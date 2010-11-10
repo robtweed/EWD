@@ -1,7 +1,7 @@
 %zewdJSON	; Enterprise Web Developer JSON functions
  ;
- ; Product: Enterprise Web Developer (Build 829)
- ; Build Date: Sun, 07 Nov 2010 14:18:35
+ ; Product: Enterprise Web Developer (Build 830)
+ ; Build Date: Wed, 10 Nov 2010 13:15:10
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -162,16 +162,20 @@ parseJSONArray(buff,subs)
  QUIT error
  ;
 getJSONValue(buff)
- n c,stop,value
- s stop=0,value=""
+ n c,isLiteral,lc,stop,value
+ s stop=0,value="",isLiteral=0,lc=""
  f  d  q:stop  q:buff=""
  . s c=$e(buff,1)
+ . i value="",c="""" s isLiteral=1
  . i c="[" s stop=1 q
  . i c="{" s stop=1 q
  . i c="}" s stop=1 q
- . i c="," s stop=1 q
+ . i c="," d  q:stop
+ . . i isLiteral,lc'="""" q
+ . . s stop=1
  . s buff=$e(buff,2,$l(buff))
  . s value=value_c
+ . s lc=c
  QUIT value
  ;
 numeric(value)

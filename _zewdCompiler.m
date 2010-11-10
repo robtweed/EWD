@@ -1,7 +1,7 @@
 %zewdCompiler	; Enterprise Web Developer Compiler
  ;
- ; Product: Enterprise Web Developer (Build 829)
- ; Build Date: Sun, 07 Nov 2010 14:18:35
+ ; Product: Enterprise Web Developer (Build 830)
+ ; Build Date: Wed, 10 Nov 2010 13:15:09
  ; 
  ; 
  ; ----------------------------------------------------------------------------
