@@ -1,11 +1,11 @@
 %zewdCompiler20	; Enterprise Web Developer Compiler : Combo+ tag processor
  ;
- ; Product: Enterprise Web Developer (Build 830)
- ; Build Date: Wed, 10 Nov 2010 13:15:09
+ ; Product: Enterprise Web Developer (Build 834)
+ ; Build Date: Tue, 04 Jan 2011 22:40:13
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
- ; | Copyright (c) 2004-10 M/Gateway Developments Ltd,                        |
+ ; | Copyright (c) 2004-11 M/Gateway Developments Ltd,                        |
  ; | Reigate, Surrey UK.                                                      |
  ; | All rights reserved.                                                     |
  ; |                                                                          |
@@ -82,7 +82,7 @@ comboPlus(nodeOID,attrValues,docOID,technology)
 	;
 	n attr,attrName,attrs,jsText,linkOID,xOID
 	;
-	d getAttributeValues^%zewdCompiler17(nodeOID,.attrs)
+	d getAttributeValues(nodeOID,.attrs)
 	i $g(attrs("allowanytext"))'="true" s attrs("allowanytext")="false"
 	;
 	i '$$javascriptObjectExists^%zewdAPI("EWD.utils.comboPlus.getNextOptions",docName) d
@@ -885,3 +885,28 @@ svgDocument(nodeOID,attrValues,docOID,technology)
  d removeIntermediateNode^%zewdDOM(nodeOID)
  QUIT
  ;
+ ;
+getAttributeValues(nodeOID,attr)
+	;
+	n c1,name,value
+	;
+	d getAttributeValues^%zewdDOM(nodeOID,.attr)
+	s name=""
+	f  s name=$o(attr(name)) q:name=""  d
+	. s value=attr(name)
+	. s c1=$e(value,1)
+	. i c1="#"!(c1="$") d  q
+	. . s attr(name)=$$addPhpVar(value)
+	QUIT
+	;
+	;
+addPhpVar(sessionValue)
+	;
+	n phpVar,varNo
+	;
+	s varNo=$o(phpVars(""),-1)+1
+	s phpVars(varNo)=" "_sessionValue_" "
+	s phpVar="&php;"_varNo_"&php;"
+	;
+	QUIT phpVar
+	;

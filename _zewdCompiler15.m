@@ -1,11 +1,11 @@
 %zewdCompiler15	; Enterprise Web Developer Compiler
  ;
- ; Product: Enterprise Web Developer (Build 830)
- ; Build Date: Wed, 10 Nov 2010 13:15:09
+ ; Product: Enterprise Web Developer (Build 834)
+ ; Build Date: Tue, 04 Jan 2011 22:40:13
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
- ; | Copyright (c) 2004-10 M/Gateway Developments Ltd,                        |
+ ; | Copyright (c) 2004-11 M/Gateway Developments Ltd,                        |
  ; | Reigate, Surrey UK.                                                      |
  ; | All rights reserved.                                                     |
  ; |                                                                          |
@@ -116,13 +116,16 @@ tagDefinitions ;
 	;;iwd:toolbar~~0~toolbar^%zewdiwd
 	;;iwd:toolbarbutton~~0~toolbarbutton^%zewdiwd
 	;;st:card~~0~card^%zewdST
+	;;st:carousel~~0~panel^%zewdST
 	;;st:class~~0~stclass^%zewdST
+	;;st:container~~0~container^%zewdST2
 	;;st:form~~0~form^%zewdST
 	;;st:formpanel~~0~panel^%zewdST
 	;;st:js~~0~js^%zewdST
 	;;st:loggedinview~~0~loggedInView^%zewdST
 	;;st:navigationmenu~~0~navigationMenu^%zewdST
 	;;st:panel~~0~panel^%zewdST
+	;;st:tabpanel~~0~panel^%zewdST
 	;;st:uuimenu~~0~uuiMenu^%zewdST
 	;;st:universalui~~0~uui^%zewdST
 	;;st:uui~~0~uui^%zewdST

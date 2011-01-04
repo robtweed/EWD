@@ -1,11 +1,11 @@
 %zewdSTJS ; Sencha Touch Main Static Javascript file
  ;
- ; Product: Enterprise Web Developer (Build 830)
- ; Build Date: Wed, 10 Nov 2010 13:15:10
+ ; Product: Enterprise Web Developer (Build 834)
+ ; Build Date: Tue, 04 Jan 2011 22:40:13
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
- ; | Copyright (c) 2004-10 M/Gateway Developments Ltd,                        |
+ ; | Copyright (c) 2004-11 M/Gateway Developments Ltd,                        |
  ; | Reigate, Surrey UK.                                                      |
  ; | All rights reserved.                                                     |
  ; |                                                                          |
@@ -681,3 +681,75 @@ ewdST ;
  ;;
  ;;***END***
  ;;
+stJS ;;
+ ;;EWD.sencha={
+ ;;  widget:{},
+ ;;  widgetIndex:{},
+ ;;  parentPanel:{},
+ ;;  popupParams:{},
+ ;;  blurFields: function(obj,ignoreId){
+ ;;     var inputs = obj.getElementsByTagName('input');
+ ;;     for (var i=0;i<inputs.length;i++) {
+ ;;        if (!ignoreId) {
+ ;;           inputs[i].blur();
+ ;;        }
+ ;;        else {
+ ;;           if (inputs[i].id != ignoreId) inputs[i].blur();
+ ;;        }
+ ;;     }
+ ;;  },
+ ;;  defineParentWidget: function(pageName,parentWidgetId) {
+ ;;     EWD.sencha.parentPanel[pageName] = Ext.getCmp(parentWidgetId);
+ ;;  },
+ ;;  removeWidgetById: function(id) {
+ ;;     Ext.getCmp(id).destroy();
+ ;;  },
+ ;;  addWidget: function(currentPage, widgetId) {
+ ;;     if (EWD.sencha.parentPanel[currentPage]) {
+ ;;        EWD.sencha.parentPanel[currentPage].add(Ext.getCmp(widgetId));
+ ;;        EWD.sencha.parentPanel[currentPage].doLayout();
+ ;;        delete EWD.sencha.parentPanel[currentPage];
+ ;;     }
+ ;;  },
+ ;;  openPopup: function(params) {
+ ;;     var thePanel = Ext.getCmp(params.panelId);
+ ;;     if (params.by) {
+ ;;        thePanel.showBy(params.by);
+ ;;     }
+ ;;     else {
+ ;;        thePanel.show();
+ ;;     }
+ ;;     if (Ext.is.Phone) {
+ ;;        thePanel.setSize({width:320});
+ ;;        thePanel.setCentered(true);
+ ;;     }
+ ;;     else {
+ ;;        thePanel.setPosition(params.x,params.y);
+ ;;     }
+ ;;     if (params.draggable) thePanel.setDraggable(true);
+ ;;     if (params.fn) params.fn();
+ ;;  },
+ ;;  loadListData: function(store,arrayName) {
+ ;;     for (var i=0; i < arrayName.length; i++) {
+ ;;        store.add(arrayName[i]);
+ ;;     }
+ ;;  },
+ ;;  loadCardPanel: function(panelId) {
+ ;;     if (EWD.sencha.cardPanel) {
+ ;;        var cp=Ext.getCmp(EWD.sencha.cardPanel.id);
+ ;;        cp.add(Ext.getCmp(panelId));
+ ;;        cp.doLayout();
+ ;;        EWD.sencha.cardPanel.prevCard = cp.getActiveItem();
+ ;;        cp.setActiveItem(Ext.getCmp(panelId), EWD.sencha.cardPanel.transition);
+ ;;        var backButton=Ext.getCmp(EWD.sencha.backbuttonId);
+ ;;        backButton.show();
+ ;;        backButton.setHandler(function(btn,e) {
+ ;;           Ext.getCmp(panelId).destroy();
+ ;;           Ext.getCmp(EWD.sencha.cardPanel.id).setActiveItem(EWD.sencha.cardPanel.prevCard, {type:EWD.sencha.cardPanel.transition, direction: 'right'});
+ ;;           backButton.hide();
+ ;;        });
+ ;;     }
+ ;;  }
+ ;;};
+ ;;
+ ;;***END***

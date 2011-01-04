@@ -1,11 +1,11 @@
 %zewdST ; Sencha Touch Tag Processors and runtime logic
  ;
- ; Product: Enterprise Web Developer (Build 830)
- ; Build Date: Wed, 10 Nov 2010 13:15:10
+ ; Product: Enterprise Web Developer (Build 834)
+ ; Build Date: Tue, 04 Jan 2011 22:40:13
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
- ; | Copyright (c) 2004-10 M/Gateway Developments Ltd,                        |
+ ; | Copyright (c) 2004-11 M/Gateway Developments Ltd,                        |
  ; | Reigate, Surrey UK.                                                      |
  ; | All rights reserved.                                                     |
  ; |                                                                          |
@@ -90,7 +90,7 @@ uui(nodeOID,attrValue,docOID,technology)
  ;
  s attr("rel")="stylesheet"
  s attr("type")="text/css"
- s attr("href")=rootPath_resourcePath_"css/ext-touch.css"
+ s attr("href")=rootPath_resourcePath_"css/sencha-touch.css"
  s xOID=$$addElementToDOM^%zewdDOM("link",headOID,,.attr)
  ;
  s attr("rel")="stylesheet"
@@ -177,23 +177,22 @@ uui(nodeOID,attrValue,docOID,technology)
  ;
  d removeIntermediateNode^%zewdDOM(nodeOID)
  ;
- d createJSFile
+ d createJSFile("ewdST","ewdST.js")
  QUIT
  ;
-createJSFile ;
+createJSFile(label,jsFileName) ;
  ;
- n delim,filePath,io,line,lineNo,outputPath
+ n delim,filePath,io,line,lineNo,outputPath,x
  ;
  s outputPath=$g(^zewd("config","jsScriptPath",technology,"outputPath"))
  s delim=$$getDelim^%zewdAPI()
  i $e(outputPath,$l(outputPath))'=delim s outputPath=outputPath_delim
- s filePath=outputPath_"ewdST.js"
+ s filePath=outputPath_jsFileName
  s io=$io
  i '$$openNewFile^%zewdCompiler(filePath) q
  u filePath
- f lineNo=1:1 s line=$t(ewdST+lineNo^%zewdSTJS) q:line["***END***"  d
- . s line=$p(line,";;",2,200)
- . w line_$c(10)
+ s x="f lineNo=1:1 s line=$t("_label_"+lineNo^%zewdSTJS) q:line[""***END***""  w $p(line,"";;"",2,200)_$c(10)"
+ x x
  c filePath u io
  ;
  QUIT
@@ -344,6 +343,7 @@ uuiMenuItem(nodeOID,parentOID)
  . s attr("value")=src
  . s attr("type")=type
  . s jsNVPOID=$$addElementToDOM^%zewdDOM("ewd:jsnvp",parentOID,,.attr)
+ ;
  i preventHide="true" d
  . s attr("name")="preventHide"
  . s attr("value")=preventHide
@@ -385,6 +385,7 @@ uuiToolbarButton(nodeOID,parentOID)
  do getAttributeValues^%zewdCustomTags(nodeOID,.mainAttrs)
  s text=$g(mainAttrs("text"))
  i text="" s text="Popup"
+ ;
  s attr("name")="text"
  s attr("value")=text
  s xOID=$$addElementToDOM^%zewdDOM("ewd:jsnvp",jsNVPOID,,.attr) 
@@ -485,6 +486,9 @@ js(nodeOID,attrValue,docOID,technology)
  do getAttributeValues^%zewdCustomTags(nodeOID,.mainAttrs)
  ;
  s block=$g(mainAttrs("block")) i block="" s block="ewdST"
+ i ((block="top")!(block="bottom")!(block="ewdPreSTJS")!(block="ewdPostSTJS")) i $$createJS("standard")
+ i block="top" s block="ewdPreSTJS"
+ i block="bottom" s block="ewdPostSTJS"
  s position=$g(mainAttrs("position")) i position="" s position="end"
  ;
  s stOID=$$getElementById^%zewdDOM(block,docOID)
@@ -522,8 +526,8 @@ form(nodeOID,attrValue,docOID,technology)
  ;
  do getAttributeValues^%zewdCustomTags(nodeOID,.mainAttrs)
  ;
- s jsOID=$$createJS()
- s postSTOID=$$getElementById^%zewdDOM("ewdPostST",docOID)
+ s jsOID=$$createJS("standard")
+ s postSTOID=$$getElementById^%zewdDOM("ewdPostSTJS",docOID)
  ;
  s autoRender=$g(mainAttrs("autorender")) k mainAttrs("autorender")
  s formOID=$$insertNewNextSibling("st:class",nodeOID)
@@ -548,22 +552,33 @@ form(nodeOID,attrValue,docOID,technology)
  ;
  ; If form has a fieldset it will be the first child
  ;
- s parentOID=nodeOID
- s fcOID=$$getFirstChild^%zewdDOM(nodeOID)
- i $$getTagName^%zewdDOM(fcOID)="st:fieldset" d
- . n hasChildren,itemsAttr
- . s fsOID=$$fieldset(fcOID,itemsOID)
- . s itemsAttr=$$getAttribute^%zewdDOM("items",fcOID)
- . s hasChildren=$$hasChildNodes^%zewdDOM(fcOID)
- . i itemsAttr="",hasChildren="true" s itemsOID=$$addElementToDOM^%zewdDOM("st:items",fsOID)
- . s parentOID=fcOID
- ;
- d getChildrenInOrder^%zewdDOM(parentOID,.OIDArray)
+ ;s parentOID=nodeOID
+ d getChildrenInOrder^%zewdDOM(nodeOID,.OIDArray)
  s childNo=""
  f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d
  . s childOID=OIDArray(childNo)
  . s tagName=$$getTagName^%zewdDOM(childOID)
- . i tagName="st:field" d field(childOID,itemsOID,mainAttrs("return"))  q
+ . i tagName="st:fieldset" d fieldSets(childOID,itemsOID)
+ ;
+ d removeIntermediateNode^%zewdDOM(nodeOID)
+ ;
+ QUIT
+ ;
+fieldSets(nodeOID,itemsOID)
+ ;
+ n childNo,childOID,fsItemsOID,fsOID,hasChildren,itemsAttr,OIDArray
+ ;
+ s fsOID=$$fieldset(nodeOID,itemsOID)
+ s itemsAttr=$$getAttribute^%zewdDOM("items",nodeOID)
+ s hasChildren=$$hasChildNodes^%zewdDOM(nodeOID)
+ i itemsAttr="",hasChildren="true" s fsItemsOID=$$addElementToDOM^%zewdDOM("st:items",fsOID)
+ ;
+ d getChildrenInOrder^%zewdDOM(nodeOID,.OIDArray)
+ s childNo=""
+ f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d
+ . s childOID=OIDArray(childNo)
+ . s tagName=$$getTagName^%zewdDOM(childOID)
+ . i tagName="st:field" d field(childOID,fsItemsOID,mainAttrs("return")) q
  . i tagName="st:checkboxes" d  q
  . . n parentOID
  . . s parentOID=formOID
@@ -651,25 +666,58 @@ field(nodeOID,parentOID,return)
  ;      <st:field type="password" id="password" label="Password" />
  ;      <st:field type="submit" text="Login" style="drastic_round" targetId="contentDiv" nextpage="loggedIn" />
  ;
- n attr,fieldOID,id,mainAttrs,type,value,xtype
+ n attr,fieldOID,id,mainAttrs,name,type,value,xtype
  ;
  do getAttributeValues^%zewdCustomTags(nodeOID,.mainAttrs)
  s type=$g(mainAttrs("type")) i type="" s type="text"
  s xtype="textfield"
  i type="password" s xtype="passwordfield"
+ i type="radio" s xtype="radiofield"
+ i type="date" d
+ . s xtype="datepickerfield"
+ . n attr,addPicker,i,pOID
+ . i $g(mainAttrs("yearvalue"))'="" d
+ . . s mainAttrs("value")=".{year:"_mainAttrs("yearvalue")_",day:15,month:6}"
+ . . k mainAttrs("yearvalue")
+ . s addPicker=0
+ . f i="yearfrom","yearto","slotorder" d
+ . . i $g(mainAttrs(i))'="" d
+ . . . s addPicker=1
+ . . . s attr(i)=mainAttrs(i)
+ . . . k mainAttrs(i)
+ . i addPicker d
+ . . s pOID=$$addElementToDOM^%zewdDOM("st:picker",nodeOID,,.attr)
  i type="submit" s xtype="button"
  s attr("xtype")=xtype
  s id=$g(mainAttrs("id"))
- i id="" s id=$g(mainAttrs("name"))
+ i id="",type'="radio" s id=$g(mainAttrs("name"))
  i id="" s id="ewdSTField"_$$uniqueId^%zewdAPI(nodeOID,filename)
  s attr("id")=id
- s attr("name")=id
+ s attr("name")=$g(mainAttrs("name"))
+ i type'="radio" s attr("name")=id
  i $g(mainAttrs("label"))'="" s attr("label")=mainAttrs("label")
  i xtype="button" d
  . i $g(mainAttrs("style"))'="" s attr("ui")=mainAttrs("style")
  . s attr("text")=$g(mainAttrs("text"))
  i $g(mainAttrs("value"))'="" s attr("value")=mainAttrs("value")
+ s name=""
+ f  s name=$o(mainAttrs(name)) q:name=""  d
+ . i name="type"!(name="label")!(name="style")!(name="value") q
+ . s attr(name)=mainAttrs(name)
  s fieldOID=$$addElementToDOM^%zewdDOM("st:item",parentOID,,.attr)
+ ;
+ i type="date" d
+ . n attr,fcOID,iOID,pOID
+ . s pOID=$$addElementToDOM^%zewdDOM("st:picker",fieldOID)
+ . s fcOID=$$getFirstChild^%zewdDOM(nodeOID)
+ . do getAttributeValues^%zewdCustomTags(fcOID,.attr)
+ . i $g(attr("slotorder"))'="" d
+ . . i attr("slotorder")="dmy" s attr("slotorder")=".['day','month','year']"
+ . i $g(attr("yearvalue"))'="" d
+ . . s attr("value")=".{year:"_attr("yearvalue")_"}"
+ . . k attr("yearvalue")
+ . s iOID=$$addElementToDOM^%zewdDOM("st:item",pOID,,.attr)
+ ;
  i xtype="button" d
  . n attr,childNo,childOID,fieldNames,formOID,funcOID,handler,jsText
  . n name,nextPage,OIDArray,plus,postSTOID,preSTOID,tagName,targetId
@@ -684,6 +732,9 @@ field(nodeOID,parentOID,return)
  . . . i name="" s name=$$getAttribute^%zewdDOM("name",childOID)
  . . . i name'="" s fieldNames(name)=""
  . ; <ewd:jsFunction return="xxx" addVar="true">...</ewd:jsFunction>
+ . i $g(mainAttrs("handler"))'="" d  q
+ . . d setAttribute^%zewdDOM("handler",mainAttrs("handler"),fieldOID)
+ . ;
  . s handler="ewdSTHandler"_$$uniqueId^%zewdAPI(fieldOID,filename)
  . s attr("return")=handler
  . s attr("addVar")="false"
@@ -694,10 +745,13 @@ field(nodeOID,parentOID,return)
  . . s jsText=jsText_plus_name_"=' + "_return_".getValues()."_name
  . . s plus=" + '&"
  . s jsText=jsText_";"_$c(13,10)
+ . s preSTOID=$$getElementById^%zewdDOM("ewdPreST",docOID)
  . s nextPage=$g(mainAttrs("nextpage")) i nextPage="" s nextPage="missingNextPage"
  . s targetId=$g(mainAttrs("targetid")) i targetId="" s targetId="st-uui-nullId"
+ . i preSTOID="" d
+ . . s preSTOID=$$getElementById^%zewdDOM("ewdPreSTJS",docOID)
+ . . i targetId="st-uui-nullId" s targetId="ewdNullId"
  . s jsText=jsText_"ewd.ajaxRequest("""_nextPage_""","""_targetId_""",nvp);"
- . s preSTOID=$$getElementById^%zewdDOM("ewdPreST",docOID)
  . s funcOID=$$addElementToDOM^%zewdDOM("ewd:jsfunction",preSTOID,,.attr,jsText)
  . d setAttribute^%zewdDOM("handler",handler,fieldOID)
  . s postSTOID=$$getElementById^%zewdDOM("ewdPostST",docOID)
@@ -803,7 +857,22 @@ loggedInView(nodeOID,attrValue,docOID,technology)
  ;
 stclass(nodeOID,attrValue,docOID,technology)
  ;
- n mainAttrs,name
+ n childNo,childOID,mainAttrs,name,OIDArray,parentOID,stop,tagName
+ ;
+ ;
+ ; If another class tag exists as a previous sibling, process it instead
+ ;
+ s parentOID=$$getParentNode^%zewdDOM(nodeOID)
+ d getChildrenInOrder^%zewdDOM(parentOID,.OIDArray)
+ s childNo="",stop=0
+ f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d  q:stop
+ . s childOID=OIDArray(childNo)
+ . s tagName=$$getTagName^%zewdDOM(childOID)
+ . i tagName'="st:class" q
+ . s stop=1
+ i stop s nodeOID=childOID
+ ;
+ ; Now process this first st:class tag
  ;
  do getAttributeValues^%zewdCustomTags(nodeOID,.mainAttrs)
  s name=$g(mainAttrs("name"))
@@ -813,32 +882,59 @@ stclass(nodeOID,attrValue,docOID,technology)
  ;
 panel(nodeOID,attrValue,docOID,technology)
  ;
- n childNo,childOID,itemsAdded,itemsOID,mainAttrs,OIDArray,panelOID,parentOID,return,stop,thisOID
+ n childNo,childOID,extName,i,itemsAdded,itemsOID,mainAttrs,OIDArray
+ n panelOID,parentOID,parentTagName,postSTOID,return,stop,tagName,text,thisOID
+ n widgetId,widgetObj,widgetObjName
  ;
  ; move up parents until no more panels found
  ;
  s stop=0
  s thisOID=nodeOID
+ s tagName=$$getTagName^%zewdDOM(nodeOID)
  f  d  q:stop
  . s parentOID=$$getParentNode^%zewdDOM(thisOID)
- . i $$getTagName^%zewdDOM(parentOID)'="st:panel" s stop=1
+ . s parentTagName=$$getTagName^%zewdDOM(parentOID)
+ . ;i tagName="st:panel",parentTagName="st:tabpanel" s thisOID=parentOID,stop=1 q
+ . ;i tagName="st:panel",parentTagName="st:carousel" s thisOID=parentOID,stop=1 q
+ . i parentTagName'="st:panel",parentTagName'="st:cardpanel",parentTagName'="st:tabpanel",parentTagName'="st:carousel",parentTagName'="st:dockeditems" s stop=1 q
+ . s thisOID=parentOID
  s nodeOID=thisOID
  do getAttributeValues^%zewdCustomTags(nodeOID,.mainAttrs)
  ;
  s panelOID=$$renameTag^%zewdDOM("st:class",nodeOID)
- d setAttribute^%zewdDOM("name","Ext.Panel",panelOID)
- s return=$g(mainAttrs("return")) i return="" s return="EWD.sencha.card"
- d setAttribute^%zewdDOM("return",return,panelOID)
+ s tagName=$$getTagName^%zewdDOM(nodeOID)
+ s extName="Ext.Panel"
+ i tagName="st:tabpanel" d
+ . s extName="Ext.TabPanel"
+ . d setAttribute^%zewdDOM("layout","card",panelOID)
+ i tagName="st:carousel" d
+ . s extName="Ext.Carousel"
+ . d setAttribute^%zewdDOM("layout","card",panelOID)
+ d setAttribute^%zewdDOM("name",extName,panelOID)
+ s widgetObjName="ewdST"_$$uniqueId^%zewdAPI(nodeOID,filename)	
+ i $g(mainAttrs("object"))'="" d
+ . s widgetObjName=mainAttrs("object")
+ . k mainAttrs("object")
+ s widgetObj="EWD.sencha.widget."_widgetObjName
+ s widgetId=$g(mainAttrs("id"))
+ i widgetId="" s widgetId=widgetObjName
+ ;
+ ;s return=$g(mainAttrs("return")) i return="" s return="EWD.sencha.card"
+ d setAttribute^%zewdDOM("return",widgetObj,panelOID)
  ;
  d getChildrenInOrder^%zewdDOM(panelOID,.OIDArray)
  s childNo="",stop=0
- f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d  q:stop
+ f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d  ;q:stop
  . s childOID=OIDArray(childNo)
  . s tagName=$$getTagName^%zewdDOM(childOID)
+ . i tagName="st:animation" d animation(childOID) q
+ . i tagName="st:carousel" s stop=1 q
  . i tagName="st:panel" s stop=1 q
+ . i tagName="st:cardpanel" s stop=1 q
  . i tagName="st:menu" s stop=1 q
  . i tagName="st:button" s stop=1 q
  . i tagName="st:form" s stop=1 q
+ . i tagName="st:list" s stop=1 q
  s itemsOID=""
  i stop s itemsOID=$$addElementToDOM^%zewdDOM("st:items",panelOID)
  s childNo="",itemsAdded=0
@@ -846,12 +942,68 @@ panel(nodeOID,attrValue,docOID,technology)
  . s childOID=OIDArray(childNo)
  . s tagName=$$getTagName^%zewdDOM(childOID)
  . i tagName="st:toolbar" d toolbar(childOID,panelOID) q
+ . i tagName="st:tabbar" d toolbar(childOID,panelOID) q
+ . i tagName="st:carousel" d subPanel(childOID,parentOID,itemsOID)  q
  . i tagName="st:panel" d subPanel(childOID,parentOID,itemsOID)  q
+ . i tagName="st:cardpanel" d cardPanel(childOID,parentOID,itemsOID)  q
  . i tagName="st:menu" d menu(childOID,itemsOID)  q
  . i tagName="st:button" d button(childOID,itemsOID) q
  . i tagName="st:form" d formPanel(childOID,parentOID,itemsOID) q
+ . i tagName="st:dockeditems" d dockedItems(childOID) q
+ . i tagName="st:list" d list(childOID,itemsOID)  q
  . i tagName'["st:" d contentEl(childOID,panelOID)
  ;
+ i $g(mainAttrs("parentpanel"))'=""!($g(mainAttrs("parentwidget"))'="") d
+ . n jsOID,parent,postSTOID,text
+ . d removeAttribute^%zewdDOM("parentpanel",nodeOID)
+ . d removeAttribute^%zewdDOM("parentwidget",nodeOID)
+ . s parent=$g(mainAttrs("parentpanel"))
+ . i parent="" s parent=$g(mainAttrs("parentwidget"))
+ . s text="EWD.sencha.widget."_parent_".add("_widgetObj_");EWD.sencha.widget."_parent_".doLayout();"
+ . i $$createJS("standard")
+ . s postSTOID=$$getElementById^%zewdDOM("ewdPostSTJS",docOID)
+ . s jsOID=$$addElementToDOM^%zewdDOM("ewd:jsline",postSTOID,,,text)
+ ;
+ i $g(mainAttrs("addto"))'="" d
+ . n jsOID,parent,postSTOID,text
+ . s parent=$g(mainAttrs("addto"))
+ . s text="Ext.getCmp('"_parent_"').add(Ext.getCmp('"_widgetId_"'));Ext.getCmp('"_parent_"').doLayout();"
+ . i $g(mainAttrs("setactive"))="true" d
+ . . n transition
+ . . s transition=$g(mainAttrs("transition"))
+ . . i transition="" s transition="slide"
+ . . s text=text_"Ext.getCmp('"_parent_"').setActiveItem(Ext.getCmp('"_widgetId_"'),'"_transition_"');"
+ . i $$createJS("standard")
+ . s postSTOID=$$getElementById^%zewdDOM("ewdPostSTJS",docOID)
+ . s jsOID=$$addElementToDOM^%zewdDOM("ewd:jsline",postSTOID,,,text)
+ ;
+ s text="EWD.sencha.addWidget('"_$p(filename,".ewd",1)_"','"_widgetId_"');"
+ i $$createJS("standard")
+ ;s postSTOID=$$getElementById^%zewdDOM("ewdPostSTJS",docOID)
+ s postSTOID=$$getElementById^%zewdDOM("ewdSTJS",docOID)
+ s jsOID=$$addElementToDOM^%zewdDOM("ewd:jsline",postSTOID,,,text)
+ s text="EWD.sencha.loadCardPanel('"_widgetId_"');"
+ s postSTOID=$$getElementById^%zewdDOM("ewdPostSTJS",docOID)
+ s jsOID=$$addElementToDOM^%zewdDOM("ewd:jsline",postSTOID,,,text)
+ ;
+ f i="parentpanel","addto","field" d removeAttribute^%zewdDOM(i,nodeOID)
+ ;
+ QUIT
+ ;
+dockedItems(nodeOID)
+ ;
+ n childNo,childOID,OIDArray,tagName
+ ;
+ d getChildrenInOrder^%zewdDOM(nodeOID,.OIDArray)
+ s childNo="",stop=0
+ f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d
+ . s childOID=OIDArray(childNo)
+ . s tagName=$$getTagName^%zewdDOM(childOID)
+ . i tagName="st:panel" d subPanel(childOID,nodeOID,nodeOID)
+ QUIT
+ ;
+animation(nodeOID)
+ i $$renameTag^%zewdDOM("st:cardswitchanimation",nodeOID)
  QUIT
  ;
 formPanel(nodeOID,bodyOID,itemsOID)
@@ -901,6 +1053,124 @@ button(nodeOID,parentOID)
  s xOID=$$addElementToDOM^%zewdDOM("st:item",parentOID,,.mainAttrs)
  ;
  d removeIntermediateNode^%zewdDOM(nodeOID)
+ QUIT
+ ;
+list(nodeOID,itemsOID)
+ ;
+ n attr,childNo,childOID,comma,fcOID,field,itemOID,jsOID,listOID
+ n mainAttrs,name,OIDArray,phpVar,sessionName,stOID,store,tagName,template
+ n value,widgetObjName,widgetId
+ ;
+ do getAttributeValues^%zewdCustomTags(nodeOID,.mainAttrs)
+ ;
+ s listOID=$$createElement^%zewdDOM("st:class",docOID)
+ s listOID=$$insertBefore^%zewdDOM(listOID,panelOID)
+ d setAttribute^%zewdDOM("name","Ext.List",listOID)
+ ;
+ s store=$g(mainAttrs("store"))
+ i store="" d
+ . s store="ewdSTStore"_$$uniqueId^%zewdAPI(nodeOID,filename)	
+ . s mainAttrs("store")=store
+ s widgetObjName="ewdST"_$$uniqueId^%zewdAPI(nodeOID,filename)	
+ i $g(mainAttrs("object"))'="" d
+ . s widgetObjName=mainAttrs("object")
+ . k mainAttrs("object")
+ s widgetObj="EWD.sencha.widget."_widgetObjName
+ s widgetId=$g(mainAttrs("id"))
+ i widgetId="" s widgetId=widgetObjName
+ k mainAttrs("id")
+ ;
+ d setAttribute^%zewdDOM("return",widgetObj,listOID)
+ d setAttribute^%zewdDOM("id",widgetId,listOID)
+ i $g(mainAttrs("ontap"))'=""  d
+ . n lOID,lsOID
+ . s lsOID=$$addElementToDOM^%zewdDOM("st:listeners",listOID)
+ . s text="function(view,index,item,e){"
+ . s text=text_"var record = "_store_".getAt(index);"
+ . i $g(mainAttrs("transition"))'="" d
+ . . s text=text_"EWD.sencha.transition='"_mainAttrs("transition")_"';"
+ . . k mainAttrs("transition")
+ . s text=text_mainAttrs("ontap")_"(index,record);"
+ . s text=text_"}"
+ . s attr("itemtap")="."_text
+ . s lOID=$$addElementToDOM^%zewdDOM("st:listener",lsOID,,.attr)
+ . k mainAttrs("ontap")
+ ;
+ i $g(mainAttrs("nextpage"))'="" d
+ . n cpid,fn,lOID,lsOID
+ . s cpid=$g(mainAttrs("cardpanel"))
+ . k mainAttrs("cardpanel")
+ . s lsOID=$$addElementToDOM^%zewdDOM("st:listeners",listOID)
+ . s text="function(view,index,item,e){"
+ . s text=text_"var record = "_store_".getAt(index);"
+ . i $g(mainAttrs("transition"))'="" d
+ . . s text=text_"EWD.sencha.cardPanel={transition:'"_mainAttrs("transition")_"',id:'"_cpid_"'};"
+ . . k mainAttrs("transition")
+ . s text=text_"var nvp='listItemNo='+(index+1);"
+ . s fn=$$ewdAjaxRequest(mainAttrs("nextpage"),"ewdNullId",1,listOID)
+ . s text=text_fn_"(nvp);"
+ . ;s text=text_"ewd.ajaxRequest('"_mainAttrs("nextpage")_"','ewdNullId',nvp);"
+ . k mainAttrs("nextpage")
+ . s text=text_"}"
+ . s attr("itemtap")="."_text
+ . s lOID=$$addElementToDOM^%zewdDOM("st:listener",lsOID,,.attr)
+ ;
+ s sessionName=$g(mainAttrs("sessionname")) k mainAttrs("sessionname")
+ ;
+ s name=""
+ f  s name=$o(mainAttrs(name)) q:name=""  d
+ . i name="storeid" q
+ . s value=mainAttrs(name)
+ . i name="store" s value="."_value
+ . d setAttribute^%zewdDOM(name,value,listOID)
+ ;
+ s text="EWD.sencha.addWidget('"_$p(filename,".ewd",1)_"','"_widgetId_"');"
+ i $$createJS("standard")
+ s stOID=$$getElementById^%zewdDOM("ewdSTJS",docOID)
+ s jsOID=$$addElementToDOM^%zewdDOM("ewd:jsline",stOID,,,text)
+ ;
+ s attr("objectname")=widgetObj
+ s itemOID=$$addElementToDOM^%zewdDOM("st:item",itemsOID,,.attr)
+ ;
+ s template=""
+ s fcOID=$$getFirstChild^%zewdDOM(nodeOID)
+ i $$getTagName^%zewdDOM(fcOID)="st:layout" d
+ . d getChildrenInOrder^%zewdDOM(fcOID,.OIDArray)
+ . s childNo=""
+ . f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d
+ . . s childOID=OIDArray(childNo)
+ . . s tagName=$$getTagName^%zewdDOM(childOID)
+ . . i tagName="st:field" d  q
+ . . . s name=$$getAttribute^%zewdDOM("name",childOID)
+ . . . s field(name)=""
+ . . . s template=template_"{"_name_"}"
+ . . i tagName="st:text" d
+ . . . s value=$$getAttribute^%zewdDOM("value",childOID)
+ . . . s value=$$replaceAll^%zewdAPI(value,"&nbsp;"," ")
+ . . . s template=template_value
+ . d setAttribute^%zewdDOM("itemtpl",template,listOID)
+ d removeIntermediateNode^%zewdDOM(fcOID)
+ ;
+ s text="Ext.regModel('"_widgetId_"',{fields:["
+ s name="",comma=""
+ f  s name=$o(field(name)) q:name=""  s text=text_comma_"'"_name_"'",comma=","
+ s text=text_"]});"
+ s stOID=$$getElementById^%zewdDOM("ewdPreSTJS",docOID)
+ s jsOID=$$addElementToDOM^%zewdDOM("ewd:jsline",stOID,,,text)
+ ;
+ s text=store_"=new Ext.data.JsonStore({"
+ s text=text_"model:'"_widgetId_"'"
+ i $g(mainAttrs("storeid"))'="" s text=text_",id:'"_mainAttrs("storeid")_"'"
+ s text=text_"});"
+ s jsOID=$$addElementToDOM^%zewdDOM("ewd:jsline",stOID,,,text)
+ ;
+ s stOID=$$getElementById^%zewdDOM("ewdPostSTJS",docOID)
+ s phpVar=$$addPhpVar^%zewdCustomTags("#"_sessionName)
+ s text="EWD.sencha.loadListData("_store_","_phpVar_");"
+ s jsOID=$$addElementToDOM^%zewdDOM("ewd:jsline",stOID,,,text)
+ ;
+ d removeIntermediateNode^%zewdDOM(nodeOID)
+ ;
  QUIT
  ;
 menu(nodeOID,parentOID)
@@ -1000,24 +1270,54 @@ popup(nodeOID,jsVar)
  ;
  QUIT
  ;
+cardPanel(nodeOID,bodyOID,itemsOID)
+ ;
+ n childNo,childOID,id,tagName,xnodeOID,OIDArray
+ ;
+ d setAttribute^%zewdDOM("layout","card",nodeOID)
+ s xnodeOID=$$renameTag^%zewdDOM("st:panel",nodeOID)
+ s id=$$getAttribute^%zewdDOM("id",xnodeOID)
+ i id="" d
+ . s id="ewdSTcardPanel"_$$uniqueId^%zewdAPI(xnodeOID,filename)
+ . d setAttribute^%zewdDOM("id",id,xnodeOID)
+ ;
+ d getChildrenInOrder^%zewdDOM(xnodeOID,.OIDArray)
+ s childNo=""
+ f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d
+ . s childOID=OIDArray(childNo)
+ . s tagName=$$getTagName^%zewdDOM(childOID)
+ . i tagName="st:listcard" d
+ . . n panelOID,xchildOID
+ . . s panelOID=$$insertNewParentElement^%zewdDOM(childOID,"st:panel",docOID) 
+ . . s xchildOID=$$renameTag^%zewdDOM("st:list",childOID)
+ . . d setAttribute^%zewdDOM("cardpanel",id,xchildOID)
+ ;
+ d subPanel(xnodeOID,bodyOID,itemsOID)
+ ;
+ QUIT
+ ;
 subPanel(nodeOID,bodyOID,itemsOID)
  ;
- n attr,childNo,childOID,itemOID,mainAttrs,name,OIDArray,tagName,xOID
+ n attr,childNo,childOID,itemOID,mainAttrs,name,OIDArray,subItemsOID,tagName,xOID,xtype
  ;
  do getAttributeValues^%zewdCustomTags(nodeOID,.mainAttrs)
  ;
+ s tagName=$$getTagName^%zewdDOM(nodeOID)
+ s xtype="panel"
+ i tagName="st:carousel" s xtype="carousel"
  s itemOID=$$addElementToDOM^%zewdDOM("st:item",itemsOID)
- d setAttribute^%zewdDOM("xtype","panel",itemOID)
+ d setAttribute^%zewdDOM("xtype",xtype,itemOID)
  i $g(mainAttrs("fitwidth"))'="" d
  . s mainAttrs("minwidth")=".EWD.sencha.nestedList.width"
  . s mainAttrs("maxwidth")=".EWD.sencha.nestedList.width"
  . k mainAttrs("fitwidth")
  s name=""
  f  s name=$o(mainAttrs(name)) q:name=""  d
+ . i name="object" q
  . d setAttribute^%zewdDOM(name,mainAttrs(name),itemOID)
  ;
  d getChildrenInOrder^%zewdDOM(nodeOID,.OIDArray)
- s childNo=""
+ s childNo="",subItemsOID=""
  f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d
  . s childOID=OIDArray(childNo)
  . s tagName=$$getTagName^%zewdDOM(childOID)
@@ -1046,6 +1346,11 @@ subPanel(nodeOID,bodyOID,itemsOID)
  . . d setAttribute^%zewdDOM("return",return,childOID)
  . . d setAttribute^%zewdDOM("placeattop","true",childOID)
  . . d setAttribute^%zewdDOM("items","."_return,itemOID)
+ . ;
+ . i tagName="st:panel"!(tagName="st:tabpanel")!(tagName="st:carousel")!(tagName="st:list") d
+ . . i subItemsOID="" s subItemsOID=$$addElementToDOM^%zewdDOM("st:items",itemOID)
+ . . i tagName="st:list" d list(childOID,subItemsOID) q
+ . . d subPanel(childOID,nodeOID,subItemsOID)
  ;
  d removeIntermediateNode^%zewdDOM(nodeOID)
  ;
@@ -1062,11 +1367,20 @@ toolbar(nodeOID,parentOID)
  ;
  do getAttributeValues^%zewdCustomTags(nodeOID,.mainAttrs)
  ;
- s diOID=$$insertNewNextSibling("st:dockeditems",nodeOID)
- i $g(mainAttrs("style"))'="" s attr("ui")=mainAttrs("style")
- i $g(mainAttrs("position"))'="" s attr("dock")=mainAttrs("position")
+ s diOID=$$getTagOID^%zewdDOM("st:dockeditems",docName)
+ i diOID="" s diOID=$$insertNewNextSibling("st:dockeditems",nodeOID)
+ ;
+ i $g(mainAttrs("style"))'="" d
+ . s mainAttrs("ui")=mainAttrs("style")
+ . k mainAttrs("style")
+ i $g(mainAttrs("position"))'="" d
+ . s mainAttrs("dock")=mainAttrs("position")
+ . k mainAttrs("position")
+ s tagName=$$getTagName^%zewdDOM(nodeOID)
  s attr("xtype")="toolbar"
+ i tagName="st:tabbar" s attr("xtype")="tabbar"
  s itemOID=$$addElementToDOM^%zewdDOM("st:item",diOID,,.attr)
+ d addAttrs(.mainAttrs,itemOID)
  s itemsOID=$$addElementToDOM^%zewdDOM("st:items",itemOID)
  ;
  d getChildrenInOrder^%zewdDOM(nodeOID,.OIDArray)
@@ -1074,7 +1388,7 @@ toolbar(nodeOID,parentOID)
  f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d
  . s childOID=OIDArray(childNo)
  . s tagName=$$getTagName^%zewdDOM(childOID)
- . i tagName="st:toolbarbutton" d toolbarButton(childOID,itemsOID) 
+ . i tagName="st:toolbarbutton"!(tagName="st:button") d toolbarButton(childOID,itemsOID) 
  . i tagName="st:spacer" d
  . . n attr,spacerOID
  . . s attr("xtype")="spacer"
@@ -1082,53 +1396,93 @@ toolbar(nodeOID,parentOID)
  ;
  s text="EWD.sencha.resetMenuHeight('toolbar');"
  s preSTOID=$$getElementById^%zewdDOM("ewdPreST",docOID)
- s jsOID=$$addElementToDOM^%zewdDOM("ewd:jsline",preSTOID,,,text)
+ i preSTOID'="" s jsOID=$$addElementToDOM^%zewdDOM("ewd:jsline",preSTOID,,,text)
  ;
  i $$removeChild^%zewdDOM(nodeOID)
  ;
  QUIT
  ;
+ewdAjaxRequest(nextPage,targetId,hasNVP,nodeOID,addVar)
+ ;
+ n attr,fn,funcOID,jsOID,jsText,preSTOID
+ ;
+ s fn="ewdSTFn"_$$uniqueId^%zewdAPI(nodeOID,filename)
+ s preSTOID=$$getElementById^%zewdDOM("ewdPreST",docOID)
+ i preSTOID="" d
+ . s jsOID=$$createJS("standard")
+ . s preSTOID=$$getElementById^%zewdDOM("ewdSTJS",docOID)
+ i $g(targetId)="" s targetId="ewdNullId"
+ s attr("return")=fn
+ i $g(addVar)="" s addVar="false"
+ s attr("addVar")=addVar
+ s nextPage=$g(nextPage) 
+ i nextPage="" s nextPage="missingNextPage"
+ s jsText="ewd.ajaxRequest("""_nextPage_""","""_targetId_""""
+ i $g(hasNVP)=1 d
+ . s jsText=jsText_",nvp"
+ . s attr("parameters")="nvp"
+ s jsText=jsText_");"
+ s funcOID=$$addElementToDOM^%zewdDOM("ewd:jsfunction",preSTOID,,.attr,jsText)
+ QUIT fn
+ ;
 toolbarButton(nodeOID,parentOID)
  ;
- n attr,funcOID,handler,itemOID,jsText,mainAttrs,nextPage,preSTOID,targetId,type
+ n attr,funcOID,handler,id,itemOID,jsOID,jsText,mainAttrs,nextPage,preSTOID,targetId,type
  ;
  do getAttributeValues^%zewdCustomTags(nodeOID,.mainAttrs)
- s type=$g(mainAttrs("type")) i type="" s type="action" 
- i type'="back" d
+ s type=$g(mainAttrs("type")) ;i type="" s type="action" 
+ i type'="",type'="back" d
  . s handler=$g(mainAttrs("handler"))
  . i handler="" d
  . . s handler="ewdSTHandler"_$$uniqueId^%zewdAPI(nodeOID,filename)
+ . . s preSTOID=$$getElementById^%zewdDOM("ewdPreST",docOID)
+ . . i preSTOID="" d
+ . . . s jsOID=$$createJS("standard")
+ . . . s preSTOID=$$getElementById^%zewdDOM("ewdSTJS",docOID)
+ . . . i $g(mainAttrs("targetid"))="" s mainAttrs("targetid")="ewdNullId"
  . . s attr("return")=handler
  . . s attr("addVar")="false"
  . . s nextPage=$g(mainAttrs("nextpage")) i nextPage="" s nextPage="missingNextPage"
  . . s targetId=$g(mainAttrs("targetid")) i targetId="" s targetId="st-uui-nullId"
  . . s jsText="ewd.ajaxRequest("""_nextPage_""","""_targetId_""");"
- . . s preSTOID=$$getElementById^%zewdDOM("ewdPreST",docOID)
  . . s funcOID=$$addElementToDOM^%zewdDOM("ewd:jsfunction",preSTOID,,.attr,jsText)
- e  d
- . s handler="EWD.sencha.onToolbarBack"
+ ;e  d
+ ;. s handler="EWD.sencha.onToolbarBack"
  ;
+ s id=$g(mainAttrs("id"))
+ i id="" s id="ewdSTToolbar"_$$uniqueId^%zewdAPI(nodeOID,filename)
  i $g(mainAttrs("type"))'="" s attr("ui")=mainAttrs("type")
  i $g(mainAttrs("text"))'="" s attr("text")=mainAttrs("text")
- s attr("handler")=handler
+ s attr("id")=id
+ i $g(mainAttrs("hidden"))'="" s attr("hidden")=mainAttrs("hidden")
+ i $g(mainAttrs("ui"))'="" s attr("ui")=mainAttrs("ui")
+ ;s attr("handler")=handler
  s itemOID=$$addElementToDOM^%zewdDOM("st:item",parentOID,,.attr)
+ i $g(mainAttrs("ui"))="back" d
+ . n jsOID,text,preSTOID
+ . s text="EWD.sencha.backbuttonId='"_id_"';"
+ . s jsOID=$$createJS("standard")
+ . s preSTOID=$$getElementById^%zewdDOM("ewdPreSTJS",docOID)
+ . s jsOID=$$addElementToDOM^%zewdDOM("ewd:jsline",preSTOID,,,text)
  ;
  QUIT
  ;
 class(className,nodeOID)
  ;
  n attr,childNo,childOID,cOID,jsOID
- n mainAttrs,OIDArray,oOID,pOID,sOID,subTagName,tagName
+ n mainAttrs,OIDArray,oOID,parentOID,pOID,sOID,stop,subTagName,tagName
  ;
  do getAttributeValues^%zewdCustomTags(nodeOID,.mainAttrs)
  d convertAttrsToCamelCase(.mainAttrs)
  s jsOID=$$createJS()
  s jsOID=$$getElementById^%zewdDOM("ewdST",docOID)
+ i jsOID="" s jsOID=$$getElementById^%zewdDOM("ewdSTJS",docOID)
  s cOID=$$addConstructor(jsOID,.mainAttrs,className)
  s pOID=$$addElementToDOM^%zewdDOM("ewd:jsparameters",cOID)
  s oOID=$$addElementToDOM^%zewdDOM("ewd:jsobject",pOID)
  d addNVPs(.mainAttrs,oOID)
  ;
+ k OIDArray
  d getChildrenInOrder^%zewdDOM(nodeOID,.OIDArray)
  s childNo=""
  f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d
@@ -1157,7 +1511,7 @@ subTag(subTagName,nodeOID,parentOID)
  e  d
  . s attr("name")=subTagName
  . s attr("type")="object"
- . i subTagName="items" s attr("type")="array"
+ . i subTagName="items"!(subTagName="dockedItems") s attr("type")="array"
  . s subTagOID=$$addElementToDOM^%zewdDOM("ewd:jsnvp",parentOID,,.attr)
  do getAttributeValues^%zewdCustomTags(nodeOID,.mainAttrs)
  d addNVPs(.mainAttrs,subTagOID)
@@ -1168,22 +1522,30 @@ subTag(subTagName,nodeOID,parentOID)
  . s childOID=OIDArray(childNo)
  . s tagName=$$getTagName^%zewdDOM(childOID)
  . s subName=$p(tagName,"st:",2)
- . i subTagName="items" s subTagOID=$$addElementToDOM^%zewdDOM("ewd:jsobject",stOID)
+ . i subTagName="items"!(subTagName="dockedItems") s subTagOID=$$addElementToDOM^%zewdDOM("ewd:jsobject",stOID)
  . s sOID=$$subTag(subName,childOID,subTagOID)
  d removeIntermediateNode^%zewdDOM(nodeOID)
  QUIT subTagOID
  ;
 addNVPs(mainAttrs,parentOID)
  ;
- n attr,attrcc,attrlc,nvpOID,terms,type,value
+ n attr,attrcc,attrlc,count,nvpOID,terms,type,value
  ;
  d defineCamelCaseTerms(.terms)
+ s attrlc="",count=0
+ f  s attrlc=$o(mainAttrs(attrlc)) q:attrlc=""  d
+ . s count=count+1
+ ;
+ i count=1,$g(mainAttrs("objectname"))'="" d  QUIT
+ . s parentOID=$$renameTag^%zewdDOM("ewd:jsvariable",parentOID)
+ . d setAttribute^%zewdDOM("name",mainAttrs("objectname"),parentOID)
+ ;
  s attrlc=""
  f  s attrlc=$o(mainAttrs(attrlc)) q:attrlc=""  d
  . s attrcc=$$getCamelCase(attrlc,.terms)
  . s value=mainAttrs(attrlc)
  . s type="literal"
- . i value="true"!(value="false") s type="boolean" q
+ . i value="true"!(value="false") s type="boolean"
  . i $$numeric^%zewdJSON(value) s type="numeric"
  . i attrcc="handler" s type="reference"
  . i $e(value,1)="." s value=$e(value,2,$l(value)),type="reference"
@@ -1191,6 +1553,18 @@ addNVPs(mainAttrs,parentOID)
  . s attr("value")=value
  . s attr("type")=type
  . s nvpOID=$$addElementToDOM^%zewdDOM("ewd:jsnvp",parentOID,,.attr)
+ QUIT
+ ;
+addAttrs(mainAttrs,nodeOID)
+ ;
+ n attrcc,attrlc,terms,value
+ ;
+ d defineCamelCaseTerms(.terms)
+ s attrlc=""
+ f  s attrlc=$o(mainAttrs(attrlc)) q:attrlc=""  d
+ . s attrcc=$$getCamelCase(attrlc,.terms)
+ . s value=mainAttrs(attrlc)
+ . d setAttribute^%zewdDOM(attrcc,value,nodeOID)
  QUIT
  ;
 addConstructor(parentOID,mainAttrs,className)
@@ -1211,7 +1585,7 @@ addConstructor(parentOID,mainAttrs,className)
  d setAttribute^%zewdDOM("object",className,cOID)
  QUIT cOID
  ;
-createJS()
+createJS(type)
  ;
  n attr,jsOID,postSTOID,preSTOID,stOID
  ;
@@ -1221,13 +1595,23 @@ createJS()
  . s nsOID=$$getElementById^%zewdDOM("ewdajaxonload",docOID)
  . s jsOID=$$createElement^%zewdDOM("ewd:js",docOID)
  . s jsOID=$$insertBefore^%zewdDOM(jsOID,nsOID)
- s stOID=$$getElementById^%zewdDOM("ewdST",docOID)
+ s stOID=$$getElementById^%zewdDOM("ewdSTJS",docOID)
+ i stOID'="" s type="standard"
  i stOID="" d
+ . s stOID=$$getElementById^%zewdDOM("ewdST",docOID)
+ i $g(stOID)="",$g(type)="" d
  . s attr("id")="ewdPreST"
  . s preSTOID=$$addElementToDOM^%zewdDOM("ewd:jssection",jsOID,,.attr)
  . s attr("id")="ewdST"
  . s stOID=$$addElementToDOM^%zewdDOM("ewd:jssection",jsOID,,.attr)
  . s attr("id")="ewdPostST"
+ . s postSTOID=$$addElementToDOM^%zewdDOM("ewd:jssection",jsOID,,.attr)
+ i stOID="",$g(type)="standard" d
+ . s attr("id")="ewdPreSTJS"
+ . s preSTOID=$$addElementToDOM^%zewdDOM("ewd:jssection",jsOID,,.attr)
+ . s attr("id")="ewdSTJS"
+ . s stOID=$$addElementToDOM^%zewdDOM("ewd:jssection",jsOID,,.attr)
+ . s attr("id")="ewdPostSTJS"
  . s postSTOID=$$addElementToDOM^%zewdDOM("ewd:jssection",jsOID,,.attr)
  QUIT jsOID
  ;
@@ -1380,29 +1764,54 @@ uiJS ;;
  ;;***END***
  ;;
 camelCaseTerms
+ ;;activeCls
  ;;activeItem
  ;;autoDestroy
  ;;baseCls
+ ;;bodyBorder
+ ;;bodyMargin
+ ;;bodyPadding
+ ;;bubbleEvents
+ ;;cardSwitchAnimation
+ ;;componentCls
  ;;componentLayout
  ;;contentEl
+ ;;dayText
  ;;defaultType
  ;;disabledClass
+ ;;disabledCls
  ;;dockedItems
+ ;;doneButton
+ ;;enterAnimation
+ ;;exitAnimation
  ;;floatingCls
  ;;hideOnMaskTap
+ ;;itemTpl
  ;;labelWidth
  ;;layoutConfig
+ ;;layoutOnOrientationChange
  ;;labelAlign
  ;;maxHeight
  ;;maxWidth
  ;;minHeight
  ;;minWidth
  ;;monitorOrientation
+ ;;monthText
  ;;overCls
+ ;;renderSelectors
  ;;renderTo
  ;;renderTpl
  ;;showAnimation
+ ;;slotOrder
+ ;;stopMaskTapEvent
+ ;;stretchX
+ ;;stretchY
+ ;;styleHtmlCls
  ;;styleHtmlContent
  ;;tplWriteMode
+ ;;useTitles
+ ;;yearFrom
+ ;;yearText
+ ;;yearTo
  ;;***END***
  ;;

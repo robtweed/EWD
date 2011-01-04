@@ -1,11 +1,11 @@
 %zewdJSON	; Enterprise Web Developer JSON functions
  ;
- ; Product: Enterprise Web Developer (Build 830)
- ; Build Date: Wed, 10 Nov 2010 13:15:10
+ ; Product: Enterprise Web Developer (Build 834)
+ ; Build Date: Tue, 04 Jan 2011 22:40:13
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
- ; | Copyright (c) 2004-10 M/Gateway Developments Ltd,                        |
+ ; | Copyright (c) 2004-11 M/Gateway Developments Ltd,                        |
  ; | Reigate, Surrey UK.                                                      |
  ; | All rights reserved.                                                     |
  ; |                                                                          |
@@ -35,6 +35,7 @@ parseJSON(jsonString,propertiesArray,mode)
  k propertiesArray
  s error=""
  s buff=$g(jsonString)
+ s buff=$$replaceAll^%zewdAPI(buff,"\""","\'")
  s arrRef="array"
  s c=$e(buff,1)
  s buff=$e(buff,2,$l(buff))

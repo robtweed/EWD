@@ -1,11 +1,11 @@
 %zewdGTM	;Enterprise Web Developer GT.M/ Virtual Appliance Functions
  ;
- ; Product: Enterprise Web Developer (Build 830)
- ; Build Date: Wed, 10 Nov 2010 13:15:09
+ ; Product: Enterprise Web Developer (Build 834)
+ ; Build Date: Tue, 04 Jan 2011 22:40:13
 	;
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
- ; | Copyright (c) 2004-10 M/Gateway Developments Ltd,                        |
+ ; | Copyright (c) 2004-11 M/Gateway Developments Ltd,                        |
  ; | Reigate, Surrey UK.                                                      |
  ; | All rights reserved.                                                     |
  ; |                                                                          |
@@ -696,7 +696,8 @@ shellPipe	; Pipe output from shell commands to scratch global
 	n i,x
 	;
 	k ^%mgwPipe
-	f i=1:1:200 r x q:((i>20)&(x=""))  s ^%mgwPipe(i)=x
+	;f i=1:1:200 r x q:((i>20)&(x=""))  s ^%mgwPipe(i)=x
+	f i=1:1 r x q:$zeof  s ^%mgwPipe(i)=x
 	QUIT
 	;
 deletePipe	
