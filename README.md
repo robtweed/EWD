@@ -2,7 +2,7 @@
  
 EWD is a Free Open Source Ajax Framework for GT.M
 
-Build 837
+Build 838
 
 ## License
 
