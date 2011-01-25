@@ -1,7 +1,7 @@
 %zewdSTJS ; Sencha Touch Main Static Javascript file
  ;
- ; Product: Enterprise Web Developer (Build 835)
- ; Build Date: Wed, 05 Jan 2011 11:13:34
+ ; Product: Enterprise Web Developer (Build 837)
+ ; Build Date: Tue, 25 Jan 2011 09:19:26
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -687,6 +687,8 @@ stJS ;;
  ;;  widgetIndex:{},
  ;;  parentPanel:{},
  ;;  popupParams:{},
+ ;;  handlerByClass:{},
+ ;;  onListItemTap:{},
  ;;  blurFields: function(obj,ignoreId){
  ;;     var inputs = obj.getElementsByTagName('input');
  ;;     for (var i=0;i<inputs.length;i++) {
@@ -749,6 +751,29 @@ stJS ;;
  ;;           backButton.hide();
  ;;        });
  ;;     }
+ ;;  },
+ ;;  onListImageClick: function(evt) {
+ ;;     if (EWD.sencha.handlerByClass[evt.target.className]) {
+ ;;        EWD.sencha.imageHandler = EWD.sencha.handlerByClass[evt.target.className];
+ ;;        EWD.sencha.cancelListItemTap = true;
+ ;;        var data = evt.target.getAttribute('data');
+ ;;        eval(EWD.sencha.imageHandler + '(evt,evt.target.id,data);');
+ ;;     }
+ ;;  },
+ ;;  listItemTapProxyHandler: function() {
+ ;;     if (!EWD.sencha.cancelListItemTap) {
+ ;;	       var index = EWD.sencha.itemTapProxyData.index;
+ ;;	       var record = EWD.sencha.itemTapProxyData.record;
+ ;;	       var listId = EWD.sencha.itemTapProxyData.listId;
+ ;;        eval(EWD.sencha.onListItemTap[listId] + '(index,record);');
+ ;;     }
+ ;;     else {
+ ;;        delete EWD.sencha.cancelListItemTap;
+ ;;     }
+ ;;  },
+ ;;  listItemTapProxy: function(index,record,listId) {
+ ;;	    EWD.sencha.itemTapProxyData = {index:index,record:record,listId:listId};
+ ;;     setTimeout('EWD.sencha.listItemTapProxyHandler()',250);
  ;;  }
  ;;};
  ;;

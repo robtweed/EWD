@@ -1,7 +1,7 @@
 %zewdJSON	; Enterprise Web Developer JSON functions
  ;
- ; Product: Enterprise Web Developer (Build 835)
- ; Build Date: Wed, 05 Jan 2011 11:13:34
+ ; Product: Enterprise Web Developer (Build 837)
+ ; Build Date: Tue, 25 Jan 2011 09:19:26
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -590,6 +590,7 @@ hasChildElements(nodeOID)
  ;
 arrayToJSON(name)
  n subscripts
+ i '$d(@name) QUIT "[]"
  QUIT $$walkArray("",name)
  ;
 walkArray(json,name,subscripts)

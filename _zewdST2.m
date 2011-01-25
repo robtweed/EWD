@@ -1,7 +1,7 @@
 %zewdST2 ; Sencha Touch Tag Processors and runtime logic
  ;
- ; Product: Enterprise Web Developer (Build 835)
- ; Build Date: Wed, 05 Jan 2011 11:13:34
+ ; Product: Enterprise Web Developer (Build 837)
+ ; Build Date: Tue, 25 Jan 2011 09:19:26
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -183,3 +183,203 @@ locale(nodeOID,images)
  d removeIntermediateNode^%zewdDOM(nodeOID)
  QUIT
  ;
+writeCheckboxes(sessionName,jsVarName,idRoot,nameRoot,checkIf,labelAlign,sessid)
+ ;
+ n array,code,no,plist,result,text,x
+ ;
+ d mergeArrayFromSession^%zewdAPI(.plist,sessionName,sessid)
+ s no=""
+ f  s no=$o(plist(no)) q:no=""  d
+ . s code=$g(plist(no,"code"))
+ . s text=$g(plist(no,"text"))
+ . s array(1,"zobj"_no,"id")=idRoot_no
+ . s array(1,"zobj"_no,"label")=text
+ . s array(1,"zobj"_no,"labelAlign")=labelAlign
+ . s array(1,"zobj"_no,"name")=nameRoot_code
+ . s array(1,"zobj"_no,"xtype")="checkbox"
+ . s array(1,"zobj"_no,"listeners","zobj1","check")="<?= EWD.sencha.checkBoxHandler ?>"
+ . i $g(checkIf)'="" d
+ . . i $e(checkIf,1,5)="class" s checkIf="##"_checkIf
+ . . i $e(checkIf,1,2)'="$$",$e(checkIf,1,2)'="##" s checkIf="$$"_checkIf
+ . . i checkIf'["(code,text,sessid)" s checkIf=checkIf_"(code,text,sessid)"
+ . . s x="s result="_checkIf
+ . . x x
+ . . i result s array(1,"zobj"_no,"checked")="true"
+ ;
+ w jsVarName_"="
+ d walkObjectArray^%zewdCompiler19("array")
+ w ";"
+ w $c(13,10)
+ QUIT
+ ;
+writeMenuOptions(sessionName,jsVarName,sessid)
+ ;
+ n array,len,no,plist,xno
+ ;
+ d mergeArrayFromSession^%zewdAPI(.plist,sessionName,sessid)
+ s no=""
+ f  s no=$o(plist(no)) q:no=""  d
+ . s xno="0000"_no
+ . s len=$l(xno)
+ . s xno=$e(xno,len-3,len)
+ . s array(1,"zobj"_xno,"text")=plist(no,"text")
+ . s array(1,"zobj"_xno,"key")=no
+ . s array(1,"zobj"_xno,"id")=sessionName_no
+ . s array(1,"zobj"_xno,"leaf")="<?= true ?>"
+ ;
+ w jsVarName_"="
+ d walkObjectArray^%zewdCompiler19("array")
+ w ";"
+ w $c(13,10)
+ ;
+ w "Ext.regModel('"_jsVarName_"List',{"
+ w "fields: [{name: 'text',type: 'string'},{name: 'key',type: 'string'}]"
+ w "});"
+ w jsVarName_"Store=new Ext.data.TreeStore({"
+ w "model: '"_jsVarName_"List',"
+ w "root: {"
+ w "items: "_jsVarName
+ w "},"
+ w "proxy: {type: 'ajax',reader: {type: 'tree',root: 'items'}}"
+ w "});"
+ ; 
+ QUIT
+ ;
+replaceMenuOptions(sessionName,sessid)
+ ;
+ n array,in,no
+ ;
+ d mergeArrayFromSession^%zewdAPI(.in,sessionName,sessid)
+ s no=""
+ f  s no=$o(in(no)) q:no=""  d
+ . s array(1,"zobj"_no,"text")=in(no)
+ . s array(1,"zobj"_no,"leaf")="<?= true ?>"
+ . s array(1,"zobj"_no,"key")=no
+ w "EWD.sencha.mainMenu="
+ d walkObjectArray^%zewdCompiler19("array")
+ w ";"
+ w $c(13,10)
+ w "EWD.sencha.replaceNavigationMenu();"_$c(13,10)
+ QUIT
+ ;
+insertNewNextSibling(elementName,nodeOID)
+ ;
+ n elOID,nsOID,parentOID
+ ;
+ s elOID=$$createElement^%zewdDOM(elementName,docOID)
+ s nsOID=$$getNextSibling^%zewdDOM(nodeOID)
+ i nsOID'="" d
+ . s elOID=$$insertBefore^%zewdDOM(elOID,nsOID)
+ e  d
+ . s parentOID=$$getParentNode^%zewdDOM(nodeOID)
+ . s elOID=$$appendChild^%zewdDOM(elOID,parentOID)
+ ;
+ QUIT elOID
+ ;
+getCamelCase(string,options)
+ ;
+ n camelCase
+ ;
+ s camelCase=$g(options(string))
+ i camelCase="" s camelCase=string
+ ;
+ QUIT camelCase
+ ;
+defineCamelCaseTerms(options)
+ ;
+ n line,lineNo
+ ;
+ k options
+ f lineNo=1:1 s line=$t(camelCaseTerms+lineNo) q:line["***END***"  d
+ . s line=$p(line,";;",2,200)
+ . s options($$zcvt^%zewdAPI(line,"l"))=line
+ QUIT
+ ;
+convertAttrsToCamelCase(mainAttrs)
+ ;
+ n attrcc,attrlc,copyAttrs,terms
+ ;
+ m copyAttrs=mainAttrs
+ k mainAttrs
+ d defineCamelCaseTerms(.terms)
+ s attrlc=""
+ f  s attrlc=$o(copyAttrs(attrlc)) q:attrlc=""  d
+ . s attrcc=$$getCamelCase(attrlc,.terms)
+ . s mainAttrs(attrcc)=copyAttrs(attrlc)
+ QUIT
+ ;
+convertToCamelCase(string)
+ ;
+ n terms
+ ;
+ d defineCamelCaseTerms(.terms)
+ QUIT $$getCamelCase(string,.terms)
+ ;
+camelCaseTerms
+ ;;activeCls
+ ;;activeItem
+ ;;autoDestroy
+ ;;baseCls
+ ;;baseParams
+ ;;bodyBorder
+ ;;bodyMargin
+ ;;bodyPadding
+ ;;bubbleEvents
+ ;;cardSwitchAnimation
+ ;;componentCls
+ ;;componentLayout
+ ;;contentEl
+ ;;dayText
+ ;;defaultType
+ ;;disabledClass
+ ;;disabledCls
+ ;;dockedItems
+ ;;doneButton
+ ;;enterAnimation
+ ;;exitAnimation
+ ;;floatingCls
+ ;;hideOnMaskTap
+ ;;itemTpl
+ ;;labelWidth
+ ;;layoutConfig
+ ;;layoutOnOrientationChange
+ ;;labelAlign
+ ;;maxHeight
+ ;;maxWidth
+ ;;minHeight
+ ;;minWidth
+ ;;monitorOrientation
+ ;;monthText
+ ;;overCls
+ ;;renderSelectors
+ ;;renderTo
+ ;;renderTpl
+ ;;showAnimation
+ ;;slotOrder
+ ;;standardSubmit
+ ;;stopMaskTapEvent
+ ;;stretchX
+ ;;stretchY
+ ;;styleHtmlCls
+ ;;styleHtmlContent
+ ;;submitOnAction
+ ;;tplWriteMode
+ ;;useTitles
+ ;;waitTpl
+ ;;yearFrom
+ ;;yearText
+ ;;yearTo
+ ;;***END***
+ ;;
+uiJS ;;
+ ;;EWD.sencha.loadMenu = function() {
+ ;; ewd.ajaxRequest("<launchPage>","st-uui-launchScreenContents");
+ ;; <login>
+ ;;};
+ ;;EWD.sencha.resourcesPath = '<rootPath><uiPath>';
+ ;;EWD.sencha.appTitle = {phone: '<phoneTitle>',tablet: '<tabletTitle>'};
+ ;;EWD.sencha.navigationButtonText = '<navigationButtonText>';
+ ;;EWD.sencha.codePanel = {scroll: 'vertical', height: <panelHeight>, width: <panelWidth>};
+ ;;EWD.sencha.div = {nullId: '<nullId>',launchScreen: '<launchScreenId>'};
+ ;;***END***
+ ;;
