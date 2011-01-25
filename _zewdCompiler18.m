@@ -1,7 +1,7 @@
 %zewdCompiler18	; Slideshow Javascript
  ;
- ; Product: Enterprise Web Developer (Build 837)
- ; Build Date: Tue, 25 Jan 2011 09:19:25
+ ; Product: Enterprise Web Developer (Build 838)
+ ; Build Date: Tue, 25 Jan 2011 16:34:09
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |

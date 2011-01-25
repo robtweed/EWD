@@ -1,7 +1,7 @@
 %zewdCompiler15	; Enterprise Web Developer Compiler
  ;
- ; Product: Enterprise Web Developer (Build 837)
- ; Build Date: Tue, 25 Jan 2011 09:19:25
+ ; Product: Enterprise Web Developer (Build 838)
+ ; Build Date: Tue, 25 Jan 2011 16:34:09
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -125,6 +125,7 @@ tagDefinitions ;
 	;;st:loggedinview~~0~loggedInView^%zewdST
 	;;st:navigationmenu~~0~navigationMenu^%zewdST
 	;;st:panel~~0~panel^%zewdST
+	;;st:qrcode~~0~qrCode^%zewdST2
 	;;st:tabpanel~~0~panel^%zewdST
 	;;st:uuimenu~~0~uuiMenu^%zewdST
 	;;st:universalui~~0~uui^%zewdST

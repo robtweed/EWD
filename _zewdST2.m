@@ -1,7 +1,7 @@
 %zewdST2 ; Sencha Touch Tag Processors and runtime logic
  ;
- ; Product: Enterprise Web Developer (Build 837)
- ; Build Date: Tue, 25 Jan 2011 09:19:26
+ ; Product: Enterprise Web Developer (Build 838)
+ ; Build Date: Tue, 25 Jan 2011 16:34:10
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -181,6 +181,30 @@ locale(nodeOID,images)
  m locale=mainAttrs
  ;
  d removeIntermediateNode^%zewdDOM(nodeOID)
+ QUIT
+ ;
+qrCode(nodeOID,attrValue,docOID,technology)
+ ;
+ n attr,blockSize,correctionLevel,data,id,jsOID,jsText,mainAttrs,pointSize,stOID,xOID
+ ;
+ d getAttributeValues^%zewdCustomTags(nodeOID,.mainAttrs)
+ ;
+ s blockSize=$g(mainAttrs("blocksize")) i blockSize="" s blockSize=7
+ s correctionLevel=$g(mainAttrs("correctionlevel")) i correctionLevel="" s correctionLevel="H"
+ s data=$g(mainAttrs("data")) i data="" s data="Undefined QRCode"
+ s id=$g(mainAttrs("id")) i id="" s id="ewdSTQRCode"_$$uniqueId^%zewdAPI(nodeOID,filename)
+ s pointSize=$g(mainAttrs("pointsize")) i pointSize="" s pointSize=4
+ ;
+ s jsText="EWD.sencha.qrCode.draw({pointSize:"_pointSize_",correctionLevel:'"_correctionLevel_"',blockSize:"_blockSize_",data:'"_data_"',id:'"_id_"'});"
+ s jsOID=$$createJS^%zewdST("standard")
+ s stOID=$$getElementById^%zewdDOM("ewdPostSTJS",docOID)
+ s jsOID=$$addElementToDOM^%zewdDOM("ewd:jsline",stOID,,,jsText)
+ ;
+ s attr("id")=id
+ s xOID=$$addElementToDOM^%zewdDOM("canvas",nodeOID,,.attr)
+ ;
+ d removeIntermediateNode^%zewdDOM(nodeOID)
+ ;
  QUIT
  ;
 writeCheckboxes(sessionName,jsVarName,idRoot,nameRoot,checkIf,labelAlign,sessid)
