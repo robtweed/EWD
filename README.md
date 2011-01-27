@@ -2,7 +2,20 @@
  
 EWD is a Free Open Source Ajax Framework for GT.M
 
-Build 838
+Build 839
+
+This build includes an optional Node.js replacement for the m_apache service which you'll find in the 
+*node* subdirectory.  To use this:
+
+   - ensure that you have installed and configired Node.js
+   - copy /node/mapache.js to the directory in which you run GT.M, eg /usr/local/gtm/ewd
+   - edit mapache.js if required to adjust the parameters (defined near the top)
+   - start the mapache service using: node mapache.js
+   
+   Modify the URL you use to invoke your EWD application(s) by adding the HTTP port used by mapache.js, eg:
+   
+      http://192.168.1.130:8081/ewd/myApp/index.ewd
+
 
 ## License
 

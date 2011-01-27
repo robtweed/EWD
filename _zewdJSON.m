@@ -1,7 +1,7 @@
 %zewdJSON	; Enterprise Web Developer JSON functions
  ;
- ; Product: Enterprise Web Developer (Build 838)
- ; Build Date: Tue, 25 Jan 2011 16:34:10
+ ; Product: Enterprise Web Developer (Build 839)
+ ; Build Date: Thu, 27 Jan 2011 18:45:43
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -102,6 +102,7 @@ parseJSONObject(buff,subs)
  . . s subs2=subs
  . . i subs'="" s subs2=subs2_","
  . . s subs2=subs2_name
+ . . i value["\'" s value=$$replaceAll^%zewdAPI(value,"\'","""""")
  . . s x="s "_arrRef_"("_subs2_")="_value
  . . x x
  . i c="," s name="" q
@@ -168,9 +169,11 @@ getJSONValue(buff)
  f  d  q:stop  q:buff=""
  . s c=$e(buff,1)
  . i value="",c="""" s isLiteral=1
- . i c="[" s stop=1 q
- . i c="{" s stop=1 q
- . i c="}" s stop=1 q
+ . i 'isLiteral,c="[" s stop=1 q
+ . i 'isLiteral,c="{" s stop=1 q
+ . i c="}" d  q:stop
+ . . i isLiteral,lc'="""" q
+ . . s stop=1
  . i c="," d  q:stop
  . . i isLiteral,lc'="""" q
  . . s stop=1

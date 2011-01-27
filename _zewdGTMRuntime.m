@@ -1,7 +1,7 @@
 %zewdGTMRuntime ; EWD for GT.M.  Runtime interface  
  ;
- ; Product: Enterprise Web Developer (Build 838)
- ; Build Date: Tue, 25 Jan 2011 16:34:10
+ ; Product: Enterprise Web Developer (Build 839)
+ ; Build Date: Thu, 27 Jan 2011 18:45:43
  ;
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -60,7 +60,11 @@ runPage(cgi,data)
  . . s no=""
  . . f  s no=$o(data(name,no)) q:no=""  s %KEY(name,no)=$$urlUnescape($g(data(name,no)))
  m %CGIEVAR=cgi
- s script=$g(cgi("SCRIPT_NAME"))
+ ;
+nodeEntry ; entry point for Node.js emulation of m_apache
+ ;
+ s script=$g(%CGIEVAR("SCRIPT_NAME"))
+ ;d trace^%zewdAPI("SCRIPT_NAME="_script)
  s app=$p(script,"/",3)
  s pageName=$p(script,"/",4)
  i pageName[".mgwsi" s pageName=$p(pageName,".mgwsi",1)
@@ -1084,3 +1088,79 @@ errorPage ;;
  ;;</body>
  ;;</html>
  ;;***END***
+ ;
+mapacheListener
+ ;
+ n app,array,%CGIEVAR,dev,bodyStarted,ewdAppName,ewdPageName,headArray,hname,i,io
+ n %KEY,json,line,name,np,nvp,nvps,ok,pageName,path,p1,p2,p3,response
+ n rouName,script,value,x
+ ;
+mapacheLoop ;
+ ;
+ k %CGIEVAR,%KEY
+ ;
+ r query,headers,method,content
+ ;
+ ; remove trailing CR
+ s query=$e(query,1,$l(query)-1)
+ s headers=$e(headers,1,$l(headers)-1)
+ s method=$e(method,1,$l(method)-1)
+ s content=$e(content,1,$l(content)-1)
+ ;
+ s query=$$urlUnescape(query)
+ d trace^%zewdAPI("query="_query)
+ ;s query=$$replaceAll^%zewdAPI(query,"\""","""""")
+ ;d trace^%zewdAPI("query(2)="_query)
+ s query=$$replaceAll^%zewdAPI(query,""""":"""",","")
+ i query="{"""":""""}" s query="undefined"
+ f  q:query'[""""":["  d
+ . s p1=$p(query,""""":[",1)
+ . s p2=$p(query,""""":[",2,$l(query))
+ . s p3=$p(p2,"],",2,$l(p2))
+ . s query=p1_p3
+ s headers=$$urlUnescape(headers)
+ s content=$$urlUnescape(content)
+ ;d trace^%zewdAPI("headers="_headers)
+ ;d trace^%zewdAPI("method="_method)
+ ;d trace^%zewdAPI("content="_content)
+ ;s ^rltQuery=query
+ i query'="undefined" s ok=$$parseJSON^%zewdJSON(query,.%KEY,1)
+ i content'="" d
+ . s np=$l(content,"&")
+ . f i=1:1:np d
+ . . s nvp=$p(content,"&",i)
+ . . s name=$p(nvp,"=",1)
+ . . s value=$p(nvp,"=",2,$l(nvp))
+ . . s %KEY(name)=$$urlUnescape(value)
+ ;k ^rltkey m ^rltkey=%KEY
+ i $$parseJSON^%zewdJSON(headers,.headArray,1)
+ ;d trace^%zewdAPI("headers parsed")
+ ;k ^rltheaders m ^rltheaders=headArray
+ s name=""
+ f  s name=$o(headArray(name)) q:name=""  d
+ . q:name="headers"
+ . s hname=$$zcvt^%zewdAPI(name,"U")
+ . s hname=$tr(hname,"-","_")
+ . s %CGIEVAR(hname)=headArray(name)
+ s name=""
+ f  s name=$o(headArray("headers",name)) q:name=""  d
+ . s hname="HTTP_"_$$zcvt^%zewdAPI(name,"U")
+ . s hname=$tr(hname,"-","_")
+ . s %CGIEVAR(hname)=headArray("headers",name)
+ s %CGIEVAR("SERVER_SOFTWARE")="Node.js"
+ s host=$G(%CGIEVAR("HTTP_HOST"))
+ s port=$p(host,":",2)
+ s host=$p(host,":",1)
+ k %CGIEVAR("HTTP_HOST")
+ s %CGIEVAR("SERVER_PORT")=port
+ s %CGIEVAR("REMOTE_HOST")=$g(%CGIEVAR("REMOTE_ADDR"))
+ s %CGIEVAR("SERVER_NAME")=host
+ S %CGIEVAR("REQUEST_METHOD")=method
+ ;
+ ;d trace^%zewdAPI("invoking nodeEntry")
+ d nodeEntry
+ ;
+ w $c(17,18,19,20)_$c(13,10)
+ g mapacheLoop
+ ;
+ QUIT
