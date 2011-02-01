@@ -2,7 +2,7 @@
  
 EWD is a Free Open Source Ajax Framework for GT.M
 
-Build 839
+Build 841
 
 This build includes an optional Node.js replacement for the m_apache service which you'll find in the 
 *node* subdirectory.  To use this:
