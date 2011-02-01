@@ -1,7 +1,7 @@
 %zewdHTMLParser	; Enterprise Web Developer HTML to XHTML Converter
  ;
- ; Product: Enterprise Web Developer (Build 839)
- ; Build Date: Thu, 27 Jan 2011 18:45:43
+ ; Product: Enterprise Web Developer (Build 841)
+ ; Build Date: Tue, 01 Feb 2011 13:50:15
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -567,7 +567,7 @@ normaliseDivs
  . . . . s c=$e(p2,i)
  . . . . i c=$c(13)!(c=$c(10))!(c=" ")!(c=$c(9)) q
  . . . . i c'="<" s stop=1 q
- . . . . s line=p1_tag_"<ewddummy />"_p2 s stop=1
+ . . . . s line=p1_"<ewddummy />"_tag_"<ewddummy />"_p2 s stop=1
  . . s ^CacheTempEWD($j,lineNo)=line
  QUIT
  ;

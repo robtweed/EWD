@@ -1,7 +1,7 @@
 %zewdCompiler	; Enterprise Web Developer Compiler
  ;
- ; Product: Enterprise Web Developer (Build 839)
- ; Build Date: Thu, 27 Jan 2011 18:45:43
+ ; Product: Enterprise Web Developer (Build 841)
+ ; Build Date: Tue, 01 Feb 2011 13:50:15
  ; 
  ; 
  ; ----------------------------------------------------------------------------
@@ -295,6 +295,9 @@ processApplication(inputPath,outputPath,verbose,outputStyle,results,technology,c
 	i outputPath="" s outputPath=inputPath
 	i $e(inputPath,$l(inputPath))'=delim s inputPath=inputPath_delim
 	i $e(outputPath,$l(outputPath))'=delim s outputPath=outputPath_delim
+	;
+	; clear down custom resource loader records for this application
+	k ^zewd("loader",$$zcvt^%zewdAPI(app))
 	;
 	d getDirectoriesInPath^%zewdHTMLParser(inputPath,.dirs)
 	d getFilesInPath^%zewdHTMLParser(inputPath,"ewd",.files)

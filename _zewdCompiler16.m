@@ -1,7 +1,7 @@
 %zewdCompiler16	; Enterprise Web Developer Compiler Functions
  ;
- ; Product: Enterprise Web Developer (Build 839)
- ; Build Date: Thu, 27 Jan 2011 18:45:43
+ ; Product: Enterprise Web Developer (Build 841)
+ ; Build Date: Tue, 01 Feb 2011 13:50:15
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -318,7 +318,7 @@ tokeniseURL(url,sessid)
  s n=$$setNextPageToken^%zewdAPI(pageName,sessid)
  s token=$$getSessionValue^%zewdAPI("ewd_token",sessid)
  s technology=$$getSessionValue^%zewdAPI("ewd_technology",sessid)
- s technology="mgwsi"
+ s technology="ewd"
  i technology="wl" d
  . s url=$$getRootURL^%zewdCompiler("wl")_"?MGWCHD="_$$getSessionValue^%zewdAPI("ewd_mgwchd",sessid)_"&MGWAPP=ewdwl&app="_$$getSessionValue^%zewdAPI("ewd_appName",sessid)_"&page="_pageName_"&"
  e  d
@@ -809,6 +809,8 @@ scriptsTag(app,docName,technology)
 	;
 	n attr,djOID,headOID,path,scriptOID
 	;
+	i $g(isAjax) QUIT
+	i $e($g(pageName),1,3)="ewd" QUIT
 	s path=$$getJSScriptsPath^%zewdCompiler8(app,technology)
 	s headOID=$$getTagOID^%zewdCompiler("head",docName)
 	s djOID=$$getTagByNameAndAttr^%zewdAPI("script","djConfig","parseOnLoad: true",1,docName)
@@ -825,10 +827,14 @@ scriptsTag(app,docName,technology)
 	. s textOID=$$createTextNode^%zewdDOM(text,docOID)
 	. s textOID=$$appendChild^%zewdDOM(textOID,djScriptOID)	
 	i '$g(isIwd) d
+	. n cspOID,text
 	. s attr("href")=path_"ewd.css"
 	. s attr("rel")="stylesheet"
 	. s attr("type")="text/css"
 	. s scriptOID=$$addElementToDOM^%zewdDOM("link",headOID,,.attr,"",1)
+	. s text=" d writePageLinks^%zewdCompiler20("""_$$zcvt^%zewdAPI(app,"l")_""",sessid)"
+	. s cspOID=$$addCSPServerScript^%zewdAPI(headOID,text)
+	. s cspOID=$$renameTag^%zewdDOM("script",cspOID)
 	QUIT
 	;
 modulo(nodeOID,attrValues,docOID,technology)

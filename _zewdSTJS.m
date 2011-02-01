@@ -1,7 +1,7 @@
 %zewdSTJS ; Sencha Touch Main Static Javascript file
  ;
- ; Product: Enterprise Web Developer (Build 839)
- ; Build Date: Thu, 27 Jan 2011 18:45:44
+ ; Product: Enterprise Web Developer (Build 841)
+ ; Build Date: Tue, 01 Feb 2011 14:36:51
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -774,27 +774,31 @@ stJS ;;
  ;;  listItemTapProxy: function(index,record,listId) {
  ;;	    EWD.sencha.itemTapProxyData = {index:index,record:record,listId:listId};
  ;;     setTimeout('EWD.sencha.listItemTapProxyHandler()',250);
- ;;  },
- ;;  qrCode:{
- ;;     draw: function(params) {
- ;;        var qr = new QRCode(params.pointSize, EWD.sencha.qrCode.errorCorrectLevel[params.correctionLevel]);
- ;;        qr.addData(params.data);
- ;;        qr.make();
- ;;        var canvasSize = qr.getModuleCount() * params.blockSize;
- ;;        var el = document.getElementById(params.id);
- ;;        el.setAttribute("width",canvasSize);
- ;;        el.setAttribute("height",canvasSize);
- ;;        var ctx = el.getContext("2d");
- ;;        for (var r = 0; r < qr.getModuleCount(); r++) {
- ;;           for (var c = 0; c < qr.getModuleCount(); c++) {
- ;;              if (qr.isDark(r, c) ) {
- ;;                 ctx.fillStyle = "rgb(0,0,0)";
- ;;              } 
- ;;              else {
- ;;                 ctx.fillStyle = "rgb(255, 255, 255)";
- ;;              }
- ;;              ctx.fillRect ((params.blockSize*c), (params.blockSize*r), params.blockSize, params.blockSize);
+ ;;  }
+ ;;};
+ ;;
+ ;;***END***
+ ;;
+QRCode ;;
+ ;;EWD.sencha.qrCode = {
+ ;;  draw: function(params) {
+ ;;     var qr = new QRCode(params.pointSize, EWD.sencha.qrCode.errorCorrectLevel[params.correctionLevel]);
+ ;;     qr.addData(params.data);
+ ;;     qr.make();
+ ;;     var canvasSize = qr.getModuleCount() * params.blockSize;
+ ;;     var el = document.getElementById(params.id);
+ ;;     el.setAttribute("width",canvasSize);
+ ;;     el.setAttribute("height",canvasSize);
+ ;;     var ctx = el.getContext("2d");
+ ;;     for (var r = 0; r < qr.getModuleCount(); r++) {
+ ;;        for (var c = 0; c < qr.getModuleCount(); c++) {
+ ;;           if (qr.isDark(r, c) ) {
+ ;;              ctx.fillStyle = "rgb(0,0,0)";
+ ;;           } 
+ ;;           else {
+ ;;              ctx.fillStyle = "rgb(255, 255, 255)";
  ;;           }
+ ;;           ctx.fillRect ((params.blockSize*c), (params.blockSize*r), params.blockSize, params.blockSize);
  ;;        }
  ;;     }
  ;;  }

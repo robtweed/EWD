@@ -1,7 +1,7 @@
 %zewdST ; Sencha Touch Tag Processors and runtime logic
  ;
- ; Product: Enterprise Web Developer (Build 839)
- ; Build Date: Thu, 27 Jan 2011 18:45:43
+ ; Product: Enterprise Web Developer (Build 841)
+ ; Build Date: Tue, 01 Feb 2011 14:36:51
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -938,6 +938,7 @@ panel(nodeOID,attrValue,docOID,technology)
  . i tagName="st:button" s stop=1 q
  . i tagName="st:form" s stop=1 q
  . i tagName="st:list" s stop=1 q
+ . i tagName="st:touchgrid" s stop=1 q
  s itemsOID=""
  i stop s itemsOID=$$addElementToDOM^%zewdDOM("st:items",panelOID)
  s childNo="",itemsAdded=0
@@ -955,6 +956,7 @@ panel(nodeOID,attrValue,docOID,technology)
  . i tagName="st:form" d formPanel(childOID,parentOID,itemsOID) q
  . i tagName="st:dockeditems" d dockedItems(childOID) q
  . i tagName="st:list" d list(childOID,itemsOID)  q
+ . i tagName="st:touchgrid" d touchGridSub^%zewdST2(childOID,itemsOID)  q
  . i tagName'["st:" d contentEl(childOID,panelOID)
  ;
  i $g(mainAttrs("parentpanel"))'=""!($g(mainAttrs("parentwidget"))'="") d

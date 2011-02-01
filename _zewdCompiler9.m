@@ -1,7 +1,7 @@
 %zewdCompiler9	; Enterprise Web Developer Compiler : ajax fixed text
  ;
- ; Product: Enterprise Web Developer (Build 839)
- ; Build Date: Thu, 27 Jan 2011 18:45:43
+ ; Product: Enterprise Web Developer (Build 841)
+ ; Build Date: Tue, 01 Feb 2011 13:50:15
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -437,6 +437,17 @@ ajaxLoader ;
 	;;      var method = "synch" ;
 	;;      if (!synch) method = "GET"
 	;;      EWD.ajax.makeRequest(url,targetId,method) ;
+	;;   },
+	;;   fetchPage: {},
+	;;   getPage: function(page,targetId,nvp) {
+	;;      EWD.ajax.fetchPage[page.toLowerCase()](targetId,nvp);
+	;;   },
+	;;   getURL: function(url,targetId,nvp) {
+	;;      if (nvp) {
+	;;        if (nvp !== '') url = url + '&' + nvp;
+	;;      }
+	;;      if (targetId === '') targetId='ewdNullId';
+	;;      EWD.ajax.makeRequest(url,targetId,'get','','');
 	;;   },
 	;;   submit: function (buttonName,formPointer,nextPage,url,id,traceFlag,synch) {
 	;;      if (EWD.ajax.allowSubmit != false) {

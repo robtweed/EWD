@@ -1,7 +1,7 @@
 %zewdCompiler19	; Runtime Functions
  ;
- ; Product: Enterprise Web Developer (Build 839)
- ; Build Date: Thu, 27 Jan 2011 18:45:43
+ ; Product: Enterprise Web Developer (Build 841)
+ ; Build Date: Tue, 01 Feb 2011 13:50:15
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -304,6 +304,9 @@ createJSFile(outputPath,verbose,technology) ;
 	. . i $e(line,$l(line)-1,$l(line))=" ;" s line=$e(line,1,$l(line)-2)_";"
 	. . w line_$c(10)
 	c filePath u io
+	;
+	d createCustomResources^%zewdCustomTags(app)
+	;
 	;i verbose=1 w filePath,!
 	;i verbose=2 d addToReport^%zewdCompiler(filePath,.results)
 	QUIT

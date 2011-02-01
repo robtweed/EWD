@@ -1,7 +1,7 @@
 %zewdMgrAjax	; Enterprise Web Developer Manager Functions
  ;
- ; Product: Enterprise Web Developer (Build 839)
- ; Build Date: Thu, 27 Jan 2011 18:45:43
+ ; Product: Enterprise Web Developer (Build 841)
+ ; Build Date: Tue, 01 Feb 2011 13:50:15
  ;
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -1239,7 +1239,7 @@ addIPAddress(sessid) ;
  . s num=$p(newSubnet,".",i)
  . i num'?1N.N S Error=mess,%stop=1 q
  . i num=0 q
- . i num>0,num<255 q
+ . i num>0,num<256 q
  . S Error=mess,%stop=1 q
  i %stop QUIT Error
  s ^%zewd("config","security","validSubnet",newSubnet)=""

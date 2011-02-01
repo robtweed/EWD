@@ -1,7 +1,7 @@
 %zewdJSON	; Enterprise Web Developer JSON functions
  ;
- ; Product: Enterprise Web Developer (Build 839)
- ; Build Date: Thu, 27 Jan 2011 18:45:43
+ ; Product: Enterprise Web Developer (Build 841)
+ ; Build Date: Tue, 01 Feb 2011 13:50:15
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -188,6 +188,8 @@ numeric(value)
  i value?1"-"1N.N QUIT 1
  i value?1N.N1"."1N.N QUIT 1
  i value?1"-"1N.N1"."1N.N QUIT 1
+ i value?1"."1N.N QUIT 1
+ i value?1"-."1N.N QUIT 1
  QUIT 0
  ;
 JSON2XML(jsonString,write)
@@ -632,10 +634,11 @@ walkArray(json,name,subscripts)
  . . i 'allNumeric d
  . . . s json=json_""""_sub_""":"
  . . s type="literal"
- . . i value?1N.N s type="numeric"
- . . i value?1"-"1N.N s type="numeric"
- . . i value?1N.N1"."1N.N s type="numeric"
- . . i value?1"-"1N.N1"."1N.N s type="numeric"
+ . . i $$numeric(value) s type="numeric"
+ . . ;i value?1N.N s type="numeric"
+ . . ;i value?1"-"1N.N s type="numeric"
+ . . ;i value?1N.N1"."1N.N s type="numeric"
+ . . ;i value?1"-"1N.N1"."1N.N s type="numeric"
  . . i value="true"!(value="false") s type="boolean"
  . . i $e(value,1)="{",$e(value,$l(value))="}" s type="variable"
  . . i type="literal" s value=valquot_value_valquot
@@ -660,4 +663,79 @@ walkArray(json,name,subscripts)
  e  d
  . s json=json_"}"
  QUIT json ; exit!
+ ;
+streamArrayToJSON(name)
+ n subscripts
+ i '$d(@name) w "[]" QUIT
+ d streamWalkArray(name)
+ ;
+streamWalkArray(name,subscripts)
+ ;
+ n allNumeric,arrComma,brace,comma,cr,dd,i,json,no,numsub,dblquot,quot,ref,sub,subNo,subscripts1,type,valquot,value,xref,zobj
+ ;
+ s json=""
+ s cr=$c(13,10),comma=","
+ s (dblquot,valquot)=""""
+ s dd=$d(@name)
+ i dd=1!(dd=11) d  i dd=1 w json QUIT
+ . s value=@name
+ . i value'[">" q
+ . w json s json=""
+ . d streamWalkArray(value,.subscripts)
+ s ref=name_"("
+ s no=$o(subscripts(""),-1)
+ i no>0 f i=1:1:no d
+ . s quot=""""
+ . i subscripts(i)?."-"1N.N s quot=""
+ . s ref=ref_quot_subscripts(i)_quot_","
+ s ref=ref_"sub)"
+ s sub="",numsub=0,subNo=0
+ s allNumeric=1
+ f  s sub=$o(@ref) q:sub=""  d  q:'allNumeric
+ . i sub'?1N.N s allNumeric=0
+ i allNumeric d
+ . s json=json_"["
+ e  d
+ . s json=json_"{"
+ s sub=""
+ f  s sub=$o(@ref) q:sub=""  d
+ . s subscripts(no+1)=sub
+ . s subNo=subNo+1
+ . s dd=$d(@ref)
+ . i dd=1 d
+ . . s value=@ref 
+ . . i 'allNumeric d
+ . . . s json=json_""""_sub_""":"
+ . . s type="literal"
+ . . i $$numeric(value) s type="numeric"
+ . . ;i value?1N.N s type="numeric"
+ . . ;i value?1"-"1N.N s type="numeric"
+ . . ;i value?1N.N1"."1N.N s type="numeric"
+ . . ;i value?1"-"1N.N1"."1N.N s type="numeric"
+ . . i value="true"!(value="false") s type="boolean"
+ . . i $e(value,1)="{",$e(value,$l(value))="}" s type="variable"
+ . . i type="literal" s value=valquot_value_valquot
+ . . d
+ . . . s json=json_value_","
+ . k subscripts1
+ . m subscripts1=subscripts
+ . i dd>9 d
+ . . i sub?1N.N d
+ . . . i subNo=1 d
+ . . . . s numsub=1
+ . . . . s json=$e(json,1,$l(json)-1)_"["
+ . . e  d
+ . . . s json=json_""""_sub_""":"
+ . . w json s json=""
+ . . d streamWalkArray(name,.subscripts1)
+ . . d
+ . . . s json=json_","
+ ;
+ s json=$e(json,1,$l(json)-1)
+ i allNumeric d
+ . s json=json_"]"
+ e  d
+ . s json=json_"}"
+ w json
+ QUIT
  ;

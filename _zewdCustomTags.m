@@ -1,7 +1,7 @@
 %zewdCustomTags	; Enterprise Web Developer Custom Tag Library Functions
  ;
- ; Product: Enterprise Web Developer (Build 839)
- ; Build Date: Thu, 27 Jan 2011 18:45:43
+ ; Product: Enterprise Web Developer (Build 841)
+ ; Build Date: Tue, 01 Feb 2011 13:50:15
  ;
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -227,4 +227,60 @@ addPhpVar(sessionValue)
  s phpVar="&php;"_varNo_"&php;"
  ;
  QUIT phpVar
+ ;
+loadFiles(appName,type,sessid)
+ ;
+ n file,path,technology
+ ;
+ ; type = css|js
+ ;
+ s technology=$$getSessionValue^%zewdAPI("ewd.technology",sessid)
+ i technology="",$zv["Cache" s technology="wl"
+ i technology="" s technology="gtm"
+ s path=$g(^zewd("config","jsScriptPath",technology,"path"))
+ i $e(path,$l(path))'="/" s path=path_"/"
+ s file=""
+ f  s file=$o(^zewd("loader",appName,type,file)) q:file=""  d
+ . i type="js" w "<script src='"_path_file_"'></script>"_$c(13,10)
+ . i type="css" w "<link href='"_path_file_"' rel='stylesheet' type='text/css' />"_$c(13,10)
+ ;
+ QUIT
+ ;
+registerResource(type,fileName,source,app)
+ ;
+ i $p(fileName,".",2)'=type s fileName=fileName_"."_type
+ s ^zewd("loader",$$zcvt^%zewdAPI(app,"l"),type,fileName)=source
+ ;
+ QUIT
+ ;
+createCustomResources(app)
+ ;
+ n fileName,source,type
+ ;
+ s app=$$zcvt^%zewdAPI(app,"l")
+ f type="css","js" d
+ . s fileName=""
+ . f  s fileName=$o(^zewd("loader",app,type,fileName)) q:fileName=""  d
+ . . s source=^zewd("loader",app,type,fileName)
+ . . d createResource(fileName,source)
+ QUIT
+ ;
+createResource(fileName,source)
+ ;
+ n delim,io,label,line,lineNo,filePath,outputPath,routine,x
+ ;
+ s label=$p(source,"^",1)
+ s routine="^"_$p(source,"^",2)
+ s outputPath=$g(^zewd("config","jsScriptPath",technology,"outputPath"))
+ s delim=$$getDelim^%zewdAPI()
+ i $e(outputPath,$l(outputPath))'=delim s outputPath=outputPath_delim
+ s filePath=outputPath_fileName
+ s io=$io
+ i '$$openNewFile^%zewdCompiler(filePath) q
+ u filePath
+ s x="f lineNo=1:1 s line=$t("_label_"+lineNo"_routine_") q:line[""***END***""  w $p(line,"";;"",2,200)_$c(10)"
+ x x
+ c filePath u io
+ ;
+ QUIT
  ;

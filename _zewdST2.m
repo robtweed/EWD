@@ -1,7 +1,7 @@
 %zewdST2 ; Sencha Touch Tag Processors and runtime logic
  ;
- ; Product: Enterprise Web Developer (Build 839)
- ; Build Date: Thu, 27 Jan 2011 18:45:44
+ ; Product: Enterprise Web Developer (Build 841)
+ ; Build Date: Tue, 01 Feb 2011 14:36:51
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -78,17 +78,25 @@ container(nodeOID,attrValue,docOID,technology)
  s attr("href")=rootPath_"resources/css/sencha-touch.css"
  s xOID=$$addElementToDOM^%zewdDOM("link",headOID,,.attr)
  ;
+ s text=" d loadFiles^%zewdCustomTags("""_$$zcvt^%zewdAPI(app,"l")_""",""css"",sessid)"
+ i $$addCSPServerScript^%zewdAPI(headOID,text)
+ ;
  s attr("type")="text/javascript"
  s attr("src")=rootPath_"sencha-touch.js"
  i debug="true" s attr("src")=rootPath_"sencha-touch-debug.js"
  s xOID=$$addElementToDOM^%zewdDOM("script",headOID,,.attr)
  ;
- d createJSFile^%zewdST("stJS","ewdSTJS.js")
- s path=$g(^zewd("config","jsScriptPath",technology,"path"))
- s path=$$addSlashAtEnd^%zewdST(path)
- s attr("type")="text/javascript"
- s attr("src")=path_"ewdSTJS.js"
- s xOID=$$addElementToDOM^%zewdDOM("script",headOID,,.attr)
+ ;d createJSFile^%zewdST("stJS","ewdSTJS.js")
+ d registerResource^%zewdCustomTags("js","ewdSTJS.js","stJS^%zewdSTJS",app)
+ ;
+ ;s path=$g(^zewd("config","jsScriptPath",technology,"path"))
+ ;s path=$$addSlashAtEnd^%zewdST(path)
+ ;s attr("type")="text/javascript"
+ ;s attr("src")=path_"ewdSTJS.js"
+ ;s xOID=$$addElementToDOM^%zewdDOM("script",headOID,,.attr)
+ ;
+ s text=" d loadFiles^%zewdCustomTags("""_$$zcvt^%zewdAPI(app,"l")_""",""js"",sessid)"
+ i $$addCSPServerScript^%zewdAPI(headOID,text)
  ;
  d getChildrenInOrder^%zewdDOM(nodeOID,.OIDArray)
  s childNo=""
@@ -204,6 +212,163 @@ qrCode(nodeOID,attrValue,docOID,technology)
  s xOID=$$addElementToDOM^%zewdDOM("canvas",nodeOID,,.attr)
  ;
  d removeIntermediateNode^%zewdDOM(nodeOID)
+ ;
+ ; s ^zewd("loader",$$zcvt^%zewdAPI(app,"l"),"js","qrCode.js")="QRCode^%zewdSTJS"
+ ; registerResource(type,fileName,source,app)
+ d registerResource^%zewdCustomTags("js","qrCode.js","QRCode^%zewdSTJS",app)
+ ;
+ QUIT
+ ;
+touchGridSub(nodeOID,itemsOID)
+ ;
+ n colDef,dataStore,editable,id,itemOID,mainAttrs,name,onEdit,onTap,store,tagName,xtype
+ ;
+ do getAttributeValues^%zewdCustomTags(nodeOID,.mainAttrs)
+ ;
+ s tagName=$$getTagName^%zewdDOM(nodeOID)
+ s xtype="touchgridpanel"
+ s itemOID=$$addElementToDOM^%zewdDOM("st:item",itemsOID)
+ ;
+ s dataStore=$g(mainAttrs("sessionname"))
+ k mainAttrs("sessionname")
+ ;
+ s store=$g(mainAttrs("store"))
+ i store="" d
+ . s store="ewdSTouchGridStore"_$$uniqueId^%zewdAPI(nodeOID,filename)
+ k mainAttrs("store")
+ ;
+ s colDef=$g(mainAttrs("columndefinition"))
+ k mainAttrs("columndefinition")
+ ;
+ s id=$g(mainAttrs("id")) 
+ i id="" d
+ . s id="ewdSTouchGrid"_$$uniqueId^%zewdAPI(nodeOID,filename)
+ . s mainAttrs("id")=id
+ ;
+ s onTap="",editable=0
+ s onEdit=$g(mainAttrs("onedit"))
+ i onEdit'="" s editable=1,onTap="EWD.sencha.touchGrid.editCell"
+ k mainAttrs("onedit")
+ ;
+ i editable d
+ . n attr,fsOID,parentOID,xOID
+ . s parentOID=$$getParentNode^%zewdDOM(bodyxOID) ; bodyxOID = top level panel node
+ . s attr("id")="ewdSTTouchGridEditPanel"
+ . s attr("floating")="true"
+ . s attr("draggable")="false"
+ . s attr("modal")="true"
+ . s attr("height")=200
+ . s attr("width")=350
+ . s attr("scroll")="vertical"
+ . s attr("hidden")="true"
+ . s xOID=$$addElementToDOM^%zewdDOM("st:panel",parentOID,,.attr)
+ . s attr("id")="ewdSTTouchGridEditForm"
+ . s attr("submitOnAction")="false"
+ . s xOID=$$addElementToDOM^%zewdDOM("st:form",xOID,,.attr)
+ . s attr("title")="Edit Value"
+ . s fsOID=$$addElementToDOM^%zewdDOM("st:fieldset",xOID,,.attr)
+ . s attr("type")="text"
+ . s attr("id")="ewdSTTouchGridCell"
+ . s attr("label")="Value"
+ . s attr("labelwidth")="20%"
+ . s xOID=$$addElementToDOM^%zewdDOM("st:field",fsOID,,.attr)
+ . s attr("type")="submit"
+ . s attr("text")="Update"
+ . s attr("style")="drastic_round"
+ . s attr("handler")="EWD.sencha.touchGrid.updateCell"
+ . s xOID=$$addElementToDOM^%zewdDOM("st:field",fsOID,,.attr)
+ ;
+ d setAttribute^%zewdDOM("xtype",xtype,itemOID)
+ s name=""
+ f  s name=$o(mainAttrs(name)) q:name=""  d
+ . i name="object" q
+ . d setAttribute^%zewdDOM(name,mainAttrs(name),itemOID)
+ ;
+ d touchGridCode(itemOID,dataStore,store,colDef,onTap,onEdit)
+ d removeIntermediateNode^%zewdDOM(nodeOID)
+ ;
+ QUIT
+ ;
+touchGrid(nodeOID,attrValue,docOID,technology)
+ ;
+ n colDef,dataStore,i,id,mainAttrs,onTap,store
+ ;
+ s gridOID=$$renameTag^%zewdDOM("st:class",nodeOID)
+ ;
+ d getAttributeValues^%zewdCustomTags(nodeOID,.mainAttrs)
+ ;
+ s dataStore=$g(mainAttrs("sessionname"))
+ s store=$g(mainAttrs("store"))
+ i store="" s store="ewdSTouchGridStore"_$$uniqueId^%zewdAPI(nodeOID,filename)
+ s colDef=$g(mainAttrs("columndefinition"))
+ s id=$g(mainAttrs("id")) 
+ i id="" d
+ . s id="ewdSTouchGrid"_$$uniqueId^%zewdAPI(nodeOID,filename)
+ . d setAttribute^%zewdDOM("id",id,gridOID)
+ s onTap=$g(mainAttrs("ontap"))
+ ;
+ d setAttribute^%zewdDOM("name","Ext.ux.TouchGridPanel",gridOID)
+ f i="sessionname","columndefinition","ontap" d
+ . d removeAttribute^%zewdDOM(i,gridOID)
+ ;
+ d touchGridCode(gridOID,dataStore,store,colDef,onTap)
+ ;
+ QUIT
+ ;
+touchGridCode(nodeOID,dataStore,store,colDef,onTap,onEdit)
+ ;
+ n attr,i,jsOID,lOID,lsOID,stOID,text
+ ;
+ s jsOID=$$createJS^%zewdST("standard")
+ s stOID=$$getElementById^%zewdDOM("ewdPreSTJS",docOID)
+ ;
+ s text=" d writeRegModel^%zewdST2("""_dataStore_""","""_store_""","""_colDef_""",sessid)"
+ i $$addCSPServerScript^%zewdAPI(stOID,text)
+ ;
+ i $g(onEdit)'="" d
+ . s text="EWD.sencha.touchGrid.onSave="_onEdit_";"_$c(13,10)
+ . s jsOID=$$addElementToDOM^%zewdDOM("ewd:jsline",stOID,,,text)
+ ;
+ d setAttribute^%zewdDOM("store","."_store,nodeOID)
+ d setAttribute^%zewdDOM("selModel",".{singleSelect:true}",nodeOID)
+ d setAttribute^%zewdDOM("colModel",".EWD.sencha.colModel",nodeOID)
+ i $g(onTap)'="" d
+ . s lsOID=$$addElementToDOM^%zewdDOM("st:listeners",nodeOID)
+ . s attr("rowTap")="."_onTap
+ . s lOID=$$addElementToDOM^%zewdDOM("st:listener",lsOID,,.attr)
+ ;
+ d registerResource^%zewdCustomTags("js","touchGrid.js","touchGrid^%zewdSTJS2",app)
+ d registerResource^%zewdCustomTags("css","touchGrid.css","touchGrid^%zewdSTCSS",app)
+ QUIT
+ ;
+writeRegModel(sessionName,store,colDefName,sessid)
+ ;
+ n col,col1,colDef,comma,data,no
+ ;
+ s comma=""
+ w "Ext.regModel('"_sessionName_"Model',{fields:["
+ d mergeArrayFromSession^%zewdAPI(.colDef,colDefName,sessid)
+ f col=1:1 q:'$d(colDef(col))  d
+ . w comma_"'"_colDef(col,"name")_"'"
+ . s comma=","
+ w "]});"_$c(13,10)
+ w store_"=new Ext.data.Store({model:'"_sessionName_"Model',data:"
+ d mergeArrayFromSession^%zewdAPI(.data,sessionName,sessid)
+ s col1=$g(colDef(1,"name"))
+ s no=""
+ f  s no=$o(data(no)) q:no=""  s data(no,col1)="&nbsp;&nbsp;"_$g(data(no,col1))
+ d streamArrayToJSON^%zewdJSON("data")
+ w "});"_$c(13,10)
+ w "EWD.sencha.colModel=["
+ s col="",comma=""
+ f  s col=$o(colDef(col)) q:col=""  d
+ . w comma_"{header:'"_$g(colDef(col,"header"))_"',"
+ . w "mapping:'"_$g(colDef(col,"name"))_"'"
+ . i $g(colDef(col,"renderer"))'="" d
+ . . w ",renderer:"_colDef(col,"renderer")
+ . w "}"
+ . s comma=","
+ w "];"_$c(13,10)
  ;
  QUIT
  ;

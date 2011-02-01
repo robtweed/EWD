@@ -1,7 +1,7 @@
 %zewdCompiler7	; Enterprise Web Developer Compiler Functions
  ;
- ; Product: Enterprise Web Developer (Build 839)
- ; Build Date: Thu, 27 Jan 2011 18:45:43
+ ; Product: Enterprise Web Developer (Build 841)
+ ; Build Date: Tue, 01 Feb 2011 13:50:15
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -35,7 +35,7 @@ eventBroker(allArray,docOID,jsOID,phpHeaderArray,filename,docName,routineName,ne
 	; 
 	; First in onXXX attributes
 	; 
-	n attr,attrName,attrOID,attrValue,%changed,dlim,docName,eventName,eventNo
+	n addJSComment,attr,attrName,attrOID,attrValue,%changed,dlim,docName,eventName,eventNo
 	n headOID,i,%id,initialEventNo,jsText,jsTextArray,jsTextOID,language,length,line,method,newText
 	n nnmOID,nodeOID,nodeType,%np,ntags,%nvp,OIDArray,olOID,%p1,%p2,%p2a,%p2b,%p3,%p4,%p5
 	n page,paramList,tagName,%trace,src,%url,value
@@ -77,9 +77,10 @@ eventBroker(allArray,docOID,jsOID,phpHeaderArray,filename,docName,routineName,ne
 	. q:$$zcvt^%zewdAPI(language,"L")'["javascript"
 	. s src=$$getAttributeValue^%zewdDOM("src",1,nodeOID)
 	. q:src'=""
-	. s jsTextOID=""
+	. s jsTextOID="" k addJSComment
 	. f  s jsTextOID=$$getNextChild^%zewdAPI(nodeOID,jsTextOID) q:jsTextOID=""  d
 	. . s jsText=$$getData^%zewdDOM(jsTextOID)
+	. . i $g(addJSComment(jsTextOID))=1 s jsText="/*ewd:comment"_jsText,addJSComment=0
 	. . ;
 	. . ; remove any ewd:comment text from within the JavaScript
 	. . ;
@@ -89,7 +90,7 @@ eventBroker(allArray,docOID,jsOID,phpHeaderArray,filename,docName,routineName,ne
 	. . . i %p1'["/*ewd:comment" s jsText=$p(jsText,"*/ewd:comment",2,2000)
 	. . f  q:jsText'["/*ewd:comment"  d
 	. . . s %p1=$p(jsText,"/*ewd:comment",1)
-	. . . s %p2=$p(jsText,"*/ewd:comment",2,2000)
+	. . . s %p2=$p(jsText,"*/ewd:comment",2,2000) i jsText'["*/ewd:comment" s addJSComment($$getNextChild^%zewdAPI(nodeOID,jsTextOID))=1
 	. . . i %p1=$c(13,10) s %p1=""
 	. . . i %p1=$c(10) s %p1=""
 	. . . i $e(%p2,1,2)=$c(13,10) s %p2=$e(%p2,3,$l(%p2))
@@ -585,6 +586,8 @@ pageIndex(app,filename,nextPageList) ;
  ;
  n nextPage,np
  ;
+ i technology="wl"!(technology="gtm") s app=appx
+ i $e(filename,1,3)'="ewd" s ^%zewdIndex($$zcvt^%zewdAPI(app,"l"),"pages",$$zcvt^%zewdAPI($p(filename,".ewd",1),"l"))=$g(config("isFirstPage"))
  s nextPage=""
  f  s nextPage=$o(nextPageList(nextPage)) q:nextPage=""  d
  . s np=$p(nextPage,"?",1)
