@@ -668,6 +668,7 @@ streamArrayToJSON(name)
  n subscripts
  i '$d(@name) w "[]" QUIT
  d streamWalkArray(name)
+ QUIT
  ;
 streamWalkArray(name,subscripts)
  ;
