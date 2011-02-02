@@ -50,14 +50,17 @@ touchGrid ;
  ;;    EWD.sencha.touchGrid.editedCell = {grid:grid,record:record,colIndex:colIndex,rowIndex:rowIndex,mapping:mapping,value:value};
  ;;  },
  ;;  updateCell: function() {
+ ;;    var update = true;
  ;;    var cell = EWD.sencha.touchGrid.editedCell;
  ;;    var value = Ext.getCmp("ewdSTTouchGridCell").getValue();
- ;;    if (value != cell.oldValue) {
- ;;      cell.record.set(cell.mapping,value);
- ;;      cell.grid.refresh();
+ ;;    if (EWD.sencha.touchGrid.onSave) update = EWD.sencha.touchGrid.onSave(cell.rowIndex,cell.colIndex,value);
+ ;;    if (update) {
+ ;;      if (value != cell.oldValue) {
+ ;;        cell.record.set(cell.mapping,value);
+ ;;        cell.grid.refresh();
+ ;;      }
  ;;    }
  ;;    Ext.getCmp('ewdSTTouchGridEditPanel').hide();
- ;;    if (EWD.sencha.touchGrid.onSave) EWD.sencha.touchGrid.onSave(cell.rowIndex,cell.colIndex,value);
  ;;  }
  ;;};
  ;;
