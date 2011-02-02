@@ -1,7 +1,7 @@
 %zewdCompiler20	; Enterprise Web Developer Compiler : Combo+ tag processor
  ;
- ; Product: Enterprise Web Developer (Build 841)
- ; Build Date: Tue, 01 Feb 2011 13:50:15
+ ; Product: Enterprise Web Developer (Build 842)
+ ; Build Date: Wed, 02 Feb 2011 09:31:08
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -913,6 +913,9 @@ addPhpVar(sessionValue)
 writePageLinks(app,sessid)
  ;
  n page
+ ;
+ i $g(^zewd("config","stopTokenisedURLs",app))=1 QUIT
+ i $g(^zewd("config","stopTokenizedURLs",app))=1 QUIT
  ;
  w "<script type='text/javascript'>"_$c(13,10)
  s page=""

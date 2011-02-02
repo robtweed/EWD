@@ -1,7 +1,7 @@
 %zewdSTJS2 ; More Sencha Touch Static Javascript files
  ;
- ; Product: Enterprise Web Developer (Build 841)
- ; Build Date: Tue, 01 Feb 2011 14:36:51
+ ; Product: Enterprise Web Developer (Build 842)
+ ; Build Date: Wed, 02 Feb 2011 09:31:08
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -54,7 +54,7 @@ touchGrid ;
  ;;    var value = Ext.getCmp("ewdSTTouchGridCell").getValue();
  ;;    if (value != cell.oldValue) {
  ;;      cell.record.set(cell.mapping,value);
- ;;      cell.grid.renderGrid();
+ ;;      cell.grid.refresh();
  ;;    }
  ;;    Ext.getCmp('ewdSTTouchGridEditPanel').hide();
  ;;    if (EWD.sencha.touchGrid.onSave) EWD.sencha.touchGrid.onSave(cell.rowIndex,cell.colIndex,value);

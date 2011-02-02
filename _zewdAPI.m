@@ -1,7 +1,7 @@
 %zewdAPI	; Enterprise Web Developer run-time functions and user APIs
  ;
- ; Product: Enterprise Web Developer (Build 841)
- ; Build Date: Tue, 01 Feb 2011 13:50:15
+ ; Product: Enterprise Web Developer (Build 842)
+ ; Build Date: Wed, 02 Feb 2011 09:31:07
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
