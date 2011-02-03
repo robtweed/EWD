@@ -1,7 +1,7 @@
 %zewdCustomTags	; Enterprise Web Developer Custom Tag Library Functions
  ;
- ; Product: Enterprise Web Developer (Build 842)
- ; Build Date: Wed, 02 Feb 2011 09:31:08
+ ; Product: Enterprise Web Developer (Build 843)
+ ; Build Date: Thu, 03 Feb 2011 14:01:46
  ;
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -230,7 +230,7 @@ addPhpVar(sessionValue)
  ;
 loadFiles(appName,type,sessid)
  ;
- n file,path,technology
+ n file,path,src,technology
  ;
  ; type = css|js
  ;
@@ -239,16 +239,31 @@ loadFiles(appName,type,sessid)
  i technology="" s technology="gtm"
  s path=$g(^zewd("config","jsScriptPath",technology,"path"))
  i $e(path,$l(path))'="/" s path=path_"/"
+ i type="js",$d(^zewd("loader",appName,type,"ewdSTJS.js")) d
+ . s src=path_"ewdSTJS.js"
+ . w "<script src='"_src_"' type='text/javascript'></script>"_$c(13,10)
  s file=""
  f  s file=$o(^zewd("loader",appName,type,file)) q:file=""  d
- . i type="js" w "<script src='"_path_file_"'></script>"_$c(13,10)
- . i type="css" w "<link href='"_path_file_"' rel='stylesheet' type='text/css' />"_$c(13,10)
+ . i file="ewdSTJS.js" q
+ . i $e(file,1,3)'="ewd" q
+ . s src=file
+ . i $e(file,1)'="/" s src=path_file 
+ . i type="js" w "<script src='"_src_"' type='text/javascript'></script>"_$c(13,10)
+ . i type="css" w "<link href='"_src_"' rel='stylesheet' type='text/css' />"_$c(13,10)
+ ;
+ s file=""
+ f  s file=$o(^zewd("loader",appName,type,file)) q:file=""  d
+ . i $e(file,1,3)="ewd" q
+ . s src=file
+ . i $e(file,1)'="/" s src=path_file 
+ . i type="js" w "<script src='"_src_"' type='text/javascript'></script>"_$c(13,10)
+ . i type="css" w "<link href='"_src_"' rel='stylesheet' type='text/css' />"_$c(13,10)
  ;
  QUIT
  ;
 registerResource(type,fileName,source,app)
  ;
- i $p(fileName,".",2)'=type s fileName=fileName_"."_type
+ i fileName'[("."_type) s fileName=fileName_"."_type
  s ^zewd("loader",$$zcvt^%zewdAPI(app,"l"),type,fileName)=source
  ;
  QUIT
@@ -262,6 +277,7 @@ createCustomResources(app)
  . s fileName=""
  . f  s fileName=$o(^zewd("loader",app,type,fileName)) q:fileName=""  d
  . . s source=^zewd("loader",app,type,fileName)
+ . . i source="" q
  . . d createResource(fileName,source)
  QUIT
  ;
@@ -283,4 +299,23 @@ createResource(fileName,source)
  c filePath u io
  ;
  QUIT
+ ;
+getComboMatches(sessid)
+ ;
+ n app,id,json,list,no,options,prefix,x
+ ;
+ s prefix=$$getRequestValue^%zewdAPI("seed",sessid)
+ s id=$$getRequestValue^%zewdAPI("id",sessid)
+ s app=$$getSessionValue^%zewdAPI("ewd.appName",sessid)
+ s x=$g(^zewd("comboMethod",app,id))
+ i x="" d  QUIT ""
+ . d setSessionValue^%zewdAPI("ewdComboMatches","[]",sessid)
+ s x="d "_x_"(prefix,.options)"
+ x x
+ s no=""
+ f  s no=$o(options(no)) q:no=""  d
+ . s list(no,"text")=options(no)
+ s json=$$arrayToJSON^%zewdJSON("list")
+ d setSessionValue^%zewdAPI("ewdComboMatches",json,sessid)
+ QUIT ""
  ;

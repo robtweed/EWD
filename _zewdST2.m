@@ -1,7 +1,7 @@
 %zewdST2 ; Sencha Touch Tag Processors and runtime logic
  ;
- ; Product: Enterprise Web Developer (Build 842)
- ; Build Date: Wed, 02 Feb 2011 09:31:08
+ ; Product: Enterprise Web Developer (Build 843)
+ ; Build Date: Thu, 03 Feb 2011 14:01:46
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -34,7 +34,7 @@ container(nodeOID,attrValue,docOID,technology)
  ;
  n attr,bodyOID,childNo,childOID,contentPage,debug,funcOID,headOID,htmlOID
  n images,jsOID,jsText,locale,mainAttrs,OIDArray,path,resourcePath,rootPath
- n tagName,text,title,xOID
+ n src,tagName,text,title,xOID
  ;
  ;<st:container rootPath="/sencha-1.0/" contentPage="intro" title="ST Demo App">
  ;  <st:images>
@@ -73,18 +73,23 @@ container(nodeOID,attrValue,docOID,technology)
  ;
  s xOID=$$addElementToDOM^%zewdDOM("title",headOID,,,title)
  ;
- s attr("rel")="stylesheet"
- s attr("type")="text/css"
- s attr("href")=rootPath_"resources/css/sencha-touch.css"
- s xOID=$$addElementToDOM^%zewdDOM("link",headOID,,.attr)
+ ;s attr("rel")="stylesheet"
+ ;s attr("type")="text/css"
+ ;s attr("href")=rootPath_"resources/css/sencha-touch.css"
+ s src=rootPath_"resources/css/sencha-touch.css"
+ d registerResource^%zewdCustomTags("css",src,"",app)
+ ;s xOID=$$addElementToDOM^%zewdDOM("link",headOID,,.attr)
  ;
- s text=" d loadFiles^%zewdCustomTags("""_$$zcvt^%zewdAPI(app,"l")_""",""css"",sessid)"
- i $$addCSPServerScript^%zewdAPI(headOID,text)
+ ;s text=" d loadFiles^%zewdCustomTags("""_$$zcvt^%zewdAPI(app,"l")_""",""css"",sessid)"
+ ;i $$addCSPServerScript^%zewdAPI(headOID,text)
  ;
- s attr("type")="text/javascript"
- s attr("src")=rootPath_"sencha-touch.js"
- i debug="true" s attr("src")=rootPath_"sencha-touch-debug.js"
- s xOID=$$addElementToDOM^%zewdDOM("script",headOID,,.attr)
+ ;s attr("type")="text/javascript"
+ ;s attr("src")=rootPath_"sencha-touch.js"
+ ;i debug="true" s attr("src")=rootPath_"sencha-touch-debug.js"
+ ;s xOID=$$addElementToDOM^%zewdDOM("script",headOID,,.attr)
+ s src=rootPath_"sencha-touch.js"
+ i debug="true" s src=rootPath_"sencha-touch-debug.js"
+ d registerResource^%zewdCustomTags("js",src,"",app)
  ;
  ;d createJSFile^%zewdST("stJS","ewdSTJS.js")
  d registerResource^%zewdCustomTags("js","ewdSTJS.js","stJS^%zewdSTJS",app)
@@ -95,8 +100,8 @@ container(nodeOID,attrValue,docOID,technology)
  ;s attr("src")=path_"ewdSTJS.js"
  ;s xOID=$$addElementToDOM^%zewdDOM("script",headOID,,.attr)
  ;
- s text=" d loadFiles^%zewdCustomTags("""_$$zcvt^%zewdAPI(app,"l")_""",""js"",sessid)"
- i $$addCSPServerScript^%zewdAPI(headOID,text)
+ ;s text=" d loadFiles^%zewdCustomTags("""_$$zcvt^%zewdAPI(app,"l")_""",""js"",sessid)"
+ ;i $$addCSPServerScript^%zewdAPI(headOID,text)
  ;
  d getChildrenInOrder^%zewdDOM(nodeOID,.OIDArray)
  s childNo=""
@@ -104,8 +109,11 @@ container(nodeOID,attrValue,docOID,technology)
  . s childOID=OIDArray(childNo)
  . s tagName=$$getTagName^%zewdDOM(childOID)
  . i tagName="script" d
+ . . n src
+ . . s src=$$getAttribute^%zewdDOM("src",childOID)
  . . s xOID=$$removeChild^%zewdDOM(childOID)
- . . s xOID=$$appendChild^%zewdDOM(childOID,headOID)
+ . . d registerResource^%zewdCustomTags("js",src,"",app)
+ . . ;s xOID=$$appendChild^%zewdDOM(childOID,headOID)
  ;
  s attr("type")="text/javascript"
  s jsOID=$$addElementToDOM^%zewdDOM("script",headOID,,.attr)
@@ -339,6 +347,73 @@ touchGridCode(nodeOID,dataStore,store,colDef,onTap,onEdit)
  ;
  d registerResource^%zewdCustomTags("js","touchGrid.js","touchGrid^%zewdSTJS2",app)
  d registerResource^%zewdCustomTags("css","touchGrid.css","touchGrid^%zewdSTCSS",app)
+ QUIT
+ ;
+combo(nodeOID,mainAttrs,formOID)
+ ;
+ n attr,bodyOID,fOID,height,i,id,jsOID,lOID,lsOID,lyOID,method,pOID,stOID,width
+ ;
+ s bodyOID=$$getParentNode^%zewdDOM(formOID)
+ s method=$g(mainAttrs("method"))
+ s height=$g(mainAttrs("panelheight"))
+ s width=$g(mainAttrs("panelwidth"))
+ s id=$g(mainAttrs("id"))
+ i id="" s id="ewdSTField"_$$uniqueId^%zewdAPI(nodeOID,filename)
+ f i="method","panelheight","panelwidth" k mainAttrs(i)
+ s ^zewd("comboMethod",app,id)=method
+ s lsOID=$$addElementToDOM^%zewdDOM("st:listeners",nodeOID)
+ s attr("keyup")=".{fn: function(){EWD.sencha.combo.filter({seed:this.getValue(),id:'name',width:"_width_",height:"_height_"}); }}"
+ s lOID=$$addElementToDOM^%zewdDOM("st:listener",lsOID,,.attr)
+ ;
+ s attr("id")="ewdComboPanel"
+ s attr("floating")="true"
+ s attr("draggable")="false"
+ s attr("modal")="false"
+ s attr("scroll")="vertical"
+ s attr("hideonmasktap")="true"
+ s attr("width")=400
+ s attr("height")=200
+ s attr("hidden")="true"
+ s pOID=$$addElementToDOM^%zewdDOM("st:panel",bodyOID,,.attr)
+ s attr("id")="ewdComboMatches"
+ s attr("sessionname")="ewdComboMatches"
+ s attr("store")="EWD.sencha.combo.store"
+ s attr("scroll")="false"
+ s attr("ontap")="EWD.sencha.combo.selectItem"
+ s lOID=$$addElementToDOM^%zewdDOM("st:list",pOID,,.attr)
+ s lyOID=$$addElementToDOM^%zewdDOM("st:layout",lOID)
+ s attr("name")="text"
+ s attr("displayinlist")="true"
+ s fOID=$$addElementToDOM^%zewdDOM("st:field",lyOID,,.attr)
+ s jsOID=$$createJS^%zewdST("standard")
+ s stOID=$$getElementById^%zewdDOM("ewdPreSTJS",docOID)
+ s attr("method")="setSessionValue^%zewdAPI"
+ s attr("param1")="ewdComboMatches"
+ s attr("param2")="[]"
+ s attr("param3")="#ewd_sessid"
+ s attr("type")="procedure"
+ s pOID=$$addElementToDOM^%zewdDOM("ewd:execute",stOID,,.attr)
+ d comboMatchesPage(inputPath,.files)
+ d registerResource^%zewdCustomTags("js","ewdCombo.js","combo^%zewdSTJS2",app)
+ ;
+ QUIT
+ ;
+comboMatchesPage(inputPath,files)
+ ;
+ n fileName,filePath,io
+ ;
+ s io=$io
+ s fileName="zewdComboMatches"
+ s filePath=inputPath_fileName_".ewd"
+ i '$$openNewFile^%zewdCompiler(filePath) QUIT
+ u filePath
+ w "<ewd:config isFirstPage=""false"" pagetype=""ajax"" prePageScript=""getComboMatches^%zewdCustomTags"" />",!
+ w "<script language='javascript'>",!
+ w " EWD.sencha.combo.store.loadData(<?= #ewdComboMatches ?>,false);",!
+ w "</script>",!
+ c filePath
+ u io
+ s files(fileName_".ewd")=""
  QUIT
  ;
 writeRegModel(sessionName,store,colDefName,sessid)

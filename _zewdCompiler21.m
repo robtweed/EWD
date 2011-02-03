@@ -1,7 +1,7 @@
 %zewdCompiler21	; Enterprise Web Developer Compiler : Combo+ Javascript
  ;
- ; Product: Enterprise Web Developer (Build 842)
- ; Build Date: Wed, 02 Feb 2011 09:31:08
+ ; Product: Enterprise Web Developer (Build 843)
+ ; Build Date: Thu, 03 Feb 2011 14:01:46
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -403,7 +403,8 @@ comboPlus ;
  ;;            else {
  ;;              var noOfChildren = pointer.childNodes.length ;
  ;;              var found = false;
- ;;              if (EWD.utils.comboPlus.browserType == "firefox") {
+ ;;              var browserType = EWD.utils.comboPlus.browserType;
+ ;;              if ((browserType === "firefox")||(browserType === 'safari')) {
  ;;                if (noOfChildren > 1) {
  ;;                  for (var i=1;i<noOfChildren;i++) {
  ;;                    var fc = pointer.childNodes[i].firstChild ;

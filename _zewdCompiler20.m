@@ -1,7 +1,7 @@
 %zewdCompiler20	; Enterprise Web Developer Compiler : Combo+ tag processor
  ;
- ; Product: Enterprise Web Developer (Build 842)
- ; Build Date: Wed, 02 Feb 2011 09:31:08
+ ; Product: Enterprise Web Developer (Build 843)
+ ; Build Date: Thu, 03 Feb 2011 14:01:46
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -183,6 +183,8 @@ comboPlus(nodeOID,attrValues,docOID,technology)
 	s attr("active")=""
 	s xOID=$$addElementToDOM^%zewdDOM("div",nodeOID,,.attr,,1)
 	;
+	d registerResource^%zewdCustomTags("js","ewdComboPlus.js","comboPlus^%zewdCompiler21",app)
+	;d registerResource^%zewdCustomTags("css","touchGrid.css","touchGrid^%zewdSTCSS",app)
 	d removeIntermediateNode^%zewdDOM(nodeOID) 
 	QUIT
 	;
@@ -914,15 +916,16 @@ writePageLinks(app,sessid)
  ;
  n page
  ;
+ d loadFiles^%zewdCustomTags($$zcvt^%zewdAPI(app,"l"),"js",sessid)
  i $g(^zewd("config","stopTokenisedURLs",app))=1 QUIT
  i $g(^zewd("config","stopTokenizedURLs",app))=1 QUIT
  ;
  w "<script type='text/javascript'>"_$c(13,10)
  s page=""
  f  s page=$o(^%zewdIndex(app,"pages",page)) q:page=""  d
- . w "EWD.ajax.fetchPage['"_$$zcvt^%zewdAPI(page,"l")_"']=function(targetId,nvp) {"_$c(13,10)
- . w " var url='"_$$tokeniseURL^%zewdCompiler16(page,sessid)_"';"_$c(13,10)
- . w " EWD.ajax.getURL(url,targetId,nvp);"_$c(13,10)
+ . w "EWD.ajax.fetchPage['"_$$zcvt^%zewdAPI(page,"l")_"']=function(params) {"_$c(13,10)
+ . w " params.url='"_$$tokeniseURL^%zewdCompiler16(page,sessid)_"';"_$c(13,10)
+ . w " EWD.ajax.getURL(params);"_$c(13,10)
  . w "};"_$c(13,10)
  w "</script>"_$c(13,10)
  ;

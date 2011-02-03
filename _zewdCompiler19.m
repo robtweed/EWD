@@ -1,7 +1,7 @@
 %zewdCompiler19	; Runtime Functions
  ;
- ; Product: Enterprise Web Developer (Build 842)
- ; Build Date: Wed, 02 Feb 2011 09:31:08
+ ; Product: Enterprise Web Developer (Build 843)
+ ; Build Date: Thu, 03 Feb 2011 14:01:46
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -259,7 +259,8 @@ createJSFile(outputPath,verbose,technology) ;
 	i '$$openNewFile^%zewdCompiler(filePath) QUIT
 	u filePath:width=1000000
 	;
-	f label="jsBlock","openWindowJS","ajaxLoader","JSON2","comboPlus" d
+	;f label="jsBlock","openWindowJS","ajaxLoader","JSON2","comboPlus" d
+	f label="jsBlock","openWindowJS","ajaxLoader","JSON2" d
 	. s stop=0
 	. f lineNo=1:1 d  q:stop
 	. . s no=2

@@ -1,7 +1,7 @@
 %zewdCompiler16	; Enterprise Web Developer Compiler Functions
  ;
- ; Product: Enterprise Web Developer (Build 842)
- ; Build Date: Wed, 02 Feb 2011 09:31:08
+ ; Product: Enterprise Web Developer (Build 843)
+ ; Build Date: Thu, 03 Feb 2011 14:01:46
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -807,17 +807,18 @@ eojs ;
  ;
 scriptsTag(app,docName,technology)
 	;
-	n attr,djOID,headOID,path,scriptOID
+	n attr,djOID,ewdScriptsOID,headOID,path,scriptOID
 	;
 	i $g(isAjax) QUIT
 	i $e($g(pageName),1,3)="ewd" QUIT
 	s path=$$getJSScriptsPath^%zewdCompiler8(app,technology)
 	s headOID=$$getTagOID^%zewdCompiler("head",docName)
 	s djOID=$$getTagByNameAndAttr^%zewdAPI("script","djConfig","parseOnLoad: true",1,docName)
+	s ewdScriptsOID=""
 	i '$g(isIwd) d
 	. s attr("src")=path_"ewdScripts.js"
 	. ;i $g(isIwd) s attr("src")=path_"iwdScripts.js"
-	. s scriptOID=$$addElementToDOM^%zewdDOM("script",headOID,,.attr,"",1)
+	. s ewdScriptsOID=$$addElementToDOM^%zewdDOM("script",headOID,,.attr,"",1)
 	i djOID'="" d
 	. n djScriptOID,text,textOID
 	. s djScriptOID=$$createElement^%zewdDOM("script",docOID)
@@ -827,14 +828,26 @@ scriptsTag(app,docName,technology)
 	. s textOID=$$createTextNode^%zewdDOM(text,docOID)
 	. s textOID=$$appendChild^%zewdDOM(textOID,djScriptOID)	
 	i '$g(isIwd) d
-	. n cspOID,text
+	. n cspOID,nsOID,text,textOID
+	. s text=" d loadFiles^%zewdCustomTags("""_$$zcvt^%zewdAPI(app,"l")_""",""css"",sessid)"
+	. s cspOID=$$addCSPServerScript^%zewdAPI(headOID,text,1)
+	. s cspOID=$$renameTag^%zewdDOM("script",cspOID)
 	. s attr("href")=path_"ewd.css"
 	. s attr("rel")="stylesheet"
 	. s attr("type")="text/css"
 	. s scriptOID=$$addElementToDOM^%zewdDOM("link",headOID,,.attr,"",1)
 	. s text=" d writePageLinks^%zewdCompiler20("""_$$zcvt^%zewdAPI(app,"l")_""",sessid)"
-	. s cspOID=$$addCSPServerScript^%zewdAPI(headOID,text)
-	. s cspOID=$$renameTag^%zewdDOM("script",cspOID)
+	. s cspOID=$$createElement^%zewdDOM("script",docOID)
+	. s nsOID=$$getNextSibling^%zewdDOM(ewdScriptsOID)
+	. i nsOID="" d
+	. . n parentOID
+	. . s parentOID=$$getParentNode^%zewdDOM(ewdScriptsOID)
+	. . s cspOID=$$appendChild^%zewdDOM(cspOID,parentOID)
+	. e  d
+	. . s cspOID=$$insertBefore^%zewdDOM(cspOID,nsOID)
+	. d setAttribute^%zewdDOM("language","cache",cspOID)
+	. d setAttribute^%zewdDOM("runat","server",cspOID)
+	. s textOID=$$addTextToElement^%zewdDOM(cspOID,text)
 	QUIT
 	;
 modulo(nodeOID,attrValues,docOID,technology)

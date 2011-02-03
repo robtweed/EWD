@@ -1,7 +1,7 @@
 %zewdST ; Sencha Touch Tag Processors and runtime logic
  ;
- ; Product: Enterprise Web Developer (Build 842)
- ; Build Date: Wed, 02 Feb 2011 09:31:08
+ ; Product: Enterprise Web Developer (Build 843)
+ ; Build Date: Thu, 03 Feb 2011 14:01:46
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -522,7 +522,16 @@ form(nodeOID,attrValue,docOID,technology)
  ; </st:form>
  ;
  n attr,attrName,autoRender,childNo,childOID,fcOID,formOID,fsOID,itemOID,itemsOID,jsOID
- n mainAttrs,OIDArray,parentOID,postSTOID,tagName
+ n mainAttrs,OIDArray,parentOID,postSTOID,stop,tagName
+ ;
+ ; check if form is inside a panel - if so, ignore for now
+ ;
+ s stop=0
+ s parentOID=nodeOID
+ f  q:stop  d  q:parentOID=""
+ . s parentOID=$$getParentNode^%zewdDOM(parentOID)
+ . i $$getTagName^%zewdDOM(parentOID)="st:panel" s stop=1
+ i stop QUIT
  ;
  do getAttributeValues^%zewdCustomTags(nodeOID,.mainAttrs)
  ;
@@ -666,7 +675,7 @@ field(nodeOID,parentOID,return)
  ;      <st:field type="password" id="password" label="Password" />
  ;      <st:field type="submit" text="Login" style="drastic_round" targetId="contentDiv" nextpage="loggedIn" />
  ;
- n attr,fieldOID,id,mainAttrs,name,type,value,xtype
+ n attr,childNo,childOID,fieldOID,id,mainAttrs,name,OIDArray,type,value,xtype
  ;
  do getAttributeValues^%zewdCustomTags(nodeOID,.mainAttrs)
  s type=$g(mainAttrs("type")) i type="" s type="text"
@@ -674,6 +683,7 @@ field(nodeOID,parentOID,return)
  i type="password" s xtype="passwordfield"
  i type="radio" s xtype="radiofield"
  i type="hidden" s xtype="hiddenfield"
+ i type="combo" s xtype="textfield" d combo^%zewdST2(nodeOID,.mainAttrs,formOID)
  i type="date" d
  . s xtype="datepickerfield"
  . n attr,addPicker,i,pOID
@@ -706,6 +716,13 @@ field(nodeOID,parentOID,return)
  . i name="type"!(name="label")!(name="style")!(name="value") q
  . s attr(name)=mainAttrs(name)
  s fieldOID=$$addElementToDOM^%zewdDOM("st:item",parentOID,,.attr)
+ ; any listeners etc?
+ d getChildrenInOrder^%zewdDOM(nodeOID,.OIDArray)
+ s childNo=""
+ f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d
+ . s childOID=OIDArray(childNo)
+ . s childOID=$$removeChild^%zewdDOM(childOID)
+ . s childOID=$$appendChild^%zewdDOM(childOID,fieldOID)
  ;
  i type="date" d
  . n attr,fcOID,iOID,pOID
@@ -1437,9 +1454,10 @@ subPanel(nodeOID,bodyOID,itemsOID)
  . . d setAttribute^%zewdDOM("placeattop","true",childOID)
  . . d setAttribute^%zewdDOM("items","."_return,itemOID)
  . ;
- . i tagName="st:panel"!(tagName="st:tabpanel")!(tagName="st:carousel")!(tagName="st:list") d
+ . i tagName="st:panel"!(tagName="st:tabpanel")!(tagName="st:carousel")!(tagName="st:list")!(tagName="st:touchgrid") d
  . . i subItemsOID="" s subItemsOID=$$addElementToDOM^%zewdDOM("st:items",itemOID)
  . . i tagName="st:list" d list(childOID,subItemsOID) q
+ . . i tagName="st:touchgrid" d touchGridSub^%zewdST2(childOID,subItemsOID) q
  . . d subPanel(childOID,nodeOID,subItemsOID)
  ;
  d removeIntermediateNode^%zewdDOM(nodeOID)

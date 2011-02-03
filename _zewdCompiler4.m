@@ -1,7 +1,7 @@
 %zewdCompiler4	; Enterprise Web Developer Compiler : Tag Processing Logic
  ;
- ; Product: Enterprise Web Developer (Build 842)
- ; Build Date: Wed, 02 Feb 2011 09:31:08
+ ; Product: Enterprise Web Developer (Build 843)
+ ; Build Date: Thu, 03 Feb 2011 14:01:46
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -803,11 +803,11 @@ createJSPCommand(data,docOID)
 	s procInsOID=$$createProcessingInstruction^%zewdDOM(target,data,docOID)
 	QUIT procInsOID
 	;
-addCSPServerScript(parentOID,text)
-	n scriptOID,attr
+addCSPServerScript(parentOID,text,atTop)
+	n attr,scriptOID
  	s attr("language")="cache"
  	s attr("runat")="server"
- 	s scriptOID=$$addElementToDOM^%zewdDOM("ewd:cspscript",parentOID,,.attr,text)
+ 	s scriptOID=$$addElementToDOM^%zewdDOM("ewd:cspscript",parentOID,,.attr,text,$g(atTop))
  	QUIT scriptOID
 	;
 normaliseJSPVar(var,type)

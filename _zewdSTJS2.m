@@ -1,7 +1,7 @@
 %zewdSTJS2 ; More Sencha Touch Static Javascript files
  ;
- ; Product: Enterprise Web Developer (Build 842)
- ; Build Date: Wed, 02 Feb 2011 09:31:08
+ ; Product: Enterprise Web Developer (Build 843)
+ ; Build Date: Thu, 03 Feb 2011 14:01:46
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -429,6 +429,29 @@ touchGrid ;
  ;;  }
  ;;});
  ;;Ext.reg("touchgridpanel", Ext.ux.TouchGridPanel);
+ ;;
+ ;;***END***
+ ;;
+combo ;
+ ;; EWD.sencha.combo = {
+ ;;  panel: {},
+ ;;  filter: function(params) {
+ ;;    var seed = params.seed;
+ ;;    var id = params.id;
+ ;;    EWD.sencha.combo.id = id;
+ ;;    var panel = Ext.getCmp('ewdComboPanel')
+ ;;    panel.showBy(Ext.getCmp(id));
+ ;;    panel.setWidth(params.width);
+ ;;    panel.setHeight(params.height);
+ ;;    panel.scroller.scrollTo({x: 0, y: 0});
+ ;;    EWD.ajax.getPage({page:'zewdComboMatches',nvp:'seed=' + seed + "&id=" + id});
+ ;;  },
+ ;;  selectItem: function(index,record) {
+ ;;    Ext.getCmp(EWD.sencha.combo.id).setValue(record.get("text"));
+ ;;    Ext.getCmp(EWD.sencha.combo.id).blur();
+ ;;    Ext.getCmp('ewdComboPanel').hide();
+ ;;  }
+ ;;};
  ;;
  ;;***END***
  ;;

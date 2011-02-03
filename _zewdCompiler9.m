@@ -1,7 +1,7 @@
 %zewdCompiler9	; Enterprise Web Developer Compiler : ajax fixed text
  ;
- ; Product: Enterprise Web Developer (Build 842)
- ; Build Date: Wed, 02 Feb 2011 09:31:08
+ ; Product: Enterprise Web Developer (Build 843)
+ ; Build Date: Thu, 03 Feb 2011 14:01:46
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -439,15 +439,27 @@ ajaxLoader ;
 	;;      EWD.ajax.makeRequest(url,targetId,method) ;
 	;;   },
 	;;   fetchPage: {},
-	;;   getPage: function(page,targetId,nvp) {
-	;;      EWD.ajax.fetchPage[page.toLowerCase()](targetId,nvp);
+	;;   getPage: function(params) {
+	;;      var page = params.page;
+	;;      EWD.ajax.fetchPage[page.toLowerCase()](params);
 	;;   },
-	;;   getURL: function(url,targetId,nvp) {
+	;;   getURL: function(params) {
+	;;      var url = params.url;
+	;;      var nvp = params.nvp;
+	;;      var targetId = params.targetId;
+	;;      var synch = params.synch;
+	;;      if (synch) {
+	;;        method="synch";
+	;;      }
+	;;      else {
+	;;        var method = params.method;
+	;;      }
 	;;      if (nvp) {
 	;;        if (nvp !== '') url = url + '&' + nvp;
 	;;      }
+	;;      if (!targetId) targetId = 'ewdNullId';
 	;;      if (targetId === '') targetId='ewdNullId';
-	;;      EWD.ajax.makeRequest(url,targetId,'get','','');
+	;;      EWD.ajax.getFragment(url,targetId,method);
 	;;   },
 	;;   submit: function (buttonName,formPointer,nextPage,url,id,traceFlag,synch) {
 	;;      if (EWD.ajax.allowSubmit != false) {
