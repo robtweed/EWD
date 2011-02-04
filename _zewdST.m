@@ -1,7 +1,7 @@
 %zewdST ; Sencha Touch Tag Processors and runtime logic
  ;
- ; Product: Enterprise Web Developer (Build 843)
- ; Build Date: Thu, 03 Feb 2011 14:01:46
+ ; Product: Enterprise Web Developer (Build 844)
+ ; Build Date: Fri, 04 Feb 2011 14:54:35
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -481,11 +481,14 @@ js(nodeOID,attrValue,docOID,technology)
  ;
  ; <st:js block="ewdPreST" position="end">...javascript code </st:js>
  ;
- n attr,block,jsOID,mainAttrs,no,position,stOID,text,textarr,textOID
+ n at,attr,block,jsOID,mainAttrs,no,position,stOID,text,textarr,textOID
  ;
  do getAttributeValues^%zewdCustomTags(nodeOID,.mainAttrs)
  ;
  s block=$g(mainAttrs("block")) i block="" s block="ewdST"
+ s at=$g(mainAttrs("at"))
+ i at="before"!(at="top")!(at="start") s block="ewdPreSTJS"
+ i at="after"!(at="bottom")!(at="end") s block="ewdPostSTJS"
  i ((block="top")!(block="bottom")!(block="ewdPreSTJS")!(block="ewdPostSTJS")) i $$createJS("standard")
  i block="top" s block="ewdPreSTJS"
  i block="bottom" s block="ewdPostSTJS"
@@ -1226,6 +1229,11 @@ layout(nodeOID,listOID,field,lsOID,listId)
  . . i display="" s display="true"
  . . s field(name)=""
  . . i display="true" s template=template_"{"_name_"}"
+ . i tagName="st:imagefield" d  q
+ . . n name
+ . . s name=$$getAttribute^%zewdDOM("name",childOID)
+ . . s field(name)=""
+ . . s template=template_"&lt;img src='{"_name_"}'>&lt;/img>"
  . i tagName="st:text" d
  . . n value
  . . s value=$$getAttribute^%zewdDOM("value",childOID)
@@ -1541,6 +1549,7 @@ toolbarButton(nodeOID,parentOID)
  do getAttributeValues^%zewdCustomTags(nodeOID,.mainAttrs)
  s type=$g(mainAttrs("type")) ;i type="" s type="action" 
  i type'="",type'="back" d
+ . n handler
  . s handler=$g(mainAttrs("handler"))
  . i handler="" d
  . . s handler="ewdSTHandler"_$$uniqueId^%zewdAPI(nodeOID,filename)
@@ -1564,8 +1573,9 @@ toolbarButton(nodeOID,parentOID)
  i $g(mainAttrs("text"))'="" s attr("text")=mainAttrs("text")
  s attr("id")=id
  i $g(mainAttrs("hidden"))'="" s attr("hidden")=mainAttrs("hidden")
+ s attr("xtype")="button"
  i $g(mainAttrs("ui"))'="" s attr("ui")=mainAttrs("ui")
- ;s attr("handler")=handler
+ i $g(mainAttrs("handler"))'="" s attr("handler")="."_mainAttrs("handler")
  s itemOID=$$addElementToDOM^%zewdDOM("st:item",parentOID,,.attr)
  i $g(mainAttrs("ui"))="back" d
  . n jsOID,text,preSTOID

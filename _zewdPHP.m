@@ -1,7 +1,7 @@
 %zewdPHP	; Enterprise Web Developer PHP run-time functions and processing
  ;
- ; Product: Enterprise Web Developer (Build 843)
- ; Build Date: Thu, 03 Feb 2011 14:01:46
+ ; Product: Enterprise Web Developer (Build 844)
+ ; Build Date: Fri, 04 Feb 2011 14:54:35
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -1016,7 +1016,7 @@ getBrowserOS(browserSignature)
  ;
 getBrowserType(browserSignature,os)
  ;
- n ie
+ n dev,ie
  ;
  s os="other"
  s browserSignature=$$zcvt(browserSignature)
@@ -1027,11 +1027,15 @@ getBrowserType(browserSignature,os)
  i browserSignature["mac os x" s os="mac osx"
  i browserSignature["linux" s os="linux"
  ;
- i browserSignature["opera" d  QUIT "opera"
- i browserSignature["safari" d  QUIT "safari"
- i browserSignature["firefox" d  QUIT "firefox"
- i browserSignature["iphone" d  QUIT "iphone"
- i browserSignature["ipod" d  QUIT "iphone"
+ i browserSignature["android" d  QUIT dev
+ . s dev="androidphone"
+ . i browserSignature["P1000" s dev="androidtablet"
+ i browserSignature["iphone" QUIT "iphone"
+ i browserSignature["ipod" QUIT "iphone"
+ i browserSignature["ipad" QUIT "ipad"
+ i browserSignature["opera" QUIT "opera"
+ i browserSignature["safari" QUIT "safari"
+ i browserSignature["firefox" QUIT "firefox"
  i browserSignature["msie" d  QUIT ie
  . s ie=$p(browserSignature,"msie",2)
  . s ie=$$stripLeadingSpaces(ie)

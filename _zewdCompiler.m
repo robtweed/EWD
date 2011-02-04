@@ -1,7 +1,7 @@
 %zewdCompiler	; Enterprise Web Developer Compiler
  ;
- ; Product: Enterprise Web Developer (Build 843)
- ; Build Date: Thu, 03 Feb 2011 14:01:45
+ ; Product: Enterprise Web Developer (Build 844)
+ ; Build Date: Fri, 04 Feb 2011 14:54:34
  ; 
  ; 
  ; ----------------------------------------------------------------------------
@@ -275,7 +275,7 @@ addToReport(text,results)
  ;
 processApplication(inputPath,outputPath,verbose,outputStyle,results,technology,clearResults,multilingual,templateFilename,maxLines)
 	;
-	n checkboxNo,files,dirs,dir,delim,error,isDojo,isIwd,mgwsiServer,mode
+	n checkboxNo,ewdWLErrorCompiled,files,dirs,dir,delim,error,isDojo,isIwd,mgwsiServer,mode
 	;
 	; outputStyle = "collapse" | "pretty"
 	;
@@ -329,7 +329,7 @@ processApplication(inputPath,outputPath,verbose,outputStyle,results,technology,c
 	;
 processOneFile(filepath,outputPath,verbose,mode,technology,multilingual,maxLines)
 	;
-	n app,checkboxNo,delim,dir,isDojo,isIwd,error,file,files,inputPath,np,npieces,page
+	n app,checkboxNo,delim,dir,isDojo,isIwd,error,ewdWLErrorCompiled,file,files,inputPath,np,npieces,page
 	n $etrap
 	;
 	k results

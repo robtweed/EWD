@@ -1,7 +1,7 @@
 %zewdST2 ; Sencha Touch Tag Processors and runtime logic
  ;
- ; Product: Enterprise Web Developer (Build 843)
- ; Build Date: Thu, 03 Feb 2011 14:01:46
+ ; Product: Enterprise Web Developer (Build 844)
+ ; Build Date: Fri, 04 Feb 2011 14:54:35
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -33,7 +33,7 @@ container(nodeOID,attrValue,docOID,technology)
  ;
  ;
  n attr,bodyOID,childNo,childOID,contentPage,debug,funcOID,headOID,htmlOID
- n images,jsOID,jsText,locale,mainAttrs,OIDArray,path,resourcePath,rootPath
+ n images,jsOID,jsText,locale,mainAttrs,OIDArray,path,phpVar,resourcePath,rootPath
  n src,tagName,text,title,xOID
  ;
  ;<st:container rootPath="/sencha-1.0/" contentPage="intro" title="ST Demo App">
@@ -47,7 +47,7 @@ container(nodeOID,attrValue,docOID,technology)
  do getAttributeValues^%zewdCustomTags(nodeOID,.mainAttrs)
  ;
  s contentPage=$g(mainAttrs("contentpage"))
- i contentPage="" s contentPage="pageNotDefined"
+ ;i contentPage="" s contentPage="pageNotDefined"
  s title=$g(mainAttrs("title"))
  i title="" s title="EWD/Sencha Touch Application"
  s rootPath=$g(mainAttrs("rootpath"))
@@ -118,29 +118,42 @@ container(nodeOID,attrValue,docOID,technology)
  s attr("type")="text/javascript"
  s jsOID=$$addElementToDOM^%zewdDOM("script",headOID,,.attr)
  ;
+ ;s attr("return")="EWD.sencha.loadContentPage"
+ ;s attr("addVar")="false"
+ ;s attr("parameters")=""
+ ;s funcOID=$$addElementToDOM^%zewdDOM("ewd:jsfunction",jsOID,,.attr)
+ ;
+ ;s jsText=""
+ ;i $g(locale("dateformat"))'="" s jsText=jsText_"Ext.util.Format.defaultDateFormat='"_locale("dateformat")_"';"_$c(13,10)
+ ;s jsText=jsText_"ewd.ajaxRequest("""_contentPage_""",""ewdContent"");"
+ ;s xOID=$$addElementToDOM^%zewdDOM("ewd:jsline",funcOID,,,jsText)
+ ;
  s text=""
- s text=text_"Ext.setup({"
- s text=text_"tabletStartupScreen:'"_images("tabletStartupScreen","src")_"',"
- s text=text_"phoneStartupScreen:'"_images("phoneStartupScreen","src")_"',"
- s text=text_"icon:'"_images("icon","src")_"',"
- s text=text_"addGlossToIcon:"_images("icon","addgloss")_","
- s text=text_"onReady:function(){"
- s text=text_"EWD.sencha.loadContentPage()"
- s text=text_"}"
- s text=text_"});"
+ s text=text_"Ext.setup({"_$c(13,10)
+ s text=text_"tabletStartupScreen:'"_images("tabletStartupScreen","src")_"',"_$c(13,10)
+ s text=text_"phoneStartupScreen:'"_images("phoneStartupScreen","src")_"',"_$c(13,10)
+ s text=text_"icon:'"_images("icon","src")_"',"_$c(13,10)
+ s text=text_"addGlossToIcon:"_images("icon","addgloss")_","_$c(13,10)
+ s text=text_"onReady:function(){"_$c(13,10)
+ i $g(locale("dateformat"))'="" s text=text_"Ext.util.Format.defaultDateFormat='"_locale("dateformat")_"';"_$c(13,10)
+ s text=text_"EWD.ajax.getPage({page:'"_contentPage_"',targetId:'ewdContent'});"_$c(13,10)
+ ;s text=text_"EWD.sencha.loadContentPage()"_$c(13,10)
+ s text=text_"}"_$c(13,10)
+ s text=text_"});"_$c(13,10)
  s xOID=$$addElementToDOM^%zewdDOM("ewd:jsline",jsOID,,,text)
  ;
- s attr("return")="EWD.sencha.loadContentPage"
- s attr("addVar")="false"
- s attr("parameters")=""
- s funcOID=$$addElementToDOM^%zewdDOM("ewd:jsfunction",jsOID,,.attr)
- ;
- s jsText=""
- i $g(locale("dateformat"))'="" s jsText=jsText_"Ext.util.Format.defaultDateFormat='"_locale("dateformat")_"';"_$c(13,10)
- s jsText=jsText_"ewd.ajaxRequest("""_contentPage_""",""ewdContent"");"
- s xOID=$$addElementToDOM^%zewdDOM("ewd:jsline",funcOID,,,jsText)
  ;
  ;s attr("onLoad")="EWD.sencha.loadContentPage();"
+ ;
+ s attr("method")="startupImage^%zewdCustomTags"
+ s attr("param1")=images("phoneStartupScreen","src")
+ s attr("param2")=images("tabletStartupScreen","src")
+ s attr("param3")="#ewd_sessid"
+ s attr("type")="procedure"
+ s xOID=$$addElementToDOM^%zewdDOM("ewd:execute",headOID,,.attr)
+ ;
+ s phpVar=$$addPhpVar^%zewdCustomTags("#ewd_startupImage")
+ s attr("style")="background-image: url("_phpVar_");background-repeat: no-repeat"
  s bodyOID=$$addElementToDOM^%zewdDOM("body",htmlOID,,.attr)
  ;
  s attr("id")="ewdNullId"

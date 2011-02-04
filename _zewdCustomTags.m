@@ -1,7 +1,7 @@
 %zewdCustomTags	; Enterprise Web Developer Custom Tag Library Functions
  ;
- ; Product: Enterprise Web Developer (Build 843)
- ; Build Date: Thu, 03 Feb 2011 14:01:46
+ ; Product: Enterprise Web Developer (Build 844)
+ ; Build Date: Fri, 04 Feb 2011 14:54:34
  ;
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -318,4 +318,14 @@ getComboMatches(sessid)
  s json=$$arrayToJSON^%zewdJSON("list")
  d setSessionValue^%zewdAPI("ewdComboMatches",json,sessid)
  QUIT ""
+ ;
+startupImage(phoneImg,tabletImg,sessid)
+ ;
+ n img,type
+ ;
+ s img=$g(tabletImg)
+ s type=$$getSessionValue^%zewdAPI("ewd.browserType",sessid)
+ i type="iphone"!(type="androidphone") s img=$g(phoneImg)
+ d setSessionValue^%zewdAPI("ewd.startupImage",img,sessid)
+ QUIT
  ;
