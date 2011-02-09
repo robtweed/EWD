@@ -1,7 +1,7 @@
 %zewdST2 ; Sencha Touch Tag Processors and runtime logic
  ;
- ; Product: Enterprise Web Developer (Build 844)
- ; Build Date: Fri, 04 Feb 2011 14:54:35
+ ; Product: Enterprise Web Developer (Build 846)
+ ; Build Date: Wed, 09 Feb 2011 13:14:58
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -236,7 +236,25 @@ qrCode(nodeOID,attrValue,docOID,technology)
  ;
  ; s ^zewd("loader",$$zcvt^%zewdAPI(app,"l"),"js","qrCode.js")="QRCode^%zewdSTJS"
  ; registerResource(type,fileName,source,app)
- d registerResource^%zewdCustomTags("js","qrCode.js","QRCode^%zewdSTJS",app)
+ d registerResource^%zewdCustomTags("js","qrCode.js","QRCode^%zewdSTJS3",app)
+ ;
+ QUIT
+ ;
+list(nodeOID,attrValue,docOID,technology)
+ ;
+ n panelOID,parentOID,stop
+ ;
+ ; check if list is inside a panel - if so, ignore for now
+ ;
+ s stop=0
+ s parentOID=nodeOID
+ f  q:stop  d  q:parentOID=""
+ . s parentOID=$$getParentNode^%zewdDOM(parentOID)
+ . i $$getTagName^%zewdDOM(parentOID)="st:panel" s stop=1
+ i stop QUIT
+ ;
+ s panelOID=nodeOID
+ d list^%zewdST(nodeOID)
  ;
  QUIT
  ;

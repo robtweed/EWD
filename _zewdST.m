@@ -1,7 +1,7 @@
 %zewdST ; Sencha Touch Tag Processors and runtime logic
  ;
- ; Product: Enterprise Web Developer (Build 844)
- ; Build Date: Fri, 04 Feb 2011 14:54:35
+ ; Product: Enterprise Web Developer (Build 846)
+ ; Build Date: Wed, 09 Feb 2011 13:14:58
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -926,6 +926,7 @@ panel(nodeOID,attrValue,docOID,technology)
  s bodyxOID=$$getParentNode^%zewdDOM(panelOID)
  s tagName=$$getTagName^%zewdDOM(nodeOID)
  s extName="Ext.Panel"
+ i $g(mainAttrs("layout"))="" d setAttribute^%zewdDOM("layout","fit",panelOID)
  i tagName="st:tabpanel" d
  . s extName="Ext.TabPanel"
  . d setAttribute^%zewdDOM("layout","card",panelOID)
@@ -939,7 +940,9 @@ panel(nodeOID,attrValue,docOID,technology)
  . k mainAttrs("object")
  s widgetObj="EWD.sencha.widget."_widgetObjName
  s widgetId=$g(mainAttrs("id"))
- i widgetId="" s widgetId=widgetObjName
+ i widgetId="" d
+ . s widgetId=widgetObjName
+ . d setAttribute^%zewdDOM("id",widgetId,panelOID)
  ;
  ;s return=$g(mainAttrs("return")) i return="" s return="EWD.sencha.card"
  d setAttribute^%zewdDOM("return",widgetObj,panelOID)
@@ -1110,11 +1113,29 @@ list(nodeOID,itemsOID)
  d setAttribute^%zewdDOM("return",widgetObj,listOID)
  d setAttribute^%zewdDOM("id",widgetId,listOID)
  ;
+ i $g(mainAttrs("addto"))'="" d
+ . n jsOID,parent,postSTOID,text
+ . s parent=$g(mainAttrs("addto"))
+ . k mainAttrs("addto")
+ . s text="Ext.getCmp('"_parent_"').add(Ext.getCmp('"_widgetId_"'));Ext.getCmp('"_parent_"').doLayout();"
+ . i $g(mainAttrs("setactive"))="true" d
+ . . n transition
+ . . s transition=$g(mainAttrs("transition"))
+ . . i transition="" s transition="slide"
+ . . s text=text_"Ext.getCmp('"_parent_"').setActiveItem(Ext.getCmp('"_widgetId_"'),'"_transition_"');"
+ . i $$createJS("standard")
+ . s postSTOID=$$getElementById^%zewdDOM("ewdPostSTJS",docOID)
+ . s jsOID=$$addElementToDOM^%zewdDOM("ewd:jsline",postSTOID,,,text)
+ ;
  i $g(mainAttrs("renderfn"))'="" d
  . i $g(lsOID)="" s lsOID=$$addElementToDOM^%zewdDOM("st:listeners",listOID)
  . s attr("afterrender")="."_mainAttrs("renderfn")
  . s lOID=$$addElementToDOM^%zewdDOM("st:listener",lsOID,,.attr)
  . k mainAttrs("renderfn")
+ ;
+ i $g(mainAttrs("nextpagefield"))'="" d
+ . s mainAttrs("nextpage")=".record.get('"_mainAttrs("nextpagefield")_"')"
+ . k mainAttrs("nextpagefield") 
  ;
  i $g(mainAttrs("nextpage"))'="" d
  . n cpid,fn,lOID
@@ -1123,12 +1144,19 @@ list(nodeOID,itemsOID)
  . i $g(lsOID)="" s lsOID=$$addElementToDOM^%zewdDOM("st:listeners",listOID)
  . s text="function(view,index,item,e){"
  . s text=text_"var record = "_store_".getAt(index);"
+ . i $g(mainAttrs("transition"))="" s mainAttrs("transition")="slide"
  . i $g(mainAttrs("transition"))'="" d
  . . s text=text_"EWD.sencha.cardPanel={transition:'"_mainAttrs("transition")_"',id:'"_cpid_"'};"
  . . k mainAttrs("transition")
  . s text=text_"var nvp='listItemNo='+(index+1);"
- . s fn=$$ewdAjaxRequest(mainAttrs("nextpage"),"ewdNullId",1,listOID)
- . s text=text_fn_"(nvp);"
+ . s text=text_"var page="
+ . i $e(mainAttrs("nextpage"),1)'="." d
+ . . s text=text_"'"_mainAttrs("nextpage")_"';"
+ . e  d
+ . . s text=text_$e(mainAttrs("nextpage"),2,$l(mainAttrs("nextpage")))_";"
+ . s text=text_"EWD.ajax.getPage({page:page,nvp:nvp});"
+ . ;s fn=$$ewdAjaxRequest(mainAttrs("nextpage"),"ewdNullId",1,listOID)
+ . ;s text=text_fn_"(nvp);"
  . k mainAttrs("nextpage")
  . s text=text_"}"
  . s attr("itemtap")="."_text
@@ -1150,7 +1178,7 @@ list(nodeOID,itemsOID)
  s jsOID=$$addElementToDOM^%zewdDOM("ewd:jsline",stOID,,,text)
  ;
  s attr("objectname")=widgetObj
- s itemOID=$$addElementToDOM^%zewdDOM("st:item",itemsOID,,.attr)
+ i $g(itemsOID)'="" s itemOID=$$addElementToDOM^%zewdDOM("st:item",itemsOID,,.attr)
  ;
  d getChildrenInOrder^%zewdDOM(nodeOID,.OIDArray)
  s childNo=""
@@ -1400,10 +1428,11 @@ cardPanel(nodeOID,bodyOID,itemsOID)
  f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d
  . s childOID=OIDArray(childNo)
  . s tagName=$$getTagName^%zewdDOM(childOID)
- . i tagName="st:listcard" d
+ . i tagName="st:listcard"!(tagName="st:list") d
  . . n panelOID,xchildOID
- . . s panelOID=$$insertNewParentElement^%zewdDOM(childOID,"st:panel",docOID) 
- . . s xchildOID=$$renameTag^%zewdDOM("st:list",childOID)
+ . . s panelOID=$$insertNewParentElement^%zewdDOM(childOID,"st:panel",docOID)
+ . . s xchildOID=childOID
+ . . i tagName="st:listcard" s xchildOID=$$renameTag^%zewdDOM("st:list",childOID)
  . . d setAttribute^%zewdDOM("cardpanel",id,xchildOID)
  ;
  d subPanel(xnodeOID,bodyOID,itemsOID)
@@ -1426,6 +1455,14 @@ subPanel(nodeOID,bodyOID,itemsOID)
  . s mainAttrs("minwidth")=".EWD.sencha.nestedList.width"
  . s mainAttrs("maxwidth")=".EWD.sencha.nestedList.width"
  . k mainAttrs("fitwidth")
+ ;
+ i $g(mainAttrs("page"))'="" d
+ . n lOID,lsOID
+ . s lsOID=$$addElementToDOM^%zewdDOM("st:listeners",itemOID)
+ . s attr("render")=".function() {EWD.ajax.getPage({page:'"_mainAttrs("page")_"'});}"
+ . s lOID=$$addElementToDOM^%zewdDOM("st:listener",lsOID,,.attr)
+ . k mainAttrs("page")
+ ;
  s name=""
  f  s name=$o(mainAttrs(name)) q:name=""  d
  . i name="object" q
@@ -1570,14 +1607,15 @@ toolbarButton(nodeOID,parentOID)
  s id=$g(mainAttrs("id"))
  i id="" s id="ewdSTToolbar"_$$uniqueId^%zewdAPI(nodeOID,filename)
  i $g(mainAttrs("type"))'="" s attr("ui")=mainAttrs("type")
+ i $g(mainAttrs("type"))="autoback" s attr("ui")="back"
  i $g(mainAttrs("text"))'="" s attr("text")=mainAttrs("text")
  s attr("id")=id
  i $g(mainAttrs("hidden"))'="" s attr("hidden")=mainAttrs("hidden")
  s attr("xtype")="button"
- i $g(mainAttrs("ui"))'="" s attr("ui")=mainAttrs("ui")
+ i $g(mainAttrs("ui"))'="",$g(mainAttrs("type"))="" s attr("ui")=mainAttrs("ui")
  i $g(mainAttrs("handler"))'="" s attr("handler")="."_mainAttrs("handler")
  s itemOID=$$addElementToDOM^%zewdDOM("st:item",parentOID,,.attr)
- i $g(mainAttrs("ui"))="back" d
+ i $g(mainAttrs("type"))="autoback" d
  . n jsOID,text,preSTOID
  . s text="EWD.sencha.backbuttonId='"_id_"';"
  . s jsOID=$$createJS("standard")
