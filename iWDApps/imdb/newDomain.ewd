@@ -1,0 +1,23 @@
+<ewd:config isFirstPage="false" pageType="ajax"  prePageScript="py:iMDB.initialiseDomain">
+
+<script language="javascript">
+ iWD.removeActive();
+ iMDB.saveDomain = function() {
+   document.getElementById("newDomainName").blur();
+   var nvp = "domainName=" + document.getElementById("newDomainName").value ;
+   ewd.ajaxRequest("saveDomain","domainMenuPanel",nvp);
+ };
+</script>
+
+<iwd:toolbar title="Add Domain">
+ <iwd:toolbarButton type="back" text="Domains" />
+</iwd:toolbar>
+
+  <iwd:formpanel>
+
+     <iwd:formfield type="text" name="newDomainName" text="Domain Name" /> 
+     <iwd:formfield type="button" text="Add" onClick="iMDB.saveDomain()" /> 
+
+  </iwd:formpanel>
+
+

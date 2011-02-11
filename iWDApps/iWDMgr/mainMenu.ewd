@@ -1,0 +1,10 @@
+<ewd:config isFirstPage="false" pageType="ajax">
+<div>
+ <iwd:menuPanel>
+  <iwd:menuItem text="Configuration" nextpage="configuration" transition="slide" />
+  <iwd:menuItem text="Applications" nextpage="applications" transition="slide" />
+  <iwd:menuItem text="Sessions" nextpage="sessions" transition="slide" />
+  <iwd:menuItem text="About EWD" nextpage="about" transition="slideup" />
+ </iwd:menuPanel>
+
+</div>

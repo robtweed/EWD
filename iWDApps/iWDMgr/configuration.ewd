@@ -1,0 +1,20 @@
+<ewd:config isFirstPage="false" pageType="ajax" prePageScript="getConfigInfo^%zewdiWDMgr">
+
+<iwd:toolbar>
+ <iwd:toolbarButton type="back" text="Menu" />
+</iwd:toolbar>
+
+<ewd:set return="$color" value="blue" />
+<br />
+<iwd:graytitle text="EWD Configuration" />
+
+<iwd:formPanel>
+ <iwd:field type="text" text="Database technology: <br /><span style='color:<?= $color ?>'><?= #mgr.database ?></span>" />
+ <iwd:field type="text" text="Web Gateway: <span style='color:<?= $color ?>'><?= #mgr.technology ?></span>" />
+ <iwd:field type="text" text="Application Root Path: <br /><span style='color:<?= $color ?>'><?= #mgr.appRootPath ?></span>" />
+ <iwd:field type="text" text="Routine Output Path: <br /><span style='color:<?= $color ?>'><?= #mgr.rouPath ?></span>" />
+ <iwd:field type="text" text="Javascript/CSS File Output Path: <br /><span style='color:<?= $color ?>'><?= #mgr.jsPath ?></span>" />
+ <iwd:field type="text" text="Root URL: <br /><span style='color:<?= $color ?>'><?= #mgr.rootURL ?></span>" />
+ <iwd:field type="text" text="Javascript/CSS URL: <br /><span style='color:<?= $color ?>'><?= #mgr.jsURL ?></span>" />
+</iwd:formPanel>
+

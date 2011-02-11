@@ -1,0 +1,105 @@
+<ewd:config pageType="ajax" applyTemplate="false">
+
+<ewd:comment>
+  ----------------------------------------------------------------------------
+  | Enterprise Web Developer for GT.M and m_apache                           |
+  | Copyright (c) 2004-9 M/Gateway Developments Ltd,                         |
+  | Reigate, Surrey UK.                                                      |
+  | All rights reserved.                                                     |
+  |                                                                          |
+  | http://www.mgateway.com                                                  |
+  | Email: rtweed@mgateway.com                                               |
+  |                                                                          |
+  | This program is free software: you can redistribute it and/or modify     |
+  | it under the terms of the GNU Affero General Public License as           |
+  | published by the Free Software Foundation, either version 3 of the       |
+  | License, or (at your option) any later version.                          |
+  |                                                                          |
+  | This program is distributed in the hope that it will be useful,          |
+  | but WITHOUT ANY WARRANTY; without even the implied warranty of           |
+  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            |
+  | GNU Affero General Public License for more details.                      |
+  |                                                                          |
+  | You should have received a copy of the GNU Affero General Public License |
+  | along with this program.  If not, see http://www.gnu.org/licenses/.      |
+  ----------------------------------------------------------------------------
+</ewd:comment>
+
+<span>
+<form method="post" action="ewd">
+  <br>
+  <table border=0 class="configTable">
+
+    <tr class="configRow">
+      <td><ewd:help sourceId="routine_path" width="350px" />Routine path:</td>
+      <td>
+        <input type="text" name="gtmRoutinePath" value="*">
+      </td>
+    </tr>
+
+    <tr class="configRow">
+      <td><ewd:help sourceId="op_root_path" width="350px" />Output path:</td>
+      <td>
+        <input type="text" name="gtmOutputPath" value="*">
+      </td>
+    </tr>
+
+    <tr class="configRow">
+      <td><ewd:help sourceId="root_url" />Root URL:</td>
+      <td>
+        <input type="text" name="gtmRootURL" value="*" size="25">
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2">
+        <br><ewd:help sourceId="js_url" width="400px" />Javascript (.js) file URL references:<br><br>
+      </td>
+    </tr>
+    <tr class="configRow">
+      <td>Type of URL:</td>
+      <td>
+        <select name="gtmJsURLType"></select>
+      </td>
+    </tr>
+    <tr>
+      <td>Path root:</td>
+      <td>
+        <input type="text" name="gtmJsURLRoot" value="*">
+      </td>
+    </tr>
+  </table>
+  <div>
+    <br>
+    <input type="submit" name="wlUpdate"  class="actionButton" value="Update" action="saveMapacheConfig^%zewdMgrAjax" ajax="true" targetId="nullId" nextpage="configSettingsSaved">
+  </div>
+</form>
+
+<div id="routine_path" class="alertPanelOff">
+ When compiling using the "gtm" option, ie to use MGWSI/<i>m_apache</i>, EWD generates GT.M Mumps routines.  
+ EWD needs to know where to save the routine source files.  This is determined by this parameter.  
+ Specify the path/directory into which you want the GT.M routine files to be created.
+</div>
+<div id="op_root_path" class="alertPanelOff">
+ When compiling to GT.M/<i>m_apache</i> routines, EWD needs to know where to save its automatically generated Javascript and CSS files.  
+ This is determined by this parameter.  Specify the path/directory into which you want these files to be created.
+</div>
+<div id="web_server" class="alertPanelOff">
+ Click this to generate the suggested WebLink Root URL for your web server.
+</div>
+
+<div id="root_url" class="alertPanelOff">
+ This defines the root part of the MGWSI/m_apache URL that EWD will add to the page URLs it generates.
+</div>
+<div id="js_url" class="alertPanelOff">
+ <p>The two parameters below are used to instruct EWD how to construct the URLs that will point to the Javascript and CSS 
+ files that it generates automatically for you, eg <b>ewdScripts.js</b> and <b>ewd.css</b>.</p>  
+ <p>The recommended setting is 
+ to set the <i>Type of URL</i> to <b>Absolute</b> and leave the <i>Path Root</i> as <b>blank (ie null)</b>, in which case 
+ EWD will generate URLs that expect the JS and CSS files to be in the same path as your compiled CSP pages.</p>
+ <p>If you wanted ewdScripts.js to be fetched from <b>src="myJSFiles/ewdScripts.js"</b>, then set 
+ the <i>Type of URL</i> to <b>Relative</b> and set the <i>Path Root</i> to <b>myJSFiles</b>.</p>
+ <p>If you wanted ewdScripts.js to be fetched from <b>src="/myJSFiles/ewdScripts.js"</b>, then set 
+ the <i>Type of URL</i> to <b>Absolute</b> and set the <i>Path Root</i> to <b>myJSFiles</b>.</p>
+</div>
+
+</span>

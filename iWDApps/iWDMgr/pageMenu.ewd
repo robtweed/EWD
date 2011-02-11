@@ -1,0 +1,16 @@
+<ewd:config isFirstPage="false" pageType="ajax" prePageScript="selectPage^%zewdiWDMgr">
+
+<iwd:toolbar>
+ <iwd:toolbarButton type="back" text="Pages" />
+ <iwd:toolbarButton type="forward" transition="slide" nextpage="incomplete" text="Compile" />
+</iwd:toolbar>
+
+<iwd:pageItem>
+<p>Application: <?= #mgr.app ?></p>
+<p>Page: <?= #mgr.page ?></p>
+</iwd:pageItem>
+
+ <iwd:menuPanel>
+  <iwd:menuItem text="Show Contents" nextpage="incomplete" transition="slide" />
+  <iwd:menuItem text="Properties" nextpage="incomplete" transition="slide" />
+ </iwd:menuPanel>

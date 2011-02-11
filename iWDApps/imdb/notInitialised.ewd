@@ -1,0 +1,28 @@
+<ewd:config isFirstPage="false" pageType="ajax" prePageScript="isMDBConfigured^MDBMgr">
+
+
+<iwd:redirect>
+  <iwd:test name="isConfigured" value="1" page="login" />
+</iwd:redirect>
+
+<iwd:pageItem>
+  <iwd:header text="M/DB Not Yet Initialised" />
+  <br />
+  <p>
+    You cannot use the M/DB Explorer yet because you haven't initialised the 
+    M/DB Appliance.
+  </p><br />
+  <p>
+    Point a desktop browser at the domain name/IP Address of your
+    M/DB Appliance to read the instructions on how to do this.  Once you've initialised
+    it, try the URL again on your iPhone and you'll be able to log in to the 
+    M/DB Explorer.
+  </p>
+</iwd:pageItem>
+
+   <iwd:footer>
+        &copy; 2010 M/Gateway Developments Ltd<br />All Rights Reserved.<br />
+        Powered by iWD 
+   </iwd:footer>
+
+

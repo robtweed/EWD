@@ -1,0 +1,15 @@
+<ewd:config isFirstPage="false" pageType="ajax" prePageScript="getPageList^%zewdiWDMgr">
+
+<iwd:toolbar>
+ <iwd:toolbarButton type="back" text="Apps" />
+ <iwd:toolbarButton type="forward" transition="slide" nextpage="incomplete" text="Compile" />
+</iwd:toolbar>
+
+<iwd:pageItem>
+<p>Application: <?= #mgr.app ?></p>
+</iwd:pageItem>
+
+<iwd:graytitle text="Pages:" />
+
+<iwd:menuPanel sessionName="pageList" nextPage="pageMenu" transition="slide" />
+

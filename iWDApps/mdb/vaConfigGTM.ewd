@@ -1,0 +1,109 @@
+<ewd:config isFirstPage="false" pageType="ajax">
+
+<ewd:comment>
+  ----------------------------------------------------------------------------
+  | M/DB                                                                     |
+  | Copyright (c) 2004-9 M/Gateway Developments Ltd,                         |
+  | Reigate, Surrey UK.                                                      |
+  | All rights reserved.                                                     |
+  |                                                                          |
+  | http://www.mgateway.com                                                  |
+  | Email: rtweed@mgateway.com                                               |
+  |                                                                          |
+  | This program is free software: you can redistribute it and/or modify     |
+  | it under the terms of the GNU Affero General Public License as           |
+  | published by the Free Software Foundation, either version 3 of the       |
+  | License, or (at your option) any later version.                          |
+  |                                                                          |
+  | This program is distributed in the hope that it will be useful,          |
+  | but WITHOUT ANY WARRANTY; without even the implied warranty of           |
+  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            |
+  | GNU Affero General Public License for more details.                      |
+  |                                                                          |
+  | You should have received a copy of the GNU Affero General Public License |
+  | along with this program.  If not, see http://www.gnu.org/licenses/.      |
+  ----------------------------------------------------------------------------
+</ewd:comment>
+
+<span>
+
+<h3>Managing the GT.M MUMPS Environment</h3>
+</a>
+A fully working GT.M system has been included in this Appliance. It is used as the core 
+ DBMS technology in which M/DB domains and their contents are stored and maintained.  
+ GT.M has been pre-configured for you as follows:<br><br>
+
+
+<table border=1>
+ <tr>
+  <td>GT.M installation directory</td>
+  <td>/usr/local/gtm/</td>
+ </tr>
+ <tr>
+  <td>M/DB installation and GT.M working directory</td>
+  <td>/usr/local/gtm/ewd</td>
+ </tr>
+</table>
+<br>
+
+Note: If you are using the M/DB Appliance within an Amazon EC2 AMI instance and you 
+ have configured an EBS volume using the M/DB installer script, you should access GT.M 
+ in the following directory:<br><br>
+
+<table border=1>
+ <tr>
+  <td>GT.M installation directory</td>
+  <td>/usr/local/gtm</td>
+ </tr>
+ <tr>
+  <td>M/DB installation and GT.M working directory</td>
+  <td>/mdb/ewd</td>
+ </tr>
+</table>
+<br>
+
+The GT.M profile has been automatically set up for you.  If you want to get into the 
+ GT.M MUMPS environment shell, do the following:<br><br>
+
+<i>
+cd /usr/local/gtm/ewd<br>
+$gtm<br>
+GTM>
+</i>
+<br><br>
+
+If you are running the M/DB Appliance in an EC2 instance with an EBS volume, access the 
+ GT.M environment as follows:<br><br>
+
+<i>
+cd /mdb/ewd<br>
+$gtm<br>
+GTM>
+</i>
+<br><br>
+
+To logout and return to the Linux shell prompt:<br><br>
+
+<i>
+GTM>H<br>
+ewd@ubuntuJEOS:/usr/local/gtm/ewd$<br>
+</i>
+<br>
+
+
+<p>All M/DB domains and their contents are stored within GT.M as a single Mumps global named ^MDB.  
+You can use the standard GT.M administrative tools for backup, restore, 
+archiving etc of this global.</p>
+
+<p>For further information about GT.M, go to <a href="http://www.fis-gtm.com">http://www.fis-gtm.com</a> and download the documentation. 
+However, for convenience,a copy of the main GT.M documents are included within this M/DB Appliance.  Just click 
+the Documentation tab above.</p>
+
+<hr>
+Note: If you build your own Ubuntu JEOS or LAMP Server-based M/DB system, you must open up the privileges to the <i>/var</i> path in order to get GT.M working, ie do the following:<br><br>
+<i>
+cd /<br>
+sudo chmod 777 var
+</i>
+
+</span>

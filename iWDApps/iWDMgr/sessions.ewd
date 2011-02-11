@@ -1,0 +1,11 @@
+<ewd:config isFirstPage="false" pageType="ajax" prePageScript="getSessionList^%zewdiWDMgr">
+
+<iwd:toolbar>
+ <iwd:toolbarButton type="back" text="Menu" />
+</iwd:toolbar>
+
+<iwd:graytitle text="Current Sessions" />
+
+<iwd:menuPanel sessionName="sessionList" nextPage="sessionDetails" transition="slide" />
+
+</div>

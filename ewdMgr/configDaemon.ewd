@@ -1,0 +1,180 @@
+<ewd:config pageType="ajax" applyTemplate="false" prePageScript="getDaemonData^%zewdMgrAjax">
+
+<ewd:comment>
+  ----------------------------------------------------------------------------
+  | Enterprise Web Developer for GT.M and m_apache                           |
+  | Copyright (c) 2004-9 M/Gateway Developments Ltd,                         |
+  | Reigate, Surrey UK.                                                      |
+  | All rights reserved.                                                     |
+  |                                                                          |
+  | http://www.mgateway.com                                                  |
+  | Email: rtweed@mgateway.com                                               |
+  |                                                                          |
+  | This program is free software: you can redistribute it and/or modify     |
+  | it under the terms of the GNU Affero General Public License as           |
+  | published by the Free Software Foundation, either version 3 of the       |
+  | License, or (at your option) any later version.                          |
+  |                                                                          |
+  | This program is distributed in the hope that it will be useful,          |
+  | but WITHOUT ANY WARRANTY; without even the implied warranty of           |
+  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            |
+  | GNU Affero General Public License for more details.                      |
+  |                                                                          |
+  | You should have received a copy of the GNU Affero General Public License |
+  | along with this program.  If not, see http://www.gnu.org/licenses/.      |
+  ----------------------------------------------------------------------------
+</ewd:comment>
+
+<script language="javascript">
+  MGW.page.stopDaemon = function() {
+    ewd:stop^%zewdDaemon() ;
+    alert("Daemon flagged to stop") ;
+    document.getElementById("daemonStatus").innerHTML = "Flagged to stop" ;
+   document.getElementById("daemonStop").className = "alertPanelOff" ;
+  };
+  MGW.page.startDaemon = function() {
+    ewd:start^%zewdDaemon() ;
+    alert("Daemon process started") ;
+    document.getElementById("daemonStatus").innerHTML = "Running" ;
+   document.getElementById("daemonStart").className = "alertPanelOff" ;
+   document.getElementById("daemonStop").className = "actionButton" ;
+  };
+  MGW.page.usernameOff = function() {
+   document.getElementById("usernameRow").className = "invisible" ;
+   document.getElementById("passwordRow").className = "invisible" ;
+  };
+  MGW.page.usernameOn = function() {
+   document.getElementById("usernameRow").className = "configRow" ;
+   document.getElementById("passwordRow").className = "configRow" ;
+  };
+</script>
+
+<span class="mediumText">
+  <table border=0 width="96%">
+    <tr>
+      <td class="selectorPanel">
+        <h4 align="center">Background Daemon Process Configuration<ewd:help sourceId="daemon_info" /></h4>
+        <div class="applicationPanel">
+          <form method="post" action="ewd">
+              <br>
+              <table class="configTable">
+                <tr class="configRow">
+                  <td>Daemon enabled?:</td>
+                  <td>
+                    <input type="radio" name="activateDaemon" value="true">: Yes<br/>
+                    <input type="radio" name="activateDaemon" value="false">: No<br/>
+                  </td>
+                </tr>
+                <tr class="configRow">
+                  <td><ewd:help sourceId="hang_time" />Hang period (secs):</td>
+                  <td><input type="text" size="5" name="hangTime" value="*"></td>
+                </tr>
+                <tr class="configRow">
+                  <td>Daemon Status:</td>
+                  <td>
+                    <span id="daemonStatus"><?= #daemonStatus ?></span>
+                    <ewd:set return="$startClass" value="alertPanelOff">
+                    <ewd:set return="$stopClass" value="alertPanelOff">
+                    <ewd:if firstValue="#daemonStatus" operation="=" secondValue="Running">
+                      <ewd:set return="$stopClass" value="actionButton">
+                    <ewd:elseif firstValue="#daemonStatus" operation="=" secondValue="Stopped">
+                      <ewd:set return="$startClass" value="actionButton">
+                    </ewd:if>
+                    <input type="button" class="<?= $stopClass ?>" name="daemonStop" value="Stop" onClick="MGW.page.stopDaemon()">
+                    <input type="button" class="<?= $startClass ?>" name="daemonStart" value="Start" onClick="MGW.page.startDaemon()">
+                  </td>
+                </tr>
+              </table>
+              <div>
+                <br>
+                <input type="submit" name="configUpdate" class="actionButton" value="Update" ajax="true" targetId="configMenu" nextpage="configDaemon" action="setDaemonData^%zewdMgrAjax">
+              </div>
+          </form>
+        </div>
+      </td>
+      <td class="selectorPanel">
+        <h4 align="center"><ewd:help sourceId="email_daemon" width="340"/>Email Dispatcher Configuration</h4>
+        <div class="applicationPanel">
+          <form method="post" action="ewd">
+              <br>
+              <table class="configTable">
+                <tr class="configRow">
+                  <td>SMTP Server domain name/IP address:</td>
+                  <td><input type="text" size="20" name="serverDomain" value="*"></td>
+                </tr>
+                <tr class="configRow">
+                  <td>Use SMTP Authentication?:</td>
+                  <td>
+                    <input type="radio" name="authType" value="1" onClick="MGW.page.usernameOn()">: Yes<br/>
+                    <input type="radio" name="authType" value="0" onClick="MGW.page.usernameOff()">: No<br/>
+                  </td>
+                </tr>
+                <ewd:set return="$rowClass" value="alertPanelOff">
+                <ewd:if firstValue="#authType" operation="=" secondValue="1">
+                   <ewd:set return="$rowClass" value="configRow">
+                </ewd:if>
+                <tr id="usernameRow" class="<?= $rowClass ?>">
+                  <td>SMTP Server Username:</td>
+                  <td><input type="text" size="30" name="username" value="*"></td>
+                </tr>
+                <tr id="passwordRow" class="<?= $rowClass ?>">
+                  <td>SMTP Server Password:</td>
+                  <td><input type="password" size="30" name="password" value="*"></td>
+                </tr>
+                <tr class="configRow">
+                  <td colspan="2">
+                    <input type="submit" name="emailConfigUpdate" class="actionButton" value="Update" ajax="true" targetId="nullId" nextpage="configSettingsSaved" action="setEmailDaemonData^%zewdMgrAjax">
+                  </td>
+                </tr>
+                <tr>
+                  <td>No of queued emails:</td>
+                  <td><?= #noOfEmails ?></td>
+                </tr>
+                <tr>
+                  <td>To queue an email:</td>
+                  <td><i>d queueMail^%zewdDaemon(from,to,.cc,subject,.text)</i></td>
+                </tr>
+              </table>
+          </form>
+        </div>
+      </td>
+    </tr>
+  </table>
+  <div id="nullId" />
+
+  <div id="alertPanel" class="alertPanelOff">
+    Configuration settings saved
+  </div>
+
+  <div id="daemon_info" class="alertPanelOff">
+    <p>The EWD Background Daemon is an optional background Cach&eacute; process that you can instruct EWD to 
+    start for you (it is started automatically by anyone starting an EWD session).  The Daemon has two key 
+    purposes:</p>
+    <ul>
+     <li>It takes over responsibility for the garbage-collection of expired EWD sessions, making the instantiation of 
+         new EWD sessions more efficient and faster</li>
+     <li>It provides an offline, asynchronous service for dispatching Cach&eacute;-generated emails via SMTP</li>
+    </ul>
+  </div>
+
+  <div id="hang_time" class="alertPanelOff">
+    <p>You can set the polling time interval for the Daemon process using this parameter.  The smaller the value, the 
+       more frequently the Daemon process will check for timed-out EWD sessions and unsent, queued emails.</p>
+  </div>
+
+  <div id="email_daemon" class="alertPanelOff">
+    <p>Configure these details to asynchronously dispatch emails that you add to the queue.  Note that 
+    the EWD Background Daemon process must be enabled and running to use this facility.</p>
+    <p>Emails can be added 
+    to the queue using the command:</p>
+    <p>d queueMail^%zewdDaemon(from,to,.cc,subject,.text)</p>
+    <p>where:<br />
+        from=the email address of the sender<br />
+        to=the email address of the recipient<br />
+        subject=the email subject line<br />
+        cc= local array of Cc'd recipients, eg cc("rtweed@example.com")=""<br />
+        text= local array containing email message text, eg text(lineNo)=Line of text</p>
+  </div>
+
+</span>
+

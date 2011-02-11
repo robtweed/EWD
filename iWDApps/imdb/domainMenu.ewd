@@ -1,0 +1,10 @@
+<ewd:config pageType="ajax" prePageScript="py:iMDB.getDomainList">
+
+ <iwd:toolbar title="Domains">
+   <iwd:toolbarButton type="forward" transition="slide" nextpage="newDomain" text="Add" />
+ </iwd:toolbar>
+
+<div id="domainMenuPanel">
+  <iwd:menuPanel sessionName="domainList" nextPage="itemMenu" transition="slide" />
+</div>
+

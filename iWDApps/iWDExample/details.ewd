@@ -1,0 +1,12 @@
+<ewd:config isFirstPage="false" pageType="ajax" prepagescript="getSelectedUser^iWDDemo">
+
+ <iwd:toolbar>
+   <iwd:toolbarButton type="back" />
+   <iwd:toolbarButton type="forward" transition="swap" nextpage="selectApp" text="New" />
+ </iwd:toolbar>
+
+  <iwd:pageItem>
+   <p>
+     You selected <?= #personName ?>
+   </p>
+ </iwd:pageItem>

@@ -1,0 +1,17 @@
+<ewd:config pageType="ajax" prePageScript="py:iWDDemo.getTrackDetails">
+
+ <iwd:toolbar>
+   <iwd:toolbarButton type="back"/>
+ </iwd:toolbar>
+
+ <br />
+ <iwd:graytitle text="Track: <?= #trackName ?>" />
+
+ <iwd:formPanel>
+
+   <iwd:field type="text" text="Album: <?= #albumName ?>" />
+   <iwd:field type="text" text="Track # <?= #trackNo ?>" />
+   <iwd:field type="text" text="Composer: <?= #composer ?>" />
+   <iwd:field type="text" text="Time: <?= #time ?> sec" />
+
+ </iwd:formPanel>

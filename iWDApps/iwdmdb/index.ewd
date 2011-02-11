@@ -1,0 +1,3 @@
+<ewd:config isFirstPage="true" cachePage="false">
+
+<iwd:main title="iWD Py Demo" contentPage="mainMenu" touchIcon="/iwd/pics/homescreen.gif" startupImage="/iwd/pics/iwdSplash.png" iwdrootPath="/iwd/" />

@@ -1,0 +1,70 @@
+<ewd:config pageType="ajax" applyTemplate="false" prePageScript="initNewCustomTagDetails^%zewdMgrAjax">
+
+<ewd:comment>
+  ----------------------------------------------------------------------------
+  | Enterprise Web Developer for GT.M and m_apache                           |
+  | Copyright (c) 2004-9 M/Gateway Developments Ltd,                         |
+  | Reigate, Surrey UK.                                                      |
+  | All rights reserved.                                                     |
+  |                                                                          |
+  | http://www.mgateway.com                                                  |
+  | Email: rtweed@mgateway.com                                               |
+  |                                                                          |
+  | This program is free software: you can redistribute it and/or modify     |
+  | it under the terms of the GNU Affero General Public License as           |
+  | published by the Free Software Foundation, either version 3 of the       |
+  | License, or (at your option) any later version.                          |
+  |                                                                          |
+  | This program is distributed in the hope that it will be useful,          |
+  | but WITHOUT ANY WARRANTY; without even the implied warranty of           |
+  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            |
+  | GNU Affero General Public License for more details.                      |
+  |                                                                          |
+  | You should have received a copy of the GNU Affero General Public License |
+  | along with this program.  If not, see http://www.gnu.org/licenses/.      |
+  ----------------------------------------------------------------------------
+</ewd:comment>
+
+<span>
+<h5 align="center">Register New Custom Tag</h5>
+<div class="applicationPanel" style="height:320px; width:97%">
+ <form method="post" action="ewd">
+  <table border="0" width="100%" class="propsTable" style="table-layout:fixed">
+    <tr>
+      <td width="20%" class="configRow">Tag Name:</td>
+      <td class="configRow"><input type=text name=tagName value="*" size=30></td>
+    </tr>
+    <tr>
+      <td width="20%" class="configRow">Tag Compiler Method:</td>
+      <td class="configRow"><input type=text name=tagMethod value="*" size=30>(nodeOID,attrValues,docOID,technology)</td>
+    </tr>
+    <tr>
+      <td colspan="2">If the tag is empty, should EWD automatically close it if necessary? : </td>
+    </tr>
+
+    <tr>
+      <td class="configRow">&nbsp;</td>
+      <td class="configRow">
+         <input type=radio name=tagImpliedClose value="1"> Yes<br>
+         <input type=radio name=tagImpliedClose value="0"> No<br>
+      </td>
+    </tr>
+    <tr>
+      <td width="20%" class="configRow">Notes:</td>
+      <td class="configRow">
+       <textarea name="tagNotes" rows="8" cols="40">*</textarea>
+      </td>
+    </tr>
+    <tr>
+      <td colspan=2>
+        <input type=submit name=tagSubmit class="actionButton" value="Save" action="saveCustomTag^%zewdMgrAjax" ajax="true" targetId="customTagsNullid" nextpage="reloadCustomTags">
+        <input type="button" name="cancel" class="actionButton" value="Cancel" onClick="document.getElementById('listingPanel').innerHTML = ''">
+      </td>
+    </tr>
+  </table>
+ </form>
+</div>
+<div id="alertPanel" class="alertPanelOff">
+    Custom tag details saved
+</div>
+</span>

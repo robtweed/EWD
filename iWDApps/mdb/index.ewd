@@ -1,0 +1,67 @@
+<ewd:config isFirstPage="true" cachePage="false">
+<html>
+
+<ewd:comment>
+  ----------------------------------------------------------------------------
+  | M/DB                                                                     |
+  | Copyright (c) 2004-9 M/Gateway Developments Ltd,                         |
+  | Reigate, Surrey UK.                                                      |
+  | All rights reserved.                                                     |
+  |                                                                          |
+  | http://www.mgateway.com                                                  |
+  | Email: rtweed@mgateway.com                                               |
+  |                                                                          |
+  | This program is free software: you can redistribute it and/or modify     |
+  | it under the terms of the GNU Affero General Public License as           |
+  | published by the Free Software Foundation, either version 3 of the       |
+  | License, or (at your option) any later version.                          |
+  |                                                                          |
+  | This program is distributed in the hope that it will be useful,          |
+  | but WITHOUT ANY WARRANTY; without even the implied warranty of           |
+  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            |
+  | GNU Affero General Public License for more details.                      |
+  |                                                                          |
+  | You should have received a copy of the GNU Affero General Public License |
+  | along with this program.  If not, see http://www.gnu.org/licenses/.      |
+  ----------------------------------------------------------------------------
+</ewd:comment>
+
+  <head>
+    <ewd:refresh url="index.ewd" time="3500" />
+    <link href="/mgw3.css" media="screen" rel="stylesheet" type="text/css" />
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <script src="/mgw.js"></script>
+    <title>M/Gateway Developments Ltd: M/DB Appliance</title>
+    <script language="javascript">
+      var sig=navigator.userAgent;
+      if (EWD.utils.contains(sig,"iPhone")) document.location='/ewd/imdb/index.e' + 'wd';
+      if (EWD.utils.contains(sig,"iPod")) document.location='/ewd/imdb/index.e' + 'wd';
+      if (EWD.utils.contains(sig,"iPad")) document.location='/ewd/imdb/index.e' + 'wd';
+      EWD.page.loadInitialPage = function() {
+        ewd.ajaxRequest("security","bodyContent") ;
+      } ;
+      EWD.page.setTitle = function(text){};
+    </script>
+  </head>
+  <body onload="EWD.page.loadInitialPage()">
+    <table border="0" style="table-layout: fixed;" width="100%">
+      <tr>
+        <td><img src="/mgw_web_banner.jpg" /></td>
+      </tr>
+    </table>
+    <br /><br /><br />
+    <div id="bodyContent">
+    </div>
+    <div class="footerBlock">
+      <p class="footerText">
+        &copy; 2008-9 M/Gateway Developments Ltd All Rights Reserved. &nbsp;&nbsp;&nbsp;&nbsp; <a style="color:#ffffff;" href="http://www.mgateway.com">http://www.mgateway.com</a>
+      </p>
+    </div>
+    <div id="nullId" style="display:none;" />
+    <ewd:helpPanel />
+    <div style="position:absolute;top:30px;left:750px;font-size:18pt;font-family:arial;text-align:center">
+      M/DB Appliance
+    </div>
+  </body>
+</html>

@@ -1,0 +1,6 @@
+<ewd:config isFirstPage="false" pageType="ajax">
+
+ <iwd:menuPanel>
+  <iwd:menuItem text="CD Library" nextpage="CDMenu" transition="slide" />
+  <iwd:menuItem text="About" nextpage="about" transition="slideup" />
+ </iwd:menuPanel>

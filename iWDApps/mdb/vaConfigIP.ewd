@@ -1,0 +1,95 @@
+<ewd:config isFirstPage="false" pageType="ajax">
+
+<ewd:comment>
+  ----------------------------------------------------------------------------
+  | M/DB                                                                     |
+  | Copyright (c) 2004-9 M/Gateway Developments Ltd,                         |
+  | Reigate, Surrey UK.                                                      |
+  | All rights reserved.                                                     |
+  |                                                                          |
+  | http://www.mgateway.com                                                  |
+  | Email: rtweed@mgateway.com                                               |
+  |                                                                          |
+  | This program is free software: you can redistribute it and/or modify     |
+  | it under the terms of the GNU Affero General Public License as           |
+  | published by the Free Software Foundation, either version 3 of the       |
+  | License, or (at your option) any later version.                          |
+  |                                                                          |
+  | This program is distributed in the hope that it will be useful,          |
+  | but WITHOUT ANY WARRANTY; without even the implied warranty of           |
+  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            |
+  | GNU Affero General Public License for more details.                      |
+  |                                                                          |
+  | You should have received a copy of the GNU Affero General Public License |
+  | along with this program.  If not, see http://www.gnu.org/licenses/.      |
+  ----------------------------------------------------------------------------
+</ewd:comment>
+
+<span>
+
+<h3>Determining the IP address of the M/DB Virtual Appliance</h3>
+
+When you boot the M/DB Virtual Appliance, provided Linux does not encounter any networking relating problems, 
+ you will see a panel appear at the end of the boot sequence dialogue that will tell you 
+ the IP address that has been allocated.<br><br>
+
+You can also determine the allocated IP address at any other time by connecting to the Virtual Appliance using an SSH client (eg <i>puTTY</i>),  
+ logging in and typing <i>ifconfig</i>.  Look for the <i>inet addr:</i> field in the following two lines:<br><br>
+<pre>
+eth0      Link encap:Ethernet  HWaddr 00:0C:29:A4:E9:E9<br>
+          inet addr:192.168.1.21  Bcast:192.168.1.255  Mask:255.255.255.0<br>
+</pre>
+<br>
+
+So in the example above, the IP address is 192.168.1.21<br><br>
+
+Alternatively, from within GT.M you can type:<br><br>
+
+<i>
+GTM>w $$getIP^%zewdGTM()<br>
+192.168.1.21<br>
+GTM><br>
+</i>
+
+
+
+<h3>Changing the IP address of the Virtual Appliance</h3>
+
+For convenience, to get you started, the Virtual Appliance is initially configured to acquire an IP address dynamically from your DHCP server.  In most situations you will want to fix its IP address.  Do this as follows:<br><br>
+
+Log in as <i>root</i>.<br><br>
+
+<i>cd /etc/network</i><br><br>
+
+Now edit the <i>interfaces</i> file, eg:<br><br>
+
+<i>pico interfaces</i><br><br>
+
+Find the lines:<br><br>
+
+<i>
+auto eth0<br>
+iface eth0 inet dhcp<br>
+</i><br><br>
+
+and change them to the following, save the file and exit<br><br>
+
+<i>
+# The primary network interface<br>
+<br>
+auto eth0<br>
+iface eth0 inet static<br>
+address 192.168.1.21<br>
+netmask 255.255.255.0<br>
+gateway 192.168.1.2<br>
+broadcast 192.168.1.255<br><br>
+</i>
+[change the addresses according to your requirements]<br><br>
+
+Now you need to restart your network services using the following command<br><br>
+
+<i>/etc/init.d/networking restart</i><br><br>
+
+You can, of course, define a domain name for your M/DB Virtual Appliance by editing the <i>/etc/hosts</i> file.  See <a href="http://www.howtoforge.com/perfect_setup_ubuntu_6.06_p3">http://www.howtoforge.com/perfect_setup_ubuntu_6.06_p3</a> for further details.<br><br>
+
+</span>

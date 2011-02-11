@@ -1,0 +1,28 @@
+<ewd:config isFirstPage="false" pageType="ajax">
+
+<script language="javascript">
+  iMDB = {};
+</script>
+
+  <iwd:form>
+       <br />
+       <iwd:graytitle text="Login" />
+
+       <iwd:formpanel>
+
+         <iwd:formfield type="text" name="username" text="M/DB Administrator ID" /> 
+
+         <iwd:formfield type="password" name="password" text="Secret Key" /> 
+
+         <iwd:formfield type="submit" text="Login" onSubmitted="login^MDBMgr" nextPage="domainMenu" transition="cube"  /> 
+
+      </iwd:formpanel>
+
+  </iwd:form>
+
+   <iwd:footer>
+        M/DB Explorer<br />
+        &copy; 2010 M/Gateway Developments Ltd<br />All Rights Reserved.<br />
+        Powered by iWD 
+   </iwd:footer>
+

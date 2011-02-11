@@ -1,0 +1,33 @@
+<ewd:config isFirstPage="false" pageType="ajax"  prePageScript="py:iMDB.initialiseAttribute">
+
+<script language="javascript">
+ iMDB.saveAttribute = function() {
+   document.getElementById("attributeName").blur();
+   document.getElementById("attributeValue").blur();
+   var nvp = "attrName=" + document.getElementById("attributeName").value + "&attrValue=" + document.getElementById("attributeValue").value ;
+   ewd.ajaxRequest("saveAttribute","attributeMenuPanel",nvp);
+ };
+</script>
+
+<iwd:toolbar title="Add Attribute">
+ <iwd:toolbarButton type="back" text="Attribs" />
+</iwd:toolbar>
+
+<iwd:pageItem>
+    <iwd:header text="Domain: <span style='color:black'><?= #domainName ?></span>" />
+    <iwd:header text="Item: <span style='color:black'><?= #itemName ?></span>" />
+</iwd:pageItem>
+
+<iwd:form>
+
+  <iwd:formpanel>
+
+     <iwd:formfield type="text" name="attributeName" text="Attribute Name" /> 
+
+     <iwd:formfield type="text" name="attributeValue" text="Value" /> 
+
+     <iwd:formfield type="button" text="Save" onClick="iMDB.saveAttribute()" /> 
+
+   </iwd:formpanel>
+
+</iwd:form>

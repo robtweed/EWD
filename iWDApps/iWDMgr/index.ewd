@@ -1,0 +1,4 @@
+<ewd:config isFirstPage="true" cachePage="false">
+
+<iwd:main title="EWD Viewer" contentPage="login" touchIcon="/iwd/pics/homescreen.gif" addGlossToIcon="true" startupImage="/iwd/pics/iwdSplash.png" />
+

@@ -1,0 +1,31 @@
+<ewd:config isFirstPage="false" pageType="ajax" prePageScript="about^%zewdiWDMgr">
+
+  <iwd:toolbar>
+    <iwd:toolbarButton type="back" />
+  </iwd:toolbar>
+
+  <br />
+  <iwd:graytitle text="iWD Viewer Version 1.0" />
+
+  <iwd:pageItem>
+
+    <p>Running on:</p>
+
+    <br />
+    <div style="font-size:11pt">
+
+      <p><?= #ewdOS ?></p>
+      <p><?= #ewdVersion ?></p>
+      <p>(<?= #ewdDate ?>)</p>
+
+    </div>
+
+    <br />
+    <div style="font-size:8pt;">
+      <p>
+        &copy; 2010 M/Gateway Developments Ltd<br />All Rights Reserved.
+      </p>
+    </div>
+
+
+  </iwd:pageItem>

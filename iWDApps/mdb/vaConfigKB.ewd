@@ -1,0 +1,47 @@
+<ewd:config isFirstPage="false" pageType="ajax">
+
+<ewd:comment>
+  ----------------------------------------------------------------------------
+  | M/DB                                                                     |
+  | Copyright (c) 2004-9 M/Gateway Developments Ltd,                         |
+  | Reigate, Surrey UK.                                                      |
+  | All rights reserved.                                                     |
+  |                                                                          |
+  | http://www.mgateway.com                                                  |
+  | Email: rtweed@mgateway.com                                               |
+  |                                                                          |
+  | This program is free software: you can redistribute it and/or modify     |
+  | it under the terms of the GNU Affero General Public License as           |
+  | published by the Free Software Foundation, either version 3 of the       |
+  | License, or (at your option) any later version.                          |
+  |                                                                          |
+  | This program is distributed in the hope that it will be useful,          |
+  | but WITHOUT ANY WARRANTY; without even the implied warranty of           |
+  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            |
+  | GNU Affero General Public License for more details.                      |
+  |                                                                          |
+  | You should have received a copy of the GNU Affero General Public License |
+  | along with this program.  If not, see http://www.gnu.org/licenses/.      |
+  ----------------------------------------------------------------------------
+</ewd:comment>
+
+<span>
+
+<h3>Reconfiguring the Keyboard</h3>
+
+
+You should note that if you access the M/DB Virtual Appliance using puTTY, it is configured to expect a UK Keyboard layout.  If you want to change the keyboard configuration, simply login as root (default password is "1234567") and type:<br><br>
+
+<i>kbd-config</i><br><br>
+
+You'll get an initial screen of instructions.  Press the Enter key to select the "OK" button at the bottom.  You'll then be given a menu of four options.  Press Enter to select the first option:<br><br>
+
+<i>Select keymap from arch list</i><br><br>
+
+<i>[Note: to navigate to the Cancel button, use the right/left arrow keys]</i><br><br>
+
+Next, use the up/down arrow keys to select the appropriate keyboard type (probably "qwerty") and press Enter<br><br>
+
+Then scroll up/down using the up/down arrow keys to select the correct nationality.  Press Enter.  Depending on the keyboard nationality, you may be asked further specific questions, and finally accept the keyboard layout that you've selected.  You'll be returned to the command prompt and the keyboard should now be set to the correct layout.<br><br>
+
+</span>

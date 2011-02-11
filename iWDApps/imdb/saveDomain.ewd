@@ -1,0 +1,7 @@
+<ewd:config isFirstPage="false" pageType="ajax" prePageScript="py:iMDB.saveDomain">
+
+<ewd:ajaxOnLoad>
+   jQT.goBack("domainMenu");
+</ewd:ajaxOnLoad>
+
+  <iwd:menuPanel sessionName="domainList" nextPage="itemMenu" transition="slide" />

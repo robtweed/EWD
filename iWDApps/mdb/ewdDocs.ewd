@@ -1,0 +1,75 @@
+<ewd:config isFirstPage="false" pageType="ajax">
+
+<ewd:comment>
+  ----------------------------------------------------------------------------
+  | M/DB                                                                     |
+  | Copyright (c) 2004-9 M/Gateway Developments Ltd,                         |
+  | Reigate, Surrey UK.                                                      |
+  | All rights reserved.                                                     |
+  |                                                                          |
+  | http://www.mgateway.com                                                  |
+  | Email: rtweed@mgateway.com                                               |
+  |                                                                          |
+  | This program is free software: you can redistribute it and/or modify     |
+  | it under the terms of the GNU Affero General Public License as           |
+  | published by the Free Software Foundation, either version 3 of the       |
+  | License, or (at your option) any later version.                          |
+  |                                                                          |
+  | This program is distributed in the hope that it will be useful,          |
+  | but WITHOUT ANY WARRANTY; without even the implied warranty of           |
+  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            |
+  | GNU Affero General Public License for more details.                      |
+  |                                                                          |
+  | You should have received a copy of the GNU Affero General Public License |
+  | along with this program.  If not, see http://www.gnu.org/licenses/.      |
+  ----------------------------------------------------------------------------
+</ewd:comment>
+
+<span>
+
+<h3>M/DB: Documentation</h3>
+
+<div align="left">
+
+<ul>
+<li><a href="/mdb/mdb_userguide_21.pdf" target="pdf">M/DB User Guide</a></li>
+</ul>
+
+</div>
+
+<h3>Amazon SimpleDB Documentation</h3>
+
+<div align="left">
+
+<ul>
+<li><a href="http://developer.amazonwebservices.com/connect/kbcategory.jspa?categoryID=146" target="pdf">Amazon SimpleDB Technical Documentation</a></li>
+</ul>
+
+</div>
+
+
+<h3>M/DB:X Documentation</h3>
+
+<div align="left">
+
+<ul>
+<li>Full details at the <a href="http://www.mgateway.com/mdbx.html" target="ws">M/Gateway Developments web site</a></li>
+</ul>
+
+</div>
+
+<h3>GT.M and MUMPS Reference Documentation</h3>
+
+<p>If you want to find out about what's underneath the covers in M/DB, consult the following documentation:</p>
+
+<div align="left">
+
+<ul>
+<li><a href="/gtm/GTM_UNIX-Prog-Manual-4.4.pdf" target="pdf">GT.M Programmer's Guide</a></li>
+<li><a href="/gtm/AdminOperationsManGTM.pdf" target="pdf">GT.M Administration and Operations Guide</a></li>
+<li><a href="/gtm/pocket_guide_61_no_printing.pdf" target="pdf">Standard M Pocket Guide</a></li>
+</ul>
+
+</div>
+
+</span>

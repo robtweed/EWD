@@ -1,0 +1,55 @@
+<ewd:config isFirstPage="false" pageType="ajax">
+
+<ewd:comment>
+  ----------------------------------------------------------------------------
+  | Enterprise Web Developer for GT.M and m_apache                           |
+  | Copyright (c) 2004-9 M/Gateway Developments Ltd,                         |
+  | Reigate, Surrey UK.                                                      |
+  | All rights reserved.                                                     |
+  |                                                                          |
+  | http://www.mgateway.com                                                  |
+  | Email: rtweed@mgateway.com                                               |
+  |                                                                          |
+  | This program is free software: you can redistribute it and/or modify     |
+  | it under the terms of the GNU Affero General Public License as           |
+  | published by the Free Software Foundation, either version 3 of the       |
+  | License, or (at your option) any later version.                          |
+  |                                                                          |
+  | This program is distributed in the hope that it will be useful,          |
+  | but WITHOUT ANY WARRANTY; without even the implied warranty of           |
+  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            |
+  | GNU Affero General Public License for more details.                      |
+  |                                                                          |
+  | You should have received a copy of the GNU Affero General Public License |
+  | along with this program.  If not, see http://www.gnu.org/licenses/.      |
+  ----------------------------------------------------------------------------
+</ewd:comment>
+
+<span>
+<h3>Virtual Appliance Architecture</h3>
+
+The EWD Virtual Appliance is based on Ubuntu Linux 7.10 JEOS, running as a Virtual Machine in VMWare Player or WorkStation.  In addition, the following 
+components have been added:
+
+<ul>
+<li>OpenSSH : SSH Server</li>
+<li>GT.M</li>
+<li>The Free Open Source <i>m_apache</i> Gateway</li>
+<li>The Free Open Source version of Enterprise Web Developer (EWD)</li>
+</ul>
+
+
+You therefore have a fully functioning, fully configured Open Source environment which should work for most people "out of the box".  The Ubuntu JEOS version was used to provide the most efficient run-time environment and to keep the Virtual Machine size as small as possible.  Please note, however, that this means that the Linux environment does not include a graphical user interface.  However, most of the day-to-day interactions with the EWD Virtual Appliance will be via a web browser or SCP client.<br><br>
+
+You can, of course, construct your own Linux Desktop system using the same components that have been used to build the EWD Virtual Appliance.  This Virtual Appliance and these notes should provide all the background details you'll need to build your own equivalent system.<br><br>
+
+
+The architecture of your EWD Virtual appliance is shown diagrammatically below:<br><br>
+
+<center><img src="/ewd/ewd_va_Architecture.jpg"></center>
+
+<br><br>
+
+You can adapt and modify the setup and configuration of the EWD Virtual Appliance if you wish.  The following notes should provide you with most of the information you need to customise and tune your EWD Virtual Appliance.<br><br>
+
+</span>

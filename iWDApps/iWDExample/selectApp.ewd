@@ -1,0 +1,15 @@
+<ewd:config isFirstPage="true" pageType="ajax">
+
+<iwd:tabPanel>
+
+  <iwd:tab text="Tab1" selected="true" nextpage="tab1" />
+  <iwd:tab text="Tab2" nextpage="tab2" />
+  <iwd:tab text="Tab3" nextpage="tab3" />
+  <iwd:tab text="Tab4" nextpage="tab4" />
+
+</iwd:tabPanel>
+
+
+
+
+

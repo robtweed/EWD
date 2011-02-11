@@ -1,0 +1,20 @@
+<ewd:config isFirstPage="false" pageType="ajax">
+
+<div>
+
+ <iwd:toolbar>
+   <iwd:toolbarButton type="back" />
+ </iwd:toolbar>
+
+<iwd:pageItem>
+    <iwd:header text="Application: <?= #AppSelected ?>" />
+    <p>
+      Location: <?= #LocationSelected ?>
+    </p>
+</iwd:pageItem>
+
+   <iwd:graytitle text="Select User" />
+
+   <iwd:menuPanel sessionName="UserList" nextPage="details" transition="slide" />
+
+</div>

@@ -1,0 +1,39 @@
+<ewd:config isFirstPage="false" pageType="ajax"  prePageScript="py:iMDB.initialiseItem">
+
+<script language="javascript">
+ iMDB.saveItem = function() {
+   document.getElementById("newItemName").blur();
+   document.getElementById("newItemAttributeName").blur();
+   document.getElementById("newItemAttributeValue").blur();
+   var nvp = "itemName=" + document.getElementById("newItemName").value + "&attrName=" + document.getElementById("newItemAttributeName").value + "&attrValue=" + document.getElementById("newItemAttributeValue").value ;
+   ewd.ajaxRequest("saveItem","itemMenuPanel",nvp);
+ };
+</script>
+
+<iwd:toolbar title="Add Item">
+ <iwd:toolbarButton type="back" text="Items" />
+</iwd:toolbar>
+
+<iwd:pageItem>
+    <iwd:header text="Domain: <span style='color:black'><?= #domainName ?></span>" />
+</iwd:pageItem>
+
+  <iwd:formpanel>
+
+     <iwd:formfield type="text" name="newItemName" text="Item Name" /> 
+
+     <iwd:formfield type="text" name="newItemAttributeName" text="Attribute Name" /> 
+
+     <iwd:formfield type="text" name="newItemAttributeValue" text="Value" /> 
+
+     <iwd:formfield type="button" text="Add" onClick="iMDB.saveItem()" /> 
+
+   </iwd:formpanel>
+
+<iwd:pageItem>
+ <p style="font-size:11pt">
+ You can add further attributes after you add this Item by selecting it 
+ from the list of Items.
+ </p>
+</iwd:pageItem>
+

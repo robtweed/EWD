@@ -1,0 +1,7 @@
+<ewd:config isFirstPage="false" pageType="ajax" prePageScript="py:iMDB.saveAttributeValue">
+
+<ewd:ajaxOnLoad>
+   jQT.goBack("attributeMenu");
+</ewd:ajaxOnLoad>
+
+<iwd:menuPanel sessionName="attributeValues" nextPage="editAttribute" transition="slide" />

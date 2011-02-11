@@ -1,0 +1,29 @@
+<ewd:config isFirstPage="false" pageType="ajax" prePageScript="getSessionInfo^%zewdiWDMgr">
+
+<iwd:toolbar>
+ <iwd:toolbarButton type="back" text="Sessions" />
+ <iwd:toolbarButton type="forward" transition="slide" nextpage="sessionContent" text="View" />
+</iwd:toolbar>
+
+<br />
+<iwd:graytitle text="Session <?= #mgr.sessionNo ?>" />
+
+<ewd:if firstValue="#mgr.expired" operation="=" secondValue="1">
+
+  <iwd:pageItem>
+    <p>Session no longer exists</p>
+  </iwd:pageItem>
+
+<ewd:else>
+
+<iwd:formPanel>
+ <iwd:field type="text" text="Application: <?= #mgr.appName ?>" />
+ <iwd:field type="text" text="Current Page: <?= #mgr.page ?>" />
+ <iwd:field type="text" text="Timeout: <?= #mgr.timeout ?> sec" />
+ <iwd:field type="text" text="Current Time on Server: <?= #mgr.now ?>" />
+ <iwd:field type="text" text="Session Due to Expire: <?= #mgr.expiry ?>" />
+ <iwd:field type="text" text="Database: <?= #mgr.db ?>" />
+ <iwd:field type="text" text="Web Gateway: <?= #mgr.gw ?>" />
+</iwd:formPanel>
+
+</ewd:if>

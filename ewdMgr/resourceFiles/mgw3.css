@@ -1,0 +1,884 @@
+body {
+   background: #FFFCF5 ;
+   height : auto ;
+   overflow: scroll;
+}
+.analysisTable {
+   font-family: Arial, sans-serif ; 
+   font-size: 10pt ; 
+   vertical-align : top ; 
+}
+.analysisTableCentered {
+   font-family: Arial, sans-serif ; 
+   font-size: 10pt ; 
+   vertical-align : top ;
+   text-align : center ; 
+}
+.headerBlock {
+   width: 100% ; 
+   background : #111111 ; 
+   text-align : left ; 
+}
+.headerBlock[class] {
+   width: 100% ; 
+   background : #111111 ; 
+   text-align : left ; 
+   position: relative ; 
+   border-right-style : solid ; 
+   border-right-width: 2px ; 
+}
+.headerText {
+   vertical-align: middle ; 
+   font-family: Arial, sans-serif ; 
+   color: #dddddd ; 
+   font-size: 11pt ; 
+   margin-left: 10px;
+}
+.footerText {
+   vertical-align: middle ; 
+   font-family: Arial, sans-serif ; 
+   color: #dddddd ; 
+   font-size: 8pt ; 
+   margin-left : 10px;
+}
+#headerSubject {
+   vertical-align: middle ; 
+   font-family: Arial, sans-serif ; 
+   color: #dddddd ; 
+   font-size: 11pt ; 
+   position: relative ; 
+   top: -30px ; 
+   text-align: center ;
+}
+.viewWSDL {
+  text-align: center ;
+  font-style : italic ;
+  font-weight: bold;
+  text-decoration : underline ;
+  cursor : pointer ;
+}
+.selectedTab {
+   font-size:8pt ;
+   border-style: solid ;
+   border-width: 1px;
+   background: #DCE1F2 ; 
+   padding-left: 3px ; 
+   padding-right: 3px ;
+   margin-right: 0px;
+   border-color: #EBAB3C #EBAB3C #DCE3f7 #EBAB3C;
+}
+
+.unselectedTab {
+   font-size:8pt ;
+   background: #fcfcfc ;
+   border-style: solid;
+   border-width: 1px ;
+   padding-left: 3px ; 
+   padding-right: 3px ;
+   margin: 0px;
+   border-color: #EBAB3C #EBAB3C #EBAB3C #EBAB3C ;
+}
+
+.highlightedTab {
+   font-size:8pt ;
+   background: #DCE1F2 ;
+   border-style: solid;
+   border-width: 1px ;
+   padding-left: 3px ; 
+   padding-right: 3px ;
+   margin: 0px;
+   border-color: #EBAB3C #EBAB3C #EBAB3C #EBAB3C ;
+}
+
+.selectedInnerTab[class] {
+   font-size:8pt ;
+   border-style: solid ; 
+   background: #DFE1FF ; 
+   padding-left: 3px ; 
+   padding-right: 3px ;
+   margin-right: 0px;
+   border-color: #EBAB3C #EBAB3C transparent #EBAB3C;
+}
+
+.selectedInnerTabOdd[class] {
+   font-size:8pt ;
+   border-style: solid ; 
+   background: #ffffff ; 
+   padding-left: 3px ; 
+   padding-right: 3px ;
+   margin-right: 0px;
+   border-color: #EBAB3C #EBAB3C transparent #EBAB3C;
+}
+
+.selectedInnerTab {
+   font-size:8pt ;
+   border-style: solid ; 
+   border-width:1px;
+   background: #DFE1FF ; 
+   padding-left: 3px ; 
+   padding-right: 3px ;
+   margin-right: 0px;
+   border-bottom-width: 0px;
+   border-color: EBAB3C EBAB3C #fafafa EBAB3C;
+}
+
+.selectedInnerTabOdd {
+   font-size:8pt ;
+   border-style: solid ; 
+   border-width:1px;
+   background: #ffffff ; 
+   padding-left: 3px ; 
+   padding-right: 3px ;
+   margin-right: 0px;
+   border-bottom-width: 0px;
+   border-color: #EBAB3C #EBAB3C #ffffff #EBAB3C;
+}
+
+.highlightedInnerTab {
+   font-size:8pt ;
+   background: #DCE3f7 ;
+   border-style: solid;
+   border-width: 1px ;
+   padding-left: 3px ; 
+   padding-right: 3px ;
+   margin-right: 0px;
+   border-color: #EBAB3C #EBAB3C #EBAB3C #EBAB3C;
+}
+.highlightedInnerTabOdd {
+   font-size:8pt ;
+   background: #ffffff ;
+   border-style: solid;
+   border-width: 1px ;
+   padding-left: 3px ; 
+   padding-right: 3px ;
+   margin-right: 0px;
+   border-color: #EBAB3C #EBAB3C #EBAB3C #EBAB3C;
+}
+
+.unselectedInnerTab {
+   font-size:8pt ;
+   background: #ffffff ;
+   border-style: solid;
+   border-width: 1px ;
+   padding-left: 3px ; 
+   padding-right: 3px ;
+   margin-right: 0px;
+   border-color: #EBAB3C #EBAB3C #EBAB3C #EBAB3C;
+}
+.unselectedInnerTabOdd {
+   font-size:8pt ;
+   background: #DCE3f7 ;
+   border-style: solid;
+   border-width: 1px ;
+   padding-left: 3px ; 
+   padding-right: 3px ;
+   margin-right: 0px;
+   border-color: #EBAB3C #EBAB3C #EBAB3C #EBAB3C;
+}
+.mainTabs {
+   position:relative;
+   top: -45;
+}
+.tabs {
+   cursor : pointer ; 
+   height: 20px ;  
+   background : transparent ; 
+   text-align: center ; 
+   position: relative ; 
+   left: 5px ; 
+   font-family : Arial, Helvetica, sens-serif ; 
+   font-size: 11pt;
+   position:relative;
+   top: -2px;
+   z-index:1 ;
+}
+.innerTabs {
+   cursor : pointer ; 
+   height: 20px ;  
+   background : transparent ; 
+   text-align: center ; 
+   position: relative ; 
+   left: 10px ; 
+   font-family : Arial, Helvetica, sens-serif ; 
+   font-size: 10pt;
+   top: -7px;
+   z-index:1 ;
+}
+
+.mainArea {
+   background : #fafafa ; 
+   padding: 0 ; 
+   text-align: left ; 
+   width : 100% ; 
+   height: auto ; 
+   border-style: solid ;
+   border-width: 0px ; 
+   padding-top : 0px ; 
+   margin-top : 0px ;
+   position:relative;
+   top: -48px;
+}
+
+.workArea {
+   background : #ffffff ; 
+   background-image : url(bgfade_small.gif);
+   background-position : top ;
+   background-repeat: repeat-x;
+   text-align: left ; 
+   position: relative ; 
+   top: -5px;
+   left: 0px ; 
+   width : 100% ; 
+   height: auto ; 
+   font-family : Arial, Helvetica, sens-serif ; 
+   font-size: 12pt ; 
+   border-style: solid;
+   border-width:1px;
+   border-color: black;
+   border-left: 1px #FFE2AF dotted ; 
+   border-right: 1px #FFE2AF dotted ;
+   border-top-color: #EBAB3C ;
+   border-bottom-color: #EBAB3C ;
+}
+.imageStyle {
+  border-bottom: 1px #FFE2AF dotted;
+}
+
+.pageTitle {
+   position: relative;
+   text-align: right;
+   top: -60px;
+   left: -10px;
+   font-family: Arial, sans-serif; 
+   color: #777788 ; 
+   font-size: 35pt ;
+}
+.footerBlock {
+   width: 100% ;
+   background : #111111 ; 
+   text-align : left ; 
+   position: relative ; 
+   top : -49px ;
+   left: 0px; 
+   border-right-style : solid ; 
+   border-right-width: 2px ; 
+}
+.footerBlock[class] {
+   width: 100% ;
+   background : #111111 ; 
+   text-align : left ; 
+   position: relative ; 
+   top : -60px ;
+   left: 0px; 
+   border-right-style : solid ; 
+   border-right-width: 2px ; 
+}
+.tableblock {
+   text-align: left ; 
+   margin-top: 40px ;
+   height : auto ;
+   position: relative ; 
+   top : -26px ; 
+}
+#hiddenForm {
+   visibility: hidden ;
+}
+.smallText {
+   vertical-align: middle ; 
+   font-family: Arial, sans-serif ; 
+   color: black ; 
+   font-size: 9pt ;
+   font-style : italic ;   
+}
+.largeText {
+   vertical-align: middle ; 
+   font-family: Arial, sans-serif ; 
+   color: #000000 ; 
+   font-size: 14pt 
+}
+.mediumText {
+   vertical-align: middle ; 
+   font-family: Arial, sans-serif ; 
+   color: #000000 ; 
+   font-size: 12pt 
+}
+.tinyText {
+   vertical-align: middle ; 
+   font-family: Arial, sans-serif ; 
+   color: #000000 ; 
+   font-size: 8pt ;
+}
+.errorClass {
+   background-color : #ffec9e ;
+   border-color : #ff0000 ;
+}
+.nodeText {
+   font-size: 9pt ;
+}
+
+.propsText {
+   font-size: 10pt ;
+   font-family: Arial, sans-serif ; 
+}
+
+.mainTitleText {
+   position: relative;
+   text-align: right;
+   top: -60px;
+   left: -10px;
+   font-family: Arial, sans-serif; 
+   color: #666666 ; 
+   font-size: 35pt ;
+}
+
+.smallButtonOn {
+   margin-left:0px;
+   margin-right: 0px;
+   font-size:7pt;
+   border: 1px outset white;
+   background-color: #F3F3F3;
+   padding: 0px 0px 0px 0px;
+   cursor : pointer ;
+}
+.smallButton2On {
+   margin-left:0px;
+   margin-right: 0px;
+   font-size:7pt;
+   border: 1px outset white;
+   background-color: #F3F3F3;
+   padding: 0px 2px 0px 1px;
+   cursor : pointer ;
+}
+.smallButtonOff{
+   display: none ;
+   cursor : pointer ;
+}
+
+.indented {
+   position: relative ; 
+   left: 30px ; 
+}
+.popupOn {
+    background : #efffff ;
+    border-style: outset ;
+    border-width: 3px ;
+    text-align : left ;
+    font-size : 8pt ;
+    left:500px; 
+    width: 320px;
+    height:300px;
+    position:absolute; 
+    top:20px; 
+    visibility: visible; 
+    overflow:auto;
+    z-index:1;
+}
+
+
+.showLine {
+   visibility: visible ;
+}
+.hideLine {
+   visibility: hidden ;
+   display: none ;
+}
+.spinnerButtonUp {
+   margin-left:0px;
+   margin-right: 0px;
+   font-size:5pt;
+   border: 1px outset white;
+   background-color: #F3F3F3;
+   padding: 0px 3px 0px 2px;
+   cursor : pointer ;
+   position:relative; 
+   top:-8px;
+   left:-4px;
+}
+.spinnerButtonDown {
+   margin-left:0px;
+   margin-right: 0px;
+   font-size:5pt;
+   border: 1px outset white;
+   background-color: #F3F3F3;
+   padding: 0px 2px 0px 1px;
+   position:relative; 
+   top:5px;
+   left:-23px ;
+   cursor : pointer ;
+}
+    .selectorPanel {
+      height: auto;
+      width: 50% ;
+      background-color: transparent ;
+      vertical-align: top ;
+      border-style: solid ;
+      border-color: #EBAB3C ;
+      border-width: 0px ;
+      padding: 4px; 
+    }
+    .selectorPanel2 {
+      background-color: transparent ;
+      vertical-align: top ;
+      border-style: solid ; 
+      border-width: 1px ;
+      border-color : #000000 ;
+    }
+    .applicationPanel {
+      height: auto;
+      width: 95% ;
+      background-color: #FFFCF5 ;
+      vertical-align: top ;
+      margin-left: 10px;
+      margin-right: 0px;
+      margin-top: 0px;
+      padding-top: 0px;
+      position:relative;
+      top: -10px;
+      border-style: solid ;
+      border-color: #EBAB3C ;
+      border-width: 1px ;
+      padding: 4px;
+    }
+    .propertiesPanel {
+      height: auto;
+      width: 50% ;
+      background-color: #D5D2E2 ;
+      vertical-align: top ;
+      border-style: solid ; 
+      border-width: 1px ;
+      border-color : #000000 ;
+    }
+    .propsPanel {
+      height: 170px;
+      width: 95% ;
+      background-color: #FFE4E4 ;
+      vertical-align: top ;
+      margin-left: 10px;
+      margin-top: 0px;
+      padding-top: 0px;
+      position:relative;
+      top: -10px;
+      border-style: solid ; 
+      border-width: 1px ;
+      border-color : #000000 ;
+    }
+    .propsTable {
+      font-size: 10pt;
+      border-collapse: collapse;
+      width: 100%;
+    }
+    .configRow {
+      border-bottom: 1px solid #cccccc ;
+    }
+    .maintable {
+      position:relative;
+      top: -15px;
+    }
+    .buttonPanel {
+      background-color: #D5D2E2 ;
+    }
+    .but {
+      padding-right: 5px ;
+    }
+    .highlightedTextOn {
+      background-color: #FCA2A2 ;
+      font-weight: bold ;
+    }
+    .highlightedTextOff {
+      background-color: #FFE4E4 ;
+    }
+
+    .smallButton {
+      padding: 0px;
+      font-size: 8pt;
+    }
+
+    .outerPanel {
+      height: 250px;
+      width: 32% ;
+      background-color: #D5D2E2 ;
+      vertical-align: top ;
+      border-style: outset ;
+
+    }
+.mainTabMenuPanel {
+      background : #ffffff ; 
+      background-image : url(bgfade_small.gif);
+      background-position : top ;
+      background-repeat: repeat-x;
+   text-align: left ; 
+   position: relative ; 
+   top: -5px;
+   left: 0px ; 
+   width : 100% ; 
+   height: auto ; 
+   font-family : Arial, Helvetica, sens-serif ; 
+   font-size: 12pt ; 
+   border-style: solid;
+   border-width:1px;
+   border-color: black;
+   border-left: 1px #FFE2AF dotted ; 
+   border-right: 1px #FFE2AF dotted ;
+   border-top-color: #EBAB3C ;
+   padding: 10px 20px 10px 20px;
+}
+.mainTabMenuPanel[class] {
+      background : #ffffff ; 
+      background-image : url(bgfade_small.gif);
+      background-position : top ;
+      background-repeat: repeat-x;
+   text-align: left ; 
+   position: relative ; 
+   top: -5px;
+   left: 0px ; 
+   width : 96% ; 
+   height: auto ; 
+   font-family : Arial, Helvetica, sens-serif ; 
+   font-size: 12pt ; 
+   border-style: solid;
+   border-width:1px;
+   border-color: black;
+   border-left: 1px #FFE2AF dotted ; 
+   border-right: 1px #FFE2AF dotted ;
+   border-top-color: #EBAB3C ;
+   padding: 10px 20px 10px 20px;
+}
+
+    .innerPanel {
+      height: auto;
+      width: 100% ;
+      background : #ffffff ; 
+      background-image : url(bgfade_small.gif);
+      background-position : top ;
+      background-repeat: repeat-x;
+      vertical-align: top ;
+      margin-left: 5px;
+      margin-right: 5px;
+      margin-top: 0px;
+      margin-bottom: 5px;
+      padding-top: 10px;
+      padding-left:10px;
+      position:relative;
+      top: -10px;
+      border-style: solid;
+      border-width:1px;
+      border-top-color: #EBAB3C ;
+      border-bottom-color: #ffffff ;
+      border-left-width: 0px ;
+      border-right-width: 0px ;
+    }
+    .innerPanelOdd {
+      height: auto;
+      width: 97% ;
+      background-color: #ffffff ;
+      background-image : url(bgfade2_small.gif);
+      background-position : bottom left ;
+      background-repeat : repeat-x ;
+      vertical-align: top ;
+      margin-left: 5px;
+      margin-right: 5px;
+      margin-top: 0px;
+      margin-bottom: 5px;
+      padding-top: 10px;
+      padding-left:10px;
+      position:relative;
+      top: -10px;
+      border-top-style: solid ; 
+      border-width: 2px ;
+      border-top-width: 1px;
+      border-color : #EBAB3C ;
+    }
+    .configTable {
+      border-collapse: collapse;
+      border-spacing: 3px;
+      font-family: Arial, sans-serif ; 
+      font-size: 8pt;
+      width: 100%;
+    }
+    .boldText {
+      font-size: 11pt;
+      font-weight: bold;
+      margin-bottom: 3px;
+    }
+    .configTable select {
+      font-size: 8pt;
+    }
+    .propsTable select {
+      font-size: 8pt;
+    }
+
+.listPagePanelOff {
+    display : none ;
+}
+
+.listPagePanelOn {
+  height: auto;
+  width: 750px;
+  background-color: #FFFCF5 ;
+      border-style: solid ;
+      border-color: #EBAB3C ;
+      border-width: 1px ;
+  visibility: visible; 
+  z-index: 10;
+  position:absolute;
+  top: -140px ;
+  left: 80px ;
+}
+
+.alertPanelOff {
+    display : none ;
+}
+
+.alertPanelOn {
+  height: auto;
+  width: auto;
+  background-color: #DCE1F2 ;
+  border-style: solid ;
+  border-color: #EBAB3C ;
+  border-width: 2px ;
+  padding: 5px 5px 5px 5px;
+  visibility: visible; 
+  z-index: 2;
+  position:absolute;
+  top: 200px ;
+  left: 400px ;
+}
+
+.header {
+  background-color: #DCE1F2 ;
+  height: 20px;
+  font-family: Arial, sans-serif ; 
+  font-weight: bold;
+  font-size: 12pt;
+}
+
+.invisible {
+  visibility: hidden ;
+}
+
+.hiddenImage {
+  display: none ;
+}
+.visibleImage {
+   z-index:1 ;
+   left: 300px;
+   top: 150px;
+   background-color: #8484FD ;
+   height: 50px;
+   width: 160px ;
+   text-align: center;
+}
+.s3TablePanel {
+  height: 380px;
+  width: 340px;
+  background-color: transparent;
+}
+.s3MovePanel {
+  height: 380px;
+  width: 50px;
+  background-color: #DCE1F2 ;
+}
+.pathPanel {
+  height: 20px;
+  width:320px;
+  text-align:left;
+  background-color: #FFFCF5 ;
+  border-style: solid ;
+  border-color: #EBAB3C ;
+  border-width: 1px ;
+}
+.pathPanel[class] {
+  height: 21px;
+  width:332px;
+  text-align:left;
+  background-color: #FFFCF5 ;
+  border-style: solid ;
+  border-color: #EBAB3C ;
+  border-width: 1px ;
+}
+.filePanel {
+  text-align: left;
+  height: 150px;
+  width:320px;
+  background-color: #FFFCF5 ;
+  vertical-align: top ;
+  border-style: solid ;
+  border-color: #EBAB3C ;
+  border-width: 1px ;
+  padding: 5px;
+  overflow: auto;
+}
+.s3Table {
+  table-layout: fixed ;
+  width: 700px;
+  height: 380px;
+  border-collapse: collapse;
+  background-color: transparent;
+}
+.s3Table[class] {
+  table-layout: fixed ;
+  width: 780px;
+  height: 400px;
+  border-collapse: collapse;
+  background-color: transparent ;
+}
+ 
+.s3FilePanelRow {
+  height: 160px;
+}
+.selectedBucket {
+  font-style : italic ;
+  font-weight: bold;
+}
+.unselectedBucket {
+}
+.moveButton {
+  width: 46px;
+  font-size: 8pt ;
+  position: relative;
+  top: 70 ;
+  left: 2px;
+}
+.helpButton {
+  width: 46px;
+  font-size: 8pt ;
+  position: relative;
+  top: -145 ;
+  left: 2px;
+}
+.bucketButton {
+  width: 46px;
+  font-size: 8pt ;
+  position: relative;
+  top: -50 ;
+  left: -5px;
+}
+.bucketButton[class] {
+  width: 46px;
+  font-size: 8pt ;
+  position: relative;
+  top: -70 ;
+  left: 2px;
+}
+.objectButton {
+  width: 46px;
+  font-size: 8pt ;
+  position: relative;
+  top: 8px ;
+  left: -5px;
+}
+.objectButton[class] {
+  width: 46px;
+  font-size: 8pt ;
+  position: relative;
+  top: 8px ;
+  left: 2px;
+}
+.bucketField {
+  width: 313px;
+  height: 17px;
+  border-width: 0px;
+  background-color: #FFFCF5 ;
+}
+.bucketField[class] {
+  width: 330px;
+  height: 19px;
+  border-width: 0px;
+  background-color: #FFFCF5 ;
+}
+.mainS3Panel {
+  background-color: #DCE1F2 ;
+  border-style: solid ;
+  border-color: #EBAB3C ;
+  border-width: 1px ;
+  width: 788px;
+  height: 388px;
+}
+.mainS3Panel[class] {
+  background-color: #DCE1F2 ;
+  border-style: solid ;
+  border-color: #EBAB3C ;
+  border-width: 1px ;
+  width: 848px;
+  height: 400px;
+}
+.popupPanelOn {
+  height: 300px;
+  width: 300px;
+  background-color: #FFFCF5 ;
+  z-index: 1;
+  position: relative;
+  top: -390px;
+  left: 180px;
+  border-style: solid ;
+  border-color: #EBAB3C ;
+  border-width: 1px ;
+  padding: 4px; 
+  overflow:auto;
+}
+.popupPanelOff {
+  display: none;
+}
+.helpPanelOn {
+  height: 430px;
+  width: 500px;
+  background-color: #FFFCF5 ;
+  z-index: 4;
+  position: relative;
+  top: -550px;
+  left: 300px;
+  border-style: solid ;
+  border-color: #DCE1F2 ;
+  border-width: 2px ;
+  padding: 4px; 
+  overflow: auto;
+}
+.apiColumn {
+  vertical-align: top;
+}
+
+.dragging {
+    opacity:.80; 
+    filter:alpha(opacity=80);
+    cursor:move;
+    background : #efffff ;
+    border-style: outset ;
+    border-width: 3px ;
+    text-align : left ;
+    font-size : 8pt ;
+  top: -18px ;
+  left: 20px ;
+  width: 750px;
+  height: auto;
+    position:absolute; 
+    visibility: visible; 
+    overflow:auto;
+    z-index:1;
+}
+.actionButton {
+  width: auto;
+  font-size: 8pt ;
+}
+.listingCol {
+  background-color: #DCE1F2 ;
+  border-width: 0px ;
+  font-size: 10pt ;
+}
+.listingColTiny {
+  background-color: #DCE1F2 ;
+  border-width: 0px ;
+  font-size: 8pt ;
+}
+.bubbleHelpPanelOn {
+  height: auto;
+  background-color: #FFFCF5 ;
+  z-index: 4;
+  position: absolute;
+  border-style: solid ;
+  border-color: #DCE1F2 ;
+  border-width: 2px ;
+  padding: 4px; 
+  font-family: Arial, sans-serif ; 
+  font-size: 8pt;
+  color: #5555ff ;
+}

@@ -1,0 +1,23 @@
+<ewd:config isFirstPage="false" pageType="ajax" prePageScript="isPasswordProtected^%zewdiWDMgr">
+
+ <iwd:redirect>
+  <iwd:test name="isPasswordProtected" value="0" page="mainMenu" />
+ </iwd:redirect>
+
+
+ <iwd:form>
+   <br />
+   <iwd:graytitle text="Login" />
+   <iwd:formpanel>
+     <iwd:formfield type="text" name="username" text="Username" /> 
+     <iwd:formfield type="password" name="password" text="Password" /> 
+     <iwd:formfield type="submit" name="submit" text="Login" onSubmitted="login^%zewdiWDMgr" nextPage="mainMenu" transition="swap" alertTitle="Login Error!"  />
+   </iwd:formpanel>
+ </iwd:form>
+
+ <iwd:footer>
+    EWD Viewer<br />
+    Powered by iWD<br/>
+    From M/Gateway Developments Ltd
+ </iwd:footer>
+

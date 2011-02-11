@@ -1,0 +1,11 @@
+<ewd:config isFirstPage="false" pageType="ajax">
+
+ <iwd:toolbar>
+   <iwd:toolbarButton type="forward" transition="swap" nextpage="selectApp" text="New" />
+ </iwd:toolbar>
+
+  <iwd:pageItem>
+   <p>
+     Data Entry completed!
+   </p>
+ </iwd:pageItem>

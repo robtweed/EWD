@@ -1,0 +1,11 @@
+#!/bin/bash
+#
+# If the EBS volume is mounted as /mdb, use it, otherwise use the defaults
+if [ -d /mdb/ewd ]; then
+    cd /mdb/ewd
+    source /mdb/ewd/gtmprofile
+else
+    cd /usr/local/gtm/ewd
+    source /usr/local/gtm/ewd/gtmprofile
+fi
+mumps -r INETD^%ZMGWSIS

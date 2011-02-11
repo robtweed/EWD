@@ -1,0 +1,3 @@
+<ewd:config isFirstPage="true" cachePage="false">
+
+<iwd:main title="M/DB Explorer" contentPage="notInitialised" touchIcon="/iwd/pics/homescreen.gif" addGlossToIcon="true" startupImage="/iwd/pics/iwdSplash.png" />

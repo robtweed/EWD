@@ -1,0 +1,130 @@
+<ewd:config pageType="ajax" applyTemplate="false" prePageScript="getCustomTagList^%zewdMgrAjax">
+
+<ewd:comment>
+  ----------------------------------------------------------------------------
+  | Enterprise Web Developer for GT.M and m_apache                           |
+  | Copyright (c) 2004-9 M/Gateway Developments Ltd,                         |
+  | Reigate, Surrey UK.                                                      |
+  | All rights reserved.                                                     |
+  |                                                                          |
+  | http://www.mgateway.com                                                  |
+  | Email: rtweed@mgateway.com                                               |
+  |                                                                          |
+  | This program is free software: you can redistribute it and/or modify     |
+  | it under the terms of the GNU Affero General Public License as           |
+  | published by the Free Software Foundation, either version 3 of the       |
+  | License, or (at your option) any later version.                          |
+  |                                                                          |
+  | This program is distributed in the hope that it will be useful,          |
+  | but WITHOUT ANY WARRANTY; without even the implied warranty of           |
+  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            |
+  | GNU Affero General Public License for more details.                      |
+  |                                                                          |
+  | You should have received a copy of the GNU Affero General Public License |
+  | along with this program.  If not, see http://www.gnu.org/licenses/.      |
+  ----------------------------------------------------------------------------
+</ewd:comment>
+
+<ewd:ajaxOnLoad>
+  EWD.page.setTitle('enterprise web developer') ;
+</ewd:ajaxOnLoad>
+
+<script language="javascript">
+  MGW.page.displayCustomTag = function(tagName) {
+    document.getElementById("listingColumn").style.visibility = "visible" ;
+    var nvp="tagName=" + tagName ;
+    ewd.ajaxRequest("editCustomTag","listingPanel",nvp) ;
+  };
+  MGW.page.deleteCustomTag = function(tagName) {
+    var ok=confirm("Are you sure you want to delete the custom tag: " + tagName + "?") ;
+    if (ok) {
+      var nvp="tagName=" + tagName ;
+      ewd.ajaxRequest("deleteCustomTag","customTagsNullid",nvp) ;
+    }
+  };
+  MGW.page.exportCustomTag = function(tagName) {
+    document.getElementById("listingColumn").style.visibility = "visible" ;
+    var nvp="tagName=" + tagName ;
+    ewd.ajaxRequest("exportCustomTag","listingPanel",nvp) ;
+  };
+  MGW.page.newCustomTag = function() {
+    document.getElementById("listingColumn").style.visibility = "visible" ;
+    ewd.ajaxRequest("newCustomTag","listingPanel") ;
+  };
+  MGW.page.importCustomTag = function() {
+    document.getElementById("listingColumn").style.visibility = "visible" ;
+    ewd.ajaxRequest("importCustomTag","listingPanel") ;
+  };
+  MGW.page.displayNotes = function(tagName) {
+    var nvp="tagName=" + tagName ;
+    document.getElementById("listingColumn").style.visibility = "visible" ;
+    ewd.ajaxRequest("showCustomTagNotes","listingPanel",nvp)    
+  } ;
+</script>
+
+<span class="propsText">
+  <ewd:set return="$path" value="/">
+  <table border=0 width="99%" style="table-layout:fixed">
+    <tr>
+      <td width="46%">
+       <div class="selectorPanel" style="width:99%; height:auto">
+         <h5 align="center"><ewd:help sourceId="ct_doc" width="500px"/>Registered Custom Tags</h5>
+         <div class="applicationPanel" style="left:-5px; height:320px; overflow:scroll">
+           <table border="0" width="100%" class="propsText">
+             <tr>
+               <td align="left" class="configRow">
+                 &nbsp;
+               </td>
+               <td class="configRow" width="47%">
+                 <input class="actionButton" type="button" id="new" value="Register New.." onClick="MGW.page.newCustomTag()">
+               </td>
+             </tr>
+             <ewd:if firstValue="#hasCustomTags" operation="!=" secondValue="0">
+               <ewd:forEach sessionName="customTagList" index="$name">
+                 <tr>
+                   <td align="left" class="configRow">
+                      <img src="<?= $path ?>icn_help_blue.gif" onMouseOver="MGW.page.displayNotes('<?= $name ?>')" />&nbsp;<?= $name ?>
+                   </td>
+                   <td class="configRow" width="47%">
+                      <input class="actionButton" type="button" id="list<?= $name ?>" value="Edit" onClick="MGW.page.displayCustomTag('<?= $name ?>')">
+                      <input type="button" id="del<?= $name ?>" class="actionButton" value="Delete" onClick="MGW.page.deleteCustomTag('<?= $name ?>')">
+                   </td>
+                 </tr>
+               </ewd:forEach>
+             </ewd:if>
+           </table>
+         </div>
+       </div>
+      </td>
+      
+      <td id="listingColumn" style="visibility:hidden; height:auto">
+        <div class="selectorPanel" style="width:99%; height:99%" id="listingPanel">
+          &nbsp;
+        </div>
+      </td>
+    </tr>
+  </table>
+  <div id="customTagsNullid" />
+<div id="ct_doc" class="alertPanelOff">
+    Custom Tags are an extremely powerful feature of EWD that allow you extend its capabilities by encapsulating functionality of any degree of 
+    complexity into a single XML tag (or sometimes a group of related, interacting XML tags).  You have complete control 
+    over the naming and structure of your custom tags, and complete control over how EWD's compiler transforms your custom 
+    tags into the final markup and/or Javascript.
+
+    <p>When a Custom Tag is registered, EWD's compiler will add it to the list of tags it searches for.  On locating an instance, 
+     EWD will pass control to the associated <i>Tag Processor Method</i>.  This method is given complete access to the XML DOM 
+     that represents the EWD page, and the tag processor manipulates and modifies the page DOM using EWD's DOM API methods.</p>
+
+    <p>Your custom tag processor can add other custom tags (either built-in ones, or others that you or others have created) to 
+     the page DOM, so you can build complex custom tags from other, simpler ones, ultimately relying on EWD's built-in primitive custom tags 
+     that will take care of any technology-specific in-page logic.  Provided you avoid self referencing loops, custom tags can be 
+     layered to any depth you like.</p>
+
+    <p>By harnessing EWD's custom tags you can provide your page developers with complex gadgets and widgets that they can 
+    simply drop into their pages as XML tags and that can interface with your back-end database via EWD's Session data structures.</p>
+</div>
+</span>
+
+
+
+

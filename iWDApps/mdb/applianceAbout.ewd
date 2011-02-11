@@ -1,0 +1,90 @@
+<ewd:config isFirstPage="false" pageType="ajax" prepagescript="aboutAppliance^MDBMgr">
+
+<ewd:comment>
+  ----------------------------------------------------------------------------
+  | M/DB                                                                     |
+  | Copyright (c) 2004-9 M/Gateway Developments Ltd,                         |
+  | Reigate, Surrey UK.                                                      |
+  | All rights reserved.                                                     |
+  |                                                                          |
+  | http://www.mgateway.com                                                  |
+  | Email: rtweed@mgateway.com                                               |
+  |                                                                          |
+  | This program is free software: you can redistribute it and/or modify     |
+  | it under the terms of the GNU Affero General Public License as           |
+  | published by the Free Software Foundation, either version 3 of the       |
+  | License, or (at your option) any later version.                          |
+  |                                                                          |
+  | This program is distributed in the hope that it will be useful,          |
+  | but WITHOUT ANY WARRANTY; without even the implied warranty of           |
+  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            |
+  | GNU Affero General Public License for more details.                      |
+  |                                                                          |
+  | You should have received a copy of the GNU Affero General Public License |
+  | along with this program.  If not, see http://www.gnu.org/licenses/.      |
+  ----------------------------------------------------------------------------
+</ewd:comment>
+
+<div>
+<center>
+<br/>
+<table border="1" width="75%">
+<tr>
+<td>M/DB Appliance Version:</td>
+<td>M/DB Build <?= #mdbva_version ?> ; <?= #mdbva_date ?></td>
+</tr>
+<tr>
+<td>Operating Environment:</td>
+<td><?= #mdbva_os ?></td>
+</tr>
+<tr>
+<td>Powered by:</td>
+<td><?= #gtm_version ?><br>
+FOSS version of <?= #ewdVersion ?><br>
+</td>
+</tr>
+<tr>
+<td><i>m_apache</i> Gateway version:</td>
+<td><?= #mgwsi_version ?></td>
+</tr>
+<tr>
+<td>Current date and time:</td>
+<td><?= #gtm_dateTime ?></td>
+</tr>
+<tr>
+<td>IP Address:</td>
+<td><?= #ewd_ip ?></td>
+</tr>
+<tr>
+<td>Copyright:</td>
+<td>&copy; 2008-2009, M/Gateway Developments Ltd. (All Rights Reserved)</td>
+</tr>
+<td>Licensing:</td>
+<td>M/DB, Enterprise Web Developer, <i>m_apache</i> and the <i>ewdMgr</i> application are licensed under the 
+ GNU Affero General Public License, as published by the Free Software Foundation, 
+ either version 3 of the License, or (at your option) any later version.  See &lt;http://www.gnu.org/licenses/&gt;<br><br>
+For licensing of other components included in this Virtual Appliance, please refer to the relevant documentation.
+</td>
+</tr>
+<tr>
+<td>Warranty:</td>
+<td>This Virtual Appliance (and all components contained in it) is distributed in the hope that it will be useful, 
+ but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ GNU Affero General Public License for more details.</td>
+</tr>
+<tr>
+<td>Support:</td>
+<td>None provided except by negotiated contract<br>
+Contact Rob Tweed at rtweed@mgateway.com for details<br><br>
+<a href="http://groups.google.co.uk/group/mdb-community-forum">Online Community:</a> http://groups.google.co.uk/group/mdb-community-forum
+</td>
+</tr>
+<tr>
+<td>Special thanks to:</td>
+Jon Diamond and CAMTA for the Standard MUMPS Pocket Guide
+</td>
+</tr>
+</table>
+</center>
+</div>
+

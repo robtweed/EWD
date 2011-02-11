@@ -1,0 +1,18 @@
+<ewd:config isFirstPage="false" pageType="ajax">
+
+ <iwd:toolbar>
+    <iwd:toolbarButton type="back" />
+ </iwd:toolbar>
+
+  <br />
+  <iwd:graytitle text="Search CDs by Artist" />
+
+  <iwd:formpanel>
+    <iwd:form>
+      <iwd:formfield type="text" name="cdArtist" text="Artist" /> 
+      <iwd:formfield type="submit" text="Search" nextPage="CDXArtistList" transition="slide" /> 
+    </iwd:form>
+  </iwd:formpanel>
+
+
+

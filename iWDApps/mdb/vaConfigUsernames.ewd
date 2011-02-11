@@ -1,0 +1,48 @@
+<ewd:config isFirstPage="false" pageType="ajax">
+
+<ewd:comment>
+  ----------------------------------------------------------------------------
+  | M/DB                                                                     |
+  | Copyright (c) 2004-9 M/Gateway Developments Ltd,                         |
+  | Reigate, Surrey UK.                                                      |
+  | All rights reserved.                                                     |
+  |                                                                          |
+  | http://www.mgateway.com                                                  |
+  | Email: rtweed@mgateway.com                                               |
+  |                                                                          |
+  | This program is free software: you can redistribute it and/or modify     |
+  | it under the terms of the GNU Affero General Public License as           |
+  | published by the Free Software Foundation, either version 3 of the       |
+  | License, or (at your option) any later version.                          |
+  |                                                                          |
+  | This program is distributed in the hope that it will be useful,          |
+  | but WITHOUT ANY WARRANTY; without even the implied warranty of           |
+  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            |
+  | GNU Affero General Public License for more details.                      |
+  |                                                                          |
+  | You should have received a copy of the GNU Affero General Public License |
+  | along with this program.  If not, see http://www.gnu.org/licenses/.      |
+  ----------------------------------------------------------------------------
+</ewd:comment>
+
+<span>
+<h3>Configured Usernames</h3>
+
+In case you need low-level access to the Virtual Appliance, two usernames have been set up:  <i>root</i> and <i>ewd</i>.<br><br>  
+
+<p>Both have an initial password of <i>1234567</i>.  <i>ewd</i> has sudo privelege.  Both usernames can be used to access the Virtual Appliance via SSH.  
+ To access the Virtual Appliance using SSH from a Windows PC, we recommend using 
+ <i><a href="http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html" target="putty">puTTY</a></i> and 
+ <i><a href="http://winscp.net/eng/index.php" target="winscp">WinSCP</a></i>.</p>
+
+<p>
+ However, most day-to-day management/ maintenance-related access will be done via the browser interface: just point a browser at the IP address 
+that has been assigned to the Virtual Appliance, eg <i>http://192.168.1.21</i></p>
+
+<p>For M/DB REST clients, the M/DB Virtual Appliance appears as a "black-box" equivalent to SimpleDB, accessible via 
+the same REST APIs with the exception that the requests are directed at the domain name/IP address assigned to the M/DB 
+Virtual Appliance.</p>
+
+
+
+</span>

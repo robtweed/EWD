@@ -1,0 +1,39 @@
+<ewd:config isFirstPage="false" pageType="ajax" prePageScript="py:iMDB.getAttributeDetails">
+
+<script language="javascript">
+ iMDB.saveAttributeValue = function() {
+   document.getElementById("editAttributeValue").blur();
+   var nvp = "attrValue=" + document.getElementById("editAttributeValue").value ;
+   ewd.ajaxRequest("saveAttributeValue","attributeMenuPanel",nvp);
+ };
+ iMDB.deleteAttribute = function() {
+    iWD.removeActive();
+    var ok = confirm("Are you sure you want to delete this attribute?");
+    if (ok){
+      ewd.ajaxRequest("deleteAttribute","attributeMenuPanel");
+    }
+ };
+</script>
+
+<iwd:toolbar title="Attribute">
+ <iwd:toolbarButton type="back" text="Attribs" />
+ <iwd:toolbarButton type="forward" onclick="iMDB.deleteAttribute()" text="Delete" />
+</iwd:toolbar>
+
+<iwd:pageItem>
+    <iwd:header text="Domain: <span style='color:black'><?= #domainName ?></span>" />
+    <iwd:header text="Item: <span style='color:black'><?= #itemName ?></span>" />
+    <iwd:header text="Name: <span style='color:black'><?= #attributeName ?></span>" />
+</iwd:pageItem>
+
+  <br />
+  <iwd:graytitle text="Value" />
+
+  <iwd:formpanel>
+
+     <iwd:formfield type="text" name="editAttributeValue" text="Value" /> 
+
+     <iwd:formfield type="button" text="Save" onClick="iMDB.saveAttributeValue()" /> 
+
+   </iwd:formpanel>
+

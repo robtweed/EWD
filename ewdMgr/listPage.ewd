@@ -1,0 +1,75 @@
+<ewd:config pageType="ajax" applyTemplate="false" prePageScript="getPageDetails^%zewdMgrAjax">
+
+<ewd:comment>
+  ----------------------------------------------------------------------------
+  | Enterprise Web Developer for GT.M and m_apache                           |
+  | Copyright (c) 2004-9 M/Gateway Developments Ltd,                         |
+  | Reigate, Surrey UK.                                                      |
+  | All rights reserved.                                                     |
+  |                                                                          |
+  | http://www.mgateway.com                                                  |
+  | Email: rtweed@mgateway.com                                               |
+  |                                                                          |
+  | This program is free software: you can redistribute it and/or modify     |
+  | it under the terms of the GNU Affero General Public License as           |
+  | published by the Free Software Foundation, either version 3 of the       |
+  | License, or (at your option) any later version.                          |
+  |                                                                          |
+  | This program is distributed in the hope that it will be useful,          |
+  | but WITHOUT ANY WARRANTY; without even the implied warranty of           |
+  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            |
+  | GNU Affero General Public License for more details.                      |
+  |                                                                          |
+  | You should have received a copy of the GNU Affero General Public License |
+  | along with this program.  If not, see http://www.gnu.org/licenses/.      |
+  ----------------------------------------------------------------------------
+</ewd:comment>
+
+<script language="javascript">
+   MGW.page.grab = function(objid,e) {
+
+     obj=document.getElementById(objid) ;
+     obj.className = "dragging" ;
+     startX = e.clientX ;
+     startY = e.clientY ;
+     divX = 20 ;
+     divY = -18 ;
+     if (obj.style.left != "") divX = parseInt(obj.style.left) ;
+     if (obj.style.top != "") divY = parseInt(obj.style.top) ;
+     grabbed = true ;
+
+   };
+   MGW.page.release = function(objid) {
+     obj=document.getElementById(objid) ;
+     obj.className = objid + "On" ;
+     grabbed = false ;
+   };
+   MGW.page.moveDiv = function(objid,e) {
+     if (grabbed) {
+        obj=document.getElementById(objid) ;
+        var newX = e.clientX ;
+        var newY = e.clientY ;
+        var diffX = startX - newX ;
+        var diffY = startY - newY ;
+        obj.style.left = (divX - diffX) +"px" ;
+        obj.style.top = (divY - diffY) + "px" ;
+     }
+   };
+   grabbed = false ;
+</script>
+
+
+<table border=0 width="100%">
+ <tr>
+  <td class="header" width="98%" align="center">
+    Listing of <?= #pageName ?>
+  </td>
+  <td class="header" width="2%" onClick="document.getElementById('listPagePanel').className = 'listPagePanelOff' ;">
+    <input type="button" id="x" style="font-size:10px; font-weight:bold; padding: 0px" value="X" onclick="document.getElementById('listPagePanel').className = 'listPagePanelOff' ;">
+  </td>
+ </tr>
+</table>
+<div>
+<textarea style="border-width:0px" name="pageListing" rows=24 cols=90>*</textarea>
+<br>
+</div>

@@ -1,0 +1,48 @@
+<ewd:config pageType="ajax" applyTemplate="false">
+
+<ewd:comment>
+  ----------------------------------------------------------------------------
+  | Enterprise Web Developer for GT.M and m_apache                           |
+  | Copyright (c) 2004-9 M/Gateway Developments Ltd,                         |
+  | Reigate, Surrey UK.                                                      |
+  | All rights reserved.                                                     |
+  |                                                                          |
+  | http://www.mgateway.com                                                  |
+  | Email: rtweed@mgateway.com                                               |
+  |                                                                          |
+  | This program is free software: you can redistribute it and/or modify     |
+  | it under the terms of the GNU Affero General Public License as           |
+  | published by the Free Software Foundation, either version 3 of the       |
+  | License, or (at your option) any later version.                          |
+  |                                                                          |
+  | This program is distributed in the hope that it will be useful,          |
+  | but WITHOUT ANY WARRANTY; without even the implied warranty of           |
+  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            |
+  | GNU Affero General Public License for more details.                      |
+  |                                                                          |
+  | You should have received a copy of the GNU Affero General Public License |
+  | along with this program.  If not, see http://www.gnu.org/licenses/.      |
+  ----------------------------------------------------------------------------
+</ewd:comment>
+
+<h5>References to each Custom Tag in the <?= #app ?> application</h5>
+<ewd:ifSessionNameExists sessionName="tagCalledBy">
+  <table border=1 class="propsText" width="100%">
+    <tr>
+      <td align="center" class="listingCol"><b>Custom Tag</b></td>
+      <td align="center" class="listingCol"><b>Referenced from Page</b></td>
+    </tr>
+    <ewd:forEach sessionName="tagCalledBy" index="$tag" return="$data">
+      <tr>
+        <td align="center" class="listingCol"><?= $tag ?></td>
+        <td class="listingCol">
+          <ewd:forEach sessionName="tagCalledBy" param1="$tag" index="$pageFrom" return="$type">
+            <?= $pageFrom ?><br/>
+          </ewd:forEach>
+        </td>
+      </tr>
+    </ewd:forEach>
+  </table>
+<ewd:else>
+  <div class="propsText">No custom tags have been referenced</div>
+</ewd:ifSessionNameExists>

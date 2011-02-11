@@ -1,0 +1,45 @@
+<ewd:config pageType="ajax" applyTemplate="false" prePageScript="getIndices^%zewdMgrAjax">
+
+<ewd:comment>
+  ----------------------------------------------------------------------------
+  | Enterprise Web Developer for GT.M and m_apache                           |
+  | Copyright (c) 2004-9 M/Gateway Developments Ltd,                         |
+  | Reigate, Surrey UK.                                                      |
+  | All rights reserved.                                                     |
+  |                                                                          |
+  | http://www.mgateway.com                                                  |
+  | Email: rtweed@mgateway.com                                               |
+  |                                                                          |
+  | This program is free software: you can redistribute it and/or modify     |
+  | it under the terms of the GNU Affero General Public License as           |
+  | published by the Free Software Foundation, either version 3 of the       |
+  | License, or (at your option) any later version.                          |
+  |                                                                          |
+  | This program is distributed in the hope that it will be useful,          |
+  | but WITHOUT ANY WARRANTY; without even the implied warranty of           |
+  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            |
+  | GNU Affero General Public License for more details.                      |
+  |                                                                          |
+  | You should have received a copy of the GNU Affero General Public License |
+  | along with this program.  If not, see http://www.gnu.org/licenses/.      |
+  ----------------------------------------------------------------------------
+</ewd:comment>
+
+<script language="javascript">
+  EWD.page.setTitle('enterprise web developer') ;
+</script>
+
+<span>
+
+<br>
+
+<ewd:subTabMenu id="xrefMenu">
+   <ewd:subTabMenuOption text="Page =&gt; Page" nextpage="xrefPageToPage" preSelected="true" />
+   <ewd:subTabMenuOption text="Page &lt;= Page" nextpage="xrefPageFromPage" />
+   <ewd:subTabMenuOption text="Page =&gt; Script" nextpage="xrefPageToScript" />
+   <ewd:subTabMenuOption text="Script &lt;= Page" nextpage="xrefPageFromScript" />
+   <ewd:subTabMenuOption text="Page =&gt; Tag" nextpage="xrefPageToTag" />
+   <ewd:subTabMenuOption text="Tag &lt;= Page" nextpage="xrefPageFromTag" />
+</ewd:subTabMenu>
+
+</span>

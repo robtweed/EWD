@@ -1,0 +1,7 @@
+<ewd:config isFirstPage="false" pageType="ajax" prePageScript="py:iMDB.deleteItem">
+
+<ewd:ajaxOnLoad>
+   jQT.goBack("itemMenu");
+</ewd:ajaxOnLoad>
+
+  <iwd:menuPanel sessionName="itemList" nextPage="attributeMenu" transition="slide" />

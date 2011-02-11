@@ -1,0 +1,62 @@
+<ewd:config isFirstPage="false" pageType="ajax">
+
+<ewd:comment>
+  ----------------------------------------------------------------------------
+  | M/DB                                                                     |
+  | Copyright (c) 2004-9 M/Gateway Developments Ltd,                         |
+  | Reigate, Surrey UK.                                                      |
+  | All rights reserved.                                                     |
+  |                                                                          |
+  | http://www.mgateway.com                                                  |
+  | Email: rtweed@mgateway.com                                               |
+  |                                                                          |
+  | This program is free software: you can redistribute it and/or modify     |
+  | it under the terms of the GNU Affero General Public License as           |
+  | published by the Free Software Foundation, either version 3 of the       |
+  | License, or (at your option) any later version.                          |
+  |                                                                          |
+  | This program is distributed in the hope that it will be useful,          |
+  | but WITHOUT ANY WARRANTY; without even the implied warranty of           |
+  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            |
+  | GNU Affero General Public License for more details.                      |
+  |                                                                          |
+  | You should have received a copy of the GNU Affero General Public License |
+  | along with this program.  If not, see http://www.gnu.org/licenses/.      |
+  ----------------------------------------------------------------------------
+</ewd:comment>
+
+<span>
+
+<h3><i>m_apache</i> Gateway</h3>
+
+The <i>m_apache</i> gateway automatically starts when the M/DB Virtual Appliance is booted up and the Apache Web Server starts.  
+
+<p>
+<i>m_apache</i> has been configured such that any URL to the path <i>/mdb</i> and that ends with the file extension <i>.mgwsi</i> 
+will automatically invoke the back-end M/DB routine.  See the file <i>/etc/apache2/sites-available/default</i> to examine 
+ and/or change this configuration.
+</p>
+
+
+<p>To stop, start or restart <i>m_apache</i>, simply stop, start or restart Apache, eg:</p>
+
+<i>
+sudo /etc/init.d/apache2 restart<br>
+</i>
+
+<p>Note: if you create and/or edit and recompile an EWD application, page or fragment, there's no need to restart <i>m_apache</i> 
+ in order to ensure that the latest version of the compiled GT.M Mumps routines are used by the back-end
+ <i>m_apache</i> processes. EWD's run-time engine is automatically notified of changes to your pages and relinks 
+ any routines that it is using.  <i>m_apache</i> restarts should therefore be rarely required.</p> 
+
+<p>If you make any changes to pre-page or action scripts, you can force m_apache to relink them automatically by 
+ invoking:</p>
+
+<ul>
+ <li><i>d relink^%zewdGTM</i></li>
+</ul>
+
+<p>For further details regarding <i>m_apache</i> see the documentation that is included in its source file 
+<i>/usr/mgwsi/bin/m_apache.c</i>.</p>
+
+</span>

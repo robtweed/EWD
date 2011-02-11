@@ -1,0 +1,31 @@
+<ewd:config isFirstPage="false" pageType="ajax">
+
+<div>
+
+ <iwd:toolbar title="iWD Demo" />
+
+
+  <iwd:form>
+       <br />
+       <iwd:graytitle text="Login" />
+
+       <iwd:formpanel>
+
+         <iwd:formfield type="text" name="username" text="Username" /> 
+
+         <iwd:formfield type="password" name="password" text="Password" /> 
+
+         <iwd:formfield type="submit" text="Login" onSubmitted="login^iWDDemo" nextPage="selectApp" transition="swap"  /> 
+
+      </iwd:formpanel>
+
+  </iwd:form>
+
+   <iwd:footer>
+        &copy; 2010 M/Gateway Developments Ltd<br />All Rights Reserved.<br />
+        Powered by iWD 
+   </iwd:footer>
+
+
+</div>
+

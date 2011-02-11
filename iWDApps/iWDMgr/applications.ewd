@@ -1,0 +1,12 @@
+<ewd:config isFirstPage="false" pageType="ajax" prePageScript="getAppList^%zewdiWDMgr">
+
+<iwd:toolbar>
+ <iwd:toolbarButton type="back" text="Menu" />
+</iwd:toolbar>
+
+<br />
+<iwd:graytitle text="Applications:" />
+
+<iwd:menuPanel sessionName="applicationList" nextPage="pages" transition="slide" />
+
+</div>

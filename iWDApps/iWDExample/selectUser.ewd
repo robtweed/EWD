@@ -1,0 +1,32 @@
+<ewd:config isFirstPage="false" pageType="ajax" prepagescript="initialiseUser^iWDDemo">
+
+<div>
+
+ <iwd:toolbar>
+   <iwd:toolbarButton type="back" />
+   <iwd:toolbarButton type="forward" transition="slide" nextpage="newUser" text="New User" />
+ </iwd:toolbar>
+
+<iwd:pageItem>
+    <iwd:header text="Application: <?= #AppSelected ?>" />
+    <p>
+      Location: <?= #LocationSelected ?>
+    </p>
+</iwd:pageItem>
+
+  <iwd:form>
+       <br />
+       <iwd:graytitle text="Select User" />
+
+       <iwd:formpanel>
+
+         <iwd:formfield type="text" name="lastName" text="User's Last Name" /> 
+
+         <iwd:formfield type="submit" text="Search" onSubmitted="getMatchingUsers^iWDDemo" nextPage="userList" transition="slide"  /> 
+
+      </iwd:formpanel>
+
+  </iwd:form>
+
+</div>
+

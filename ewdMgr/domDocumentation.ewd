@@ -1,0 +1,69 @@
+<ewd:config pageType="ajax" applyTemplate="false" prePageScript="getDOMMethods^%zewdMgrAjax">
+
+<ewd:comment>
+  ----------------------------------------------------------------------------
+  | Enterprise Web Developer for GT.M and m_apache                           |
+  | Copyright (c) 2004-9 M/Gateway Developments Ltd,                         |
+  | Reigate, Surrey UK.                                                      |
+  | All rights reserved.                                                     |
+  |                                                                          |
+  | http://www.mgateway.com                                                  |
+  | Email: rtweed@mgateway.com                                               |
+  |                                                                          |
+  | This program is free software: you can redistribute it and/or modify     |
+  | it under the terms of the GNU Affero General Public License as           |
+  | published by the Free Software Foundation, either version 3 of the       |
+  | License, or (at your option) any later version.                          |
+  |                                                                          |
+  | This program is distributed in the hope that it will be useful,          |
+  | but WITHOUT ANY WARRANTY; without even the implied warranty of           |
+  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            |
+  | GNU Affero General Public License for more details.                      |
+  |                                                                          |
+  | You should have received a copy of the GNU Affero General Public License |
+  | along with this program.  If not, see http://www.gnu.org/licenses/.      |
+  ----------------------------------------------------------------------------
+</ewd:comment>
+
+<span class="propsText">
+    <ewd:if firstValue="#ewd.technology" operation="=" secondValue="wl">
+      <ewd:set return="$path" value="/">
+    <ewd:else>
+      <ewd:set return="$path" value="">      
+    </ewd:if>
+  <table border=0 width="99%" style="table-layout:fixed">
+    <tr>
+      <td width="35%">
+       <div class="selectorPanel" style="width:99%; height:auto">
+         <h5 align="center"><ewd:help sourceId="dom_doc" />DOM API Methods</h5>
+         <div class="applicationPanel" style="left:-5px; height:230px; overflow:scroll">
+          <form method="post" action="ewd">
+           <table border="0" width="100%" class="propsText">
+             <tr>
+               <td>
+                 <select name="method" onChange="document.getElementById('docsel').click()"></select>
+               </td>
+               <td>
+                 <input type="submit" class="actionButton" name="docsel" value="Details" ajax="true" nextPage="domDocumentationDetail" targetId="listingPanel">
+               </td>
+             </tr>
+           </table>
+          </form>
+         </div>
+       </div>
+      </td>
+      
+      <td id="listingColumn" style="visibility:hidden; height:auto">
+        <div class="selectorPanel" style="width:99%; height:99%" id="listingPanel">
+          &nbsp;
+        </div>
+      </td>
+    </tr>
+  </table>
+  <div id="docNullid" />
+<div id="dom_doc" class="alertPanelOff">
+    These methods are for use in your Custom Tag Processor/Compiler methods.  These methods allow you to 
+    locate, access, manipulate and modify the contents of the XML DOM that represents your EWD page.  Your Custom Tag processor has 
+    complete access to the entire page DOM and these methods allow you to modify it in any way you wish.
+</div>
+</span>

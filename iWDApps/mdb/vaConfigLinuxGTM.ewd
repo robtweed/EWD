@@ -1,0 +1,55 @@
+<ewd:config isFirstPage="false" pageType="ajax">
+
+<ewd:comment>
+  ----------------------------------------------------------------------------
+  | M/DB                                                                     |
+  | Copyright (c) 2004-9 M/Gateway Developments Ltd,                         |
+  | Reigate, Surrey UK.                                                      |
+  | All rights reserved.                                                     |
+  |                                                                          |
+  | http://www.mgateway.com                                                  |
+  | Email: rtweed@mgateway.com                                               |
+  |                                                                          |
+  | This program is free software: you can redistribute it and/or modify     |
+  | it under the terms of the GNU Affero General Public License as           |
+  | published by the Free Software Foundation, either version 3 of the       |
+  | License, or (at your option) any later version.                          |
+  |                                                                          |
+  | This program is distributed in the hope that it will be useful,          |
+  | but WITHOUT ANY WARRANTY; without even the implied warranty of           |
+  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            |
+  | GNU Affero General Public License for more details.                      |
+  |                                                                          |
+  | You should have received a copy of the GNU Affero General Public License |
+  | along with this program.  If not, see http://www.gnu.org/licenses/.      |
+  ----------------------------------------------------------------------------
+</ewd:comment>
+
+<span>
+
+<h3>How Ubuntu Linux and GT.M have been configured to support M/DB</h3>
+
+M/BD requires globals that can handle record lengths up to 32k. In order to support this, the kernel shared memory first had to be increased.  
+ This has been defined in <i>/etc/sysctl.conf</i> where you'll find the line:<br><br>
+
+<i>kernel.shmmax = 134217728</i><br><br>
+
+You can check that this value has been accepted using:<br><br>
+
+<i>sysctl -a |grep shmmax</i>
+
+<br><br>
+
+Secondly, the globals that are used within the <i>/usr/local/gtm/ewd</i> directory were defined using the GT.M Global Definition Editor (^GDE) 
+ as follows:<br><br>
+
+<i>
+GTM>d ^GDE<br>
+change -segment default -block=32256<br>
+change -region default -key=255 -record=32240<br>
+exit<br>
+mupip create<br>
+</i>
+
+
+</span>

@@ -1,0 +1,114 @@
+<ewd:config pageType="ajax" applyTemplate="false" prePageScript="getDataTypeList^%zewdMgrAjax">
+
+<ewd:comment>
+  ----------------------------------------------------------------------------
+  | Enterprise Web Developer for GT.M and m_apache                           |
+  | Copyright (c) 2004-9 M/Gateway Developments Ltd,                         |
+  | Reigate, Surrey UK.                                                      |
+  | All rights reserved.                                                     |
+  |                                                                          |
+  | http://www.mgateway.com                                                  |
+  | Email: rtweed@mgateway.com                                               |
+  |                                                                          |
+  | This program is free software: you can redistribute it and/or modify     |
+  | it under the terms of the GNU Affero General Public License as           |
+  | published by the Free Software Foundation, either version 3 of the       |
+  | License, or (at your option) any later version.                          |
+  |                                                                          |
+  | This program is distributed in the hope that it will be useful,          |
+  | but WITHOUT ANY WARRANTY; without even the implied warranty of           |
+  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            |
+  | GNU Affero General Public License for more details.                      |
+  |                                                                          |
+  | You should have received a copy of the GNU Affero General Public License |
+  | along with this program.  If not, see http://www.gnu.org/licenses/.      |
+  ----------------------------------------------------------------------------
+</ewd:comment>
+
+<script language="javascript">
+  MGW.page.editDataType = function(name) {
+    document.getElementById("listingColumn").style.visibility = "visible" ;
+    var nvp="dataType=" + name ;
+    ewd.ajaxRequest("editDataType","listingPanel",nvp) ;
+  };
+  MGW.page.deleteDataType = function(name) {
+    var ok=confirm("Are you sure you want to delete the data type: " + name + "?") ;
+    if (ok) {
+      var nvp="dataType=" + name ;
+      ewd.ajaxRequest("deleteDataType","customTagsNullid",nvp) ;
+    }
+  };
+  MGW.page.newDataType = function() {
+    document.getElementById("listingColumn").style.visibility = "visible" ;
+    ewd.ajaxRequest("newdataType","listingPanel") ;
+  };
+  MGW.page.displayNotes = function(name) {
+    var nvp="dataType=" + name ;
+    document.getElementById("listingColumn").style.visibility = "visible" ;
+    ewd.ajaxRequest("showDataTypeNotes","listingPanel",nvp)    
+  } ;
+</script>
+
+<span class="propsText">
+  <ewd:set return="$path" value="/">
+  <table border=0 width="99%" style="table-layout:fixed">
+    <tr>
+      <td width="46%">
+       <div class="selectorPanel" style="width:99%; height:auto">
+         <h5 align="center"><ewd:help sourceId="dt_help" />Registered Data Types</h5>
+         <div class="applicationPanel" style="left:-5px; height:320px; overflow:scroll">
+           <table border="0" width="100%" class="propsText">
+             <tr>
+               <td align="left" class="configRow">
+                 &nbsp;
+               </td>
+               <td class="configRow" width="47%">
+                 <input class="actionButton" type="button" id="new" value="Register New.." onClick="MGW.page.newDataType()">
+               </td>
+             </tr>
+             <ewd:if firstValue="#hasDataTypes" operation="!=" secondValue="0">
+               <ewd:forEach sessionName="dataTypeList" index="$name">
+                 <tr>
+                   <td align="left" class="configRow">
+                      <img src="<?= $path ?>icn_help_blue.gif" onMouseOver="MGW.page.displayNotes('<?= $name ?>')" />&nbsp;<?= $name ?>
+                   </td>
+                   <td class="configRow" width="47%">
+                      <input class="actionButton" type="button" id="list<?= $name ?>" value="Edit" onClick="MGW.page.editDataType('<?= $name ?>')">
+                      <input type="button" id="del<?= $name ?>" class="actionButton" value="Delete" onClick="MGW.page.deleteDataType('<?= $name ?>')">
+                   </td>
+                 </tr>
+               </ewd:forEach>
+             </ewd:if>
+           </table>
+         </div>
+       </div>
+      </td>
+      
+      <td id="listingColumn" style="visibility:hidden; height:auto">
+        <div class="selectorPanel" style="width:99%; height:99%" id="listingPanel">
+          &nbsp;
+        </div>
+      </td>
+    </tr>
+  </table>
+  <div id="customTagsNullid" />
+  <div id="dt_help" class="alertPanelOff">
+   Data Types allow you to specify automatic encoding, decoding and field validation in text form fields, eg:
+
+   <p>&lt;input type="text" name="endDate" value="*" dataType="myDateType"&gt;</p>
+
+   <p>An EWD Data Type is defined by two functions:</p>
+   <ul>
+   <li>The input/decode function is used to convert the raw value (ie as extracted from your database) 
+   to its display format, for presentation within the browser page;</li>
+
+   <li>The output/encode function is used to convert the display value (ie as sent from the browser) 
+   to its raw format, for storage in your database.</li>
+   </ul>
+  </div>
+
+</span>
+
+
+
+

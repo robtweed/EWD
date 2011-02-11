@@ -1,0 +1,28 @@
+<ewd:config pageType="ajax" prePageScript="py:iMDB.getItemList">
+
+<script language="javascript">
+ iMDB.deleteDomain = function() {
+    iWD.removeActive();
+    var ok = confirm("Are you sure you want to delete this entire Domain?");
+    if (ok){
+      ewd.ajaxRequest("deleteDomain","domainMenuPanel");
+    }
+ };
+</script>
+
+ <iwd:toolbar title="Items">
+   <iwd:toolbarButton type="back" text="Domains" />
+   <iwd:toolbarButton type="forward" transition="slide" nextpage="newItem" text="Add" />
+ </iwd:toolbar>
+
+<iwd:pageItem>
+    <iwd:header text="Domain Selected: <span style='color:black'><?= #domainName ?></span>" />
+</iwd:pageItem>
+
+<div id="itemMenuPanel">
+  <iwd:menuPanel sessionName="itemList" nextPage="attributeMenu" transition="slide" />
+</div>
+
+  <iwd:formpanel>
+     <iwd:formfield type="button" text="Delete Domain" onClick="iMDB.deleteDomain()" /> 
+  </iwd:formpanel>

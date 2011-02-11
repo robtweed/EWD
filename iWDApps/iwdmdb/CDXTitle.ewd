@@ -1,0 +1,12 @@
+<ewd:config isFirstPage="false" pageType="ajax">
+
+ <iwd:toolbar>
+    <iwd:toolbarButton type="back" />
+ </iwd:toolbar>
+
+  <br />
+  <iwd:graytitle text="Search CDs by Title" />
+
+  <iwd:pageItem>
+   <p>Not yet implemented</p>
+  </iwd:pageItem>

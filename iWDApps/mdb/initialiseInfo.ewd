@@ -1,0 +1,107 @@
+<ewd:config ifFirstPage="false" pageType="ajax">
+
+<ewd:comment>
+  ----------------------------------------------------------------------------
+  | M/DB                                                                     |
+  | Copyright (c) 2004-9 M/Gateway Developments Ltd,                         |
+  | Reigate, Surrey UK.                                                      |
+  | All rights reserved.                                                     |
+  |                                                                          |
+  | http://www.mgateway.com                                                  |
+  | Email: rtweed@mgateway.com                                               |
+  |                                                                          |
+  | This program is free software: you can redistribute it and/or modify     |
+  | it under the terms of the GNU Affero General Public License as           |
+  | published by the Free Software Foundation, either version 3 of the       |
+  | License, or (at your option) any later version.                          |
+  |                                                                          |
+  | This program is distributed in the hope that it will be useful,          |
+  | but WITHOUT ANY WARRANTY; without even the implied warranty of           |
+  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            |
+  | GNU Affero General Public License for more details.                      |
+  |                                                                          |
+  | You should have received a copy of the GNU Affero General Public License |
+  | along with this program.  If not, see http://www.gnu.org/licenses/.      |
+  ----------------------------------------------------------------------------
+</ewd:comment>
+
+<span>
+<h2>Welcome to M/DB</h2> 
+
+<h3>The plug-compatible alternative to SimpleDB</h3>
+
+<p>Before you can use M/DB you must initialise it.  Please follow the instructions below:</p>
+
+<ul>
+ <li>Use a secure connection (either using puTTY or a secure FTP interface such as WinSCP) to access the M/DB Virtual Appliance.</li>
+ <li>In the directory <i>/usr/MDB</i> you'll find the file <i>MDB.conf.example</i></li>
+ <li>Edit this file and replace the values of the <i>AdminstratorAccessKeyId</i> and <i>AdminstratorSecretKey</i> with the ones you 
+want for your M/DB administrator account.  You can create your own M/DB-specific values for these fields.  For security reasons, it is
+ recommended that you do <i>not</i> use your Amazon AWS credentials.</li>
+ <li>Save the edited version as <i>MDB.conf</i></li>
+ <li>From a browser, issue the URL: <i>http://192.168.1.xxx/mdb/request.mgwsi?Action=Initialise</i>.  Substitute the IP 
+ address that has been assigned to your M/DB Virtual Appliance</li>
+</ul>
+
+<p>If M/DB has initialised correctly, you should see a response similar to the following:</p>
+
+<p><i>
+&lt;InitialiseResponse&gt;<br>
+&lt;ResponseMetadata&gt;<br>
+&lt;RequestId&gt;1598b56f-f69b-29ea-19f9-8448317667db&lt;/RequestId&gt;<br>
+&lt;BoxUsage&gt;0&lt;/BoxUsage&gt;<br>
+&lt;/ResponseMetadata&gt;<br>
+&lt;/InitialiseResponse&gt;<br>
+
+</i></p>
+
+<p>Refresh this page in your browser (ie point your browser at the IP address assigned to the M/DB Virtual Appliance again), 
+and you will now be prompted to login using the administrator user id and secret key.</p>
+
+<p>
+If you log in correctly, you will be presented with the M/DB Portal menu.  Congratulations!  You can now begin to use M/DB.</p>
+</p>
+
+<p>Note: We strongly recommend that you amend the passwords as soon as possible for the pre-configured usernames: <i><b>ewd</b></i> and 
+   <i><b>root</b></i>.
+</p>
+
+<hr>
+
+<p>
+If a problem occurred during initialisation, you will receive an error response, eg:
+</p>
+
+<p><i>
+&lt;Response&gt;<br>
+&lt;Errors&gt;<br>
+&lt;Error&gt;<br>
+&lt;Message&gt;Configuration File /usr/MDB/MDB.conf was not found&lt;/Message&gt;<br>
+&lt;Code&gt;InvalidConfigurationFile&lt;/Code&gt;<br>
+&lt;BoxUsage&gt;0&lt;/BoxUsage&gt;<br>
+&lt;/Error&gt;<br>
+&lt;/Errors&gt;<br>
+&lt;RequestId&gt;e49e102f-3686-741a-4b96-7bcc72912c82&lt;/RequestId&gt;<br>
+&lt;/Response&gt;<br>
+</i></p>
+
+<p>
+Note that after successfully initialising your M/DB Virtual Appliance, you cannot re-issue the initialise REST API. 
+ If you attempt to do so, you will receive the error:
+</p>
+
+<p><i>
+&lt;Response&gt;<br>
+&lt;Errors&gt;<br>
+&lt;Error&gt;<br>
+&lt;Message&gt;M DB has already been initialised&lt;/Message&gt;<br>
+&lt;Code&gt;InvalidAction&lt;/Code&gt;<br>
+&lt;BoxUsage&gt;0&lt;/BoxUsage&gt;<br>
+&lt;/Error&gt;<br>
+&lt;/Errors&gt;<br>
+&lt;RequestId&gt;5e9cb16e-f9f1-631e-e091-78e328b273e8&lt;/RequestId&gt;<br>
+&lt;/Response&gt;<br>
+</i></p>
+
+</span> 
+

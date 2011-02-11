@@ -1,0 +1,11 @@
+<ewd:config isFirstPage="false" pageType="ajax" prepagescript="getApps^iWDDemo">
+
+<div>
+   <iwd:graytitle text="Select App" />
+   <iwd:menuPanel sessionName="AppList" nextPage="selectLocations" transition="slide" />
+</div>
+
+
+
+
+

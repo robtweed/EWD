@@ -1,0 +1,9 @@
+<ewd:config isFirstPage="false" pageType="ajax">
+
+<iwd:toolbar>
+ <iwd:toolbarButton type="back" />
+</iwd:toolbar>
+
+<iwd:pageItem>
+ <p>Not yet implemented...</p>
+</iwd:pageItem>

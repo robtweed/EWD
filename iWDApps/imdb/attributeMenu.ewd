@@ -1,0 +1,29 @@
+<ewd:config isFirstPage="false" pageType="ajax" prePageScript="py:iMDB.getAttributes">
+
+<script language="javascript">
+ iMDB.deleteItem = function() {
+    iWD.removeActive();
+    var ok = confirm("Are you sure you want to delete this entire Item?");
+    if (ok){
+      ewd.ajaxRequest("deleteItem","itemMenuPanel");
+    }
+ };
+</script>
+
+<iwd:toolbar title="Attributes">
+ <iwd:toolbarButton type="back" text="Items" />
+ <iwd:toolbarButton type="forward" transition="slide" nextpage="newAttribute" text="Add" />
+</iwd:toolbar>
+
+<iwd:pageItem>
+    <iwd:header text="Domain: <span style='color:black'><?= #domainName ?></span>" />
+    <iwd:header text="Item: <span style='color:black'><?= #itemName ?></span>" />
+</iwd:pageItem>
+
+<div id="attributeMenuPanel">
+  <iwd:menuPanel sessionName="attributeValues" nextPage="editAttribute" transition="slide" />
+</div>
+
+  <iwd:formpanel>
+     <iwd:formfield type="button" text="Delete Item" onClick="iMDB.deleteItem()" /> 
+  </iwd:formpanel>

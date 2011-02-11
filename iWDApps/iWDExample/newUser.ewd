@@ -1,0 +1,64 @@
+<ewd:config isFirstPage="false" pageType="ajax" prepagescript="getNewUserData^iWDDemo">
+
+<div>
+
+ <iwd:toolbar>
+   <iwd:toolbarButton type="back" />
+ </iwd:toolbar>
+
+  <iwd:form>
+       <br />
+       <iwd:graytitle text="Enter New User Details" />
+
+       <iwd:formpanel>
+
+         <iwd:formfield type="text" name="firstName" text="First Name" /> 
+         <iwd:formfield type="text" name="familyName" text="Family Name" /> 
+         <iwd:formfield type="tel" name="phone" text="Phone No" /> 
+         <iwd:formfield type="number" name="membNo" text="Membership No" /> 
+         <iwd:formfield type="date" name="dob" text="Date of Birth" fromYear="1910" toYear="2010" />
+         <iwd:formfield type="time" name="tor" text="Time of Registration" />
+         <iwd:formfield type="multipleselect" name="userType" text="User Type"/> 
+      </iwd:formpanel>
+
+<iwd:graytitle text="User Type" />
+<iwd:formpanel>
+<iwd:formfield type="multipleselect" name="userType" /> 
+</iwd:formpanel>
+
+       <iwd:graytitle text="Gender" />
+       <iwd:formpanel>
+         <iwd:formfield type="radio" name="sex" text="Male" value="m" /> 
+         <iwd:formfield type="radio" name="sex" text="Female" value="f" /> 
+       </iwd:formpanel>
+
+
+       <iwd:graytitle text="Favourite Colours" />
+       <iwd:formpanel>
+         <iwd:formfield type="checkbox" name="colors" text="Red" value="red" /> 
+         <iwd:formfield type="checkbox" name="colors" text="Blue" value="blue" /> 
+         <iwd:formfield type="checkbox" name="colors" text="Green" value="green" /> 
+       </iwd:formpanel>
+
+       <iwd:graytitle text="Options" />
+       <iwd:formpanel>
+<iwd:formfield type="toggle" name="options" text="Email" value="email" /> 
+<iwd:formfield type="toggle" name="options" text="SMS Texts" value="sms" /> 
+<iwd:formfield type="toggle" name="options" text="Skype" value="skype" /> 
+       </iwd:formpanel>
+
+       <iwd:formpanel>
+         <iwd:formfield type="textarea" name="comments" titleText="Insert your comments" rows="4" />
+       </iwd:formpanel>
+
+       <iwd:formpanel>
+         <iwd:formfield type="submit" text="Save" onSubmitted="checkUser^iWDDemo" nextPage="completed" transition="slide" /> 
+       </iwd:formpanel>
+
+  </iwd:form>
+
+   <iwd:footer>
+        Cool! Powered by iWD 
+   </iwd:footer>
+
+</div>

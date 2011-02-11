@@ -1,0 +1,10 @@
+<ewd:config isFirstPage="false" pageType="ajax">
+
+<div>
+   <iwd:graytitle text="You selected Tab 2" />
+
+<iwd:pageItem>
+    Pretty cool tab control, eh?
+</iwd:pageItem>
+
+</div>

@@ -1,0 +1,16 @@
+<ewd:config isFirstPage="false" pageType="ajax">
+
+  <iwd:toolbar>
+    <iwd:toolbarButton type="back" />
+  </iwd:toolbar>
+
+  <br />
+  <iwd:graytitle text="About This Demo" />
+
+  <iwd:pageItem>
+
+    <p>This is a demo of iWD, running on the M/DB Appliance, scripted using 
+       Python with M/DB as the database.
+    </p>
+
+  </iwd:pageItem>

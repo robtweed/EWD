@@ -1,0 +1,13 @@
+<ewd:config isFirstPage="false" pageType="ajax">
+
+ <iwd:toolbar>
+    <iwd:toolbarButton type="back" />
+ </iwd:toolbar>
+
+  <br />
+  <iwd:graytitle text="CD Library" />
+
+ <iwd:menuPanel>
+  <iwd:menuItem text="Search By Artist" nextpage="CDXArtist" transition="slide" />
+  <iwd:menuItem text="Search By Title" nextpage="CDXTitle" transition="slide" />
+ </iwd:menuPanel>

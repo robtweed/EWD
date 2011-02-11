@@ -1,0 +1,10 @@
+<ewd:config pageType="ajax" prePageScript="py:iWDDemo.getCDTracksXArtist">
+
+ <iwd:toolbar>
+   <iwd:toolbarButton type="back"/>
+ </iwd:toolbar>
+
+
+  <iwd:graytitle text="Matching Tracks" />
+
+   <iwd:menuPanel sessionName="TrackList" nextPage="selectTrack" transition="slide" />

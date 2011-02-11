@@ -1,0 +1,12 @@
+<ewd:config isFirstPage="false" pageType="ajax" prePageScript="getSessionContent^%zewdiWDMgr">
+
+<iwd:toolbar>
+ <iwd:toolbarButton type="back" />
+</iwd:toolbar>
+
+<br />
+<iwd:graytitle text="Session <?= #mgr.sessionNo ?>" />
+
+<iwd:tablePanel sessionName="sessionContent" />
+
+</div>

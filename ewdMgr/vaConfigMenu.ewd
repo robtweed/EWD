@@ -1,0 +1,42 @@
+<ewd:config ifFirstPage="false" pageType="ajax">
+
+<ewd:comment>
+  ----------------------------------------------------------------------------
+  | Enterprise Web Developer for GT.M and m_apache                           |
+  | Copyright (c) 2004-9 M/Gateway Developments Ltd,                         |
+  | Reigate, Surrey UK.                                                      |
+  | All rights reserved.                                                     |
+  |                                                                          |
+  | http://www.mgateway.com                                                  |
+  | Email: rtweed@mgateway.com                                               |
+  |                                                                          |
+  | This program is free software: you can redistribute it and/or modify     |
+  | it under the terms of the GNU Affero General Public License as           |
+  | published by the Free Software Foundation, either version 3 of the       |
+  | License, or (at your option) any later version.                          |
+  |                                                                          |
+  | This program is distributed in the hope that it will be useful,          |
+  | but WITHOUT ANY WARRANTY; without even the implied warranty of           |
+  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            |
+  | GNU Affero General Public License for more details.                      |
+  |                                                                          |
+  | You should have received a copy of the GNU Affero General Public License |
+  | along with this program.  If not, see http://www.gnu.org/licenses/.      |
+  ----------------------------------------------------------------------------
+</ewd:comment>
+
+<div>
+<ewd:subTabMenu id="mainmenu" isMainMenu="true">
+   <ewd:subTabMenuOption text="Architecture" nextpage="vaConfigArchitecture" preSelected="true" help="EWD Virtual Appliance Architecture" />
+   <ewd:subTabMenuOption text="Usernames" nextpage="vaConfigUsernames" help="Configured Usernames for the Virtual Appliance" />
+   <ewd:subTabMenuOption text="Network" nextpage="vaConfigIP" help="Configuring the Virtual Appliance's IP Address" />
+   <ewd:subTabMenuOption text="Keyboard" nextpage="vaConfigKB" help="Reconfiguring the keyboard" />
+   <ewd:subTabMenuOption text="Apache" nextpage="vaConfigApache" help="Configuring Apache" />
+   <ewd:subTabMenuOption text="GT.M" nextpage="vaConfigGTM" help="GT.M's configuration in the Virtual Appliance" />
+   <ewd:subTabMenuOption text="Memory & Globals" nextpage="vaConfigLinuxGTM" help="Memory and Global configuration" />
+   <ewd:subTabMenuOption text="m_apache" nextpage="vaConfigMGWSI" help="The m_apache Gateway" />
+   <ewd:subTabMenuOption text="EWD" nextpage="vaConfigEWD" help="EWD: using and configuration" />
+   <ewd:subTabMenuOption text="Shutdown" nextpage="vaConfigExit" help="Shutting down and re-booting the Virtual Appliance" />
+</ewd:subTabMenu>
+</div>
+

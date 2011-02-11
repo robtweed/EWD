@@ -1,0 +1,206 @@
+.footer {
+	text-align: center;
+	position: relative;
+	margin: 20px 10px 0;
+	height: auto;
+	width: auto;
+	bottom: 10px;
+	text-decoration: none;
+	font-size: 9pt;
+	color: #4C4C4C;
+	text-shadow: #FFF 0 1px 0;
+}
+
+.alertPopup{
+  position:absolute;
+  bottom:0;
+  width:100%;
+  left:0;
+  z-index:9999
+}
+
+.iWDAlertTitle {
+ font-size: 16pt;
+ color: #fff;
+ font-family:Arial,Helvetica,sans-serif;
+}
+
+.iWDAlertText {
+ font-size: 12pt;
+ color: #fff;
+ font-family:Arial,Helvetica,sans-serif;
+}
+
+
+.alertPanelOff{
+  -webkit-transition-property:-webkit-transform;
+  -webkit-transition-duration:0.8s;
+  -webkit-transform-style:preserve-3d;
+  position:absolute;
+  opacity:0.9;
+  left:0px;
+  overflow:hidden;
+  bottom:180px;
+  margin-left:20px;
+  width:280px;
+  background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(113, 123, 149, 1)), to(rgba(10, 30, 77, 1.0)));
+  -webkit-transform:translate(0,300%);
+  -webkit-border-radius: 8px;
+  border-style:solid;
+  border-width: 2px;
+  border-color: white;
+  text-align:center;
+}
+
+.alertPanel{
+  position:absolute;
+  bottom:180px;
+  -webkit-transform:translate(0,300%);
+  -webkit-transition-property:-webkit-transform;
+ background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(113, 123, 149, 1)), to(rgba(10, 30, 77, 1.0)));
+  opacity:0;
+}
+
+.alertPanelOn{
+  display:block;
+  opacity:0.9;
+  position:absolute;
+  left:0px;
+  overflow:hidden;
+  bottom:180px;
+  margin-left:20px;
+  width:280px;
+  background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(113, 123, 149, 1)), to(rgba(10, 30, 77, 1.0)));
+
+  -webkit-transition-duration:0.8s;
+  -webkit-transition-property:-webkit-transform;
+  -webkit-transform-style:preserve-3d;
+  -webkit-transform:translate(0,0);
+
+  -webkit-border-radius: 8px;
+  border-style:solid;
+  border-width: 2px;
+  border-color: white;
+  text-align:center;
+  z-index:99999;
+}
+
+#iWDAlertFrame span{
+  margin:10px 0 20px;
+  color:#fff;
+  width:100%;
+  text-shadow:rgba(0,0,0,1) 0 -1px 0;
+  display:block;
+}
+
+#iWDAlertFrame a{
+  text-decoration:none;
+  display:block;
+  width:96%;
+  margin-left:auto;
+  margin-right:auto;
+  margin-bottom:-15px;
+  margin-top:0;
+}
+
+#iWDAlertFrame span.black{
+  display:block;
+  height:46px;
+  border-width:0 14px;
+  width:auto;
+  background-repeat:no-repeat;
+  line-height:46px;
+  font-size:large;
+  opacity:1;
+  font-weight:bolder;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+  overflow:hidden;
+  font-family:Arial,Helvetica,sans-serif;
+ -webkit-border-image:url(/iwd/iwebkit/images/whitebutton.png) 0 14 0 14;
+  color:#fff;
+}
+
+
+.cover{
+  height:480px;
+  width:100%;
+  position:absolute;
+  top:-70px;
+  z-index:9998;
+  opacity:0.4;
+  left:0;
+  background-color:#000;
+}
+
+.nocover{
+  opacity:0;
+}
+
+.loadingOn {
+   background: none;
+   display:inline;
+   position:absolute;
+   left:140px;
+   top:80px;
+   z-index:999;
+}
+
+.loadingOff {
+   display:none;
+}
+
+.tabbar {
+  -webkit-box-sizing: border-box;
+  -webkit-transform: translateY(0px);
+  background: url(/iwd/images/bottomToolbar.png) repeat-x transparent;
+  color:white;
+  height: 49px;
+  position:absolute;
+  text-align:center;
+  width:100%;
+
+}
+
+.bottomTabUnselected {
+  -webkit-box-sizing: border-box;
+  border: 3px solid transparent;
+  color: rgb(187, 187, 187);
+  display: inline-block;
+  font-size: 11px;
+  font-weight: bold;
+  height: 47px;
+  margin-top: 1px;
+  text-align: center;
+  text-decoration: none;
+  vertical-align: middle;
+  width: 32%;
+}
+
+.bottomTabSelected {
+-webkit-border-image: url(/iwd/images/bottomToolbarHover.png) 0 3 0 3 stretch stretch;
+color: white;
+-webkit-box-sizing: border-box;
+border: 3px solid transparent;
+display: inline-block;
+color:white;
+font-size: 11px;
+font-weight: bold;
+height: 47px;
+margin-top: 1px;
+text-align: center;
+text-decoration: none;
+vertical-align: middle;
+width: 32%;
+}
+
+.bottomTabIcon {
+   display:block;
+   margin: auto auto;
+   height:30px;
+   width: 30px;
+   background-repeat:no-repeat;
+   background-position-x: 0px;
+   background-position-y: 0%;
+}
+

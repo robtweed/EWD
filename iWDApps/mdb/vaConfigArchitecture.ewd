@@ -1,0 +1,61 @@
+<ewd:config isFirstPage="false" pageType="ajax">
+
+<ewd:comment>
+  ----------------------------------------------------------------------------
+  | M/DB                                                                     |
+  | Copyright (c) 2004-9 M/Gateway Developments Ltd,                         |
+  | Reigate, Surrey UK.                                                      |
+  | All rights reserved.                                                     |
+  |                                                                          |
+  | http://www.mgateway.com                                                  |
+  | Email: rtweed@mgateway.com                                               |
+  |                                                                          |
+  | This program is free software: you can redistribute it and/or modify     |
+  | it under the terms of the GNU Affero General Public License as           |
+  | published by the Free Software Foundation, either version 3 of the       |
+  | License, or (at your option) any later version.                          |
+  |                                                                          |
+  | This program is distributed in the hope that it will be useful,          |
+  | but WITHOUT ANY WARRANTY; without even the implied warranty of           |
+  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            |
+  | GNU Affero General Public License for more details.                      |
+  |                                                                          |
+  | You should have received a copy of the GNU Affero General Public License |
+  | along with this program.  If not, see http://www.gnu.org/licenses/.      |
+  ----------------------------------------------------------------------------
+</ewd:comment>
+
+<span>
+<h3>M/DB Appliance Architecture</h3>
+
+The M/DB installer that you used to create this Appliance installed and configured 
+ the following components:
+
+<ul>
+<li>Apache 2</li>
+<li>OpenSSH : SSH Server</li>
+<li>GT.M database engine</li>
+<li>The Free Open Source <i>m_apache</i> gateway (connects Apache to GT.M)</li>
+<li>M/DB (Free Open Source)</li>
+<li>Free Open Source version of Enterprise Web Developer</li>
+</ul>
+
+
+You therefore have a fully functioning, fully configured M/DB database environment that 
+should work for most people "out of the box".<br><br>
+
+You can, of course, construct your own custom Linux system using the same components.  
+This pre-built Appliance and these notes should provide all the background details 
+you'll need to build your own equivalent system.<br><br>
+
+The architecture of your M/DB Appliance is shown diagrammatically below:<br><br>
+
+<center><img src="/mdb/mdb_app_Architecture.png" height="480px" width="700px"></center>
+
+<br><br>
+
+You can adapt and modify the setup and configuration of the M/DB Appliance if you 
+wish.  The following notes should provide you with most of the information you need to 
+customise and tune your M/DB Appliance.<br><br>
+
+</span>
