@@ -1,7 +1,7 @@
 %zewdCompiler8	; Enterprise Web Developer Compiler Functions
  ;
- ; Product: Enterprise Web Developer (Build 846)
- ; Build Date: Wed, 09 Feb 2011 13:14:58
+ ; Product: Enterprise Web Developer (Build 850)
+ ; Build Date: Sat, 12 Feb 2011 14:13:17
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -394,7 +394,7 @@ ajaxPage(allArray,docOID,jsOID,nextPageList,urlNameList,technology)
 	. . set ehy=$$getAttributeValue^%zewdDOM("eventpre",1,nodeOID)
 	. . set ehz=$$getAttributeValue^%zewdDOM("eventpost",1,nodeOID)
 	. for attr="ajaxpage","event","targetid","trace","onclickpre","onclickpost","eventpre","eventpost" d
-	. . do removeAttribute^%zewdAPI(attr,nodeOID,1)
+	. . ;do removeAttribute^%zewdAPI(attr,nodeOID,1)
 	. ;
 	. set url=$$expandPageName^%zewdCompiler8(ajaxPageName,.nextPageList,.urlNameList,technology,.jsParams)
 	. ;

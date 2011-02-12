@@ -1,7 +1,7 @@
 %zewdGTMRuntime ; EWD for GT.M.  Runtime interface  
  ;
- ; Product: Enterprise Web Developer (Build 846)
- ; Build Date: Wed, 09 Feb 2011 13:14:58
+ ; Product: Enterprise Web Developer (Build 850)
+ ; Build Date: Sat, 12 Feb 2011 14:13:17
  ;
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -470,7 +470,9 @@ outputNode(nodeOID,mode,indent,suppressIndent,endWithCR,cspFlag,cspVars,phpVars,
  . . f  s childOID=$$getNextChild^%zewdAPI(nodeOID,childOID) q:childOID=""  d
  . . . s data=$$replaceVars($$getData^%zewdDOM(childOID),.cspVars,.phpVars,technology)
  . . . s np=$l(data,$c(13,10))
- . . . f i=1:1:np d addCommand($p(data,$c(13,10),i),"body")
+ . . . f i=1:1:np d
+ . . . . i $e(data,1)'=" " s data=" "_data
+ . . . . d addCommand($p(data,$c(13,10),i),"body")
  . e  i tagName="script",language="cache",method="onprehttp" d
  . . n childOID
  . . s childOID=""

@@ -1,7 +1,7 @@
 %zewdCompiler18	; Slideshow Javascript
  ;
- ; Product: Enterprise Web Developer (Build 846)
- ; Build Date: Wed, 09 Feb 2011 13:14:57
+ ; Product: Enterprise Web Developer (Build 850)
+ ; Build Date: Sat, 12 Feb 2011 14:13:17
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -327,6 +327,51 @@ ewdStyles
  ;;   position:relative;
  ;;   top:12px;
  ;;   right:10px;
+ ;;}
+ ;;.stRoundedBox {
+ ;;   background: white;
+ ;;   border: 3px solid #B4B4B4;
+ ;;   border-bottom-left-radius: 8px 8px;
+ ;;   border-bottom-right-radius: 8px 8px;
+ ;;   border-top-left-radius: 8px 8px;
+ ;;   border-top-right-radius: 8px 8px;
+ ;;   padding: 14px 14px 14px 14px;
+ ;;   color: black;
+ ;;   font: normal normal bold 17px/normal 'Helvetica Neue', Helvetica;
+ ;;   margin: 15px 10px 17px 10px;
+ ;;}
+ ;;.stShadowBox {
+ ;;   background: white;
+ ;;   border: 3px solid #B4B4B4;
+ ;;   border-bottom-left-radius: 8px 8px;
+ ;;   border-bottom-right-radius: 8px 8px;
+ ;;   border-top-left-radius: 8px 8px;
+ ;;   border-top-right-radius: 8px 8px;
+ ;;   padding: 14px 14px 0px 14px;
+ ;;   color: black;
+ ;;   font: normal normal bold 17px/normal 'Helvetica Neue', Helvetica;
+ ;;   margin: 15px 18px 17px 10px;
+ ;;   -moz-box-shadow: 10px 10px 7px #888;
+ ;;   -webkit-box-shadow: 10px 10px 7px #888;
+ ;;   box-shadow: 10px 10px 7px #888;
+ ;;}
+ ;;.stFieldBoxTitle {
+ ;;   background: #efefef;
+ ;;   font-weight: bold!important;
+ ;;   margin: -14px -14px 14px -14px;
+ ;;   padding: 10px 14px 10px 14px;
+ ;;   border-bottom: 1px solid #aaa;
+ ;;   border-top-left-radius: 6px 6px;
+ ;;   border-top-right-radius: 6px 6px;
+ ;;}
+ ;;.stFieldBoxField {
+ ;;   margin: -14px -14px 14px -14px;
+ ;;   border-top: 1px solid #aaa;
+ ;;   padding: 20px 14px 10px 14px;
+ ;;}
+ ;;.stFieldBoxLabel {
+ ;;   display: inline-block;
+ ;;   color:#666;
  ;;}
  ;;***END*** 
  ;;

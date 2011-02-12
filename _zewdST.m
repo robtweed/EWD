@@ -1,7 +1,7 @@
 %zewdST ; Sencha Touch Tag Processors and runtime logic
  ;
- ; Product: Enterprise Web Developer (Build 846)
- ; Build Date: Wed, 09 Feb 2011 13:14:58
+ ; Product: Enterprise Web Developer (Build 850)
+ ; Build Date: Sat, 12 Feb 2011 14:13:17
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -948,6 +948,13 @@ panel(nodeOID,attrValue,docOID,technology)
  d setAttribute^%zewdDOM("return",widgetObj,panelOID)
  ;
  d getChildrenInOrder^%zewdDOM(panelOID,.OIDArray)
+ s childNo=""
+ f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d
+ . s childOID=OIDArray(childNo)
+ . s tagName=$$getTagName^%zewdDOM(childOID)
+ . i tagName="st:pageitem" d pageItem^%zewdST2(childOID,,docOID,technology)
+ ;
+ d getChildrenInOrder^%zewdDOM(panelOID,.OIDArray)
  s childNo="",stop=0
  f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d  ;q:stop
  . s childOID=OIDArray(childNo)
@@ -968,6 +975,7 @@ panel(nodeOID,attrValue,docOID,technology)
  f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d
  . s childOID=OIDArray(childNo)
  . s tagName=$$getTagName^%zewdDOM(childOID)
+ . i tagName="st:pageitem" s tagName=$$pageItemSub^%zewdST2(childOID)
  . i tagName="st:toolbar" d toolbar(childOID,panelOID) q
  . i tagName="st:tabbar" d toolbar(childOID,panelOID) q
  . i tagName="st:carousel" d subPanel(childOID,parentOID,itemsOID)  q
@@ -1224,8 +1232,11 @@ list(nodeOID,itemsOID)
  s jsOID=$$addElementToDOM^%zewdDOM("ewd:jsline",stOID,,,text)
  ;
  s stOID=$$getElementById^%zewdDOM("ewdPostSTJS",docOID)
- s phpVar=$$addPhpVar^%zewdCustomTags("#"_sessionName)
- s text="EWD.sencha.loadListData("_store_","_phpVar_");"
+ s text=" d writeListData^%zewdST2("""_sessionName_""",sessid)"
+ i $$addCSPServerScript^%zewdAPI(stOID,text)
+ s text="EWD.sencha.loadListData("_store_",EWD.sencha.jsonData);"
+ ;s phpVar=$$addPhpVar^%zewdCustomTags("#"_sessionName)
+ ;s text="EWD.sencha.loadListData("_store_","_phpVar_");"
  s jsOID=$$addElementToDOM^%zewdDOM("ewd:jsline",stOID,,,text)
  ;
  i $$removeChild^%zewdDOM(nodeOID)
@@ -1467,6 +1478,13 @@ subPanel(nodeOID,bodyOID,itemsOID)
  f  s name=$o(mainAttrs(name)) q:name=""  d
  . i name="object" q
  . d setAttribute^%zewdDOM(name,mainAttrs(name),itemOID)
+ ;
+ d getChildrenInOrder^%zewdDOM(nodeOID,.OIDArray)
+ s childNo=""
+ f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d
+ . s childOID=OIDArray(childNo)
+ . s tagName=$$getTagName^%zewdDOM(childOID)
+ . i tagName="st:pageitem" d pageItem^%zewdST2(childOID,,docOID,technology)
  ;
  d getChildrenInOrder^%zewdDOM(nodeOID,.OIDArray)
  s childNo="",subItemsOID=""

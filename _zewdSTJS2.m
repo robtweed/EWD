@@ -1,7 +1,7 @@
 %zewdSTJS2 ; More Sencha Touch Static Javascript files
  ;
- ; Product: Enterprise Web Developer (Build 846)
- ; Build Date: Wed, 09 Feb 2011 13:14:58
+ ; Product: Enterprise Web Developer (Build 850)
+ ; Build Date: Sat, 12 Feb 2011 14:13:18
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -443,7 +443,7 @@ combo ;
  ;;    panel.showBy(Ext.getCmp(id));
  ;;    panel.setWidth(params.width);
  ;;    panel.setHeight(params.height);
- ;;    panel.scroller.scrollTo({x: 0, y: 0});
+ ;;    Ext.getCmp("ewdComboMatches").scroller.scrollTo({x: 0, y: 0});
  ;;    EWD.ajax.getPage({page:'zewdComboMatches',nvp:'seed=' + seed + "&id=" + id});
  ;;  },
  ;;  selectItem: function(index,record) {

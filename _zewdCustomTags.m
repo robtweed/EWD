@@ -1,7 +1,7 @@
 %zewdCustomTags	; Enterprise Web Developer Custom Tag Library Functions
  ;
- ; Product: Enterprise Web Developer (Build 846)
- ; Build Date: Wed, 09 Feb 2011 13:14:58
+ ; Product: Enterprise Web Developer (Build 850)
+ ; Build Date: Sat, 12 Feb 2011 14:13:17
  ;
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -309,14 +309,15 @@ getComboMatches(sessid)
  s app=$$getSessionValue^%zewdAPI("ewd.appName",sessid)
  s x=$g(^zewd("comboMethod",app,id))
  i x="" d  QUIT ""
- . d setSessionValue^%zewdAPI("ewdComboMatches","[]",sessid)
+ . ;d setSessionValue^%zewdAPI("ewdComboMatches","[]",sessid)
  s x="d "_x_"(prefix,.options)"
  x x
  s no=""
  f  s no=$o(options(no)) q:no=""  d
  . s list(no,"text")=options(no)
- s json=$$arrayToJSON^%zewdJSON("list")
- d setSessionValue^%zewdAPI("ewdComboMatches",json,sessid)
+ d saveListToSession^%zewdSTAPI(.list,"ewdComboMatches",sessid)
+ ;s json=$$arrayToJSON^%zewdJSON("list")
+ ;d setSessionValue^%zewdAPI("ewdComboMatches",json,sessid)
  QUIT ""
  ;
 startupImage(phoneImg,tabletImg,sessid)

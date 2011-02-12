@@ -1,7 +1,7 @@
 %zewdST2 ; Sencha Touch Tag Processors and runtime logic
  ;
- ; Product: Enterprise Web Developer (Build 846)
- ; Build Date: Wed, 09 Feb 2011 13:14:58
+ ; Product: Enterprise Web Developer (Build 850)
+ ; Build Date: Sat, 12 Feb 2011 14:13:17
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -240,6 +240,74 @@ qrCode(nodeOID,attrValue,docOID,technology)
  ;
  QUIT
  ;
+pageItem(nodeOID,attrValue,docOID,technology)
+ ;
+ n attr,childNo,childOID,class,dOID,header,id,labelWidth
+ n mainAttrs,noOfFields,OIDArray,shadow,sOID,tagName
+ ;
+ d getAttributeValues^%zewdCustomTags(nodeOID,.mainAttrs)
+ ;
+ s title=$g(mainAttrs("title"))
+ s shadow=$g(mainAttrs("shadow")) i shadow="" s shadow="true"
+ i shadow'="true",shadow'="false" s shadow="false"
+ s id=$g(mainAttrs("id")) i id="" s id="ewdSTpageItem"_$$uniqueId^%zewdAPI(nodeOID,filename)
+ s header=$g(mainAttrs("header"))
+ s labelWidth=+$g(mainAttrs("labelwidth"))
+ ;
+ s sOID=$$insertNewIntermediateElement^%zewdDOM(nodeOID,"span",docOID)
+ d setAttribute^%zewdDOM("id",id,sOID)
+ ;
+ s dOID=$$insertNewIntermediateElement^%zewdDOM(sOID,"div",docOID)
+ s class="stRoundedBox"
+ i shadow="true" s class="stShadowBox"
+ d setAttribute^%zewdDOM("class",class,dOID)
+ ;
+ i title'="" d
+ . n textOID,titleOID
+ . s titleOID=$$createElement^%zewdDOM("div",docOID)
+ . s titleOID=$$insertBefore^%zewdDOM(titleOID,dOID)
+ . d setAttribute^%zewdDOM("class","x-form-fieldset-title",titleOID)
+ . d setAttribute^%zewdDOM("style","margin-left:20px;",titleOID)
+ . s textOID=$$addTextToElement^%zewdDOM(titleOID,title)
+ ;
+ i header'="" d
+ . n fcOID,textOID,titleOID
+ . s fcOID=$$getFirstChild^%zewdDOM(dOID)
+ . i dOID="" d
+ . . s attr("class")="stFieldBoxTitle"
+ . . s titleOID=$$addElementToDOM^%zewdDOM("div",dOID,,.attr,header)
+ . e  d
+ . . s titleOID=$$createElement^%zewdDOM("div",docOID)
+ . . s titleOID=$$insertBefore^%zewdDOM(titleOID,fcOID)
+ . . d setAttribute^%zewdDOM("class","stFieldBoxTitle",titleOID)
+ . . s textOID=$$addTextToElement^%zewdDOM(titleOID,header)
+ ;
+ d getChildrenInOrder^%zewdDOM(dOID,.OIDArray)
+ s childNo="",noOfFields=0
+ f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d
+ . s childOID=OIDArray(childNo)
+ . s tagName=$$getTagName^%zewdDOM(childOID)
+ . i tagName="st:pageitemfield" d
+ . . n boxOID,label,subAttrs,value
+ . . s noOfFields=noOfFields+1
+ . . d getAttributeValues^%zewdCustomTags(childOID,.subAttrs)
+ . . s label=$g(subAttrs("label"))
+ . . s value=$g(subAttrs("value"))
+ . . s attr("class")="stFieldBoxField"
+ . . s boxOID=$$addElementToDOM^%zewdDOM("div",childOID,,.attr) 
+ . . i label'="" d
+ . . . s attr("class")="stFieldBoxLabel"
+ . . . i labelWidth>0 s attr("style")="width:"_labelWidth_"px"
+ . . . s xOID=$$addElementToDOM^%zewdDOM("span",boxOID,,.attr,label) 
+ . . s textOID=$$addTextToElement^%zewdDOM(boxOID,value)
+ . . d removeIntermediateNode^%zewdDOM(childOID)
+ ;
+ i noOfFields=0 d setAttribute^%zewdDOM("style","padding-bottom:14px",dOID)
+ ;
+ d removeIntermediateNode^%zewdDOM(nodeOID)
+ ;
+ QUIT
+ ;
 list(nodeOID,attrValue,docOID,technology)
  ;
  n panelOID,parentOID,stop
@@ -393,7 +461,7 @@ combo(nodeOID,mainAttrs,formOID)
  f i="method","panelheight","panelwidth" k mainAttrs(i)
  s ^zewd("comboMethod",app,id)=method
  s lsOID=$$addElementToDOM^%zewdDOM("st:listeners",nodeOID)
- s attr("keyup")=".{fn: function(){EWD.sencha.combo.filter({seed:this.getValue(),id:'name',width:"_width_",height:"_height_"}); }}"
+ s attr("keyup")=".{fn: function(){EWD.sencha.combo.filter({seed:this.getValue(),id:'"_id_"',width:"_width_",height:"_height_"}); }}"
  s lOID=$$addElementToDOM^%zewdDOM("st:listener",lsOID,,.attr)
  ;
  s attr("id")="ewdComboPanel"
@@ -409,7 +477,7 @@ combo(nodeOID,mainAttrs,formOID)
  s attr("id")="ewdComboMatches"
  s attr("sessionname")="ewdComboMatches"
  s attr("store")="EWD.sencha.combo.store"
- s attr("scroll")="false"
+ s attr("scroll")="true"
  s attr("ontap")="EWD.sencha.combo.selectItem"
  s lOID=$$addElementToDOM^%zewdDOM("st:list",pOID,,.attr)
  s lyOID=$$addElementToDOM^%zewdDOM("st:layout",lOID)
@@ -418,12 +486,12 @@ combo(nodeOID,mainAttrs,formOID)
  s fOID=$$addElementToDOM^%zewdDOM("st:field",lyOID,,.attr)
  s jsOID=$$createJS^%zewdST("standard")
  s stOID=$$getElementById^%zewdDOM("ewdPreSTJS",docOID)
- s attr("method")="setSessionValue^%zewdAPI"
- s attr("param1")="ewdComboMatches"
- s attr("param2")="[]"
- s attr("param3")="#ewd_sessid"
- s attr("type")="procedure"
- s pOID=$$addElementToDOM^%zewdDOM("ewd:execute",stOID,,.attr)
+ ;s attr("method")="setSessionValue^%zewdAPI"
+ ;s attr("param1")="ewdComboMatches"
+ ;s attr("param2")="[]"
+ ;s attr("param3")="#ewd_sessid"
+ ;s attr("type")="procedure"
+ ;s pOID=$$addElementToDOM^%zewdDOM("ewd:execute",stOID,,.attr)
  d comboMatchesPage(inputPath,.files)
  d registerResource^%zewdCustomTags("js","ewdCombo.js","combo^%zewdSTJS2",app)
  ;
@@ -439,9 +507,15 @@ comboMatchesPage(inputPath,files)
  i '$$openNewFile^%zewdCompiler(filePath) QUIT
  u filePath
  w "<ewd:config isFirstPage=""false"" pagetype=""ajax"" prePageScript=""getComboMatches^%zewdCustomTags"" />",!
- w "<script language='javascript'>",!
- w " EWD.sencha.combo.store.loadData(<?= #ewdComboMatches ?>,false);",!
- w "</script>",!
+ ;w "<script language='javascript'>",!
+ w "<ewd:js>",!
+ w "<ewd:cspscript language=""cache"" runat=""server"">",!
+ w "d writeListData^%zewdST2(""ewdComboMatches"",sessid)",!
+ w "</ewd:cspscript>",!
+ ;d writeListData^%zewdST2("ewdComboMatches",sessid)
+ w " EWD.sencha.combo.store.loadData(EWD.sencha.jsonData,false);",!
+ ;w "</script>",!
+ w "</ewd:js>",!
  c filePath
  u io
  s files(fileName_".ewd")=""
@@ -476,6 +550,16 @@ writeRegModel(sessionName,store,colDefName,sessid)
  . s comma=","
  w "];"_$c(13,10)
  ;
+ QUIT
+ ;
+writeListData(sessionName,sessid)
+ ;
+ n data
+ ;
+ w "EWD.sencha.jsonData="
+ d mergeArrayFromSession^%zewdAPI(.data,sessionName,sessid)
+ d streamArrayToJSON^%zewdJSON("data")
+ w ";"_$c(13,10)
  QUIT
  ;
 writeCheckboxes(sessionName,jsVarName,idRoot,nameRoot,checkIf,labelAlign,sessid)

@@ -1,7 +1,7 @@
 %zewdCompiler20	; Enterprise Web Developer Compiler : Combo+ tag processor
  ;
- ; Product: Enterprise Web Developer (Build 846)
- ; Build Date: Wed, 09 Feb 2011 13:14:57
+ ; Product: Enterprise Web Developer (Build 850)
+ ; Build Date: Sat, 12 Feb 2011 14:13:17
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -814,12 +814,24 @@ parseAjaxRequest(jsText)
  QUIT jsText
  ;
 cspscript(nodeOID,attrValues,docOID,technology)
-	;
-	; replace <ewd:cspscript"> with <script">
-	; 
-	s nodeOID=$$renameTag^%zewdDOM("script",nodeOID)
-	QUIT
-	;
+ ;
+ ; replace <ewd:cspscript"> with <script">
+ ;
+ n childNo,childOID,data,nodeType,OIDArray,xOID
+ ; 
+ s nodeOID=$$renameTag^%zewdDOM("script",nodeOID)
+ d getChildrenInOrder^%zewdDOM(nodeOID,.OIDArray)
+ s childNo=""
+ f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d
+ . s childOID=OIDArray(childNo)
+ . s nodeType=$$getNodeType^%zewdDOM(childOID)
+ . i nodeType=3 d
+ . . s data=$$getData^%zewdDOM(childOID)
+ . . i $e(data,1)'=" " d
+ . . . s data=" "_data
+ . . . s xOID=$$modifyTextData^%zewdDOM(data,childOID)
+ QUIT
+ ;
 svgDocument(nodeOID,attrValues,docOID,technology)
  ;
  ;<ewd:svgDocument zoomAndPan="disable" onload="initialize()" >

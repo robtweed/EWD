@@ -1,7 +1,7 @@
 %zewdCompiler16	; Enterprise Web Developer Compiler Functions
  ;
- ; Product: Enterprise Web Developer (Build 846)
- ; Build Date: Wed, 09 Feb 2011 13:14:57
+ ; Product: Enterprise Web Developer (Build 850)
+ ; Build Date: Sat, 12 Feb 2011 14:13:17
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -315,14 +315,12 @@ tokeniseURL(url,sessid)
  i url["?" d
  . s nvp=$p(url,"?",2,500)
  . s pageName=$p(pageName,"?",1)
- s n=$$setNextPageToken^%zewdAPI(pageName,sessid)
- s token=$$getSessionValue^%zewdAPI("ewd_token",sessid)
  s technology=$$getSessionValue^%zewdAPI("ewd_technology",sessid)
+ i technology'="csp" d
+ . s n=$$setNextPageToken^%zewdAPI(pageName,sessid)
+ . s token=$$getSessionValue^%zewdAPI("ewd_token",sessid)
  s technology="ewd"
- i technology="wl" d
- . s url=$$getRootURL^%zewdCompiler("wl")_"?MGWCHD="_$$getSessionValue^%zewdAPI("ewd_mgwchd",sessid)_"&MGWAPP=ewdwl&app="_$$getSessionValue^%zewdAPI("ewd_appName",sessid)_"&page="_pageName_"&"
- e  d
- . s url=pageName_"."_technology_"?"
+ s url=pageName_"."_technology_"?"
  s url=url_"ewd_token="_token_"&n="_n
  i nvp'="" s url=url_"&"_nvp
  QUIT url
