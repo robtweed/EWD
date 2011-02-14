@@ -1,7 +1,7 @@
 %zewdST ; Sencha Touch Tag Processors and runtime logic
  ;
- ; Product: Enterprise Web Developer (Build 850)
- ; Build Date: Sat, 12 Feb 2011 14:13:17
+ ; Product: Enterprise Web Developer (Build 851)
+ ; Build Date: Mon, 14 Feb 2011 15:50:55
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -1088,6 +1088,7 @@ button(nodeOID,parentOID)
  i $g(mainAttrs("style"))'="" d
  . s mainAttrs("ui")=mainAttrs("style")
  . k mainAttrs("style")
+ ;i $g(mainAttrs("handler"))'="" s mainAttrs("handler")="EWD.sencha.restartSessionTimer=true;"_mainAttrs("handler") break
  s xOID=$$addElementToDOM^%zewdDOM("st:item",parentOID,,.mainAttrs)
  ;
  d removeIntermediateNode^%zewdDOM(nodeOID)
@@ -1452,7 +1453,7 @@ cardPanel(nodeOID,bodyOID,itemsOID)
  ;
 subPanel(nodeOID,bodyOID,itemsOID)
  ;
- n attr,childNo,childOID,itemOID,mainAttrs,name,OIDArray,subItemsOID,tagName,xOID,xtype
+ n attr,childNo,childOID,itemOID,lOID,lsOID,mainAttrs,name,OIDArray,subItemsOID,tagName,xOID,xtype
  ;
  do getAttributeValues^%zewdCustomTags(nodeOID,.mainAttrs)
  ;
@@ -1468,7 +1469,6 @@ subPanel(nodeOID,bodyOID,itemsOID)
  . k mainAttrs("fitwidth")
  ;
  i $g(mainAttrs("page"))'="" d
- . n lOID,lsOID
  . s lsOID=$$addElementToDOM^%zewdDOM("st:listeners",itemOID)
  . s attr("render")=".function() {EWD.ajax.getPage({page:'"_mainAttrs("page")_"'});}"
  . s lOID=$$addElementToDOM^%zewdDOM("st:listener",lsOID,,.attr)
@@ -1485,6 +1485,7 @@ subPanel(nodeOID,bodyOID,itemsOID)
  . s childOID=OIDArray(childNo)
  . s tagName=$$getTagName^%zewdDOM(childOID)
  . i tagName="st:pageitem" d pageItem^%zewdST2(childOID,,docOID,technology)
+ . i tagName="st:layout" d panelLayout^%zewdST2(childOID,itemOID)
  ;
  d getChildrenInOrder^%zewdDOM(nodeOID,.OIDArray)
  s childNo="",subItemsOID=""
@@ -1599,7 +1600,7 @@ ewdAjaxRequest(nextPage,targetId,hasNVP,nodeOID,addVar)
  ;
 toolbarButton(nodeOID,parentOID)
  ;
- n attr,funcOID,handler,id,itemOID,jsOID,jsText,mainAttrs,nextPage,preSTOID,targetId,type
+ n attr,funcOID,handler,id,itemOID,jsOID,jsText,lOID,lsOID,mainAttrs,nextPage,preSTOID,targetId,type
  ;
  do getAttributeValues^%zewdCustomTags(nodeOID,.mainAttrs)
  s type=$g(mainAttrs("type")) ;i type="" s type="action" 
@@ -1631,7 +1632,8 @@ toolbarButton(nodeOID,parentOID)
  i $g(mainAttrs("hidden"))'="" s attr("hidden")=mainAttrs("hidden")
  s attr("xtype")="button"
  i $g(mainAttrs("ui"))'="",$g(mainAttrs("type"))="" s attr("ui")=mainAttrs("ui")
- i $g(mainAttrs("handler"))'="" s attr("handler")="."_mainAttrs("handler")
+ i $g(mainAttrs("handler"))'="" d
+ . s attr("handler")="."_mainAttrs("handler")
  s itemOID=$$addElementToDOM^%zewdDOM("st:item",parentOID,,.attr)
  i $g(mainAttrs("type"))="autoback" d
  . n jsOID,text,preSTOID

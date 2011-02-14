@@ -1,7 +1,7 @@
 %zewdCompiler19	; Runtime Functions
  ;
- ; Product: Enterprise Web Developer (Build 850)
- ; Build Date: Sat, 12 Feb 2011 14:13:17
+ ; Product: Enterprise Web Developer (Build 851)
+ ; Build Date: Mon, 14 Feb 2011 15:50:55
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -270,6 +270,7 @@ createJSFile(outputPath,verbose,technology) ;
 	. . i label="comboPlus" s no=21
 	. . i label="iWD" s no=14
 	. . s x="s line=$t("_label_"+lineNo^%zewdCompiler"_no_")"
+	. . i label="jsBlock" s x="s line=$t(jsBlock+lineNo^%zewdJS)"
 	. . i label="EWDext" s x="s line=$t("_label_"+lineNo^%zewdExtJSCode)"
 	. . x x
 	. . i line["***END***" s stop=1 q

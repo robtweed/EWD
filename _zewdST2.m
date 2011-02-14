@@ -1,7 +1,7 @@
 %zewdST2 ; Sencha Touch Tag Processors and runtime logic
  ;
  ; Product: Enterprise Web Developer (Build 850)
- ; Build Date: Sat, 12 Feb 2011 14:13:17
+ ; Build Date: Sat, 12 Feb 2011 13:00:24
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -506,16 +506,16 @@ comboMatchesPage(inputPath,files)
  s filePath=inputPath_fileName_".ewd"
  i '$$openNewFile^%zewdCompiler(filePath) QUIT
  u filePath
- w "<ewd:config isFirstPage=""false"" pagetype=""ajax"" prePageScript=""getComboMatches^%zewdCustomTags"" />",!
- ;w "<script language='javascript'>",!
- w "<ewd:js>",!
- w "<ewd:cspscript language=""cache"" runat=""server"">",!
- w "d writeListData^%zewdST2(""ewdComboMatches"",sessid)",!
- w "</ewd:cspscript>",!
+ w "<ewd:config isFirstPage=""false"" pagetype=""ajax"" prePageScript=""getComboMatches^%zewdCustomTags"" />"_$c(13,10)
+ ;w "<script language='javascript'>"_$c(13,10)
+ w "<ewd:js>"_$c(13,10)
+ w "<ewd:cspscript language=""cache"" runat=""server"">"_$c(13,10)
+ w " d writeListData^%zewdST2(""ewdComboMatches"",sessid)"_$c(13,10)
+ w "</ewd:cspscript>"_$c(13,10)
  ;d writeListData^%zewdST2("ewdComboMatches",sessid)
- w " EWD.sencha.combo.store.loadData(EWD.sencha.jsonData,false);",!
+ w " EWD.sencha.combo.store.loadData(EWD.sencha.jsonData,false);"_$c(13,10)
  ;w "</script>",!
- w "</ewd:js>",!
+ w "</ewd:js>"_$c(13,10)
  c filePath
  u io
  s files(fileName_".ewd")=""
@@ -536,7 +536,7 @@ writeRegModel(sessionName,store,colDefName,sessid)
  d mergeArrayFromSession^%zewdAPI(.data,sessionName,sessid)
  s col1=$g(colDef(1,"name"))
  s no=""
- f  s no=$o(data(no)) q:no=""  s data(no,col1)="&nbsp;&nbsp;"_$g(data(no,col1))
+ ;f  s no=$o(data(no)) q:no=""  s data(no,col1)="&nbsp;&nbsp;"_$g(data(no,col1))
  d streamArrayToJSON^%zewdJSON("data")
  w "});"_$c(13,10)
  w "EWD.sencha.colModel=["

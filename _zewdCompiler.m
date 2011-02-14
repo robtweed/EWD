@@ -1,7 +1,7 @@
 %zewdCompiler	; Enterprise Web Developer Compiler
  ;
- ; Product: Enterprise Web Developer (Build 850)
- ; Build Date: Sat, 12 Feb 2011 14:13:17
+ ; Product: Enterprise Web Developer (Build 851)
+ ; Build Date: Mon, 14 Feb 2011 15:50:55
  ; 
  ; 
  ; ----------------------------------------------------------------------------
@@ -119,7 +119,7 @@ compileAll(app,mode,technology,outputPath,multilingual,templateFilename,maxLines
  ;i '$d(files) w !,"No .ewd design pages exist in this path. Compilation aborted" QUIT
  ;
  s error=$$processApplication(path,outputPath,1,mode,,technology,,multilingual,$g(templateFilename),$g(maxLines))
- i error'="" w !,"An error occurred : "_error
+ i error'="" w !,"An error occurred : "_error QUIT
  QUIT
  ;
 compilePage(app,page,mode,technology,outputPath,multilingual,maxLines)
@@ -164,7 +164,7 @@ compilePage(app,page,mode,technology,outputPath,multilingual,maxLines)
  e  d
  . s appx=outputPath
  s error=$$processOneFile(filepath,outputPath,1,mode,technology,multilingual,$g(maxLines))
- i error'="" w !,"An error occurred : "_error
+ i error'="" w !,"An error occurred : "_error QUIT
  QUIT
  ;
 setApplicationRootPath(path)
