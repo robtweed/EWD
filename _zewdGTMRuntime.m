@@ -1,7 +1,7 @@
 %zewdGTMRuntime ; EWD for GT.M.  Runtime interface  
  ;
- ; Product: Enterprise Web Developer (Build 851)
- ; Build Date: Mon, 14 Feb 2011 15:50:55
+ ; Product: Enterprise Web Developer (Build 852)
+ ; Build Date: Wed, 16 Feb 2011 15:47:20
  ;
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -66,9 +66,21 @@ nodeEntry ; entry point for Node.js emulation of m_apache
  s script=$g(%CGIEVAR("SCRIPT_NAME"))
  ;d trace^%zewdAPI("SCRIPT_NAME="_script)
  s app=$p(script,"/",3)
+ i app["<script>" d
+ . i $g(^zewd("trace"))=1 d trace^%zewdAPI("XSS attack (6) detected: app="_app_"; app was converted to null string")
+ . s app=""
+ i app["<script " d
+ . i $g(^zewd("trace"))=1 d trace^%zewdAPI("XSS attack (7) detected: app="_app_"; app was converted to null string")
+ . s app=""
  s pageName=$p(script,"/",4)
  i pageName[".mgwsi" s pageName=$p(pageName,".mgwsi",1)
  i pageName[".ewd" s pageName=$p(pageName,".ewd",1)
+ i pageName["<script>" d
+ . i $g(^zewd("trace"))=1 d trace^%zewdAPI("XSS attack (4) detected: pageName="_pageName_"; pageName was converted to null string")
+ . s pageName=""
+ i pageName["<script " d
+ . i $g(^zewd("trace"))=1 d trace^%zewdAPI("XSS attack (5) detected: pageName="_pageName_"; pageName was converted to null string")
+ . s pageName=""
  s %KEY("app")=app
  s %KEY("page")=pageName
  i $g(^zewd("trace"))=1 d

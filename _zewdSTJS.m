@@ -1,7 +1,7 @@
 %zewdSTJS ; Sencha Touch Main Static Javascript file
  ;
- ; Product: Enterprise Web Developer (Build 851)
- ; Build Date: Mon, 14 Feb 2011 15:50:55
+ ; Product: Enterprise Web Developer (Build 852)
+ ; Build Date: Wed, 16 Feb 2011 15:47:20
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -30,6 +30,8 @@
  ;
 stJS ;;
  ;;EWD.sencha={
+ ;;  cardPanelAction:{},
+ ;;  cardBackButton:{},
  ;;  widget:{},
  ;;  widgetIndex:{},
  ;;  parentPanel:{},
@@ -86,22 +88,31 @@ stJS ;;
  ;;     }
  ;;     //EWD.sencha.restartSessionTimer = true;
  ;;  },
- ;;  loadCardPanel: function(panelId) {
+ ;;  loadCardPanel: function(pageName,panelId) {
  ;;     //EWD.sencha.restartSessionTimer = true;
- ;;     if (EWD.sencha.cardPanel) {
- ;;        if (EWD.sencha.cardPanel.id) {
- ;;          if (EWD.sencha.cardPanel.id !== '') {
- ;;            var cp=Ext.getCmp(EWD.sencha.cardPanel.id);
+ ;;     if (EWD.sencha.cardPanelAction[pageName]) {
+ ;;        var cpAction = EWD.sencha.cardPanelAction[pageName];
+ ;;        if (cpAction.id) {
+ ;;          if (cpAction.id !== '') {
+ ;;            var cp=Ext.getCmp(cpAction.id);
  ;;            cp.add(Ext.getCmp(panelId));
  ;;            cp.doLayout();
- ;;            EWD.sencha.cardPanel.prevCard = cp.getActiveItem();
- ;;            cp.setActiveItem(Ext.getCmp(panelId), EWD.sencha.cardPanel.transition);
- ;;            if (EWD.sencha.backbuttonId) {
- ;;              var backButton=Ext.getCmp(EWD.sencha.backbuttonId);
+ ;;            cpAction.prevCard = cp.getActiveItem();
+ ;;            cp.setActiveItem(Ext.getCmp(panelId), cpAction.transition);
+ ;;            var bbId = '';
+ ;;            if (EWD.sencha.cardBackButton[cpAction.id]) {
+ ;;               bbId = EWD.sencha.cardBackButton[cpAction.id];
+ ;;            }
+ ;;            else {
+ ;;              if (EWD.sencha.backbuttonId) bbId = EWD.sencha.backbuttonId;
+ ;;            }
+ ;;            if (bbId !== '') {
+ ;;              var backButton=Ext.getCmp(bbId);
  ;;              backButton.show();
  ;;              backButton.setHandler(function(btn,e) {
+ ;;                console.log("going to destroy " + panelId);
  ;;                Ext.getCmp(panelId).destroy();
- ;;                Ext.getCmp(EWD.sencha.cardPanel.id).setActiveItem(EWD.sencha.cardPanel.prevCard, {type:EWD.sencha.cardPanel.transition, direction: 'right'});
+ ;;                Ext.getCmp(cpAction.id).setActiveItem(cpAction.prevCard, {type:cpAction.transition, direction: 'right'});
  ;;                backButton.hide();
  ;;              });
  ;;            }

@@ -1,7 +1,7 @@
 %zewdSTCSS ; Sencha Touch Widget-specific CSS files
  ;
- ; Product: Enterprise Web Developer (Build 851)
- ; Build Date: Mon, 14 Feb 2011 15:50:55
+ ; Product: Enterprise Web Developer (Build 852)
+ ; Build Date: Wed, 16 Feb 2011 15:47:20
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -65,8 +65,8 @@ touchGrid ;
  ;;	font-weight: bold;
  ;;	border-left: 1px solid #000;
  ;;	border-right: 1px solid #000;
- ;;    padding-left:8px;
- ;;    padding-right:8px;
+ ;; padding-left:8px;
+ ;; padding-right:8px;
  ;;}
  ;;.x-grid-cell-no-of {
  ;;	overflow:hidden;

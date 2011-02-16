@@ -1,7 +1,7 @@
 %zewdST ; Sencha Touch Tag Processors and runtime logic
  ;
- ; Product: Enterprise Web Developer (Build 851)
- ; Build Date: Mon, 14 Feb 2011 15:50:55
+ ; Product: Enterprise Web Developer (Build 852)
+ ; Build Date: Wed, 16 Feb 2011 15:47:20
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -520,7 +520,7 @@ form(nodeOID,attrValue,docOID,technology)
  ;   <st:fieldset title="Welcome to the Minimal Hold Order System">
  ;      <st:field type="text" id="username" label="Username" />
  ;      <st:field type="password" id="password" label="Password" />
- ;      <st:field type="submit" text="Login" style="drastic_round" targetId="contentDiv" nextpage="loggedIn" />
+ ;      <st:field type="submit" text="Login" style="drastic_round" nextpage="loggedIn" />
  ;   </st:fieldset>
  ; </st:form>
  ;
@@ -716,7 +716,7 @@ field(nodeOID,parentOID,return)
  i $g(mainAttrs("value"))'="" s attr("value")=mainAttrs("value")
  s name=""
  f  s name=$o(mainAttrs(name)) q:name=""  d
- . i name="type"!(name="label")!(name="style")!(name="value") q
+ . i name="type"!(name="label")!(name="style")!(name="value")!(name="nextpage") q
  . s attr(name)=mainAttrs(name)
  s fieldOID=$$addElementToDOM^%zewdDOM("st:item",parentOID,,.attr)
  ; any listeners etc?
@@ -767,12 +767,16 @@ field(nodeOID,parentOID,return)
  . . s plus=" + '&"
  . s jsText=jsText_";"_$c(13,10)
  . s preSTOID=$$getElementById^%zewdDOM("ewdPreST",docOID)
- . s nextPage=$g(mainAttrs("nextpage")) i nextPage="" s nextPage="missingNextPage"
- . s targetId=$g(mainAttrs("targetid")) i targetId="" s targetId="st-uui-nullId"
+ . s nextPage=$g(mainAttrs("nextpage")) ;i nextPage="" s nextPage="missingNextPage"
+ . ;s targetId=$g(mainAttrs("targetid")) i targetId="" s targetId="ewdNullId"
  . i preSTOID="" d
  . . s preSTOID=$$getElementById^%zewdDOM("ewdPreSTJS",docOID)
- . . i targetId="st-uui-nullId" s targetId="ewdNullId"
- . s jsText=jsText_"ewd.ajaxRequest("""_nextPage_""","""_targetId_""",nvp);"
+ . . ;i targetId="st-uui-nullId" s targetId="ewdNullId"
+ . ;s jsText=jsText_"ewd.ajaxRequest("""_nextPage_""","""_targetId_""",nvp);"
+ . i $g(mainAttrs("cardpanel"))'="" d
+ . . i $g(mainAttrs("transition"))="" s mainAttrs("transition")="slide"
+ . . s jsText=jsText_"EWD.sencha.cardPanelAction['"_nextPage_"']={transition:'"_mainAttrs("transition")_"',id:'"_mainAttrs("cardpanel")_"'};"
+ . i nextPage'="" s jsText=jsText_"EWD.ajax.getPage({page:'"_nextPage_"',nvp:nvp});"
  . s funcOID=$$addElementToDOM^%zewdDOM("ewd:jsfunction",preSTOID,,.attr,jsText)
  . d setAttribute^%zewdDOM("handler",handler,fieldOID)
  . s postSTOID=$$getElementById^%zewdDOM("ewdPostST",docOID)
@@ -1014,12 +1018,12 @@ panel(nodeOID,attrValue,docOID,technology)
  . s postSTOID=$$getElementById^%zewdDOM("ewdPostSTJS",docOID)
  . s jsOID=$$addElementToDOM^%zewdDOM("ewd:jsline",postSTOID,,,text)
  ;
- s text="EWD.sencha.addWidget('"_$p(filename,".ewd",1)_"','"_widgetId_"');"
+ ;s text="EWD.sencha.addWidget('"_$p(filename,".ewd",1)_"','"_widgetId_"');"
  i $$createJS("standard")
  ;s postSTOID=$$getElementById^%zewdDOM("ewdPostSTJS",docOID)
  s postSTOID=$$getElementById^%zewdDOM("ewdSTJS",docOID)
- s jsOID=$$addElementToDOM^%zewdDOM("ewd:jsline",postSTOID,,,text)
- s text="EWD.sencha.loadCardPanel('"_widgetId_"');"
+ ;s jsOID=$$addElementToDOM^%zewdDOM("ewd:jsline",postSTOID,,,text)
+ s text="EWD.sencha.loadCardPanel('"_$p(filename,".ewd",1)_"','"_widgetId_"');"
  s postSTOID=$$getElementById^%zewdDOM("ewdPostSTJS",docOID)
  s jsOID=$$addElementToDOM^%zewdDOM("ewd:jsline",postSTOID,,,text)
  ;
@@ -1059,7 +1063,7 @@ formPanel(nodeOID,bodyOID,itemsOID)
  ;
 contentEl(nodeOID,parentOID)
  ;
- n class,gpOID,id
+ n class,gpOID,id,sOID
  ;
  s id=$$getAttribute^%zewdDOM("id",nodeOID)
  i id="" d
@@ -1070,6 +1074,8 @@ contentEl(nodeOID,parentOID)
  s nodeOID=$$removeChild^%zewdDOM(nodeOID)
  s gpOID=$$getParentNode^%zewdDOM(parentOID)
  s nodeOID=$$appendChild^%zewdDOM(nodeOID,gpOID)
+ s sOID=$$insertNewParentElement^%zewdDOM(nodeOID,"span",docOID)
+ d setAttribute^%zewdDOM("style","display:none",sOID)
  ;
  i class="stBlueHighlight" d
  . n jsOID,text,preSTOID
@@ -1098,7 +1104,7 @@ list(nodeOID,itemsOID)
  ;
  n attr,childNo,childOID,comma,fcOID,field,imgHandler,itemOID,jsOID,listOID,lsOID
  n mainAttrs,name,OIDArray,onTap,phpVar,sessionName,stOID,store,tagName,template
- n value,widgetObjName,widgetId
+ n text,value,widgetObj,widgetObjName,widgetId
  ;
  do getAttributeValues^%zewdCustomTags(nodeOID,.mainAttrs)
  ;
@@ -1155,7 +1161,7 @@ list(nodeOID,itemsOID)
  . s text=text_"var record = "_store_".getAt(index);"
  . i $g(mainAttrs("transition"))="" s mainAttrs("transition")="slide"
  . i $g(mainAttrs("transition"))'="" d
- . . s text=text_"EWD.sencha.cardPanel={transition:'"_mainAttrs("transition")_"',id:'"_cpid_"'};"
+ . . s text=text_"EWD.sencha.cardPanelAction['"_mainAttrs("nextpage")_"']={transition:'"_mainAttrs("transition")_"',id:'"_cpid_"'};"
  . . k mainAttrs("transition")
  . s text=text_"var nvp='listItemNo='+(index+1);"
  . s text=text_"var page="
@@ -1470,7 +1476,7 @@ subPanel(nodeOID,bodyOID,itemsOID)
  ;
  i $g(mainAttrs("page"))'="" d
  . s lsOID=$$addElementToDOM^%zewdDOM("st:listeners",itemOID)
- . s attr("render")=".function() {EWD.ajax.getPage({page:'"_mainAttrs("page")_"'});}"
+ . s attr("afterrender")=".function() {EWD.ajax.getPage({page:'"_mainAttrs("page")_"'});}"
  . s lOID=$$addElementToDOM^%zewdDOM("st:listener",lsOID,,.attr)
  . k mainAttrs("page")
  ;
@@ -1604,7 +1610,7 @@ toolbarButton(nodeOID,parentOID)
  ;
  do getAttributeValues^%zewdCustomTags(nodeOID,.mainAttrs)
  s type=$g(mainAttrs("type")) ;i type="" s type="action" 
- i type'="",type'="back" d
+ i type'="",type'="autoback" d
  . n handler
  . s handler=$g(mainAttrs("handler"))
  . i handler="" d
@@ -1637,7 +1643,10 @@ toolbarButton(nodeOID,parentOID)
  s itemOID=$$addElementToDOM^%zewdDOM("st:item",parentOID,,.attr)
  i $g(mainAttrs("type"))="autoback" d
  . n jsOID,text,preSTOID
- . s text="EWD.sencha.backbuttonId='"_id_"';"
+ . i $g(mainAttrs("cardpanel"))'="" d
+ . . s text="EWD.sencha.cardBackButton['"_mainAttrs("cardpanel")_"']='"_id_"';"
+ . e  d
+ . . s text="EWD.sencha.backbuttonId='"_id_"';"
  . s jsOID=$$createJS("standard")
  . s preSTOID=$$getElementById^%zewdDOM("ewdPreSTJS",docOID)
  . s jsOID=$$addElementToDOM^%zewdDOM("ewd:jsline",preSTOID,,,text)

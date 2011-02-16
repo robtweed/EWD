@@ -1,7 +1,7 @@
 %zewdST2 ; Sencha Touch Tag Processors and runtime logic
  ;
- ; Product: Enterprise Web Developer (Build 850)
- ; Build Date: Sat, 12 Feb 2011 13:00:24
+ ; Product: Enterprise Web Developer (Build 852)
+ ; Build Date: Wed, 16 Feb 2011 15:47:20
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -34,7 +34,7 @@ container(nodeOID,attrValue,docOID,technology)
  ;
  n attr,bodyOID,childNo,childOID,contentPage,debug,funcOID,headOID,htmlOID
  n images,jsOID,jsText,locale,mainAttrs,OIDArray,path,phpVar,resourcePath,rootPath
- n src,tagName,text,title,xOID
+ n src,tagName,text,title,timeoutAction,xOID
  ;
  ;<st:container rootPath="/sencha-1.0/" contentPage="intro" title="ST Demo App">
  ;  <st:images>
@@ -54,6 +54,7 @@ container(nodeOID,attrValue,docOID,technology)
  i rootPath="" s rootPath="/sencha/"
  s rootPath=$$addSlashAtEnd^%zewdST(rootPath)
  s debug=$g(mainAttrs("debug"))
+ s timeoutAction=$g(mainAttrs("timeoutpage")) i timeoutAction="" s timeoutAction="reload"
  ;
  d getChildrenInOrder^%zewdDOM(nodeOID,.OIDArray)
  s childNo=""
@@ -137,9 +138,11 @@ container(nodeOID,attrValue,docOID,technology)
  s text=text_"onReady:function(){"_$c(13,10)
  i $g(locale("dateformat"))'="" s text=text_"Ext.util.Format.defaultDateFormat='"_locale("dateformat")_"';"_$c(13,10)
  s text=text_"EWD.ajax.getPage({page:'"_contentPage_"',targetId:'ewdContent'});"_$c(13,10)
+ s phpVar=$$addPhpVar^%zewdCustomTags("#ewd_sessid_timeout")
  ;s text=text_"EWD.sencha.loadContentPage()"_$c(13,10)
  s text=text_"}"_$c(13,10)
  s text=text_"});"_$c(13,10)
+ s text=text_"EWD.sencha.timer("_phpVar_",'"_timeoutAction_"');"_$c(13,10)
  s xOID=$$addElementToDOM^%zewdDOM("ewd:jsline",jsOID,,,text)
  ;
  ;
@@ -242,8 +245,8 @@ qrCode(nodeOID,attrValue,docOID,technology)
  ;
 pageItem(nodeOID,attrValue,docOID,technology)
  ;
- n attr,childNo,childOID,class,dOID,header,id,labelWidth
- n mainAttrs,noOfFields,OIDArray,shadow,sOID,tagName
+ n attr,childNo,childOID,class,divOID,dOID,header,id,labelWidth
+ n mainAttrs,noOfFields,OIDArray,shadow,sOID,tagName,title
  ;
  d getAttributeValues^%zewdCustomTags(nodeOID,.mainAttrs)
  ;
@@ -288,7 +291,7 @@ pageItem(nodeOID,attrValue,docOID,technology)
  . s childOID=OIDArray(childNo)
  . s tagName=$$getTagName^%zewdDOM(childOID)
  . i tagName="st:pageitemfield" d
- . . n boxOID,label,subAttrs,value
+ . . n boxOID,label,subAttrs,textOID,value,xOID
  . . s noOfFields=noOfFields+1
  . . d getAttributeValues^%zewdCustomTags(childOID,.subAttrs)
  . . s label=$g(subAttrs("label"))
@@ -497,6 +500,13 @@ combo(nodeOID,mainAttrs,formOID)
  ;
  QUIT
  ;
+panelLayout(layoutOID,itemOID)
+ ;
+ s layoutOID=$$removeChild^%zewdDOM(layoutOID)
+ s layoutOID=$$appendChild^%zewdDOM(layoutOID,itemOID) break
+ ;
+ QUIT
+ ;
 comboMatchesPage(inputPath,files)
  ;
  n fileName,filePath,io
@@ -506,16 +516,16 @@ comboMatchesPage(inputPath,files)
  s filePath=inputPath_fileName_".ewd"
  i '$$openNewFile^%zewdCompiler(filePath) QUIT
  u filePath
- w "<ewd:config isFirstPage=""false"" pagetype=""ajax"" prePageScript=""getComboMatches^%zewdCustomTags"" />"_$c(13,10)
- ;w "<script language='javascript'>"_$c(13,10)
- w "<ewd:js>"_$c(13,10)
- w "<ewd:cspscript language=""cache"" runat=""server"">"_$c(13,10)
- w " d writeListData^%zewdST2(""ewdComboMatches"",sessid)"_$c(13,10)
- w "</ewd:cspscript>"_$c(13,10)
+ w "<ewd:config isFirstPage=""false"" pagetype=""ajax"" prePageScript=""getComboMatches^%zewdCustomTags"" />",!
+ ;w "<script language='javascript'>",!
+ w "<ewd:js>",!
+ w "<ewd:cspscript language=""cache"" runat=""server"">",!
+ w "d writeListData^%zewdST2(""ewdComboMatches"",sessid)",!
+ w "</ewd:cspscript>",!
  ;d writeListData^%zewdST2("ewdComboMatches",sessid)
- w " EWD.sencha.combo.store.loadData(EWD.sencha.jsonData,false);"_$c(13,10)
+ w " EWD.sencha.combo.store.loadData(EWD.sencha.jsonData,false);",!
  ;w "</script>",!
- w "</ewd:js>"_$c(13,10)
+ w "</ewd:js>",!
  c filePath
  u io
  s files(fileName_".ewd")=""

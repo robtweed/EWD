@@ -1,7 +1,7 @@
 %zewdPHP	; Enterprise Web Developer PHP run-time functions and processing
  ;
- ; Product: Enterprise Web Developer (Build 851)
- ; Build Date: Mon, 14 Feb 2011 15:50:55
+ ; Product: Enterprise Web Developer (Build 852)
+ ; Build Date: Wed, 16 Feb 2011 15:47:20
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -348,7 +348,12 @@ updateSessionFromRequest(requestArray,sessid)
  f  s name=$o(requestArray(name)) q:name=""  d
  . q:$g(requestArray(name))=""
  . s nvp=$$zcvt(requestArray(name),"l")
- . i nvp["<script src=",nvp["</script>",((nvp["http://")!(nvp["https://")) k requestArray(name)
+ . i nvp["<script src=",nvp["</script>",((nvp["http://")!(nvp["https://")) d
+ . . i $g(^zewd("trace"))=1 d trace^%zewdAPI("XSS attempt (1) detected: nvp="_nvp_"; all request values were deleted")
+ . . k requestArray(name)
+ . i nvp["<script>",nvp["</script>" d
+ . . i $g(^zewd("trace"))=1 d trace^%zewdAPI("XSS attempt (2) detected: nvp="_nvp_"; all request values were deleted")
+ . . k requestArray(name)
  ;
  s nameList=""
  i ewdAction'="" s nameList=$g(^%zewdSession("action",sessid,ewdAction,"nameList"))
@@ -396,7 +401,9 @@ updateSessionFromRequest(requestArray,sessid)
  . i $g(requestArray(name))'="" d  q:invalid
  . . s nvp=$$zcvt(requestArray(name),"l")
  . . ; prevent attempts to inject malicious code via URLs
- . . i nvp["<script>",nvp["</script>",((nvp["http://")!(nvp["https://")) s invalid=1
+ . . i nvp["<script>",nvp["</script>",((nvp["http://")!(nvp["https://")) d
+ . . . i $g(^zewd("trace"))=1 d trace^%zewdAPI("XSS attempt (3) detected: nvp="_nvp_"; all request values were deleted")
+ . . . s invalid=1
  . i '$$allowed(name,.nameList,sessid) q
  . ;d trace^%zewdAPI("allowed name "_name)
  . ;  textareas
