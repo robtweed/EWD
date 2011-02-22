@@ -1,7 +1,7 @@
 %zewdCompiler7	; Enterprise Web Developer Compiler Functions
  ;
- ; Product: Enterprise Web Developer (Build 852)
- ; Build Date: Wed, 16 Feb 2011 15:47:20
+ ; Product: Enterprise Web Developer (Build 855)
+ ; Build Date: Tue, 22 Feb 2011 12:53:40
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -586,7 +586,7 @@ pageIndex(app,filename,nextPageList) ;
  ;
  n nextPage,np
  ;
- i technology="wl"!(technology="gtm") s app=appx
+ i technology="wl"!(technology="gtm")!(technology="ewd") s app=appx
  i $e(filename,1,3)'="ewd",isAjax s ^%zewdIndex($$zcvt^%zewdAPI(app,"l"),"pages",$p(filename,".ewd",1))=$g(config("isFirstPage"))
  s nextPage=""
  f  s nextPage=$o(nextPageList(nextPage)) q:nextPage=""  d
@@ -693,7 +693,7 @@ getProperty(nodeOID,attrValues,docOID,technology)
 	. d
 	. . n serverOID,text,useSessGlo
 	. . s useSessGlo=+$g(^%zewd("config","csp","useSessionGlobal"))=1
-	. . i technology="wl"!(technology="gtm") s useSessGlo=1
+	. . i technology="wl"!(technology="gtm")!(technology="ewd") s useSessGlo=1
 	. . i 'useSessGlo s text=" s "_return_"=%session.Data("_sname_subList_","_propertyName_")"
 	. . i useSessGlo s text=" s "_return_"=^%zewdSession(""session"","_sname_subList_","_propertyName_")"
 	. . s serverOID=$$addCSPServerScript^%zewdCompiler4(nodeOID,text)
@@ -826,7 +826,7 @@ getFirstCustomTag(parentOID,stop)
 processTag(tagName,attrList,procName,include,defFile,docName,technology,error)
 	;processTag(tagName,procName,docName,technology,error)
 	;
-	n attr,attrName,attrValue,attrValues,docOID,func,i,lcAttrName
+	n attr,attrName,attrValue,attrValues,docOID,func,i,isCustomTag,lcAttrName
 	n nAttr,nodeOID,ntags,OIDArray,ok,%p,page,x,%zt
 	; 
 	s error=""
@@ -925,7 +925,10 @@ processTag(tagName,attrList,procName,include,defFile,docName,technology,error)
 	. s %p=$g(^%zewd("customTag",tagName))
 	. s func=$p(%p,$c(1),1)
 	. ;i func'="",func'["^%zewd" d
-	. i func'["^%zewd" d
+	. s isCustomTag=0
+	. i tagName'["ewd:" s isCustomTag=1
+	. ;i func'["^%zewd" d
+	. i isCustomTag d
 	. . n appName
 	. . s appName=$$zcvt^%zewdAPI(subPath,"l")
 	. . s appName=app

@@ -1,7 +1,7 @@
 %zewdCompiler20	; Enterprise Web Developer Compiler : Combo+ tag processor
  ;
- ; Product: Enterprise Web Developer (Build 852)
- ; Build Date: Wed, 16 Feb 2011 15:47:20
+ ; Product: Enterprise Web Developer (Build 855)
+ ; Build Date: Tue, 22 Feb 2011 12:53:40
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -390,17 +390,26 @@ jsSection(nodeOID,attrValues,docOID,technology)
 	;
 	; replace the jsSection node with its text if present
 	;
-	n childOID,text,textOID
+	n childNo,childOID,id,OIDArray,text,textOID
 	;
-	s childOID=$$getFirstChild^%zewdDOM(nodeOID)
-	i $$getNodeType^%zewdDOM(childOID)=3 d
-	. s text=$$getData^%zewdDOM(childOID)
-	. i text["ewd.ajaxRequest" d
-	. . s text=$$parseAjaxRequest(text)
-	. . i $$modifyTextData^%zewdDOM(text,childOID)
-	. s textOID=$$convertNodeToText^%zewdDOM(nodeOID)
-	e  d
-	. d removeIntermediateNode^%zewdDOM(nodeOID)
+	;s id=$$getAttribute^%zewdDOM("id",nodeOID)
+	;break:$$getTagName^%zewdDOM(nodeOID)="ewd:jssection"
+	d removeIntermediateNode^%zewdDOM(nodeOID)
+	QUIT
+	;
+	d getChildrenInOrder^%zewdDOM(nodeOID,.OIDArray)
+	s childNo=""
+	f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d
+	. s childOID=OIDArray(childNo)
+	. i $$getNodeType^%zewdDOM(childOID)=3 d
+	. . s text=$$getData^%zewdDOM(childOID)
+	. . i text["ewd.ajaxRequest" d
+	. . . s text=$$parseAjaxRequest(text)
+	. . . i $$modifyTextData^%zewdDOM(text,childOID)
+	. . s textOID=$$convertNodeToText^%zewdDOM(nodeOID)
+	. e  d
+	. . d removeIntermediateNode^%zewdDOM(nodeOID)
+	i id="ewdSTJS" break
 	QUIT
 	;
 convertNodeToText(nodeOID)
@@ -752,7 +761,7 @@ assignPageToken(page,sessid)
  ;
  s token=""
  s technology=$$getSessionValue^%zewdAPI("ewd.technology",sessid)
- i technology="wl" d
+ i technology="wl"!(technology="ewd") d
  . s token=$$setNextPageToken^%zewdWLD(page)
  . m ^%zewdSession("session",sessid)=sessionArray
  . s currentPage=$$getSessionValue^%zewdAPI("ewd.pageName",sessid)
@@ -772,6 +781,8 @@ setJSONPage(sessid)
  . s url=$$getRootURL^%zewdCompiler("wl")
  . s url=url_"?MGWCHD="_$$getSessionValue^%zewdAPI("ewd_mgwchd",sessid)
  . s url=url_"&MGWAPP=ewdwl&app="_app_"&page=json"
+ e  d
+ . s url=$$getRootURL^%zewdCompiler(technology)_"/"_app_"/json."_technology
  s url=url_token_"&ewd_JSONSource="
  s js="EWD.json.url='"_url_"';"
  QUIT js

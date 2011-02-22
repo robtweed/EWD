@@ -1,7 +1,7 @@
 %zewdCompiler15	; Enterprise Web Developer Compiler
  ;
- ; Product: Enterprise Web Developer (Build 852)
- ; Build Date: Wed, 16 Feb 2011 15:47:19
+ ; Product: Enterprise Web Developer (Build 855)
+ ; Build Date: Tue, 22 Feb 2011 12:53:40
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -78,6 +78,7 @@ tagDefinitions ;
 	;;ewd:responseHeader~name,value,suppress~1~responseHeader^%zewdCompiler4
 	;;ewd:schemaForm~schemaName,instanceName~0~schemaForm^%zewdCompiler4~
 	;;ewd:schemaViewInstance~instanceName,suppressNull,suppressInvisible~0~schemaViewInstance^%zewdCompiler23~
+	;;ewd:script~~0~script^%zewdCompiler19
 	;;ewd:set~return,value,operand,firstValue,secondValue~1~set^%zewdCompiler4
 	;;ewd:setArrayValue~arrayName,index,value~1~setArrayValue^%zewdCompiler4
 	;;ewd:slideshow~~0~slideshow^%zewdSlideshow
@@ -117,11 +118,13 @@ tagDefinitions ;
 	;;iwd:toolbarbutton~~0~toolbarbutton^%zewdiwd
 	;;st:card~~0~card^%zewdST
 	;;st:carousel~~0~panel^%zewdST
+	;;st:script~~0~script^%zewdST2
 	;;st:class~~0~stclass^%zewdST
 	;;st:container~~0~container^%zewdST2
 	;;st:form~~0~form^%zewdST
 	;;st:formpanel~~0~panel^%zewdST
 	;;st:js~~0~js^%zewdST
+	;;st:json~~0~json^%zewdST2
 	;;st:list~~0~list^%zewdST2
 	;;st:loggedinview~~0~loggedInView^%zewdST
 	;;st:navigationmenu~~0~navigationMenu^%zewdST

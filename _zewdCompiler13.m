@@ -1,7 +1,7 @@
 %zewdCompiler13	; Enterprise Web Developer Compiler Functions
  ;
- ; Product: Enterprise Web Developer (Build 852)
- ; Build Date: Wed, 16 Feb 2011 15:47:19
+ ; Product: Enterprise Web Developer (Build 855)
+ ; Build Date: Tue, 22 Feb 2011 12:53:40
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -890,7 +890,7 @@ createCSSFile(outputPath,mode,verbose,technology) ;
 	. . x x
 	. . i line["***END***" s stop=1 q
 	. . i line[";;*php*",technology'="php" q
-	. . i line[";;*csp*",((technology'="csp")!(technology="wl")!(technology="gtm")) q
+	. . i line[";;*csp*",((technology'="csp")!(technology="wl")!(technology="ewd")!(technology="gtm")) q
 	. . i line[";;*jsp*",technology'="jsp" q
 	. . i line[";;*vb.net*",technology'="vb.net" q
 	. . i line["left(up)" d

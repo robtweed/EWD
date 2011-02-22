@@ -1,7 +1,7 @@
 %zewdSTJS ; Sencha Touch Main Static Javascript file
  ;
- ; Product: Enterprise Web Developer (Build 852)
- ; Build Date: Wed, 16 Feb 2011 15:47:20
+ ; Product: Enterprise Web Developer (Build 855)
+ ; Build Date: Tue, 22 Feb 2011 12:53:41
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -110,7 +110,7 @@ stJS ;;
  ;;              var backButton=Ext.getCmp(bbId);
  ;;              backButton.show();
  ;;              backButton.setHandler(function(btn,e) {
- ;;                console.log("going to destroy " + panelId);
+ ;;                //console.log("going to destroy " + panelId);
  ;;                Ext.getCmp(panelId).destroy();
  ;;                Ext.getCmp(cpAction.id).setActiveItem(cpAction.prevCard, {type:cpAction.transition, direction: 'right'});
  ;;                backButton.hide();

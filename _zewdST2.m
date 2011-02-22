@@ -1,7 +1,7 @@
 %zewdST2 ; Sencha Touch Tag Processors and runtime logic
  ;
- ; Product: Enterprise Web Developer (Build 852)
- ; Build Date: Wed, 16 Feb 2011 15:47:20
+ ; Product: Enterprise Web Developer (Build 855)
+ ; Build Date: Tue, 22 Feb 2011 12:53:41
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -104,11 +104,23 @@ container(nodeOID,attrValue,docOID,technology)
  ;s text=" d loadFiles^%zewdCustomTags("""_$$zcvt^%zewdAPI(app,"l")_""",""js"",sessid)"
  ;i $$addCSPServerScript^%zewdAPI(headOID,text)
  ;
+ s phpVar=$$addPhpVar^%zewdCustomTags("#ewd_startupImage")
+ s attr("style")="background-image: url("_phpVar_");background-repeat: no-repeat"
+ s bodyOID=$$addElementToDOM^%zewdDOM("body",htmlOID,,.attr)
+ ;
+ s attr("id")="ewdNullId"
+ s attr("style")="display:none"
+ s xOID=$$addElementToDOM^%zewdDOM("div",bodyOID,,.attr,"&nbsp;")
+ s attr("id")="ewdContent"
+ s xOID=$$addElementToDOM^%zewdDOM("div",bodyOID,,.attr,"&nbsp;")
+ ;
  d getChildrenInOrder^%zewdDOM(nodeOID,.OIDArray)
  s childNo=""
  f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d
  . s childOID=OIDArray(childNo)
  . s tagName=$$getTagName^%zewdDOM(childOID)
+ . i tagName="st:content" d
+ . . d containerContent(childOID,headOID)
  . i tagName="script" d
  . . n src
  . . s src=$$getAttribute^%zewdDOM("src",childOID)
@@ -137,14 +149,17 @@ container(nodeOID,attrValue,docOID,technology)
  s text=text_"addGlossToIcon:"_images("icon","addgloss")_","_$c(13,10)
  s text=text_"onReady:function(){"_$c(13,10)
  i $g(locale("dateformat"))'="" s text=text_"Ext.util.Format.defaultDateFormat='"_locale("dateformat")_"';"_$c(13,10)
- s text=text_"EWD.ajax.getPage({page:'"_contentPage_"',targetId:'ewdContent'});"_$c(13,10)
+ i contentPage'="" d
+ . s text=text_"EWD.ajax.getPage({page:'"_contentPage_"',targetId:'ewdContent'});"_$c(13,10)
+ e  d
+ . n preOID
+ . s text=text_"EWD.sencha.init();"_$c(13,10)
  s phpVar=$$addPhpVar^%zewdCustomTags("#ewd_sessid_timeout")
  ;s text=text_"EWD.sencha.loadContentPage()"_$c(13,10)
  s text=text_"}"_$c(13,10)
  s text=text_"});"_$c(13,10)
  s text=text_"EWD.sencha.timer("_phpVar_",'"_timeoutAction_"');"_$c(13,10)
  s xOID=$$addElementToDOM^%zewdDOM("ewd:jsline",jsOID,,,text)
- ;
  ;
  ;s attr("onLoad")="EWD.sencha.loadContentPage();"
  ;
@@ -155,17 +170,58 @@ container(nodeOID,attrValue,docOID,technology)
  s attr("type")="procedure"
  s xOID=$$addElementToDOM^%zewdDOM("ewd:execute",headOID,,.attr)
  ;
- s phpVar=$$addPhpVar^%zewdCustomTags("#ewd_startupImage")
- s attr("style")="background-image: url("_phpVar_");background-repeat: no-repeat"
- s bodyOID=$$addElementToDOM^%zewdDOM("body",htmlOID,,.attr)
+ d removeIntermediateNode^%zewdDOM(nodeOID)
  ;
- s attr("id")="ewdNullId"
- s attr("style")="display:none"
- s xOID=$$addElementToDOM^%zewdDOM("div",bodyOID,,.attr,"&nbsp;")
- s attr("id")="ewdContent"
- s xOID=$$addElementToDOM^%zewdDOM("div",bodyOID,,.attr,"&nbsp;")
+ QUIT
+ ;
+containerContent(nodeOID,headOID)
+ ;
+ n childNo,childOID,OIDArray,scriptOID,scriptOID2,tagName
+ ;
+ s attr("type")="text/javascript"
+ s attr("id")="ewdSTJS"
+ s scriptOID=$$addElementToDOM^%zewdDOM("st:script",headOID,,.attr)
+ s scriptOID2=$$createElement^%zewdDOM("st:script",docOID)
+ s scriptOID2=$$insertBefore^%zewdDOM(scriptOID2,scriptOID)
+ d setAttribute^%zewdDOM("id","ewdPreSTJS",scriptOID2)
+ d setAttribute^%zewdDOM("type","text/javascript",scriptOID2)
+ s attr("type")="text/javascript"
+ s attr("id")="ewdPostSTJS"
+ s scriptOID2=$$addElementToDOM^%zewdDOM("st:script",headOID,,.attr)
+ ;
+ d getChildrenInOrder^%zewdDOM(nodeOID,.OIDArray)
+ s childNo=""
+ f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d
+ . s childOID=OIDArray(childNo)
+ . s tagName=$$getTagName^%zewdDOM(childOID)
+ . i tagName="st:panel" d
+ . . n classOID
+ . . d panel^%zewdST(childOID,,docOID,technology)
+ . . s classOID=$$getFirstChild^%zewdDOM(nodeOID)
+ . . s classOID=$$removeChild^%zewdDOM(classOID)
+ . . s classOID=$$appendChild^%zewdDOM(classOID,scriptOID)
+ . . ;s contentJS="EWD.sencha.init=function() {"_$c(13,10)_contentJS_"};"_$c(13,10)
  ;
  d removeIntermediateNode^%zewdDOM(nodeOID)
+ ;
+ QUIT
+ ;
+script(nodeOID,attrValue,docOID,technology)
+ ;
+ n fcOID,id,line,sOID,txOID
+ ;
+ s id=$$getAttribute^%zewdDOM("id",nodeOID)
+ i id="ewdSTJS" d
+ . s fcOID=$$getFirstChild^%zewdDOM(nodeOID)
+ . d removeAttribute^%zewdDOM("id",nodeOID)
+ . s sOID=$$insertNewIntermediateElement^%zewdDOM(nodeOID,"ewd:jssection",docOID)
+ . d setAttribute^%zewdDOM("id","ewdSTJS",sOID)
+ . s line="EWD.sencha.init=function() {"
+ . s txOID=$$addElementToDOM^%zewdDOM("ewd:jsline",nodeOID,,,line,1)
+ . s line="};"
+ . s txOID=$$addElementToDOM^%zewdDOM("ewd:jsline",nodeOID,,,line)
+ e  d
+ s txOID=$$renameTag^%zewdDOM("ewd:script",nodeOID)
  ;
  QUIT
  ;
@@ -500,10 +556,35 @@ combo(nodeOID,mainAttrs,formOID)
  ;
  QUIT
  ;
+json(nodeOID,attrValue,docOID,technology)
+ ;
+ n at,jsOID,mainAttrs,return,sessionName,stOID,text,var
+ ;
+ d getAttributeValues^%zewdCustomTags(nodeOID,.mainAttrs)
+ ;
+ s sessionName=$g(mainAttrs("sessionname")) i sessionName="" s sessionName="missingSessionName"
+ s return=$g(mainAttrs("return")) i return="" s return="missingVar"
+ s var=0
+ i $g(mainAttrs("var"))="true" s var=1
+ s at=$g(mainAttrs("at")) i at="" s at="start"
+ ;
+ s jsOID=$$createJS^%zewdST("standard")
+ i at="start"!(at="top") d
+ . s stOID=$$getElementById^%zewdDOM("ewdPreSTJS",docOID)
+ e  d
+ . s stOID=$$getElementById^%zewdDOM("ewdPostSTJS",docOID) 
+ ;
+ s text=" d streamJSON^%zewdJSON("""_sessionName_""","""_return_""","""_var_""",sessid)"
+ i $$addCSPServerScript^%zewdAPI(stOID,text)
+ ;
+ d removeIntermediateNode^%zewdDOM(nodeOID)
+ ;
+ QUIT
+ ;
 panelLayout(layoutOID,itemOID)
  ;
  s layoutOID=$$removeChild^%zewdDOM(layoutOID)
- s layoutOID=$$appendChild^%zewdDOM(layoutOID,itemOID) break
+ s layoutOID=$$appendChild^%zewdDOM(layoutOID,itemOID)
  ;
  QUIT
  ;
@@ -512,19 +593,16 @@ comboMatchesPage(inputPath,files)
  n fileName,filePath,io
  ;
  s io=$io
- s fileName="zewdComboMatches"
+ s fileName="zewdcm"
  s filePath=inputPath_fileName_".ewd"
  i '$$openNewFile^%zewdCompiler(filePath) QUIT
  u filePath
  w "<ewd:config isFirstPage=""false"" pagetype=""ajax"" prePageScript=""getComboMatches^%zewdCustomTags"" />",!
- ;w "<script language='javascript'>",!
  w "<ewd:js>",!
  w "<ewd:cspscript language=""cache"" runat=""server"">",!
  w "d writeListData^%zewdST2(""ewdComboMatches"",sessid)",!
  w "</ewd:cspscript>",!
- ;d writeListData^%zewdST2("ewdComboMatches",sessid)
  w " EWD.sencha.combo.store.loadData(EWD.sencha.jsonData,false);",!
- ;w "</script>",!
  w "</ewd:js>",!
  c filePath
  u io

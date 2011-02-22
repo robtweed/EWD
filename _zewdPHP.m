@@ -1,7 +1,7 @@
 %zewdPHP	; Enterprise Web Developer PHP run-time functions and processing
  ;
- ; Product: Enterprise Web Developer (Build 852)
- ; Build Date: Wed, 16 Feb 2011 15:47:20
+ ; Product: Enterprise Web Developer (Build 855)
+ ; Build Date: Tue, 22 Feb 2011 12:53:41
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -1124,7 +1124,7 @@ getSessionValue(name,sessid)
  . i value="" d
  . . n ewdTech
  . . s ewdTech=$g(^%zewdSession("session",sessid,"ewd_technology"))
- . . i ewdTech="wl"!(ewdTech="gtm") s value=$g(sessionArray(name))
+ . . i ewdTech="wl"!(ewdTech="gtm")!(ewdTech="ewd") s value=$g(sessionArray(name))
  QUIT $g(^%zewdSession("session",sessid,name))
  ;
 getSessionObject(objectName,propertyName,sessid)

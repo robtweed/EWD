@@ -1,7 +1,7 @@
 %zewdCompiler3	; Enterprise Web Developer Compiler Functions (extension routine)
  ;
- ; Product: Enterprise Web Developer (Build 852)
- ; Build Date: Wed, 16 Feb 2011 15:47:20
+ ; Product: Enterprise Web Developer (Build 855)
+ ; Build Date: Tue, 22 Feb 2011 12:53:40
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -498,7 +498,7 @@ checkbox(docName,technology) ;
 	. . . . . s name=$p(name,"&php;",1)
 	. . . . . s sname=$tr(name,".","_")
 	. . . . . set attrValue="#($s($d(%session.Data(""ewd_selected"","""_sname_"""_"_varName_","""_value_""")):""checked='checked'"",$d(^%zewdSession(""session"",sessid,""ewd_selected"","""_sname_"""_"_varName_","""_value_""")):""checked='checked'"",1:""""))#"
-	. . . . . i technology="wl"!(technology="gtm") set attrValue="#($s($d(^%zewdSession(""session"",sessid,""ewd_selected"","""_sname_"""_"_varName_","""_value_""")):""checked='checked'"",1:""""))#"
+	. . . . . i technology="wl"!(technology="gtm")!(technology="ewd") set attrValue="#($s($d(^%zewdSession(""session"",sessid,""ewd_selected"","""_sname_"""_"_varName_","""_value_""")):""checked='checked'"",1:""""))#"
 	. . . . s svalue=""""_value_""""
 	. . . . i value["&php;" s svalue=$$getPHPVarName(value,1)
 	. . . . set attrValue="#($s($d(%session.Data(""ewd_selected"","""_sname_""","_svalue_")):""checked='checked'"",$d(^%zewdSession(""session"",sessid,""ewd_selected"","""_sname_""","_svalue_")):""checked='checked'"",1:""""))#"

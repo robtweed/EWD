@@ -1,7 +1,7 @@
 %zewdCompiler8	; Enterprise Web Developer Compiler Functions
  ;
- ; Product: Enterprise Web Developer (Build 852)
- ; Build Date: Wed, 16 Feb 2011 15:47:20
+ ; Product: Enterprise Web Developer (Build 855)
+ ; Build Date: Tue, 22 Feb 2011 12:53:40
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -796,7 +796,7 @@ forEach(nodeOID,attrValues,docOID,technology)
 	s param="param",subs=""
 	f  s param=$o(attrValues(param)) q:param=""  q:param'["param"  d
 	. s pval=attrValues(param)
-	. i technology="csp"!(technology="wl")!(technology="gtm") d
+	. i technology="csp"!(technology="wl")!(technology="gtm")!(technology="ewd") d
 	. . i $e(pval,1)="""" s pval=$e(pval,2,$l(pval)-1) q
 	. . i $e(pval,1)'="$" s pval="$"_pval
 	. . i $e(pval,1,2)="$$" s pval=$$replaceAll^%zewdAPI(pval,",",$c(0))

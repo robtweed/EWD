@@ -1,7 +1,7 @@
 %zewdMgr	; Enterprise Web Developer Manager Functions
  ;
- ; Product: Enterprise Web Developer (Build 852)
- ; Build Date: Wed, 16 Feb 2011 15:47:20
+ ; Product: Enterprise Web Developer (Build 855)
+ ; Build Date: Tue, 22 Feb 2011 12:53:40
  ;
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -404,7 +404,7 @@ compileAll(sessid)
  i $e(outputPath,$l(outputPath))'=dlim s outputPath=outputPath_dlim
  s outputPath=outputPath_app
  s multilingual=$$getSessionValue^%zewdAPI("multilingual",sessid)
- i technology="wl"!(technology="gtm") s outputPath=path
+ i technology="wl"!(technology="gtm")!(technology="ewd") s outputPath=path
  s error=$$processApplication^%zewdCompiler(path,outputPath,2,outputStyle,.results,technology,,multilingual)
  i error'="" QUIT error
  s n=""
@@ -482,7 +482,7 @@ compilePage(sessid) ;
  s outputPath=$$getSessionValue^%zewdAPI("outputPath",sessid)
  s multilingual=$$getSessionValue^%zewdAPI("multilingual",sessid)
  ;
- i technology="wl"!(technology="gtm") s outputPath=path
+ i technology="wl"!(technology="gtm")!(technology="ewd") s outputPath=path
  s error=$$processOneFile^%zewdCompiler(filepath,outputPath,2,outputStyle,technology,multilingual)
  i error'="" QUIT error
  d deleteFromSession^%zewdAPI("compilerListing",sessid)
@@ -508,7 +508,7 @@ compileFileList(sessid)
  s dlim="/" i os="windows" s dlim="\"
  i dlim="\" s path=$tr(path,"/",dlim)
  i $e(path,$l(path))'=dlim s path=path_dlim
- i technology="wl"!(technology="gtm") s outputPath=path
+ i technology="wl"!(technology="gtm")!(technology="ewd") s outputPath=path
  s page=""
  d mergeArrayFromSession^%zewdAPI(.pageList,"fileList",sessid)
  s page="",error=""

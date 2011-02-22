@@ -1,7 +1,7 @@
 %zewdCompiler16	; Enterprise Web Developer Compiler Functions
  ;
- ; Product: Enterprise Web Developer (Build 852)
- ; Build Date: Wed, 16 Feb 2011 15:47:19
+ ; Product: Enterprise Web Developer (Build 855)
+ ; Build Date: Tue, 22 Feb 2011 12:53:40
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -911,6 +911,7 @@ location(docOID,allArray,nextPageList,technology)
 	. . . set line=$p(text,dlim,nline)
 	. . . QUIT:line'[".ewd"
 	. . . QUIT:line["document.ewdNP"
+	. . . QUIT:line["EWD.ajax.makeRequest("
 	. . . if $e($$stripSpaces^%zewdAPI(line),1,12)="document.ewd",$p(line,".ewd")'="" QUIT
 	. . . set attrValue=$$expandPageURL^%zewdCompiler(line,.nextPageList,technology)
 	. . . set modified=1  ; Mark that 'text' was modified

@@ -3,7 +3,7 @@
 <ewd:comment>
   ----------------------------------------------------------------------------
   | Enterprise Web Developer for GT.M and m_apache                           |
-  | Copyright (c) 2004-9 M/Gateway Developments Ltd,                         |
+  | Copyright (c) 2004-11 M/Gateway Developments Ltd,                        |
   | Reigate, Surrey UK.                                                      |
   | All rights reserved.                                                     |
   |                                                                          |
@@ -36,7 +36,7 @@ This is version 3.0 of the ewdMgr application (26 January 2009)<br><br>
 You are running the Free Open Source version of <?= #ewdVersion ?>: <?= #ewd_date ?>
 
 
-<p>&copy; 2004-2009, M/Gateway Developments Ltd. (All Rights Reserved)</p>
+<p>&copy; 2004-2011, M/Gateway Developments Ltd. (All Rights Reserved)</p>
 
 For support, see &nbsp; <a href="http://www.mgateway.com">http://www.mgateway.com</a><br/><br/>
 

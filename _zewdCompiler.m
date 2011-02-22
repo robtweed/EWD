@@ -1,7 +1,7 @@
 %zewdCompiler	; Enterprise Web Developer Compiler
  ;
- ; Product: Enterprise Web Developer (Build 852)
- ; Build Date: Wed, 16 Feb 2011 15:47:19
+ ; Product: Enterprise Web Developer (Build 855)
+ ; Build Date: Tue, 22 Feb 2011 12:53:40
  ; 
  ; 
  ; ----------------------------------------------------------------------------
@@ -818,6 +818,7 @@ expandPageURL(url,nextPageList,technology)
 	. . s url=url_"ewd_token=#($g(^%zewdSession(""session"",sessid,""ewd_token"")))#&n=#(tokens("""_pageName_"""))#"
 	. s url=%p1_url_%p2
 	. i pageName'="" s nextPageList(pageName)=""
+	i technology="ewd" s url=$$replace^%zewdAPI(url,".mgwsi",".ewd")
 	s url=$$replaceAll^%zewdHTMLParser(url,$c(1),"&php;")
 	QUIT url
 	;
@@ -838,7 +839,7 @@ apply(docName,technology)
 parseJSText(line,scriptText)
 	i $$os^%zewdHTMLParser()="gtm" s line=$$replaceAll^%zewdAPI(line,"LOCAL","gtm")
 	i line[";;*php*",technology'="php" QUIT
-	i line[";;*csp*",technology'="csp",technology'="wl" QUIT
+	i line[";;*csp*",technology'="csp",technology'="wl",technology'="ewd" QUIT
 	i line[";;*jsp*",technology'="jsp" QUIT
 	i line[";;*vb.net*",technology'="vb.net" QUIT
 	i line[";;*gtm*",technology'="gtm" QUIT
@@ -989,7 +990,7 @@ createEwdError(outputPath,verbose,technology) ;
  u filePath
  f i=1:1 s line=$t(ewdError+i^%zewdCompiler2) q:line["***END**"  d
  . i line["ewd_Version" s line=$$replace^%zewdAPI(line,"ewd_Version",$$version^%zewdAPI())
- . i line["*wl*",technology'="wl" q
+ . i line["*wl*",technology'="wl",technology'="ewd" q
  . i line["*gtm*",technology'="gtm" q
  . i line["*php*",technology'="php" q
  . i line["*jsp*",technology'="jsp" q
@@ -1291,6 +1292,7 @@ customTags(docName,technology)
 	. s tagName=$$getTagName^%zewdDOM(nodeOID)
 	. i tagName="ewd:instantiate" q
 	. i tagName["ewd:js" q  ; leave these till last
+	. i tagName["ewd:script" q
 	. i tagName="ewd:cspscript" q  ; leave this till last
 	. s tagNameX=tagName
 	. i tagName["ewd:" s tagNameX=$p(^%zewd("customTag",tagName),$c(1),5)
@@ -1303,6 +1305,7 @@ customTags(docName,technology)
 	i error'="" QUIT error
 	f  s nodeOID=$$findFirstCustomTag^%zewdCompiler7(docName) q:nodeOID=""  d  q:error'=""
 	. s tagName=$$getTagName^%zewdDOM(nodeOID)
+	. i tagName="ewd:jssection" q
 	. i tagName'="ewd:instantiate",tagName'["ewd:js",tagName'="ewd:cspscript" q  ; shouldnt actually be necessary by this point
 	. s tagNameX=tagName
 	. i tagName["ewd:" s tagNameX=$p(^%zewd("customTag",tagName),$c(1),5)
@@ -1310,6 +1313,12 @@ customTags(docName,technology)
 	. i bypassMode,$$getCustomTagApply(tagName)="ewd" q  ; in bypass mode, but custom tag only applies to EWD pages
 	. i 'bypassMode,$$getCustomTagApply(tagName)="csp" q  ; in EWD mode, but custom tag only applies to CSP pages
 	. s error=$$customTagProc(tagName,tagNameX,docName,technology)
+	; finally process ewd:script tags
+	d initialiseProcessedFlags^%zewdCompiler7
+	i error'="" QUIT error
+	f  s nodeOID=$$findFirstCustomTag^%zewdCompiler7(docName) q:nodeOID=""  d  q:error'=""
+	. s tagName=$$getTagName^%zewdDOM(nodeOID)
+	. s error=$$customTagProc(tagName,tagName,docName,technology)
 	;
 	d initialiseProcessedFlags^%zewdCompiler7
 	QUIT error
