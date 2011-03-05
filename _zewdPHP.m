@@ -1,7 +1,7 @@
 %zewdPHP	; Enterprise Web Developer PHP run-time functions and processing
  ;
- ; Product: Enterprise Web Developer (Build 855)
- ; Build Date: Tue, 22 Feb 2011 12:53:41
+ ; Product: Enterprise Web Developer (Build 856)
+ ; Build Date: Sat, 05 Mar 2011 15:19:38
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -87,7 +87,7 @@ startSession(page,requestArray,serverArray,sessionArray,filesArray) ;
  . i $g(serverArray("REQUEST_METHOD"))="GET",page'["ewdAjaxError",nextPageToken="" d
  . . s error="Enterprise Web Developer Error : Missing nextpage token : "_$g(serverArray("METHOD"))
  . i nextPageToken'="",'$$isNextPageTokenValid(nextPageToken,sessid,page) d
- . . ;d trace^%zewdAPI("nextPageToken="_nextPageToken_" ; sessid="_sessid_" ; page="_page)
+ . . ;d trace^%zewdAPI("** nextPageToken="_nextPageToken_" ; sessid="_sessid_" ; page="_page)
  . . s error="Enterprise Web Developer Error : Invalid nextpage token"
  . . s sessionArray("ewd_sessid")=sessid
  ;
@@ -342,6 +342,7 @@ updateSessionFromRequest(requestArray,sessid)
  n ewdAction,i,invalid,name,nameList,npieces,nvp,rname,sessName,type
  ;
  s ewdAction=$g(requestArray("ewd_action"))
+ i ewdAction["zewdSTForm" s requestArray("ewd_action")=""
  ;
  ; prevent attempts to inject malicious code via URLs
  s name=""
@@ -363,7 +364,6 @@ updateSessionFromRequest(requestArray,sessid)
  . f  s actionName=$o(^%zewdSession("action",sessid,actionName)) q:actionName=""  d
  . . s nl=$g(^%zewdSession("action",sessid,actionName,"nameList"))
  . . i nl[(actionName_"$") s ewdAction=actionName,nameList=nl
- ;d trace^%zewdAPI("ewdAction="_ewdAction_" ; nameList="_nameList)
  i page="json" s nameList("ewd_JSONSource")=""
  i nameList'="" d
  . s npieces=$l(nameList,"`")-1
@@ -441,6 +441,7 @@ updateSessionFromRequest(requestArray,sessid)
  . . . . d addToSelected^%zewdAPI(name,fieldValue,sessid)
  . ;d trace^%zewdAPI("sessionValue name="_name_" ;value="_requestArray(name))
  . d setSessionValue(name,requestArray(name),sessid)
+ . i $g(nameList(name))="stdate" d processDate^%zewdST2(name,requestArray(name),sessid)
  ;
  i $g(requestArray("ewdAjaxSubmit"))=1 d
  . f name="ewd_action","ewd_nextPage","ewd_pressed" d setSessionValue(name,requestArray(name),sessid)

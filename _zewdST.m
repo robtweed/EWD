@@ -1,7 +1,7 @@
 %zewdST ; Sencha Touch Tag Processors and runtime logic
  ;
- ; Product: Enterprise Web Developer (Build 855)
- ; Build Date: Tue, 22 Feb 2011 12:53:41
+ ; Product: Enterprise Web Developer (Build 856)
+ ; Build Date: Sat, 05 Mar 2011 15:19:38
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -29,157 +29,6 @@
  QUIT
  ;
  ;
-uui(nodeOID,attrValue,docOID,technology)
- ;
- ;
- n appTitle,attr,bodyOID,childNo,childOID,debug,headOID,htmlOID,images,jsText
- n launchScreen,launchScreenId,line,lineNo
- n mainAttrs,navigationMenu,nullId,OIDArray,panelHeight,panelWidth,path
- n resourcePath,rootPath,tagName,text,uiPath,xOID
- ;
- ; <st:universalUI rootPath="/sencha/" resourcePath="resources/" uiPath="examples/kitchensink/">
- ;   <st:UUIappTitle phone="Sink" tablet="Kitchen Sink" />
- ;   <st:UUIlaunchscreen src="intro.ewd" login="true"/>
- ;   <st:UUInavigationMenu buttonText="Navigation" src="mainMenu.ewd">
- ;   <st:UUIimages>
- ;     <st:UUIimage type="tabletStartupScreen" src="resources/img/tablet_startup.png" />
- ;     <st:UUIimage type="phoneStartupScreen" src="resources/img/phone_startup.png" />
- ;     <st:UUIimage type="icon" src="resources/img/icon.png" addGloss="true" />
- ;   </st:UUIimages>
- ; </st:universalUI>
- ;
- ; Constants:
- ;
- s nullId="st-uui-nullId"
- s launchScreenId="st-uui-launchScreenContents"
- s panelWidth=500
- s panelHeight=500
- ;
- do getAttributeValues^%zewdCustomTags(nodeOID,.mainAttrs)
- ;
- s rootPath=$g(mainAttrs("rootpath"))
- i rootPath="" s rootPath="/sencha/"
- s rootPath=$$addSlashAtEnd(rootPath)
- s resourcePath=$g(mainAttrs("resourcepath"))
- i resourcePath="" s resourcePath="resources/"
- s resourcePath=$$addSlashAtEnd(resourcePath)
- s uiPath=$g(mainAttrs("uipath"))
- i uiPath="" s uiPath="examples/kitchensink/"
- s uiPath=$$addSlashAtEnd(uiPath)
- s debug=$g(mainAttrs("debug"))
- ;
- d getChildrenInOrder^%zewdDOM(nodeOID,.OIDArray)
- s childNo=""
- f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d
- . s childOID=OIDArray(childNo)
- . s tagName=$$getTagName^%zewdDOM(childOID)
- . i tagName="st:uuiapptitle" d uuiAppTitle(childOID,.appTitle) q
- . i tagName="st:uuilaunchscreen" d uuiLaunchScreen(childOID,.launchScreen) q
- . i tagName="st:uuinavigationmenu" d uuiNavigationMenu(childOID,.navigationMenu) q
- . i tagName="st:uuiimages" d uuiImages(childOID,.images)
- ;
- s htmlOID=$$addElementToDOM^%zewdDOM("ewd:xhtml",nodeOID)
- ; head
- s headOID=$$addElementToDOM^%zewdDOM("head",htmlOID)
- ;
- s attr("http-equiv")="Content-Type"
- s attr("content")="text/html; charset=utf-8"
- s xOID=$$addElementToDOM^%zewdDOM("meta",headOID,,.attr)
- ;
- s xOID=$$addElementToDOM^%zewdDOM("title",headOID,,,appTitle("tablet"))
- ;
- s attr("rel")="stylesheet"
- s attr("type")="text/css"
- s attr("href")=rootPath_resourcePath_"css/sencha-touch.css"
- s xOID=$$addElementToDOM^%zewdDOM("link",headOID,,.attr)
- ;
- s attr("rel")="stylesheet"
- s attr("type")="text/css"
- s attr("href")=rootPath_uiPath_"resources/css/sink.css"
- s xOID=$$addElementToDOM^%zewdDOM("link",headOID,,.attr)
- ;
- s attr("rel")="stylesheet"
- s attr("type")="text/css"
- s attr("href")=rootPath_uiPath_"resources/css/codebox.css"
- s xOID=$$addElementToDOM^%zewdDOM("link",headOID,,.attr)
- ;
- s text=".stBlueHighlight {height:44px;background-image: -webkit-gradient(linear, 0% 0, 0% 100%, from(#76B7EF), color-stop(0.02, #1C87E3), to(#135F9F));border-bottom-color: #0B365B;border-top-color: #105189;color: white;text-shadow: rgba(0, 0, 0, 0.496094) 0px 1px 0px;padding:10px 0 10px 10px;}"
- ;s text=".stBlueHighlight {background-image: -webkit-gradient(linear, 0% 0, 0% 100%, from(#76B7EF), color-stop(0.02, #1C87E3), to(#135F9F));border-bottom-color: #0B365B;border-top-color: #105189;color: white;text-shadow: rgba(0, 0, 0, 0.496094) 0px 1px 0px;padding:10px 0 10px 10px;height:30px}"
- s attr("type")="text/css"
- s xOID=$$addElementToDOM^%zewdDOM("style",headOID,,.attr,text)
- ;
- s attr("type")="text/javascript"
- s attr("src")=rootPath_"ext-touch.js"
- i debug="true" s attr("src")=rootPath_"ext-touch-debug.js"
- s xOID=$$addElementToDOM^%zewdDOM("script",headOID,,.attr)
- ;
- s attr("type")="text/javascript"
- s attr("src")=rootPath_uiPath_"src/CodeBox.js"
- s xOID=$$addElementToDOM^%zewdDOM("script",headOID,,.attr)
- ;
- s attr("language")="javascript"
- s text="EWD.isLogin = "_launchScreen("login")_";"_$c(13,10)
- ;
- s text=text_"EWD.senchaStartup={"
- s text=text_"tabletStartupScreen:'"_rootPath_uiPath_images("tabletStartupScreen","src")_"'"
- s text=text_",phoneStartupScreen:'"_rootPath_uiPath_images("phoneStartupScreen","src")_"'"
- s text=text_",icon:'"_rootPath_uiPath_images("icon","src")_"'"
- s text=text_",addGlossToIcon:'"_images("icon","addgloss")_"'"
- s text=text_"};"
- s xOID=$$addElementToDOM^%zewdDOM("script",headOID,,.attr,text)
- ;
- s path=$g(^zewd("config","jsScriptPath",technology,"path"))
- s path=$$addSlashAtEnd(path)
- s attr("type")="text/javascript"
- s attr("src")=path_"ewdST.js"
- s xOID=$$addElementToDOM^%zewdDOM("script",headOID,,.attr)
- ;
- s jsText=""
- f lineNo=1:1 s line=$t(uiJS+lineNo^%zewdST2) q:line["***END***"  d
- . s line=$p(line,";;",2,200)
- . s line=$$replace^%zewdAPI(line,"<navigationMenu>",navigationMenu("src"))
- . s line=$$replace^%zewdAPI(line,"<launchPage>",launchScreen("src"))
- . i line["<login>" d  q:line=""
- . . i launchScreen("login")="true" s line=" setTimeout('EWD.sencha.navigationOff()',1000);" q
- . . i launchScreen("login")="false" d  q
- . . . s line=" setTimeout('EWD.sencha.noLoginMode("""_navigationMenu("buttontext")_""")',1000);"_$c(13,10)
- . . . s line=line_"ewd.ajaxRequest("""_navigationMenu("src")_""",""st-uui-nullId"");"
- . . s line=""
- . i line["<islogin>" s line=$$replace^%zewdAPI(line,"<islogin>",launchScreen("login"))
- . s line=$$replace^%zewdAPI(line,"<rootPath>",rootPath)
- . s line=$$replace^%zewdAPI(line,"<uiPath>",uiPath)
- . s line=$$replace^%zewdAPI(line,"<tabletScreen>",images("tabletStartupScreen","src"))
- . s line=$$replace^%zewdAPI(line,"<phoneScreen>",images("phoneStartupScreen","src"))
- . s line=$$replace^%zewdAPI(line,"<icon>",images("icon","src"))
- . s line=$$replace^%zewdAPI(line,"<addGloss>",images("icon","addgloss"))
- . s line=$$replace^%zewdAPI(line,"<phoneTitle>",appTitle("phone"))
- . s line=$$replace^%zewdAPI(line,"<tabletTitle>",appTitle("tablet"))
- . s line=$$replace^%zewdAPI(line,"<navigationButtonText>",navigationMenu("buttontext"))
- . s line=$$replace^%zewdAPI(line,"<nullId>",nullId)
- . s line=$$replace^%zewdAPI(line,"<launchScreenId>",launchScreenId)
- . s line=$$replace^%zewdAPI(line,"<panelWidth>",panelWidth)
- . s line=$$replace^%zewdAPI(line,"<panelHeight>",panelHeight)
- . s jsText=jsText_line_$c(13,10)
- s attr("language")="javascript"
- s xOID=$$addElementToDOM^%zewdDOM("script",headOID,,.attr,jsText)
- ;
- s attr("onLoad")="setTimeout('EWD.sencha.loadMenu()',1500);" 
- s bodyOID=$$addElementToDOM^%zewdDOM("body",htmlOID,,.attr)
- ;
- s jsOID=$$errorHandler^%zewdCompiler(docName,technology)
- ;
- s attr("id")=nullId
- s attr("style")="display:none"
- s xOID=$$addElementToDOM^%zewdDOM("div",bodyOID,,.attr,"&nbsp;")
- s attr("id")=launchScreenId
- s attr("style")="display:none"
- s xOID=$$addElementToDOM^%zewdDOM("div",bodyOID,,.attr,"&nbsp;")
- ;
- d removeIntermediateNode^%zewdDOM(nodeOID)
- ;
- d createJSFile("ewdST","ewdST.js")
- QUIT
- ;
 createJSFile(label,jsFileName) ;
  ;
  n delim,filePath,io,line,lineNo,outputPath,x
@@ -196,259 +45,6 @@ createJSFile(label,jsFileName) ;
  c filePath u io
  ;
  QUIT
- ;
-uuiAppTitle(nodeOID,mainAttrs)
- ;
- ;  <st:UUIappTitle phone="Sink" tablet="Kitchen Sink" />
- ;
- do getAttributeValues^%zewdCustomTags(nodeOID,.mainAttrs)
- ;
- i $g(mainAttrs("tablet"))="" s mainAttrs("tablet")="Unamed Application"
- i $g(mainAttrs("phone"))="" s mainAttrs("phone")="Unamed"
- ;
- d removeIntermediateNode^%zewdDOM(nodeOID)
- QUIT
- ;
-uuiLaunchScreen(nodeOID,mainAttrs)
- ;
- ;  <st:UUIlaunchscreen src="intro.ewd" login="true"/>
- ;
- do getAttributeValues^%zewdCustomTags(nodeOID,.mainAttrs)
- ;
- i $g(mainAttrs("src"))="" s mainAttrs("src")="missingLaunchPage"
- i $g(mainAttrs("src"))[".ewd" s mainAttrs("src")=$p(mainAttrs("src"),".ewd",1)
- i $g(mainAttrs("login"))'="true" s mainAttrs("login")="false"
- ;
- d removeIntermediateNode^%zewdDOM(nodeOID)
- QUIT
- ;
-uuiNavigationMenu(nodeOID,mainAttrs)
- ;
- ;  <st:UUInavigationMenu buttonText="Navigation" src="mainMenu.ewd">
- ;
- do getAttributeValues^%zewdCustomTags(nodeOID,.mainAttrs)
- ;
- i $g(mainAttrs("buttontext"))="" s mainAttrs("buttontext")="Navigation"
- i $g(mainAttrs("src"))="" s mainAttrs("src")="missingNavigationMenuPage"
- i $g(mainAttrs("src"))[".ewd" s mainAttrs("src")=$p(mainAttrs("src"),".ewd",1)
- ;
- d removeIntermediateNode^%zewdDOM(nodeOID)
- QUIT
- ;
-uuiImages(nodeOID,images)
- ;
- n childNo,childOID,OIDArray,tagName
- ;
- d getChildrenInOrder^%zewdDOM(nodeOID,.OIDArray)
- s childNo=""
- f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d
- . s childOID=OIDArray(childNo)
- . s tagName=$$getTagName^%zewdDOM(childOID)
- . i tagName="st:uuiimage" d uuiImage(childOID,.images)
- ;
- d removeIntermediateNode^%zewdDOM(nodeOID)
- QUIT
- ;
-uuiImage(nodeOID,images)
- ;
- ;  <st:UUIimage type="tabletStartupScreen" src="resources/img/tablet_startup.png" />
- ;  <st:UUIimage type="phoneStartupScreen" src="resources/img/phone_startup.png" />
- ;  <st:UUIimage type="icon" src="resources/img/icon.png" addGloss="true" />
- ;
- n mainAttrs,type
- ;
- do getAttributeValues^%zewdCustomTags(nodeOID,.mainAttrs)
- ;
- i $g(mainAttrs("type"))="" QUIT
- s type=mainAttrs("type")
- i $g(mainAttrs("src"))="" QUIT
- i type="icon",$g(mainAttrs("addgloss"))="" s mainAttrs("addgloss")="false"
- m images(type)=mainAttrs
- ;
- d removeIntermediateNode^%zewdDOM(nodeOID)
- QUIT
- ;
-uuiMenu(nodeOID,attrValue,docOID,technology)
- ;
- ;
- n attr,childNo,childOID,firstMenuItemFound,jsNVPOID,jsObjOID,jsOID,jsSetOID
- n mainAttrs,OIDArray,scriptOID,tagName
- ;
- ; <st:UUIMenu>
- ;  <st:menuItem text="User Interface">
- ;     <st:menuItem text="Buttons" src="buttons.ewd">
- ;       <st:toolbarButton text="Test">
- ;          <st:popupPanel src="hello.ewd" scroll="both" width="300" height="300" animation="slide" />
- ;       </st:toolbarButton>
- ;     </st:menuItem>
- ;  </st:menuItem>
- ;  etc...
- ; </st:UUIMenu>
- ;
- do getAttributeValues^%zewdCustomTags(nodeOID,.mainAttrs)
- ;
- s jsOID=$$createElement^%zewdDOM("ewd:js",docOID)
- s jsOID=$$insertBefore^%zewdDOM(jsOID,nodeOID)
- s attr("return")="EWD.sencha.mainMenu"
- s attr("type")="array"
- s jsSetOID=$$addElementToDOM^%zewdDOM("ewd:jsset",jsOID,,.attr)
- ;
- d getChildrenInOrder^%zewdDOM(nodeOID,.OIDArray)
- s childNo=""
- s firstMenuItemFound=0
- f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d
- . s childOID=OIDArray(childNo)
- . s tagName=$$getTagName^%zewdDOM(childOID)
- . i tagName="st:menuitem" d
- . . s jsObjOID=$$addElementToDOM^%zewdDOM("ewd:jsobject",jsSetOID)
- . . i 'firstMenuItemFound d
- . . . s attr("name")="id"
- . . . s attr("value")="menuOption0"
- . . . s jsNVPOID=$$addElementToDOM^%zewdDOM("ewd:jsnvp",jsObjOID,,.attr)
- . . . s attr("name")="cls"
- . . . s attr("value")="launchscreen"
- . . . s jsNVPOID=$$addElementToDOM^%zewdDOM("ewd:jsnvp",jsObjOID,,.attr)
- . . . s firstMenuItemFound=1
- . . d uuiMenuItem(childOID,jsObjOID)
- ;
- d removeIntermediateNode^%zewdDOM(nodeOID)
- QUIT 
- ;
-uuiMenuItem(nodeOID,parentOID)
- ;
- n animation,attr,childNo,childOID,itemsAdded,jsNVPOID,mainAttrs,OIDArray
- n preventHide,showPageOnPhone,src,tagName,text,type
- ;
- do getAttributeValues^%zewdCustomTags(nodeOID,.mainAttrs)
- s text=$g(mainAttrs("text"))
- i text="" s text="Undefined option"
- s src=$g(mainAttrs("src"))
- s animation=$g(mainAttrs("animation"))
- s showPageOnPhone=$g(mainAttrs("showpageonphone"))
- i showPageOnPhone="" s showPageOnPhone="true" 
- s preventHide=$g(mainAttrs("preventhide"))
- i preventHide="" s preventHide="false"
- ;
- s attr("name")="text"
- s attr("value")=text
- s jsNVPOID=$$addElementToDOM^%zewdDOM("ewd:jsnvp",parentOID,,.attr)
- ;
- i src'="" d
- . s src=$$expandPageName^%zewdCompiler8(src,.nextPageList,.urlNameList,technology)
- . s type="literal"
- . i showPageOnPhone="false" d
- . . s src="Ext.platform.isPhone ? false : '"_src_"'"
- . . s type="reference"
- . s attr("name")="page"
- . s attr("value")=src
- . s attr("type")=type
- . s jsNVPOID=$$addElementToDOM^%zewdDOM("ewd:jsnvp",parentOID,,.attr)
- ;
- i preventHide="true" d
- . s attr("name")="preventHide"
- . s attr("value")=preventHide
- . s jsNVPOID=$$addElementToDOM^%zewdDOM("ewd:jsnvp",parentOID,,.attr)
- ;
- i animation'="" d
- . s attr("name")="animation"
- . s attr("value")=animation
- . s jsNVPOID=$$addElementToDOM^%zewdDOM("ewd:jsnvp",parentOID,,.attr)
- ;
- d getChildrenInOrder^%zewdDOM(nodeOID,.OIDArray)
- s childNo=""
- s itemsAdded=0
- f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d
- . s childOID=OIDArray(childNo)
- . s tagName=$$getTagName^%zewdDOM(childOID)
- . i tagName="st:menuitem" d
- . . i 'itemsAdded d 
- . . . s attr("name")="items"
- . . . s attr("type")="array"
- . . . s jsNVPOID=$$addElementToDOM^%zewdDOM("ewd:jsnvp",parentOID,,.attr)
- . . . s itemsAdded=1
- . . s jsObjOID=$$addElementToDOM^%zewdDOM("ewd:jsobject",jsNVPOID)
- . . d uuiMenuItem(childOID,jsObjOID) 
- . ;
- . i tagName="st:toolbarbutton" d
- . . d uuiToolbarButton(childOID,parentOID) 
- ;
- d removeIntermediateNode^%zewdDOM(nodeOID)
- QUIT 
- ;
-uuiToolbarButton(nodeOID,parentOID)
- ;
- n childNo,childOID,jsNVPOID,mainAttrs,OIDArray,subparams,tagName,text,xOID
- ;
- s attr("name")="button"
- s attr("type")="object"
- s jsNVPOID=$$addElementToDOM^%zewdDOM("ewd:jsnvp",parentOID,,.attr)
- do getAttributeValues^%zewdCustomTags(nodeOID,.mainAttrs)
- s text=$g(mainAttrs("text"))
- i text="" s text="Popup"
- ;
- s attr("name")="text"
- s attr("value")=text
- s xOID=$$addElementToDOM^%zewdDOM("ewd:jsnvp",jsNVPOID,,.attr) 
- s attr("name")="show"
- s attr("value")="true"
- s attr("type")="boolean"
- s xOID=$$addElementToDOM^%zewdDOM("ewd:jsnvp",jsNVPOID,,.attr)  
- ;
- d getChildrenInOrder^%zewdDOM(nodeOID,.OIDArray)
- s childNo=""
- f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d
- . s childOID=OIDArray(childNo)
- . s tagName=$$getTagName^%zewdDOM(childOID)
- . i tagName="st:popuppanel" d
- . . d uuiPopupPanel(childOID,jsNVPOID) 
- ;
- d removeIntermediateNode^%zewdDOM(nodeOID)
- QUIT 
- ;
-uuiPopupPanel(nodeOID,parentOID)
- ;
- n anim,height,jsNVPOID,mainAttrs,OIDArray,scroll,src,width,xOID
- ;
- s attr("name")="popup"
- s attr("type")="object"
- s jsNVPOID=$$addElementToDOM^%zewdDOM("ewd:jsnvp",parentOID,,.attr)
- ;
- do getAttributeValues^%zewdCustomTags(nodeOID,.mainAttrs)
- s src=$g(mainAttrs("src"))
- i src="" s src="undefPopupPage.ewd"
- s attr("name")="src"
- s attr("value")=src
- s attr("type")="url"
- s xOID=$$addElementToDOM^%zewdDOM("ewd:jsnvp",jsNVPOID,,.attr) 
- ;
- s anim=$g(mainAttrs("animation"))
- i anim="" s anim="slide"
- s attr("name")="animation"
- s attr("value")=anim
- s xOID=$$addElementToDOM^%zewdDOM("ewd:jsnvp",jsNVPOID,,.attr) 
- ;
- s scroll=$g(mainAttrs("scroll"))
- i scroll="" s scroll="vertical"
- s attr("name")="scroll"
- s attr("value")=scroll
- s xOID=$$addElementToDOM^%zewdDOM("ewd:jsnvp",jsNVPOID,,.attr)
- ;
- s width=$g(mainAttrs("width"))
- i width'="" d
- . s attr("name")="width"
- . s attr("value")=width
- . s attr("type")="numeric"
- . s xOID=$$addElementToDOM^%zewdDOM("ewd:jsnvp",jsNVPOID,,.attr)
- ;
- s height=$g(mainAttrs("height"))
- i height'="" d
- . s attr("name")="height"
- . s attr("value")=height
- . s attr("type")="numeric"
- . s xOID=$$addElementToDOM^%zewdDOM("ewd:jsnvp",jsNVPOID,,.attr) 
- ;
- d removeIntermediateNode^%zewdDOM(nodeOID)
- QUIT 
  ;
 card(nodeOID,attrValue,docOID,technology)
  ;
@@ -578,24 +174,33 @@ form(nodeOID,attrValue,docOID,technology)
  ;
 fieldSets(nodeOID,itemsOID)
  ;
- n childNo,childOID,fsItemsOID,fsOID,hasChildren,itemsAttr,OIDArray
+ n attr,childNo,childOID,eOID,fsItemsOID,fsOID,hasChildren,itemsAttr,nameList,OIDArray
  ;
  s fsOID=$$fieldset(nodeOID,itemsOID)
  s itemsAttr=$$getAttribute^%zewdDOM("items",nodeOID)
  s hasChildren=$$hasChildNodes^%zewdDOM(nodeOID)
  i itemsAttr="",hasChildren="true" s fsItemsOID=$$addElementToDOM^%zewdDOM("st:items",fsOID)
+ ; add special ewd_action hidden field to automate transfer of values to session
+ s attr("type")="hidden"
+ s attr("id")="ewd_action"
+ s attr("value")="zewdSTForm"_$$uniqueId^%zewdAPI(nodeOID,filename)
+ s eOID=$$addElementToDOM^%zewdDOM("st:field",nodeOID,,.attr)
  ;
  d getChildrenInOrder^%zewdDOM(nodeOID,.OIDArray)
  s childNo=""
  f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d
  . s childOID=OIDArray(childNo)
  . s tagName=$$getTagName^%zewdDOM(childOID)
- . i tagName="st:field" d field(childOID,fsItemsOID,mainAttrs("return")) q
+ . i tagName="st:defaults" d  q
+ . . s childOID=$$removeChild^%zewdDOM(childOID)
+ . . s childOID=$$appendChild^%zewdDOM(childOID,fsOID)
+ . i tagName="st:field" d field(childOID,fsItemsOID,mainAttrs("return"),.nameList) q
  . i tagName="st:checkboxes" d  q
  . . n parentOID
  . . s parentOID=formOID
  . . i $$getTagName^%zewdDOM(fcOID)="st:fieldset" s parentOID=fsOID
  . . d checkboxes(childOID,parentOID)
+ d processNameList^%zewdST2(.nameList,.formDeclarations)
  i $$removeChild^%zewdDOM(nodeOID)
  QUIT  
  ;
@@ -672,7 +277,7 @@ fieldset(nodeOID,parentOID)
  ;
  QUIT fsOID
  ;
-field(nodeOID,parentOID,return)
+field(nodeOID,parentOID,return,nameList)
  ;
  ;      <st:field type="text" id="username" label="Username" />
  ;      <st:field type="password" id="password" label="Password" />
@@ -685,8 +290,18 @@ field(nodeOID,parentOID,return)
  s xtype="textfield"
  i type="password" s xtype="passwordfield"
  i type="radio" s xtype="radiofield"
+ i type="checkbox" s xtype="checkboxfield"
+ i type="email" s xtype="emailfield"
+ i type="url" s xtype="urlfield"
+ i type="number" s xtype="numberfield"
  i type="hidden" s xtype="hiddenfield"
+ i type="spinner" s xtype="spinnerfield"
+ i type="select" s xtype="selectfield"
+ i type="textarea" s xtype="textareafield"
+ i type="slider" s xtype="sliderfield"
+ i type="toggle" s xtype="togglefield"
  i type="combo" s xtype="textfield" d combo^%zewdST2(nodeOID,.mainAttrs,formOID)
+ ;
  i type="date" d
  . s xtype="datepickerfield"
  . n attr,addPicker,i,pOID
@@ -706,6 +321,13 @@ field(nodeOID,parentOID,return)
  s id=$g(mainAttrs("id"))
  i id="",type'="radio" s id=$g(mainAttrs("name"))
  i id="" s id="zewdSTField"_$$uniqueId^%zewdAPI(nodeOID,filename)
+ ;
+ i type="radio" d
+ . s nameList($g(mainAttrs("name")))=type
+ e  d
+ . s nameList(id)=type
+ i id="ewd_action" s nameList(id)=type_"|"_$g(mainAttrs("value"))
+ ;
  s attr("id")=id
  s attr("name")=$g(mainAttrs("name"))
  i type'="radio" s attr("name")=id
@@ -714,19 +336,63 @@ field(nodeOID,parentOID,return)
  . i $g(mainAttrs("style"))'="" s attr("ui")=mainAttrs("style")
  . s attr("text")=$g(mainAttrs("text"))
  i $g(mainAttrs("value"))'="" s attr("value")=mainAttrs("value")
+ ;
+ i type="text"!(type="number")!(type="combo")!(type="hidden")!(type="email")!(type="toggle")!(type="url")!(type="spinner")!(type="select")!(type="textarea")!(type="slider") d
+ . n id,phpVar
+ . s id=$g(mainAttrs("id")) i id="" s id="missingTextId"
+ . s phpVar=$$addPhpVar^%zewdCustomTags("#"_id)
+ . i $g(mainAttrs("value"))="" s mainAttrs("value")=phpVar
+ ;
+ i type="date" d
+ . n id,phpVarDat,phpVarMonth,phpVarYear,value
+ . s id=$g(mainAttrs("id")) i id="" s id="missingDateId"
+ . s phpVarDay=$$addPhpVar^%zewdCustomTags("#"_id_".day")
+ . s phpVarMonth=$$addPhpVar^%zewdCustomTags("#"_id_".month")
+ . s phpVarYear=$$addPhpVar^%zewdCustomTags("#"_id_".year")
+ . i $g(mainAttrs("value"))="" s mainAttrs("value")=".{day:'"_phpVarDay_"',month:'"_phpVarMonth_"',year:'"_phpVarYear_"'}"
+ ;
+ i type="radio" d
+ . n name,phpVar,value
+ . s name=$g(mainAttrs("name")) i name="" s name="missingRadioName"
+ . s phpVar=$$addPhpVar^%zewdCustomTags("#"_name)
+ . s value=$g(mainAttrs("value"))
+ . s mainAttrs("checked")=".'"_phpVar_"' === '"_value_"'"
+ ;
+ i type="checkbox" d
+ . n id,phpVar,value
+ . s id=$g(mainAttrs("id")) i id="" s id="missingRadioId"
+ . s phpVar=$$addPhpVar^%zewdCustomTags("#"_id)
+ . s value=$g(mainAttrs("value"))
+ . s mainAttrs("checked")=".'"_phpVar_"' === '"_value_"'"
+ ;
+ i type="select" d
+ . n id,stOID,text
+ . s id=$g(mainAttrs("id")) i id="" s id="missingSelectId"
+ . s stOID=$$getElementById^%zewdDOM("ewdPreSTJS",docOID)
+ . s text=" d writeSelectOptions^%zewdST2("""_id_""",sessid)"
+ . i $$addCSPServerScript^%zewdAPI(stOID,text)
+ . s mainAttrs("valueField")="optionValue"
+ . s mainAttrs("displayField")="displayText"
+ . s mainAttrs("store")="."_id_"Store"
+ ;
+ i type="slider" d
+ . i $g(mainAttrs("ondrag"))'="" d
+ . . n attr,lOID,lsOID
+ . . s lsOID=$$getFirstChild^%zewdDOM(nodeOID)
+ . . i lsOID'="",$$getTagName^%zewdDOM(lsOID)="st:listeners" d
+ . . . ;
+ . . e  d
+ . . . s lsOID=$$addElementToDOM^%zewdDOM("st:listeners",nodeOID)
+ . . s attr("drag")="."_mainAttrs("ondrag")
+ . . s lOID=$$addElementToDOM^%zewdDOM("st:listener",lsOID,,.attr)
+ . . k mainAttrs("ondrag") 
+ ;
  s name=""
  f  s name=$o(mainAttrs(name)) q:name=""  d
- . i name="type"!(name="label")!(name="style")!(name="value")!(name="nextpage") q
+ . i name="type"!(name="label")!(name="style")!(name="nextpage") q
  . q:name="cardpanel"
  . s attr(name)=mainAttrs(name)
  s fieldOID=$$addElementToDOM^%zewdDOM("st:item",parentOID,,.attr)
- ; any listeners etc?
- d getChildrenInOrder^%zewdDOM(nodeOID,.OIDArray)
- s childNo=""
- f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d
- . s childOID=OIDArray(childNo)
- . s childOID=$$removeChild^%zewdDOM(childOID)
- . s childOID=$$appendChild^%zewdDOM(childOID,fieldOID)
  ;
  i type="date" d
  . n attr,fcOID,iOID,pOID
@@ -739,6 +405,15 @@ field(nodeOID,parentOID,return)
  . . s attr("value")=".{year:"_attr("yearvalue")_"}"
  . . k attr("yearvalue")
  . s iOID=$$addElementToDOM^%zewdDOM("st:item",pOID,,.attr)
+ . i $$removeChild^%zewdDOM(fcOID)
+ ;
+ ; any listeners etc?
+ d getChildrenInOrder^%zewdDOM(nodeOID,.OIDArray)
+ s childNo=""
+ f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d
+ . s childOID=OIDArray(childNo)
+ . s childOID=$$removeChild^%zewdDOM(childOID)
+ . s childOID=$$appendChild^%zewdDOM(childOID,fieldOID)
  ;
  i xtype="button" d
  . n attr,childNo,childOID,fieldNames,formOID,funcOID,handler,jsText
@@ -1813,8 +1488,4 @@ createJS(type)
  . s attr("id")="ewdPostSTJS"
  . s postSTOID=$$addElementToDOM^%zewdDOM("ewd:jssection",jsOID,,.attr)
  QUIT jsOID
- ;
-addSlashAtEnd(string)
- i $e(string,$l(string))'="/" s string=string_"/"
- QUIT string
  ;

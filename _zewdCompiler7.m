@@ -1,7 +1,7 @@
 %zewdCompiler7	; Enterprise Web Developer Compiler Functions
  ;
- ; Product: Enterprise Web Developer (Build 855)
- ; Build Date: Tue, 22 Feb 2011 12:53:40
+ ; Product: Enterprise Web Developer (Build 856)
+ ; Build Date: Sat, 05 Mar 2011 15:19:38
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -1218,6 +1218,10 @@ ewdConfig(docName,phpHeaderArray,routineName,technology,dataTypeList,inputPath,f
 	. . i prePageScript'["^",$e(prePageScript,1,7)'="##class",$e(prePageScript,1)'="$",$g(routineName)'="" s config("prePageScript")=config("prePageScript")_"^"_routineName q
 	. . i $e(prePageScript,1)="$" s config("prePageScript")=prePageScript_"($ewd_session)" q
 	. . s config("prePageScript")=prePageScript
+	. . i $e(prePageScript,1,3)="js:" d
+	. . . n page
+	. . . s page=$p(filename,".ewd",1)
+	. . . s ^zewd("nodeModules","methods",$$zcvt^%zewdAPI(app,"l"),$$zcvt^%zewdAPI(page,"l"))=$p(prePageScript,"js:",2)
 	. s templatePrePageScript=$$getAttributeValue^%zewdDOM("templateprepagescript",1,nodeOID)
 	. d
 	. . i filename="ewdAjaxError.ewd" q
@@ -1299,20 +1303,6 @@ ewdConfig(docName,phpHeaderArray,routineName,technology,dataTypeList,inputPath,f
 	QUIT multiLingual
 	;
  ;
-incrementCounter(nodeOID,attrValues,docOID,technology)
-	;
-	; <ewd:incrementCounter return="$counter">
-	;
-	n return,serverOID,text
-	;
-	set return=$$getAttrValue^%zewdCompiler4("return",.attrValues,technology)
-	;
-	s text=" s "_return_"=$g("_return_")+1"
-	s serverOID=$$addCSPServerScript^%zewdCompiler4(nodeOID,text)
-	;
-	d removeIntermediateNode^%zewdCompiler4(nodeOID)
-	QUIT
-	;
 mergeToList(listName,listArray,sessid)
  ;
  n position,data,%d,text,value,pos

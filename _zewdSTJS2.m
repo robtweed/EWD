@@ -1,7 +1,7 @@
 %zewdSTJS2 ; More Sencha Touch Static Javascript files
  ;
- ; Product: Enterprise Web Developer (Build 855)
- ; Build Date: Tue, 22 Feb 2011 12:53:41
+ ; Product: Enterprise Web Developer (Build 856)
+ ; Build Date: Sat, 05 Mar 2011 15:19:38
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -663,22 +663,67 @@ touchGridOld ;
  ;;
 combo ;
  ;; EWD.sencha.combo = {
+ ;;  init: function() {
+ ;;    Ext.regModel('ewdComboMatches', {
+ ;;      fields: ['text']
+ ;;    });
+ ;;    EWD.sencha.combo.store = new Ext.data.JsonStore({
+ ;;      model: 'ewdComboMatches'
+ ;;    });
+ ;;    EWD.sencha.widget.zewdComboList = new Ext.List({
+ ;;      id: "ewdComboMatches",
+ ;;      itemTpl: "{text}",
+ ;;      scroll: true,
+ ;;      store: EWD.sencha.combo.store,
+ ;;      listeners: {
+ ;;        itemtap: function (view, index, item, e) {
+ ;;          var record = EWD.sencha.combo.store.getAt(index);
+ ;;          EWD.sencha.combo.selectItem(index, record);
+ ;;        }
+ ;;      }
+ ;;    });
+ ;;    EWD.sencha.widget.zewdcm = new Ext.Panel({
+ ;;      draggable:false,
+ ;;      floating:true,
+ ;;      height:200,
+ ;;      hidden:true,
+ ;;      hideOnMaskTap:true,
+ ;;      id:'zewdComboPanel',
+ ;;      layout:'fit',
+ ;;      modal:false,
+ ;;      scroll:'vertical',
+ ;;      width:400,
+ ;;      items:[]
+ ;;    });
+ ;;  },
+ ;;  listAdded: false,
  ;;  panel: {},
  ;;  filter: function(params) {
  ;;    var seed = params.seed;
  ;;    var id = params.id;
+ ;;    var width = params.width;
+ ;;    var height = params.height;
+ ;;    if (Ext.is.Phone) {
+ ;;      width = params.phoneWidth;
+ ;;      height = params.phoneHeight;
+ ;;    }
  ;;    EWD.sencha.combo.id = id;
- ;;    var panel = Ext.getCmp('ewdComboPanel')
+ ;;    var panel = Ext.getCmp('zewdComboPanel')
  ;;    panel.showBy(Ext.getCmp(id));
- ;;    panel.setWidth(params.width);
- ;;    panel.setHeight(params.height);
+ ;;    panel.setWidth(width);
+ ;;    panel.setHeight(height);
+ ;;    if (!EWD.sencha.combo.listAdded) {
+ ;;      panel.add(Ext.getCmp("ewdComboMatches"));
+ ;;      panel.doLayout();
+ ;;      EWD.sencha.combo.listAdded = true;
+ ;;    }
  ;;    Ext.getCmp("ewdComboMatches").scroller.scrollTo({x: 0, y: 0});
- ;;    EWD.ajax.getPage({page:'zewdComboMatches',nvp:'seed=' + seed + "&id=" + id});
+ ;;    EWD.ajax.getPage({page:'zewdcm',nvp:'seed=' + seed + "&id=" + id});
  ;;  },
  ;;  selectItem: function(index,record) {
  ;;    Ext.getCmp(EWD.sencha.combo.id).setValue(record.get("text"));
  ;;    Ext.getCmp(EWD.sencha.combo.id).blur();
- ;;    Ext.getCmp('ewdComboPanel').hide();
+ ;;    Ext.getCmp('zewdComboPanel').hide();
  ;;  }
  ;;};
  ;;

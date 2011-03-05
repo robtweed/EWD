@@ -1,7 +1,7 @@
 %zewdCompiler15	; Enterprise Web Developer Compiler
  ;
- ; Product: Enterprise Web Developer (Build 855)
- ; Build Date: Tue, 22 Feb 2011 12:53:40
+ ; Product: Enterprise Web Developer (Build 856)
+ ; Build Date: Sat, 05 Mar 2011 15:19:38
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -41,7 +41,7 @@ tagDefinitions ;
 	;;ewd:execute~method,type,return~1~execute^%zewdCompiler4
 	;;ewd:expandPage~page,return~1~expandPage^%zewdCompiler4
 	;;ewd:for~from,to,increment,counter~0~for^%zewdCompiler4
-	;;ewd:foreach~sessionName,index,return,subscriptList,startValue,endValue~0~forEach^%zewdCompiler8
+	;;ewd:foreach~sessionName,index,return,subscriptList,startValue,endValue~0~forEach^%zewdCompiler19
 	;;ewd:getArrayValue~arrayName,index,return~1~getArrayValue^%zewdCompiler4
 	;;ewd:getPiece~return,data,asciiDelimiter,pieceNumber~1~getPiece^%zewdCompiler4
 	;;ewd:getProperty~~1~getProperty^%zewdCompiler7
@@ -66,7 +66,7 @@ tagDefinitions ;
 	;;ewd:jsSet~~0~jsSet^%zewdCompiler20
 	;;ewd:jsLine~~0~jsSection^%zewdCompiler20
 	;;ewd:jsMethod~~0~jsMethod^%zewdCompiler20
-	;;ewd:incrementCounter~~1~incrementCounter^%zewdCompiler7
+	;;ewd:incrementCounter~~1~incrementCounter^%zewdCompiler19
 	;;ewd:initialiseArray~arrayName~1~initialiseArray^%zewdCompiler4
 	;;ewd:instantiate~name,type,size~1~instantiate^%zewdCompiler4~
 	;;ewd:main~~0~main^%zewdCompiler24
@@ -131,6 +131,7 @@ tagDefinitions ;
 	;;st:pageitem~~0~pageItem^%zewdST2
 	;;st:panel~~0~panel^%zewdST
 	;;st:qrcode~~0~qrCode^%zewdST2
+	;;st:sessionlist~~0~sessionList^%zewdST2
 	;;st:tabpanel~~0~panel^%zewdST
 	;;st:touchgrid~~0~touchGrid^%zewdST2
 	;;st:uuimenu~~0~uuiMenu^%zewdST

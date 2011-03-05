@@ -1,7 +1,7 @@
 %zewdST2 ; Sencha Touch Tag Processors and runtime logic
  ;
- ; Product: Enterprise Web Developer (Build 855)
- ; Build Date: Tue, 22 Feb 2011 12:53:41
+ ; Product: Enterprise Web Developer (Build 856)
+ ; Build Date: Sat, 05 Mar 2011 15:19:38
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -54,7 +54,8 @@ container(nodeOID,attrValue,docOID,technology)
  i rootPath="" s rootPath="/sencha/"
  s rootPath=$$addSlashAtEnd^%zewdST(rootPath)
  s debug=$g(mainAttrs("debug"))
- s timeoutAction=$g(mainAttrs("timeoutpage")) i timeoutAction="" s timeoutAction="reload"
+ s timeoutAction=$g(mainAttrs("timeoutpage"))
+ i timeoutAction="" s timeoutAction="reload"
  ;
  d getChildrenInOrder^%zewdDOM(nodeOID,.OIDArray)
  s childNo=""
@@ -154,6 +155,8 @@ container(nodeOID,attrValue,docOID,technology)
  e  d
  . n preOID
  . s text=text_"EWD.sencha.init();"_$c(13,10)
+ ;
+ s text=text_"if (EWD.sencha.combo) EWD.sencha.combo.init();"_$c(13,10)
  s phpVar=$$addPhpVar^%zewdCustomTags("#ewd_sessid_timeout")
  ;s text=text_"EWD.sencha.loadContentPage()"_$c(13,10)
  s text=text_"}"_$c(13,10)
@@ -509,42 +512,45 @@ touchGridCode(nodeOID,dataStore,store,colDef,onTap,onEdit)
  ;
 combo(nodeOID,mainAttrs,formOID)
  ;
- n attr,bodyOID,fOID,height,i,id,jsOID,lOID,lsOID,lyOID,method,pOID,stOID,width
+ n attr,bodyOID,fOID,height,i,id,jsOID,lOID,lsOID,lyOID,method,pheight,pOID,pwidth,stOID,width
  ;
  s bodyOID=$$getParentNode^%zewdDOM(formOID)
  s method=$g(mainAttrs("method"))
- s height=$g(mainAttrs("panelheight"))
- s width=$g(mainAttrs("panelwidth"))
+ s height=$g(mainAttrs("panelheight")) i height="" s height=200
+ s width=$g(mainAttrs("panelwidth")) i width="" s width=400
+ s pheight=$g(mainAttrs("phonepanelheight")) i pheight="" s pheight=60
+ s pwidth=$g(mainAttrs("phonepanelwidth")) i pwidth="" s pwidth=240
  s id=$g(mainAttrs("id"))
  i id="" s id="ewdSTField"_$$uniqueId^%zewdAPI(nodeOID,filename)
  f i="method","panelheight","panelwidth" k mainAttrs(i)
  s ^zewd("comboMethod",app,id)=method
  s lsOID=$$addElementToDOM^%zewdDOM("st:listeners",nodeOID)
- s attr("keyup")=".{fn: function(){EWD.sencha.combo.filter({seed:this.getValue(),id:'"_id_"',width:"_width_",height:"_height_"}); }}"
+ s attr("keyup")=".{fn: function(){EWD.sencha.combo.filter({seed:this.getValue(),id:'"_id_"',width:"_width_",height:"_height_",phoneWidth:"_pwidth_",phoneHeight:"_pheight_"}); }}"
  s lOID=$$addElementToDOM^%zewdDOM("st:listener",lsOID,,.attr)
  ;
- s attr("id")="ewdComboPanel"
- s attr("floating")="true"
- s attr("draggable")="false"
- s attr("modal")="false"
- s attr("scroll")="vertical"
- s attr("hideonmasktap")="true"
- s attr("width")=400
- s attr("height")=200
- s attr("hidden")="true"
- s pOID=$$addElementToDOM^%zewdDOM("st:panel",bodyOID,,.attr)
- s attr("id")="ewdComboMatches"
- s attr("sessionname")="ewdComboMatches"
- s attr("store")="EWD.sencha.combo.store"
- s attr("scroll")="true"
- s attr("ontap")="EWD.sencha.combo.selectItem"
- s lOID=$$addElementToDOM^%zewdDOM("st:list",pOID,,.attr)
- s lyOID=$$addElementToDOM^%zewdDOM("st:layout",lOID)
- s attr("name")="text"
- s attr("displayinlist")="true"
- s fOID=$$addElementToDOM^%zewdDOM("st:field",lyOID,,.attr)
- s jsOID=$$createJS^%zewdST("standard")
- s stOID=$$getElementById^%zewdDOM("ewdPreSTJS",docOID)
+ ;s attr("id")="ewdComboPanel"
+ ;s attr("floating")="true"
+ ;s attr("draggable")="false"
+ ;s attr("modal")="false"
+ ;s attr("scroll")="vertical"
+ ;s attr("hideonmasktap")="true"
+ ;s attr("width")=400
+ ;s attr("height")=200
+ ;s attr("hidden")="true"
+ ;s pOID=$$addElementToDOM^%zewdDOM("st:panel",bodyOID,,.attr)
+ ;s attr("id")="ewdComboMatches"
+ ;s attr("sessionname")="ewdComboMatches"
+ ;s attr("store")="EWD.sencha.combo.store"
+ ;s attr("scroll")="true"
+ ;s attr("ontap")="EWD.sencha.combo.selectItem"
+ ;s lOID=$$addElementToDOM^%zewdDOM("st:list",pOID,,.attr)
+ ;s lOID=$$addElementToDOM^%zewdDOM("st:list",bodyOID,,.attr)
+ ;s lyOID=$$addElementToDOM^%zewdDOM("st:layout",lOID)
+ ;s attr("name")="text"
+ ;s attr("displayinlist")="true"
+ ;s fOID=$$addElementToDOM^%zewdDOM("st:field",lyOID,,.attr)
+ ;s jsOID=$$createJS^%zewdST("standard")
+ ;s stOID=$$getElementById^%zewdDOM("ewdPreSTJS",docOID)
  ;s attr("method")="setSessionValue^%zewdAPI"
  ;s attr("param1")="ewdComboMatches"
  ;s attr("param2")="[]"
@@ -576,6 +582,26 @@ json(nodeOID,attrValue,docOID,technology)
  ;
  s text=" d streamJSON^%zewdJSON("""_sessionName_""","""_return_""","""_var_""",sessid)"
  i $$addCSPServerScript^%zewdAPI(stOID,text)
+ ;
+ d removeIntermediateNode^%zewdDOM(nodeOID)
+ ;
+ QUIT
+ ;
+sessionList(nodeOID,attrValue,docOID,technology)
+ ;
+ n addTo,attr,mainAttrs,pOID,xOID
+ ;
+ ; <st:touchGrid sessionName="zewdSessionList" addTo="helloWorld" />
+ ;
+ d getAttributeValues^%zewdCustomTags(nodeOID,.mainAttrs)
+ ;
+ s attr("layout")="card"
+ s addTo=$g(mainAttrs("addto"))
+ i addTo'="" s attr("addto")=addTo
+ s pOID=$$addElementToDOM^%zewdDOM("st:panel",nodeOID,,.attr)
+ ;
+ s attr("sessionname")="zewdSessionList"
+ s xOID=$$addElementToDOM^%zewdDOM("st:touchgrid",pOID,,.attr)
  ;
  d removeIntermediateNode^%zewdDOM(nodeOID)
  ;
@@ -615,16 +641,25 @@ writeRegModel(sessionName,store,colDefName,sessid)
  ;
  s comma=""
  w "Ext.regModel('"_sessionName_"Model',{fields:["
- d mergeArrayFromSession^%zewdAPI(.colDef,colDefName,sessid)
+ i sessionName'="zewdSessionList" d
+ . d mergeArrayFromSession^%zewdAPI(.colDef,colDefName,sessid)
+ e  d
+ . s colDef(1,"name")="name"
+ . s colDef(1,"header")="Session Name"
+ . s colDef(2,"name")="value"
+ . s colDef(2,"header")="Value"
+ ;
  f col=1:1 q:'$d(colDef(col))  d
  . w comma_"'"_colDef(col,"name")_"'"
  . s comma=","
  w "]});"_$c(13,10)
  w store_"=new Ext.data.Store({model:'"_sessionName_"Model',data:"
- d mergeArrayFromSession^%zewdAPI(.data,sessionName,sessid)
+ i sessionName'="zewdSessionList" d
+ . d mergeArrayFromSession^%zewdAPI(.data,sessionName,sessid)
+ e  d
+ . d getSessionDetails(.data,sessid)
  s col1=$g(colDef(1,"name"))
  s no=""
- ;f  s no=$o(data(no)) q:no=""  s data(no,col1)="&nbsp;&nbsp;"_$g(data(no,col1))
  d streamArrayToJSON^%zewdJSON("data")
  w "});"_$c(13,10)
  w "EWD.sencha.colModel=["
@@ -638,6 +673,40 @@ writeRegModel(sessionName,store,colDefName,sessid)
  . s comma=","
  w "];"_$c(13,10)
  ;
+ QUIT
+ ;
+getSessionDetails(array,sessid)
+ ;
+ n end,i,j,session,sessionNo,lineNo,ref,data,%p1,line
+ ;
+ k ^%work($j),array
+ i $$isCSP^%zewdAPI(sessid) d
+ e  d
+ . m ^%work($j)=^%zewdSession("session",sessid)
+ ;
+ s ref="^%work($j,"""")"
+ s end="^%work("
+ s j=$j
+ i $j'?1N.N s j=""""_$j_""""
+ s end=end_j
+ s lineNo=0
+ f  s ref=$q(@ref) q:ref'[end  d
+ . s data=@ref
+ . s %p1=$p(ref,end_",",2)
+ . s %p1=$e(%p1,1,$l(%p1)-1)
+ . ;s data=$tr(data,$c(1),"|")
+ . ;s data=$$replaceAll^%zewdAPI(data,"&lt;","[")
+ . ;s data=$$replaceAll^%zewdAPI(data,"&gt;","]")
+ . s data=$$replaceAll^%zewdAPI(data,"&","&amp;")
+ . s data=$$replaceAll^%zewdAPI(data,"""","'")
+ . i data="" s data="&nbsp;"
+ . s lineNo=lineNo+1
+ . s array(lineNo,"name")=$$replaceAll^%zewdAPI(%p1,"""","'")
+ . s data=$$replaceAll^%zewdAPI(data,"\r\n","{crlf}")
+ . f i=0:1:31 i data[$c(i) s data=$$replaceAll^%zewdAPI(data,$c(i),"{"_i_"}")
+ . s array(lineNo,"value")=data
+ ;
+ k ^%work($j)
  QUIT
  ;
 writeListData(sessionName,sessid)
@@ -729,6 +798,93 @@ replaceMenuOptions(sessionName,sessid)
  w "EWD.sencha.replaceNavigationMenu();"_$c(13,10)
  QUIT
  ;
+writeSelectOptions(selectName,sessid)
+ ;
+ n comma,list,no,text,value
+ ;
+ d mergeArrayFromSession^%zewdAPI(.list,"ewd_list",sessid)
+ ;
+ s comma=""
+ ;
+ w "Ext.regModel('"_selectName_"',{"
+ w "fields: [{name: 'displayText',type: 'string'},{name: 'optionValue',type: 'string'}]"
+ w "});"_$c(13,10)
+ w "var "_selectName_"Store=new Ext.data.JsonStore({"
+ w "data: ["
+ s no=""
+ f  s no=$o(list(selectName,no)) q:no=""  d
+ . s text=$p(list(selectName,no),$c(1),1)
+ . s value=$p(list(selectName,no),$c(1),2)
+ . w comma_"{displayText:'"_text_"',optionValue:'"_value_"'}"
+ . s comma=","
+ w "],model:'"_selectName_"',autoLoad:true,autoDestroy:false});"_$c(13,10)
+ ; 
+ QUIT
+ ;
+processNameList(nameList,formDeclarations)
+ ;
+ n actions,field,list,name,no,type,xtype
+ ;
+ s name="zewdSTForm"
+ s no=$o(formDeclarations(""),-1)
+ s field=""
+ s list=""
+ f  s field=$o(nameList(field)) q:field=""  d
+ . s type=nameList(field)
+ . i field="ewd_action" d  q
+ . . s name=$p(type,"|",2)
+ . . s type=$p(type,"|",1)
+ . q:type="submit"
+ . s xtype="text"
+ . i type="date" s xtype="stdate"
+ . s nameList(field)=xtype
+ . s list=list_field_"|"_xtype_"`"
+ s no=no+1
+ s formDeclarations(no)=name_"~~~"_list
+ i technology="csp" d
+ . k nameList("ewd_action")
+ . m ^zewd("form",$$zcvt^%zewdAPI(app,"l"),"ewd_action",name)=nameList
+ ;
+ QUIT
+ ;
+saveRequestToSession(app,ewdAction,sessid)
+ QUIT
+ ;
+processDate(name,value,sessid)
+ ;
+ n day,dd,df,mf,mm,mon,yf,yyyy
+ ;
+ ;d trace^%zewdAPI("in processDate: "_name_";"_value_";"_sessid)
+ ;dob;Tue Dec 15 1970 00:00:00 GMT 0000 (GMT);12934
+ ;
+ s df=name_".day"
+ s mf=name_".month"
+ s yf=name_".year"
+ s mm("Jan")=1
+ s mm("Feb")=2
+ s mm("Mar")=3
+ s mm("Apr")=4
+ s mm("May")=5
+ s mm("Jun")=6
+ s mm("Jul")=7
+ s mm("Aug")=8
+ s mm("Sep")=9
+ s mm("Oct")=10
+ s mm("Nov")=11
+ s mm("Dec")=12
+ s mm=""
+ ;
+ s day=$p(value," ",1)
+ s mon=$p(value," ",2)
+ s dd=$p(value," ",3)
+ s yyyy=$p(value," ",4)
+ i mon'="" s mm=$g(mm(mon))
+ ;
+ d setSessionValue^%zewdAPI(df,dd,sessid)
+ d setSessionValue^%zewdAPI(mf,mm,sessid)
+ d setSessionValue^%zewdAPI(yf,yyyy,sessid)
+ QUIT
+ ;
 insertNewNextSibling(elementName,nodeOID)
  ;
  n elOID,nsOID,parentOID
@@ -785,6 +941,7 @@ convertToCamelCase(string)
 camelCaseTerms
  ;;activeCls
  ;;activeItem
+ ;;autoCapitalize
  ;;autoDestroy
  ;;baseCls
  ;;baseParams
@@ -800,6 +957,7 @@ camelCaseTerms
  ;;defaultType
  ;;disabledClass
  ;;disabledCls
+ ;;displayField
  ;;dockedItems
  ;;doneButton
  ;;enterAnimation
@@ -812,12 +970,15 @@ camelCaseTerms
  ;;layoutOnOrientationChange
  ;;labelAlign
  ;;maxHeight
+ ;;maxValue
  ;;maxWidth
  ;;minHeight
+ ;;minValue
  ;;minWidth
  ;;monitorOrientation
  ;;monthText
  ;;overCls
+ ;;placeHolder
  ;;renderSelectors
  ;;renderTo
  ;;renderTpl
@@ -831,7 +992,9 @@ camelCaseTerms
  ;;styleHtmlContent
  ;;submitOnAction
  ;;tplWriteMode
+ ;;useClearIcon
  ;;useTitles
+ ;;valueField
  ;;waitTpl
  ;;yearFrom
  ;;yearText

@@ -1,7 +1,7 @@
 %zewdCompiler8	; Enterprise Web Developer Compiler Functions
  ;
- ; Product: Enterprise Web Developer (Build 855)
- ; Build Date: Tue, 22 Feb 2011 12:53:40
+ ; Product: Enterprise Web Developer (Build 856)
+ ; Build Date: Sat, 05 Mar 2011 15:19:38
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -788,107 +788,6 @@ createPHPMenuOptionHeader(menuOptions,phpHeaderArray,technology,docName)
  . set scriptOID=$$addCSPServerScript^%zewdCompiler4(bodyOID,text)
  ;
  QUIT
- ;
-forEach(nodeOID,attrValues,docOID,technology)
-	;
-	n param,pval,subs
-	;
-	s param="param",subs=""
-	f  s param=$o(attrValues(param)) q:param=""  q:param'["param"  d
-	. s pval=attrValues(param)
-	. i technology="csp"!(technology="wl")!(technology="gtm")!(technology="ewd") d
-	. . i $e(pval,1)="""" s pval=$e(pval,2,$l(pval)-1) q
-	. . i $e(pval,1)'="$" s pval="$"_pval
-	. . i $e(pval,1,2)="$$" s pval=$$replaceAll^%zewdAPI(pval,",",$c(0))
-	. s subs=subs_pval_","
-	s subs=$e(subs,1,$l(subs)-1)
-	;
-	d
-	. n startValue,endValue,cwOID,dummyOID,text,index,no,serverOID
-	. ;
-	. s no=$p(nodeOID,"-",2)
-	. s startValue=$$getAttrValue^%zewdCompiler4("startvalue",.attrValues,technology)
-	. s endValue=$$getAttrValue^%zewdCompiler4("endvalue",.attrValues,technology)
-	. s index=$$getAttrValue^%zewdCompiler4("index",.attrValues,technology)
-	. s cwOID=$$addIntermediateNode^%zewdCompiler4("csp:while",nodeOID)
-	. ;
-	. s dummyOID=$$addNewFirstChild^%zewdCompiler4("temp",docOID,nodeOID)
-	. s text=" s "_index_"="_startValue_$c(13,10)
-	. s text=text_" i "_index_"?1N.N s "_index_"="_index_"-1"_$c(13,10)
-	. s text=text_" i "_index_"?1AP.ANP d"_$c(13,10)
-	. s text=text_" . s p1=$e("_index_",1,$l("_index_")-1)"_$c(13,10)
-	. s text=text_" . s p2=$e("_index_",$l("_index_"))"_$c(13,10)
-	. s text=text_" . s p2=$c($a(p2)-1)"_$c(13,10)
-	. s text=text_" . s "_index_"=p1_p2"_$c(13,10)
-	. s text=text_" s nul="""""_$c(13,10)
-	. s text=text_" s endValue"_no_"="_endValue_$c(13,10)
-	. s text=text_" i endValue"_no_"?1N.N s endValue"_no_"=endValue"_no_"+1"
-	. s serverOID=$$addCSPServerScript^%zewdCompiler4(dummyOID,text)
-	. d removeIntermediateNode^%zewdCompiler4(dummyOID)
-	. ;
-	. ; <csp:while condition="$o(%session.Data(&quot;appList&quot;,no))'=nul">
-	. ;
-	. n lname,localName,obj,subList,subListq,subscripts,sessionName,sname,attr,return
-	. n useSessGlo
-	. ;
-	. s obj="^%zewdSession(""session"",sessid,"
-	. s subscripts=$$getAttrValue^%zewdCompiler4("subscriptlist",.attrValues,technology)
-	. i $e(subscripts,1)'="""" s subscripts="$"_subscripts
-	. i $e(subscripts,1)="""" s subscripts=$e(subscripts,2,$l(subscripts)-1)
-	. i subscripts="" s subscripts=subs
-	. s sessionName=$$getAttrValue^%zewdCompiler4("sessionname",.attrValues,technology)
-	. s sessionName=$$replace^%zewdAPI(sessionName,".","_")
-	. s localName=$$getAttrValue^%zewdCompiler4("localname",.attrValues,technology)
-	. i sessionName["tmp_" s obj="sessionArray("
-	. s return=$$getAttrValue^%zewdCompiler4("return",.attrValues,technology)
-	. i return="""""" s return="dummy"
-	. s subList="",subListq=""
-	. i subscripts'="" d
-	. . n nsubs,i
-	. . s nsubs=$l(subscripts,",")
-	. . f i=1:1:nsubs d
-	. . . n sub
-	. . . s sub=$p(subscripts,",",i)
-	. . . s sub=$$replaceAll^%zewdAPI(sub,$c(0),",")
-	. . . i $e(sub,1)="$" d
-	. . . . i $e(sub,2)'="$" s sub=$e(sub,2,$l(sub))
-	. . . . s subList=subList_","_sub
-	. . . . s subListq=subListq_","_sub
-	. . . e  d
-	. . . . s subList=subList_","""_sub_""""
-	. . . . s subListq=subListq_",&quot;"_sub_"&quot;"
-	. ; 
-	. i $e(sessionName,1)="""" s sname="&quot;"_$e(sessionName,2,$l(sessionName)-1)_"&quot;"
-	. e  s sname=sessionName
-	. i $e(localName,1)="""" s lname="&quot;"_$e(localName,2,$l(localName)-1)_"&quot;"
-	. e  s lname="&quot;"_localName_"&quot;"
-	. i sessionName'="""""" d
-	. . s attr="($o("_obj_sname_subListq_","_index_"))'=endValue"_no_")&($o("_obj_sname_subListq_","_index_"))'=nul)"
-	. e  d
-	. . n %p
-	. . s %p=lname_subListq
-	. . s attr="($o(%ewdVar("_%p_","_index_"))'=endValue"_no_")&($o(%ewdVar("_%p_","_index_"))'=nul)"
-	. d setAttribute^%zewdDOM("condition",attr,cwOID)
-	. ;
-	. s dummyOID=$$addNewFirstChild^%zewdCompiler4("temp",docOID,cwOID)
-	. i sessionName'="""""" d
-	. . s text=" s "_index_"=$o("_obj_sessionName_subList_","_index_"))"_$c(13,10)
-	. . s text=text_" s "_return_"=$g("_obj_sessionName_subList_","_index_"))"
-	. e  d
-	. . n %p
-	. . s %p=localName_subListq
-	. . s text=" s "_index_"=$o(%ewdVar("_%p_","_index_"))"_$c(13,10)
-	. . s text=text_" s "_return_"=$g(%ewdVar("_%p_","_index_"))"
-	. s serverOID=$$addCSPServerScript^%zewdCompiler4(dummyOID,text)
-	. d removeIntermediateNode^%zewdCompiler4(dummyOID)
-	;
-	d removeIntermediateNode^%zewdCompiler4(nodeOID)
-	;
-	QUIT
-	;
-requote(string)
- i $e(string,1)="'" QUIT """"_$e(string,2,$l(string)-1)_""""
- QUIT string
  ;
 addVBHeaderPreCache(string)
  ;

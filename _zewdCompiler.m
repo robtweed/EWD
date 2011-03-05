@@ -1,7 +1,7 @@
 %zewdCompiler	; Enterprise Web Developer Compiler
  ;
- ; Product: Enterprise Web Developer (Build 855)
- ; Build Date: Tue, 22 Feb 2011 12:53:40
+ ; Product: Enterprise Web Developer (Build 856)
+ ; Build Date: Sat, 05 Mar 2011 15:19:38
  ; 
  ; 
  ; ----------------------------------------------------------------------------
@@ -299,6 +299,8 @@ processApplication(inputPath,outputPath,verbose,outputStyle,results,technology,c
 	; clear down custom resource loader records for this application
 	k ^zewd("loader",$$zcvt^%zewdAPI(app))
 	k ^zewd("comboMethod",$$zcvt^%zewdAPI(app))
+	k ^zewd("nodeModules","methods",$$zcvt^%zewdAPI(app))
+	k ^zewd("form",$$zcvt^%zewdAPI(app))
 	;
 	d getDirectoriesInPath^%zewdHTMLParser(inputPath,.dirs)
 	d getFilesInPath^%zewdHTMLParser(inputPath,"ewd",.files)
@@ -322,6 +324,7 @@ processApplication(inputPath,outputPath,verbose,outputStyle,results,technology,c
 	. i rootPath["\" s delim="\"
 	. s outputPath=rootPath_delim_outputPath
 	;
+	i $d(^zewd("nodeModules","methods",$$zcvt^%zewdAPI(app))) s ^zewd("nodeModules","updated")=1
 	d createJSFile^%zewdCompiler19(outputPath,+$g(verbose),technology)
 	d createCSSFile^%zewdCompiler13(outputPath,$g(outputStyle),+$g(verbose),technology)
 	d createEwdError^%zewdGTMRuntime($g(maxLines))

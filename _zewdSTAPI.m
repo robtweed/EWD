@@ -1,7 +1,7 @@
 %zewdSTAPI ; Sencha Touch User APIs
  ;
- ; Product: Enterprise Web Developer (Build 855)
- ; Build Date: Tue, 22 Feb 2011 12:53:41
+ ; Product: Enterprise Web Developer (Build 856)
+ ; Build Date: Sat, 05 Mar 2011 15:19:38
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -33,5 +33,15 @@ saveListToSession(list,sessionName,sessid)
  d deleteFromSession^%zewdAPI(sessionName,sessid)
  d mergeArrayToSession^%zewdAPI(.list,sessionName,sessid)
  ;d setSessionValue^%zewdAPI(sessionName,$$arrayToJSON^%zewdJSON("list"),sessid)
+ QUIT
+ ;
+setSessionValue(sessionName,value,sessid)
+ d setSessionValue^%zewdAPI(sessionName,value,sessid)
+ QUIT ""
+ ;
+setDateValue(sessionName,month,day,year,sessid)
+ d setSessionValue^%zewdAPI(sessionName_".day",day,sessid)
+ d setSessionValue^%zewdAPI(sessionName_".month",month,sessid)
+ d setSessionValue^%zewdAPI(sessionName_".year",year,sessid)
  QUIT
  ;
