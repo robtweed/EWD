@@ -1,7 +1,7 @@
 %zewdDaemon	; Enterprise Web Developer Background Daemon
  ;
- ; Product: Enterprise Web Developer (Build 857)
- ; Build Date: Sat, 05 Mar 2011 20:56:51
+ ; Product: Enterprise Web Developer (Build 859)
+ ; Build Date: Thu, 14 Apr 2011 11:50:58
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -111,3 +111,16 @@ status()
  l -^%zewd("daemon","lock")
  i $g(^%zewd("daemon","use"))'="true" QUIT "Not activated"
  QUIT "Stopped"
+ ;
+setPrintEvent(url,clientId)
+ ;
+ QUIT
+ ;
+printListener
+ QUIT
+ ;
+closePrintListener
+ QUIT
+ ;
+setClient(sessid)
+ QUIT ""

@@ -1,7 +1,7 @@
 %zewdST ; Sencha Touch Tag Processors and runtime logic
  ;
- ; Product: Enterprise Web Developer (Build 857)
- ; Build Date: Sat, 05 Mar 2011 20:56:51
+ ; Product: Enterprise Web Developer (Build 859)
+ ; Build Date: Thu, 14 Apr 2011 11:50:58
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -179,7 +179,8 @@ fieldSets(nodeOID,itemsOID)
  s fsOID=$$fieldset(nodeOID,itemsOID)
  s itemsAttr=$$getAttribute^%zewdDOM("items",nodeOID)
  s hasChildren=$$hasChildNodes^%zewdDOM(nodeOID)
- i itemsAttr="",hasChildren="true" s fsItemsOID=$$addElementToDOM^%zewdDOM("st:items",fsOID)
+ ;i itemsAttr="",hasChildren="true" s fsItemsOID=$$addElementToDOM^%zewdDOM("st:items",fsOID)
+ i itemsAttr="" s fsItemsOID=$$addElementToDOM^%zewdDOM("st:items",fsOID)
  ; add special ewd_action hidden field to automate transfer of values to session
  s attr("type")="hidden"
  s attr("id")="ewd_action"
@@ -584,7 +585,7 @@ stclass(nodeOID,attrValue,docOID,technology)
  ;
 panel(nodeOID,attrValue,docOID,technology)
  ;
- n bodyxOID,childNo,childOID,extName,i,itemsAdded,itemsOID,mainAttrs,OIDArray
+ n bodyxOID,childNo,childOID,extName,i,itemsAdded,itemsOID,mainAttrs,OIDArray,ok
  n panelOID,parentOID,parentTagName,postSTOID,return,stop,tagName,text,thisOID
  n widgetId,widgetObj,widgetObjName
  ;
@@ -634,6 +635,7 @@ panel(nodeOID,attrValue,docOID,technology)
  . s childOID=OIDArray(childNo)
  . s tagName=$$getTagName^%zewdDOM(childOID)
  . i tagName="st:pageitem" d pageItem^%zewdST2(childOID,,docOID,technology)
+ . i tagName="ewd:comment" s ok=$$removeChild^%zewdAPI(childOID)
  ;
  d getChildrenInOrder^%zewdDOM(panelOID,.OIDArray)
  s childNo="",stop=0
@@ -781,7 +783,7 @@ button(nodeOID,parentOID)
  ;
 list(nodeOID,itemsOID)
  ;
- n attr,childNo,childOID,comma,fcOID,field,imgHandler,itemOID,jsOID,listOID,lsOID
+ n attr,childNo,childOID,comma,cspOID,fcOID,field,imgHandler,itemOID,jsOID,listOID,lsOID
  n mainAttrs,name,OIDArray,onTap,phpVar,sessionName,stOID,store,tagName,template
  n text,value,widgetObj,widgetObjName,widgetId
  ;
@@ -925,8 +927,11 @@ list(nodeOID,itemsOID)
  s jsOID=$$addElementToDOM^%zewdDOM("ewd:jsline",stOID,,,text)
  ;
  s stOID=$$getElementById^%zewdDOM("ewdPostSTJS",docOID)
- s text=" d writeListData^%zewdST2("""_sessionName_""",sessid)"
- i $$addCSPServerScript^%zewdAPI(stOID,text)
+ s text=" d writeListData^%zewdST2("""_sessionName_""","_isAjax_",sessid)"
+ s cspOID=$$addCSPServerScript^%zewdAPI(stOID,text)
+ i 'isAjax d
+ . s cspOID=$$removeChild^%zewdDOM(cspOID)
+ . s cspOID=$$insertBefore^%zewdDOM(cspOID,stOID)
  s text="EWD.sencha.loadListData("_store_",EWD.sencha.jsonData);"
  ;s phpVar=$$addPhpVar^%zewdCustomTags("#"_sessionName)
  ;s text="EWD.sencha.loadListData("_store_","_phpVar_");"

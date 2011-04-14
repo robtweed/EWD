@@ -1,7 +1,7 @@
 %zewdAPI	; Enterprise Web Developer run-time functions and user APIs
  ;
- ; Product: Enterprise Web Developer (Build 857)
- ; Build Date: Sat, 05 Mar 2011 20:56:50
+ ; Product: Enterprise Web Developer (Build 859)
+ ; Build Date: Thu, 14 Apr 2011 11:50:57
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -111,6 +111,7 @@ setNextPageToken(nextPage,sessid)
  ;
  s length=$$getSessionValue("ewd_sessid_length",sessid)
  i length="" s length=30
+ i $g(sessid)="" s sessid=0
  f  s token=$$makeTokenString(length) q:'$d(^%zewdSession("nextPageTokens",sessid,token))
  i $g(^zewd("trace"))=1 d trace^%zewdAPI("setNextPageToken^%zewdAPI: sessid="_sessid_"; token="_token_"; nextPage="_nextPage)
  s ^%zewdSession("nextPageTokens",sessid,token,$$zcvt(nextPage,"l"))=""

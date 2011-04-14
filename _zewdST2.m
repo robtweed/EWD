@@ -1,7 +1,7 @@
 %zewdST2 ; Sencha Touch Tag Processors and runtime logic
  ;
- ; Product: Enterprise Web Developer (Build 857)
- ; Build Date: Sat, 05 Mar 2011 20:56:51
+ ; Product: Enterprise Web Developer (Build 859)
+ ; Build Date: Thu, 14 Apr 2011 11:50:58
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -626,7 +626,7 @@ comboMatchesPage(inputPath,files)
  w "<ewd:config isFirstPage=""false"" pagetype=""ajax"" prePageScript=""getComboMatches^%zewdCustomTags"" />",!
  w "<ewd:js>",!
  w "<ewd:cspscript language=""cache"" runat=""server"">",!
- w "d writeListData^%zewdST2(""ewdComboMatches"",sessid)",!
+ w "d writeListData^%zewdST2(""ewdComboMatches"",1,sessid)",!
  w "</ewd:cspscript>",!
  w " EWD.sencha.combo.store.loadData(EWD.sencha.jsonData,false);",!
  w "</ewd:js>",!
@@ -709,14 +709,16 @@ getSessionDetails(array,sessid)
  k ^%work($j)
  QUIT
  ;
-writeListData(sessionName,sessid)
+writeListData(sessionName,isAjax,sessid)
  ;
  n data
  ;
+ i 'isAjax w "<script type='text/javascript'>"_$c(13,10)
  w "EWD.sencha.jsonData="
  d mergeArrayFromSession^%zewdAPI(.data,sessionName,sessid)
  d streamArrayToJSON^%zewdJSON("data")
  w ";"_$c(13,10)
+ i 'isAjax w "</script>"_$c(13,10)
  QUIT
  ;
 writeCheckboxes(sessionName,jsVarName,idRoot,nameRoot,checkIf,labelAlign,sessid)
@@ -910,9 +912,12 @@ getCamelCase(string,options)
  ;
 defineCamelCaseTerms(options)
  ;
- n line,lineNo
+ n line,lineNo,term
  ;
  k options
+ s term=""
+ f  s term=$o(^zewd("st","camelCaseTerms",term)) q:term=""  d
+ . s options($$zcvt^%zewdAPI(term,"l"))=term
  f lineNo=1:1 s line=$t(camelCaseTerms+lineNo) q:line["***END***"  d
  . s line=$p(line,";;",2,200)
  . s options($$zcvt^%zewdAPI(line,"l"))=line
