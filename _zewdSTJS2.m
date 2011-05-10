@@ -1,7 +1,7 @@
 %zewdSTJS2 ; More Sencha Touch Static Javascript files
  ;
- ; Product: Enterprise Web Developer (Build 859)
- ; Build Date: Thu, 14 Apr 2011 11:50:58
+ ; Product: Enterprise Web Developer (Build 861)
+ ; Build Date: Tue, 10 May 2011 16:33:34
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -35,22 +35,25 @@ touchGrid ;
  ;;    //console.log(el);
  ;;    //console.log(rowIndex);
  ;;    //console.log(e);
- ;;    var colIndex = cell.colIndex;
  ;;    var value = cell.value;
  ;;    var rowIndex = cell.rowIndex;
- ;;    var editPanel = Ext.getCmp('ewdSTTouchGridEditPanel');
- ;;    editPanel.showBy(e.target);
- ;;    Ext.getCmp("ewdSTTouchGridCell").setValue(value);
- ;;    var store = dataview.getStore();
- ;;    var record = store.getAt(rowIndex);
- ;;    cell.record = record;
- ;;    EWD.sencha.touchGrid.editedCell = cell;
+ ;;    var edit = true;
+ ;;    if (EWD.sencha.touchGrid.allowEdit) edit = EWD.sencha.touchGrid.allowEdit(rowIndex,cell.mapping,value);
+ ;;    if (edit) {
+ ;;      var editPanel = Ext.getCmp('ewdSTTouchGridEditPanel');
+ ;;      editPanel.showBy(e.target);
+ ;;      Ext.getCmp("ewdSTTouchGridCell").setValue(value);
+ ;;      var store = dataview.getStore();
+ ;;      var record = store.getAt(rowIndex);
+ ;;      cell.record = record;
+ ;;      EWD.sencha.touchGrid.editedCell = cell;
+ ;;    }
  ;;  },
  ;;  updateCell: function() {
  ;;    var update = true;
  ;;    var cell = EWD.sencha.touchGrid.editedCell;
  ;;    var value = Ext.getCmp("ewdSTTouchGridCell").getValue();
- ;;    if (EWD.sencha.touchGrid.onSave) update = EWD.sencha.touchGrid.onSave(cell.rowIndex,cell.colIndex,value);
+ ;;    if (EWD.sencha.touchGrid.onSave) update = EWD.sencha.touchGrid.onSave(cell.rowIndex,cell.mapping,value);
  ;;    if (update) {
  ;;      if (value != cell.oldValue) {
  ;;        cell.record.set(cell.mapping,value);
@@ -172,11 +175,11 @@ touchGrid ;
  ;;  },
  ;;  onCellTap: function(e, t) {
  ;;    e.stopEvent();
- ;;    var cellValue = t.innerText;
+ ;;    if (t.getAttribute('rowindex') === null) t = t.parentNode;
  ;;    var rowIndex = t.getAttribute('rowindex');
- ;;    var colIndex = t.getAttribute('colIndex');
+ ;;    var cellValue = t.innerText;
  ;;    var mapping = t.getAttribute("mapping");
- ;;    var cell = {value:cellValue,rowIndex:rowIndex,colIndex:colIndex,mapping:mapping};
+ ;;    var cell = {value:cellValue,rowIndex:rowIndex,mapping:mapping};
  ;;    this.fireEvent("rowTap", e, cell, this.dataview);
  ;;  },
  ;;  //   end of addition

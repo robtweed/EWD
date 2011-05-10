@@ -1,7 +1,7 @@
 %zewdJSON	; Enterprise Web Developer JSON functions
  ;
- ; Product: Enterprise Web Developer (Build 859)
- ; Build Date: Thu, 14 Apr 2011 11:50:58
+ ; Product: Enterprise Web Developer (Build 861)
+ ; Build Date: Tue, 10 May 2011 16:33:33
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -600,7 +600,8 @@ arrayToJSON(name)
  ;
 walkArray(json,name,subscripts)
  ;
- n allNumeric,arrComma,brace,comma,cr,dd,i,no,numsub,dblquot,quot,ref,sub,subNo,subscripts1,type,valquot,value,xref,zobj
+ n allNumeric,arrComma,brace,comma,count,cr,dd,i,no,numsub,dblquot,quot
+ n ref,sub,subNo,subscripts1,type,valquot,value,xref,zobj
  ;
  s cr=$c(13,10),comma=","
  s (dblquot,valquot)=""""
@@ -616,10 +617,13 @@ walkArray(json,name,subscripts)
  . i subscripts(i)?."-"1N.N s quot=""
  . s ref=ref_quot_subscripts(i)_quot_","
  s ref=ref_"sub)"
- s sub="",numsub=0,subNo=0
+ s sub="",numsub=0,subNo=0,count=0
  s allNumeric=1
  f  s sub=$o(@ref) q:sub=""  d  q:'allNumeric
  . i sub'?1N.N s allNumeric=0
+ . s count=count+1
+ . i sub'=count s allNumeric=0
+ i allNumeric,count=1 s allNumeric=0
  i allNumeric d
  . s json=json_"["
  e  d

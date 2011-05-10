@@ -1,7 +1,7 @@
 %zewdST2 ; Sencha Touch Tag Processors and runtime logic
  ;
- ; Product: Enterprise Web Developer (Build 859)
- ; Build Date: Thu, 14 Apr 2011 11:50:58
+ ; Product: Enterprise Web Developer (Build 861)
+ ; Build Date: Tue, 10 May 2011 16:33:33
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -390,7 +390,7 @@ list(nodeOID,attrValue,docOID,technology)
  ;
 touchGridSub(nodeOID,itemsOID)
  ;
- n colDef,dataStore,editable,id,itemOID,mainAttrs,name,onEdit,onTap,store,tagName,xtype
+ n colDef,dataStore,editable,id,itemOID,mainAttrs,name,onBeforeEdit,onEdit,onTap,store,tagName,xtype
  ;
  do getAttributeValues^%zewdCustomTags(nodeOID,.mainAttrs)
  ;
@@ -418,6 +418,9 @@ touchGridSub(nodeOID,itemsOID)
  s onEdit=$g(mainAttrs("onedit"))
  i onEdit'="" s editable=1,onTap="EWD.sencha.touchGrid.editCell"
  k mainAttrs("onedit")
+ ;
+ s onBeforeEdit=$g(mainAttrs("onbeforeedit"))
+ k mainAttrs("onbeforeedit")
  ;
  i editable d
  . n attr,fsOID,parentOID,xOID
@@ -453,7 +456,7 @@ touchGridSub(nodeOID,itemsOID)
  . i name="object" q
  . d setAttribute^%zewdDOM(name,mainAttrs(name),itemOID)
  ;
- d touchGridCode(itemOID,dataStore,store,colDef,onTap,onEdit)
+ d touchGridCode(itemOID,dataStore,store,colDef,onTap,onEdit,onBeforeEdit)
  d removeIntermediateNode^%zewdDOM(nodeOID)
  ;
  QUIT
@@ -484,7 +487,7 @@ touchGrid(nodeOID,attrValue,docOID,technology)
  ;
  QUIT
  ;
-touchGridCode(nodeOID,dataStore,store,colDef,onTap,onEdit)
+touchGridCode(nodeOID,dataStore,store,colDef,onTap,onEdit,onBeforeEdit)
  ;
  n attr,i,jsOID,lOID,lsOID,stOID,text
  ;
@@ -496,6 +499,10 @@ touchGridCode(nodeOID,dataStore,store,colDef,onTap,onEdit)
  ;
  i $g(onEdit)'="" d
  . s text="EWD.sencha.touchGrid.onSave="_onEdit_";"_$c(13,10)
+ . s jsOID=$$addElementToDOM^%zewdDOM("ewd:jsline",stOID,,,text)
+ ;
+ i $g(onBeforeEdit)'="" d
+ . s text="EWD.sencha.touchGrid.allowEdit="_onBeforeEdit_";"_$c(13,10)
  . s jsOID=$$addElementToDOM^%zewdDOM("ewd:jsline",stOID,,,text)
  ;
  d setAttribute^%zewdDOM("store","."_store,nodeOID)
