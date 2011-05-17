@@ -1,7 +1,7 @@
 %zewdCompiler9	; Enterprise Web Developer Compiler : ajax fixed text
  ;
- ; Product: Enterprise Web Developer (Build 861)
- ; Build Date: Tue, 10 May 2011 16:33:33
+ ; Product: Enterprise Web Developer (Build 863)
+ ; Build Date: Tue, 17 May 2011 23:22:11
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -368,6 +368,8 @@ ajaxLoader ;
 	;;       }
 	;;       EWD.ajax.activateJS(newJSPointer) ;
     ;;       eval(jsText) ;
+    ;;       /* Custom extension hook */
+    ;;       if (typeof EWD.ajax.onAfterInject !== 'undefined') EWD.ajax.onAfterInject();
 	;;   },
 	;;   activateAjaxError: function (errorText) {
 	;;      if (errorText != "") {

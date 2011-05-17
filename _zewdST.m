@@ -1,7 +1,7 @@
 %zewdST ; Sencha Touch Tag Processors and runtime logic
  ;
- ; Product: Enterprise Web Developer (Build 861)
- ; Build Date: Tue, 10 May 2011 16:33:33
+ ; Product: Enterprise Web Developer (Build 863)
+ ; Build Date: Tue, 17 May 2011 23:22:11
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -840,6 +840,8 @@ list(nodeOID,itemsOID)
  . k mainAttrs("cardpanel")
  . i $g(lsOID)="" s lsOID=$$addElementToDOM^%zewdDOM("st:listeners",listOID)
  . s text="function(view,index,item,e){"
+ . s text=text_"if (EWD.sencha.listClicked) return;"
+ . s text=text_"EWD.sencha.listClicked = true;"
  . s text=text_"var record = "_store_".getAt(index);"
  . i $g(mainAttrs("transition"))="" s mainAttrs("transition")="slide"
  . i $g(mainAttrs("transition"))'="" d

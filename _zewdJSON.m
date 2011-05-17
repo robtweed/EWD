@@ -1,7 +1,7 @@
 %zewdJSON	; Enterprise Web Developer JSON functions
  ;
- ; Product: Enterprise Web Developer (Build 861)
- ; Build Date: Tue, 10 May 2011 16:33:33
+ ; Product: Enterprise Web Developer (Build 863)
+ ; Build Date: Tue, 17 May 2011 23:22:11
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -651,10 +651,11 @@ walkArray(json,name,subscripts)
  . k subscripts1
  . m subscripts1=subscripts
  . i dd>9 d
- . . i sub?1N.N d
+ . . i sub?1N.N,allNumeric d
  . . . i subNo=1 d
  . . . . s numsub=1
- . . . . s json=$e(json,1,$l(json)-1)_"["
+ . . . . s json=$e(json,1,$l(json)-1)
+ . . . . s json=json_"[" break
  . . e  d
  . . . s json=json_""""_sub_""":"
  . . s json=$$walkArray(json,name,.subscripts1)
