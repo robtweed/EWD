@@ -655,7 +655,7 @@ walkArray(json,name,subscripts)
  . . . i subNo=1 d
  . . . . s numsub=1
  . . . . s json=$e(json,1,$l(json)-1)
- . . . . s json=json_"[" break
+ . . . . s json=json_"["
  . . e  d
  . . . s json=json_""""_sub_""":"
  . . s json=$$walkArray(json,name,.subscripts1)
