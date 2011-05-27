@@ -1,7 +1,7 @@
 %zewdCompiler	; Enterprise Web Developer Compiler
  ;
- ; Product: Enterprise Web Developer (Build 863)
- ; Build Date: Tue, 17 May 2011 23:22:11
+ ; Product: Enterprise Web Developer (Build 864)
+ ; Build Date: Fri, 27 May 2011 14:36:20
  ; 
  ; 
  ; ----------------------------------------------------------------------------
@@ -804,7 +804,7 @@ expandPageURL(url,nextPageList,technology)
 	. s %p1=$p(%p1,".ewd",1)
 	. s %p1r=$re(%p1)
 	. s stop=0,page=""
-	. f i=1:1 d  q:stop
+	. f i=1:1:$l(%p1r) d  q:stop
 	. . s c=$e(%p1r,i)
 	. . i c?1P s stop=1 q
 	. . s page=page_c

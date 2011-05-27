@@ -1,7 +1,7 @@
 %zewdCustomTags	; Enterprise Web Developer Custom Tag Library Functions
  ;
- ; Product: Enterprise Web Developer (Build 863)
- ; Build Date: Tue, 17 May 2011 23:22:11
+ ; Product: Enterprise Web Developer (Build 864)
+ ; Build Date: Fri, 27 May 2011 14:36:20
  ;
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -230,7 +230,7 @@ addPhpVar(sessionValue)
  ;
 loadFiles(appName,type,sessid)
  ;
- n file,path,src,technology
+ n defer,deferAttr,file,path,src,technology,value
  ;
  ; type = css|js
  ;
@@ -246,25 +246,34 @@ loadFiles(appName,type,sessid)
  f  s file=$o(^zewd("loader",appName,type,file)) q:file=""  d
  . i file="ewdSTJS.js" q
  . i $e(file,1,3)'="ewd" q
+ . s value=^zewd("loader",appName,type,file)
+ . s defer=$p(value,$c(1),2)
+ . s deferAttr=""
+ . i defer s deferAttr=" defer='defer'"
  . s src=file
  . i $e(file,1)'="/" s src=path_file 
- . i type="js" w "<script src='"_src_"' type='text/javascript'></script>"_$c(13,10)
+ . i type="js" w "<script src='"_src_"' type='text/javascript'"_deferAttr_"></script>"_$c(13,10)
  . i type="css" w "<link href='"_src_"' rel='stylesheet' type='text/css' />"_$c(13,10)
  ;
  s file=""
  f  s file=$o(^zewd("loader",appName,type,file)) q:file=""  d
  . i $e(file,1,3)="ewd" q
+ . s value=^zewd("loader",appName,type,file)
+ . s defer=$p(value,$c(1),2)
+ . s deferAttr=""
+ . i defer s deferAttr=" defer='defer'"
  . s src=file
  . i $e(file,1)'="/" s src=path_file 
- . i type="js" w "<script src='"_src_"' type='text/javascript'></script>"_$c(13,10)
+ . i type="js" w "<script src='"_src_"' type='text/javascript'"_deferAttr_"></script>"_$c(13,10)
  . i type="css" w "<link href='"_src_"' rel='stylesheet' type='text/css' />"_$c(13,10)
  ;
  QUIT
  ;
-registerResource(type,fileName,source,app)
+registerResource(type,fileName,source,app,defer)
  ;
  i fileName'[("."_type) s fileName=fileName_"."_type
- s ^zewd("loader",$$zcvt^%zewdAPI(app,"l"),type,fileName)=source
+ s defer=$g(defer)
+ s ^zewd("loader",$$zcvt^%zewdAPI(app,"l"),type,fileName)=source_$c(1)_defer
  ;
  QUIT
  ;
@@ -276,7 +285,7 @@ createCustomResources(app)
  f type="css","js" d
  . s fileName=""
  . f  s fileName=$o(^zewd("loader",app,type,fileName)) q:fileName=""  d
- . . s source=^zewd("loader",app,type,fileName)
+ . . s source=$p(^zewd("loader",app,type,fileName),$c(1),1)
  . . i source="" q
  . . d createResource(fileName,source)
  QUIT

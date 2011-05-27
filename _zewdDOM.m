@@ -1,7 +1,7 @@
 %zewdDOM	; Enterprise Web Developer support functions
  ;
- ; Product: Enterprise Web Developer (Build 863)
- ; Build Date: Tue, 17 May 2011 23:22:11
+ ; Product: Enterprise Web Developer (Build 864)
+ ; Build Date: Fri, 27 May 2011 14:36:20
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -925,6 +925,7 @@ outputDOM(docOID,escape,format,outputLocation,msgLength,outputRef,finalCRLF,show
  . s docOID=$$getDocumentNode(docOID) i 'docOID QUIT
  . s docOID=$p(docOID,"-",1)_"-1"
  i 'docOID QUIT docOID
+ i +escape=11 w "var "_$e(escape,4,$l(escape))_"='&lt;?xml version=""1.0"" encoding=""UTF-8""?>';"
  s returnValue=$$outputNode(docOID,"",escape,format)
  i outputLocation="file" c dev u io
  i 'toGlobal QUIT returnValue
@@ -941,9 +942,13 @@ eGDIP
  ;
 outputNode(nodeOID,indent,escape,format)
  ;
- n displayIndent,endWithCR,nodeType,returnValue,suppressIndent
+ n displayIndent,endWithCR,lt,nodeType,returnValue,suppressIndent,var
  ;
  s returnValue=""
+ s lt="<",var="xml"
+ i +escape=11 d
+ . s lt="&lt;"
+ . s var=$e(escape,4,$l(escape))
  i nodeOID="" QUIT ""
  i format=0 s suppressIndent=1,endWithCR=0
  i format=1 s suppressIndent=1,endWithCR=1
@@ -957,15 +962,19 @@ outputNode(nodeOID,indent,escape,format)
  i nodeType=1 d  Q returnValue
  . n firstChildOID,firstChildTagName,lastTag,nextIndent,tagName
  . s tagName=$$getTagName(nodeOID)
- . w displayIndent_"<"_tagName
+ . i +escape=11 w var_"="_var_"+'"
+ . w displayIndent_lt_tagName
  . i $$hasAttributes(nodeOID)="true" d outputAttr(nodeOID)
  . i $$hasChildNodes(nodeOID)="false" w " /"
  . w ">"
+ . i +escape=11 w "';"
  . i endWithCR w $c(13,10)
  . i $$hasChildNodes(nodeOID)="false" q
  . s nextIndent=indent_"   "
  . s lastTag=$$outputChildren(nodeOID,nextIndent,escape,format)
- . w displayIndent_"</"_tagName_">"
+ . i +escape=11 w var_"="_var_"+'"
+ . w displayIndent_lt_"/"_tagName_">"
+ . i +escape=11 w "';"
  . i endWithCR w $c(13,10)
  ;
  i nodeType=3 d  QUIT returnValue
@@ -974,34 +983,47 @@ outputNode(nodeOID,indent,escape,format)
  . i $d(textArray) w displayIndent
  . s lineNo=""
  . f  s lineNo=$o(textArray(lineNo)) q:lineNo=""  d
- . . w textArray(lineNo)
+ . . i +escape=11 w var_"="_var_"+'"
+ . . s text=textArray(lineNo)
+ . . i +escape=11 d
+ . . . s text=$$replaceAll^%zewdAPI(text,"\","\\")
+ . . . s text=$$replaceAll^%zewdAPI(text,"'","\'")
+ . . . s text=$$replaceAll^%zewdAPI(text,$c(10)," ")
+ . . w text
+ . . i +escape=11 w "';"
  . i endWithCR w $c(13,10)
  ;
  i nodeType=4 d  QUIT returnValue
  . n lineNo,text,textArray
  . s text=$$getData(nodeOID,.textArray)
  . ;w "<![CDATA["_data_"]]>"
- . w "<![CDATA["
+ . i +escape=11 w var_"="_var_"+'"
+ . w lt_"![CDATA["
  . s lineNo=""
  . f  s lineNo=$o(textArray(lineNo)) q:lineNo=""  d
  . . w textArray(lineNo)
  . w "]]>"
+ . i +escape=11 w "';"
  . i endWithCR w $c(13,10) 
  ;
  i nodeType=7 d  QUIT returnValue
  . n target,data
- . w displayIndent_"<?"
+ . i +escape=11 w var_"="_var_"+'"
+ . w displayIndent_lt_"?"
  . s target=$$getTarget(nodeOID)
  . s data=$$getData(nodeOID)
  . w target
  . i data'="" w " "_data
  . w "?>"
+ . i +escape=11 w "';"
  . i endWithCR w $c(13,10) 
  ;
  i nodeType=8 d  QUIT returnValue
  . n data
  . s data=$$getData(nodeOID)
- . w "<!-- "_data_" -->"
+ . i +escape=11 w var_"="_var_"+'"
+ . w lt_"!-- "_data_" -->"
+ . i +escape=11 w "';"
  . i endWithCR w $c(13,10) 
  ;
  i nodeType=10 d  QUIT returnValue
@@ -1009,12 +1031,14 @@ outputNode(nodeOID,indent,escape,format)
  . s qualifiedName=$$getTagName(nodeOID)
  . s publicId=$$getPublicId(nodeOID)
  . s systemId=$$getSystemId(nodeOID)
- . w "<!DOCTYPE "_qualifiedName
+ . i +escape=11 w var_"="_var_"+'"
+ . w lt_"!DOCTYPE "_qualifiedName
  . i systemId'="",publicId="" w " SYSTEM """_systemId_""""
  . i publicId'="" d
  . . w " PUBLIC """_publicId_""""
  . . i systemId'="" w " """_systemId_""""
  . w ">"
+ . i +escape=11 w "';"
  . i endWithCR w $c(13,10) 
  ;
  QUIT ""
@@ -1041,7 +1065,14 @@ outputAttr(nodeOID)
  s attrOID=""
  f  s attrOID=$o(attrArray(attrOID)) q:attrOID=""  d
  . s d=attrArray(attrOID)
- . w " "_$p(d,$c(1),1)_"="""_$p(d,$c(1),2)_""""
+ . s value=$p(d,$c(1),2)
+ . i +escape=11 d
+ . . s value=$$replaceAll^%zewdAPI(value,"\","\\")
+ . . s value=$$replaceAll^%zewdAPI(value,"'","\'")
+ . . s value=$$replaceAll^%zewdAPI(value,"<","&amp;lt;")
+ . . s value=$$replaceAll^%zewdAPI(value,">","&amp;gt;")
+ . . s value=$$replaceAll^%zewdAPI(value,"""","&amp;quot;")
+ . w " "_$p(d,$c(1),1)_"="""_value_""""
  QUIT
  ;
 getElementText(nodeOID,textarr)

@@ -1,7 +1,7 @@
 %zewdJSON	; Enterprise Web Developer JSON functions
  ;
- ; Product: Enterprise Web Developer (Build 863)
- ; Build Date: Tue, 17 May 2011 23:22:11
+ ; Product: Enterprise Web Developer (Build 864)
+ ; Build Date: Fri, 27 May 2011 14:36:20
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -623,7 +623,7 @@ walkArray(json,name,subscripts)
  . i sub'?1N.N s allNumeric=0
  . s count=count+1
  . i sub'=count s allNumeric=0
- i allNumeric,count=1 s allNumeric=0
+ ;i allNumeric,count=1 s allNumeric=0
  i allNumeric d
  . s json=json_"["
  e  d
@@ -645,6 +645,9 @@ walkArray(json,name,subscripts)
  . . ;i value?1"-"1N.N1"."1N.N s type="numeric"
  . . i value="true"!(value="false") s type="boolean"
  . . i $e(value,1)="{",$e(value,$l(value))="}" s type="variable"
+ . . i $e(value,1,4)="<?= ",$e(value,$l(value)-2,$l(value))=" ?>" d
+ . . . s type="variable"
+ . . . s value=$e(value,5,$l(value)-3)
  . . i type="literal" s value=valquot_value_valquot
  . . d
  . . . s json=json_value_","
@@ -732,6 +735,9 @@ streamWalkArray(name,subscripts)
  . . ;i value?1"-"1N.N1"."1N.N s type="numeric"
  . . i value="true"!(value="false") s type="boolean"
  . . i $e(value,1)="{",$e(value,$l(value))="}" s type="variable"
+ . . i $e(value,1,4)="<?= ",$e(value,$l(value)-2,$l(value))=" ?>" d
+ . . . s type="variable"
+ . . . s value=$e(value,5,$l(value)-3)
  . . i type="literal" s value=valquot_value_valquot
  . . d
  . . . s json=json_value_","
