@@ -1,7 +1,7 @@
 %zewdDOM	; Enterprise Web Developer support functions
  ;
- ; Product: Enterprise Web Developer (Build 864)
- ; Build Date: Fri, 27 May 2011 14:36:20
+ ; Product: Enterprise Web Developer (Build 865)
+ ; Build Date: Wed, 01 Jun 2011 11:03:43
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -988,10 +988,14 @@ outputNode(nodeOID,indent,escape,format)
  . . i +escape=11 d
  . . . s text=$$replaceAll^%zewdAPI(text,"\","\\")
  . . . s text=$$replaceAll^%zewdAPI(text,"'","\'")
- . . . s text=$$replaceAll^%zewdAPI(text,$c(10)," ")
+ . . . s text=$$replaceAll^%zewdAPI(text,$c(9),"/t")
+ . . . s text=$$replaceAll^%zewdAPI(text,$c(10),"/n")
+ . . . s text=$$replaceAll^%zewdAPI(text,$c(13),"/r")
  . . w text
  . . i +escape=11 w "';"
- . i endWithCR w $c(13,10)
+ . i endWithCR d
+ . . i +escape=11 w "/r/n" q
+ . . w $c(13,10)
  ;
  i nodeType=4 d  QUIT returnValue
  . n lineNo,text,textArray
@@ -1020,6 +1024,7 @@ outputNode(nodeOID,indent,escape,format)
  ;
  i nodeType=8 d  QUIT returnValue
  . n data
+ . i +escape=11 q
  . s data=$$getData(nodeOID)
  . i +escape=11 w var_"="_var_"+'"
  . w lt_"!-- "_data_" -->"

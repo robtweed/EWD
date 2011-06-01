@@ -1,7 +1,7 @@
 %zewdGTM	;Enterprise Web Developer GT.M/ Virtual Appliance Functions
  ;
- ; Product: Enterprise Web Developer (Build 864)
- ; Build Date: Fri, 27 May 2011 14:36:20
+ ; Product: Enterprise Web Developer (Build 865)
+ ; Build Date: Wed, 01 Jun 2011 11:03:43
 	;
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -807,12 +807,16 @@ filepwdNotExists
  s $zt=""
  QUIT ""
  ;
-goq(global,file)
+goq(global,file,gzip)
  ;
- n stop,q,v,x
+ n io,ok,stop,q,v,x
  s global=$g(global)
  i $e(global,1)'="^" s global="^"_global
  s file=$g(file)
+ i file'="" d  QUIT:'ok
+ . s io=$io
+ . s ok=$$openNewFile^%zewdAPI(file)
+ . i ok u file
  s q="s x=$q("_global_"(""""))"
  x q
  i x="" QUIT
@@ -824,7 +828,44 @@ goq(global,file)
  . x q i x="" s stop=1 q
  . s v=@x
  . w x,!,v,!
+ i file'="" d
+ . w "***EOF***",!
+ . c file u io
+ . i $g(gzip)=1 d gzip(file)
  QUIT
+ ;
+giq(file,clearDown)
+ ;
+ i '$$fileExists^%zewdAPI(file) QUIT 0
+ s $zt="g giqError"
+ n data,global,gloRef,io,killed,ok,stop,x
+ ;
+ i $e(file,$l(file)-2,$l(file))=".gz" d
+ . d gunzip(file)
+ . s file=$p(file,".gz",1)
+ s io=$io
+ s ok=$$openFile^%zewdAPI(file)
+ i 'ok QUIT 0
+ u file
+ s stop=0,killed=0
+ f i=1:1 d  q:stop
+ . r gloRef i gloRef="***EOF***" s stop=1 q
+ . i 'killed,$g(clearDown)=1 d
+ . . s global=$p(gloRef,"(",1)
+ . . s x="k "_global x x
+ . . s killed=1
+ . r data i $ZEOF s stop=1 q
+ . s @gloRef=data
+ c file u io
+ s $zt=""
+ QUIT 1
+ ;
+giqError
+ c file u io
+ QUIT 0
+ ;
+openFileNotExists
+ QUIT 0
  ;
 uuid()
  n c,chars,chars2,i,uuid
@@ -844,6 +885,10 @@ tar(infile,outfile)
  ;
 gzip(file)
  zsystem "gzip "_file
+ QUIT
+ ;
+gunzip(file)
+ zsystem "gunzip "_file
  QUIT
  ;
 createTarGz(infile,outfileRootName)
