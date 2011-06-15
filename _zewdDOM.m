@@ -1,7 +1,7 @@
 %zewdDOM	; Enterprise Web Developer support functions
  ;
- ; Product: Enterprise Web Developer (Build 865)
- ; Build Date: Wed, 01 Jun 2011 11:03:43
+ ; Product: Enterprise Web Developer (Build 866)
+ ; Build Date: Wed, 15 Jun 2011 15:14:59
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -925,7 +925,11 @@ outputDOM(docOID,escape,format,outputLocation,msgLength,outputRef,finalCRLF,show
  . s docOID=$$getDocumentNode(docOID) i 'docOID QUIT
  . s docOID=$p(docOID,"-",1)_"-1"
  i 'docOID QUIT docOID
- i +escape=11 w "var "_$e(escape,4,$l(escape))_"='&lt;?xml version=""1.0"" encoding=""UTF-8""?>';"
+ i +escape=11 d
+ . i $zv'["GT.M" d
+ . . w "var "_$e(escape,4,$l(escape))_"='&lt;?xml version=""1.0"" encoding=""UTF-8""?>';"
+ . e  d
+ . . w "var "_$e(escape,4,$l(escape))_"='';"
  s returnValue=$$outputNode(docOID,"",escape,format)
  i outputLocation="file" c dev u io
  i 'toGlobal QUIT returnValue
@@ -988,13 +992,13 @@ outputNode(nodeOID,indent,escape,format)
  . . i +escape=11 d
  . . . s text=$$replaceAll^%zewdAPI(text,"\","\\")
  . . . s text=$$replaceAll^%zewdAPI(text,"'","\'")
- . . . s text=$$replaceAll^%zewdAPI(text,$c(9),"/t")
- . . . s text=$$replaceAll^%zewdAPI(text,$c(10),"/n")
- . . . s text=$$replaceAll^%zewdAPI(text,$c(13),"/r")
+ . . . s text=$$replaceAll^%zewdAPI(text,$c(9),"\t")
+ . . . s text=$$replaceAll^%zewdAPI(text,$c(10),"\n")
+ . . . s text=$$replaceAll^%zewdAPI(text,$c(13),"\r")
  . . w text
  . . i +escape=11 w "';"
  . i endWithCR d
- . . i +escape=11 w "/r/n" q
+ . . i +escape=11 w "\r\n" q
  . . w $c(13,10)
  ;
  i nodeType=4 d  QUIT returnValue
@@ -1074,9 +1078,13 @@ outputAttr(nodeOID)
  . i +escape=11 d
  . . s value=$$replaceAll^%zewdAPI(value,"\","\\")
  . . s value=$$replaceAll^%zewdAPI(value,"'","\'")
+ . . i value["&lt;" s value=$$replaceAll^%zewdAPI(value,"&lt;","&amp;lt;")
+ . . i value["&gt;" s value=$$replaceAll^%zewdAPI(value,"&gt;","&amp;gt;")
  . . s value=$$replaceAll^%zewdAPI(value,"<","&amp;lt;")
  . . s value=$$replaceAll^%zewdAPI(value,">","&amp;gt;")
  . . s value=$$replaceAll^%zewdAPI(value,"""","&amp;quot;")
+ . . i value["&quot;" s value=$$replaceAll^%zewdAPI(value,"&quot;","&amp;quot;")
+ . . i value["&apos;" s value=$$replaceAll^%zewdAPI(value,"&apos;","&amp;apos;")
  . w " "_$p(d,$c(1),1)_"="""_value_""""
  QUIT
  ;

@@ -1,7 +1,7 @@
 %zewdPHP	; Enterprise Web Developer PHP run-time functions and processing
  ;
- ; Product: Enterprise Web Developer (Build 865)
- ; Build Date: Wed, 01 Jun 2011 11:03:43
+ ; Product: Enterprise Web Developer (Build 866)
+ ; Build Date: Wed, 15 Jun 2011 15:14:59
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -555,16 +555,22 @@ createNextPageToken(nextPage,sessid)
  ;
 prePageScript(sessid)
  ;
- n x,error,io,method
+ n appName,x,error,io,method
  ;
  s io=$io
  ;d trace^%zewdAPI("running prepage script")
+ s appName=$$getSessionValue^%zewdAPI("ewd_appName",sessid)
+ s appName=$$zcvt^%zewdAPI(appName,"l")
  s error=""
  s method=$$getSessionValue("ewd_templatePrePageScript",sessid)
  i $g(^zewd("trace"))=1 d trace^%zewdAPI("templatePrePageScript method="_method)
  i method'="" d
  . s x="s error=$$"_method_"(sessid)"
- . s $zt="zg "_$zl_":prePageError^%zewdPHP"
+ . ;s $zt="zg "_$zl_":prePageError^%zewdPHP"
+ . i $g(^zewd("config","customErrorTrap",appName))'="" d
+ . . s $zt="zg "_$zl_":"_^zewd("config","customErrorTrap",appName)
+ . e  d
+ . . s $zt="zg "_$zl_":prePageError^%zewdPHP"
  . x x
  . u io
  ;
@@ -575,7 +581,11 @@ prePageScript(sessid)
  i $e(method,1)="$" QUIT method  ; pre-page script is a PHP function, not a Cache one!
  i $e(method,1,3)="py:" QUIT $$runPythonScript^%zewdPython(method,sessid)
  s x="s error=$$"_method_"(sessid)"
- s $zt="zg "_$zl_":prePageError^%zewdPHP" 
+ ;s $zt="zg "_$zl_":prePageError^%zewdPHP"
+ i $g(^zewd("config","customErrorTrap",appName))'="" d
+ . s $zt="zg "_$zl_":"_^zewd("config","customErrorTrap",appName)
+ e  d
+ . s $zt="zg "_$zl_":prePageError^%zewdPHP" 
  i $g(^zewd("trace")) d trace^%zewdAPI("About to execute prepage script: x="_x)
  x x
  u io

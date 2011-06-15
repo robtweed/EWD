@@ -1,7 +1,7 @@
 %zewdAPI	; Enterprise Web Developer run-time functions and user APIs
  ;
- ; Product: Enterprise Web Developer (Build 865)
- ; Build Date: Wed, 01 Jun 2011 11:03:43
+ ; Product: Enterprise Web Developer (Build 866)
+ ; Build Date: Wed, 15 Jun 2011 15:14:59
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -242,7 +242,6 @@ getSessionValue(name,sessid)
  n %zt,return,value
  ;
  s name=$$stripSpaces(name)
- s %zt=$zt
  i $g(name)="" QUIT ""
  i $g(sessid)="" QUIT ""
  i name["." d  QUIT value
@@ -280,7 +279,7 @@ extcErr
  QUIT ""
  ;
 valueErr ;
- s $zt=%zt
+ s $zt=$g(%zt)
  QUIT ""
  ;
  ;-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -800,14 +799,10 @@ setErrorClasses()
  QUIT $$setErrorClasses^%zewdUtilities()
  ;
 getRequestValue(fieldName,sessid)
- set $zt="getRequestValueErr"
- s sessid=$g(sessid)
+ n value,zt
  i $g(fieldName)="" QUIT ""
- QUIT $g(requestArray(fieldName))
- ;
-getRequestValueErr
- set $zt=""
- QUIT ""
+ s value=$g(requestArray(fieldName))
+ QUIT value
  ;
 mergeGlobalFromRequest(globalName,fieldName,sessid)
  d mergeGlobalFromRequest^%zewdCompiler13($g(globalName),$g(fieldName),$g(sessid))
@@ -914,16 +909,14 @@ addServerToSession(sessid,serverArray)
  ;
 getServerValue(serverFieldName,sessid)
  ;
- s sessid=$g(sessid)
- set $zt="getServerValueErr"
- s $zt="g "_$zt
+ n value,zt
+ ;
  i $g(serverFieldName)="" QUIT ""
  ;
- s $zt=""
  QUIT $g(serverArray(serverFieldName))
  ;
 getServerValueErr ; --- Come here if error occurred in 'getServerValue' ---
- set $zt=""
+ set $zt=zt
  QUIT ""
  ;
  ;-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=

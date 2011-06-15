@@ -1,7 +1,7 @@
 %zewdST ; Sencha Touch Tag Processors and runtime logic
  ;
- ; Product: Enterprise Web Developer (Build 865)
- ; Build Date: Wed, 01 Jun 2011 11:03:43
+ ; Product: Enterprise Web Developer (Build 866)
+ ; Build Date: Wed, 15 Jun 2011 15:14:59
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -417,8 +417,9 @@ field(nodeOID,parentOID,return,nameList)
  . s childOID=$$appendChild^%zewdDOM(childOID,fieldOID)
  ;
  i xtype="button" d
- . n attr,childNo,childOID,fieldNames,formOID,funcOID,handler,jsText
+ . n attr,childNo,childOID,esc,fieldNames,formOID,funcOID,handler,jsText
  . n name,nextPage,OIDArray,plus,postSTOID,preSTOID,tagName,targetId
+ . s esc=$g(mainAttrs("escapemethod"))
  . s formOID=$$getParentNode^%zewdDOM(nodeOID)
  . d getChildrenInOrder^%zewdDOM(formOID,.OIDArray)
  . s childNo=""
@@ -440,7 +441,10 @@ field(nodeOID,parentOID,return,nameList)
  . s jsText=jsText_"var nvp="
  . s name="",plus="'"
  . f  s name=$o(fieldNames(name)) q:name=""  d
- . . s jsText=jsText_plus_name_"=' + "_return_".getValues()."_name
+ . . i esc="" s jsText=jsText_plus_name_"=' + "_return_".getValues()."_name
+ . . i esc="escape" s jsText=jsText_plus_name_"=' + escape("_return_".getValues()."_name_")"
+ . . i esc="encodeURI" s jsText=jsText_plus_name_"=' + encodeURI("_return_".getValues()."_name_")"
+ . . i esc="encodeURIComponent" s jsText=jsText_plus_name_"=' + encodeURIComponent("_return_".getValues()."_name_")"
  . . s plus=" + '&"
  . s jsText=jsText_";"_$c(13,10)
  . s preSTOID=$$getElementById^%zewdDOM("ewdPreST",docOID)
