@@ -1,7 +1,7 @@
 %zewdST2 ; Sencha Touch Tag Processors and runtime logic
  ;
  ; Product: Enterprise Web Developer (Build 866)
- ; Build Date: Wed, 15 Jun 2011 15:14:59
+ ; Build Date: Wed, 15 Jun 2011 15:39:31
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -71,8 +71,8 @@ container(nodeOID,attrValue,docOID,technology)
  ;
  s attr("http-equiv")="Content-Type"
  s attr("content")="text/html"
- i $g(^zewd("config","charset",$$zcvt^%zewdAPI(app)))'="" d
- . s attr("content")=attr("content")_"; charset="_^zewd("config","charset",$$zcvt^%zewdAPI(app))
+ i $g(^zewd("config","charset",$$zcvt^%zewdAPI(app,"l")))'="" d
+ . s attr("content")=attr("content")_"; charset="_^zewd("config","charset",$$zcvt^%zewdAPI(app,"l"))
  s xOID=$$addElementToDOM^%zewdDOM("meta",headOID,,.attr)
  ;
  s xOID=$$addElementToDOM^%zewdDOM("title",headOID,,,title)
