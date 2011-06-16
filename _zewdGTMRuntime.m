@@ -1,7 +1,7 @@
 %zewdGTMRuntime ; EWD for GT.M.  Runtime interface  
  ;
- ; Product: Enterprise Web Developer (Build 866)
- ; Build Date: Wed, 15 Jun 2011 15:14:59
+ ; Product: Enterprise Web Developer (Build 867)
+ ; Build Date: Thu, 16 Jun 2011 18:10:22
  ;
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -1011,8 +1011,8 @@ pre2 ;
  f i=1:1 d  q:stop
  . s line=$t(pre3Text+i)
  . i line["s ctype=""text/html""" d
- . . i $g(^zewd("config","charset",$$zcvt^%zewdAPI(appName)))'="" d
- . . . s line=" ;;s ctype=""text/html; charset="_^zewd("config","charset",$$zcvt^%zewdAPI(appName))_""""
+ . . i $g(^zewd("config","charset",$$zcvt^%zewdAPI(appx)))'="" d
+ . . . s line=" ;;s ctype=""text/html; charset="_^zewd("config","charset",$$zcvt^%zewdAPI(appx))_""""
  . i line["***END***" s stop=1 q
  . s line=$p(line,";;",2,200)
  . i $e(line,1,2)="**",'$d(uploadText) q  ; only add this if file upload required in this page
