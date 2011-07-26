@@ -1,7 +1,7 @@
 %zewdCompiler16	; Enterprise Web Developer Compiler Functions
  ;
- ; Product: Enterprise Web Developer (Build 867)
- ; Build Date: Thu, 16 Jun 2011 18:10:22
+ ; Product: Enterprise Web Developer (Build 876)
+ ; Build Date: Tue, 26 Jul 2011 15:46:32
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -817,6 +817,22 @@ scriptsTag(app,docName,technology)
 	. s attr("src")=path_"ewdScripts.js"
 	. ;i $g(isIwd) s attr("src")=path_"iwdScripts.js"
 	. s ewdScriptsOID=$$addElementToDOM^%zewdDOM("script",headOID,,.attr,"",1)
+	i $g(config("websockets"))'="" d
+	. n bodyOID,onload,phpVar1,phpVar2,sOID,textOID
+	. s attr("src")="/socket.io/socket.io.js"
+	. s sOID=$$addElementToDOM^%zewdDOM("script",headOID,,.attr,"",1)
+	. s textOID=$$createTextNode^%zewdDOM("<!--[if (IE 6)|(IE 7)|(IE 8)]>",docOID)
+	. s textOID=$$appendChild^%zewdDOM(textOID,headOID)
+	. s textOID=$$createTextNode^%zewdDOM("<script type=""text/javascript"" src=""http://ajax.cdnjs.com/ajax/libs/json2/20110223/json2.js""></script>",docOID)
+	. s textOID=$$appendChild^%zewdDOM(textOID,headOID)
+	. s textOID=$$createTextNode^%zewdDOM("<![endif]-->",docOID)
+	. s textOID=$$appendChild^%zewdDOM(textOID,headOID)
+	. s bodyOID=$$getTagOID^%zewdDOM("body",docName)
+	. s onload=$$getAttribute^%zewdDOM("onload",bodyOID)
+	. s phpVar1=$$addPhpVar^%zewdCustomTags("#ewd_token")
+	. s phpVar2=$$addPhpVar^%zewdCustomTags("#ewd_port")
+	. s onload="EWD.sockets.connect(EWD.sockets.serverMessageHandler, "_phpVar2_", '"_phpVar1_"');"_onload
+	. d setAttribute^%zewdDOM("onload",onload,bodyOID)
 	i djOID'="" d
 	. n djScriptOID,text,textOID
 	. s djScriptOID=$$createElement^%zewdDOM("script",docOID)

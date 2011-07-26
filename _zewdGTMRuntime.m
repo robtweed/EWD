@@ -1,7 +1,7 @@
 %zewdGTMRuntime ; EWD for GT.M.  Runtime interface  
  ;
- ; Product: Enterprise Web Developer (Build 867)
- ; Build Date: Thu, 16 Jun 2011 18:10:22
+ ; Product: Enterprise Web Developer (Build 876)
+ ; Build Date: Tue, 26 Jul 2011 15:46:32
  ;
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -61,7 +61,7 @@ runPage(cgi,data)
  . . f  s no=$o(data(name,no)) q:no=""  s %KEY(name,no)=$$urlUnescape($g(data(name,no)))
  m %CGIEVAR=cgi
  ;
-nodeEntry ; entry point for Node.js emulation of m_apache
+nodeEntry ; entry point for Node.js EWD Gateway
  ;
  s script=$g(%CGIEVAR("SCRIPT_NAME"))
  ;d trace^%zewdAPI("SCRIPT_NAME="_script)
@@ -882,6 +882,7 @@ relink(sessid)
  f  s rou=$view("RTNNEXT",rou) q:rou=""  d
  . i rou="%zewdGTMRuntime" q
  . i rou="%zewdPHP" q
+ . i rou="%zewdNode" q
  . i rou="MDB" q
  . i rou="ewdWLewdmgrrelink" q
  . i rou="%ZMGWSI" q
@@ -1181,3 +1182,4 @@ mapacheLoop ;
  g mapacheLoop
  ;
  QUIT
+ ;

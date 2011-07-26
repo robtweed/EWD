@@ -1,7 +1,7 @@
 %zewdCompiler7	; Enterprise Web Developer Compiler Functions
  ;
- ; Product: Enterprise Web Developer (Build 867)
- ; Build Date: Thu, 16 Jun 2011 18:10:22
+ ; Product: Enterprise Web Developer (Build 876)
+ ; Build Date: Tue, 26 Jul 2011 15:46:32
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -1272,6 +1272,7 @@ ewdConfig(docName,phpHeaderArray,routineName,technology,dataTypeList,inputPath,f
 	. s config("nextPageList")=$$getAttributeValue^%zewdDOM("nextpagelist",1,nodeOID)
 	. s config("actionIfTimedOut")=$$getAttributeValue^%zewdDOM("actioniftimedout",1,nodeOID)
 	. s config("maxLines")=$$getAttributeValue^%zewdDOM("maxlines",1,nodeOID)
+	. s config("websockets")=$$getAttributeValue^%zewdDOM("websockets",1,nodeOID)
 	. s multiLingual=$$zcvt^%zewdAPI($$getAttributeValue^%zewdDOM("multilingual",1,nodeOID),"l")
 	. i multiLingual="false" s multiLingual=0
 	. e  s multiLingual=2

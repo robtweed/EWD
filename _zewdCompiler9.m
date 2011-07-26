@@ -1,7 +1,7 @@
 %zewdCompiler9	; Enterprise Web Developer Compiler : ajax fixed text
  ;
- ; Product: Enterprise Web Developer (Build 867)
- ; Build Date: Thu, 16 Jun 2011 18:10:22
+ ; Product: Enterprise Web Developer (Build 876)
+ ; Build Date: Tue, 26 Jul 2011 15:46:32
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -533,8 +533,75 @@ ajaxLoader ;
 	;;         }
 	;;      }
 	;;      EWD.ajax.allowSubmit = true ;
-	;;   }
-	;;} ;
+	;;   },
+	;;   loadXML: function(url, fn) {
+    ;;     var http_request = false;
+	;;     var replaceContent = function(http_request) {
+    ;;       if (http_request.readyState == 4) {
+    ;;         if (http_request.status == 200) {
+    ;;           var xmlDoc = http_request.responseXML ;
+    ;;           fn(xmlDoc);
+    ;;         }
+    ;;       }
+    ;;     }
+    ;;     if (window.XMLHttpRequest) { // Mozilla, Safari,...
+    ;;       http_request = new XMLHttpRequest();
+    ;;     } 
+    ;;     else if (window.ActiveXObject) { // IE
+    ;;       try {
+    ;;         http_request = new ActiveXObject("Msxml2.XMLHTTP");
+    ;;       } 
+    ;;       catch (e) {
+    ;;         try {
+    ;;           http_request = new ActiveXObject("Microsoft.XMLHTTP");
+    ;;         } 
+    ;;         catch (e) {}
+    ;;       }
+    ;;     }
+    ;;     http_request.onreadystatechange = function() {
+    ;;       replaceContent(http_request);
+    ;;     };
+    ;;     http_request.open('GET', url, true);
+    ;;     http_request.send(null);
+    ;;   }
+	;;};
+	;;EWD.sockets = {
+	;;  sendMessage: function(params) {
+	;;    if (typeof params.message === 'undefined') params.message = '';
+	;;    params.token = EWD.sockets.token;
+	;;    if (typeof console !== 'undefined') console.log("sendMessage: " + JSON.stringify(params));
+	;;    this.socket.json.send(JSON.stringify(params));
+	;;  },
+	;;  getPage: function(params) {
+	;;    if (typeof params.nvp === 'undefined') params.nvp = '';
+	;;    this.sendMessage({type: "ewdGetFragment", page: params.page, targetId: params.targetId, nvp: params.nvp});
+	;;  },
+	;;  connect: function(messageFunction, port, token) {
+	;;    //this.socket = io.connect(null, {port: port, rememberTransport: false});
+	;;    this.socket = io.connect();
+	;;    this.socket.on('message', function(obj){
+	;;      if (typeof console !== 'undefined') console.log("onMessage: " + JSON.stringify(obj));
+	;;      if (typeof obj === 'string') {
+	;;        var pieces = obj.split(':');
+	;;        var type = pieces.shift();
+	;;        if (type === 'ewdGetFragment') {
+	;;          var targetId = pieces.shift();
+	;;          var content = pieces.join(':');
+	;;          var pos = content.search("  <");
+	;;          EWD.ajax.injectFragment(content.substr(pos),targetId);
+	;;        }
+	;;        return;
+	;;      }
+	;;      if (obj.type === 'json') {
+	;;        obj.json = JSON.parse(obj.message);
+	;;        delete obj.message;
+	;;      }
+	;;      messageFunction(obj);
+	;;    });
+	;;    this.token = token;
+	;;    this.sendMessage({type: "register", token: token});
+	;;  } 
+	;;};
 	;;***END***
 	;
 jsErrorClass ;

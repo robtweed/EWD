@@ -1,7 +1,7 @@
 %zewdGTM	;Enterprise Web Developer GT.M/ Virtual Appliance Functions
  ;
- ; Product: Enterprise Web Developer (Build 867)
- ; Build Date: Thu, 16 Jun 2011 18:10:22
+ ; Product: Enterprise Web Developer (Build 876)
+ ; Build Date: Tue, 26 Jul 2011 15:46:32
 	;
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -902,6 +902,18 @@ createTarGz(infile,outfileRootName)
  d tar(infile,tarname)
  d gzip(tarname)
  QUIT
+ ;
+zts()
+ n io,line,ms,p
+ s io=$io
+ s p="time"
+ o p:(COMMAND="echo $(date +%s.%N)":READONLY)::"PIPE"
+ u p
+ s ms=""
+ f  r line q:$ZEOF  s ms=line
+ c p
+ u io
+ QUIT ms
  ;
 getLinuxBuild()
  n build,i,io,line,p,resp

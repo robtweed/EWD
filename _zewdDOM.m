@@ -1,7 +1,7 @@
 %zewdDOM	; Enterprise Web Developer support functions
  ;
- ; Product: Enterprise Web Developer (Build 867)
- ; Build Date: Thu, 16 Jun 2011 18:10:22
+ ; Product: Enterprise Web Developer (Build 876)
+ ; Build Date: Tue, 26 Jul 2011 15:46:32
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -972,14 +972,14 @@ outputNode(nodeOID,indent,escape,format)
  . i $$hasChildNodes(nodeOID)="false" w " /"
  . w ">"
  . i +escape=11 w "';"
- . i endWithCR w $c(13,10)
+ . i endWithCR d lf
  . i $$hasChildNodes(nodeOID)="false" q
  . s nextIndent=indent_"   "
  . s lastTag=$$outputChildren(nodeOID,nextIndent,escape,format)
  . i +escape=11 w var_"="_var_"+'"
  . w displayIndent_lt_"/"_tagName_">"
  . i +escape=11 w "';"
- . i endWithCR w $c(13,10)
+ . i endWithCR d lf
  ;
  i nodeType=3 d  QUIT returnValue
  . n lineNo,text,textArray
@@ -995,11 +995,13 @@ outputNode(nodeOID,indent,escape,format)
  . . . s text=$$replaceAll^%zewdAPI(text,$c(9),"\t")
  . . . s text=$$replaceAll^%zewdAPI(text,$c(10),"\n")
  . . . s text=$$replaceAll^%zewdAPI(text,$c(13),"\r")
+ . . . s text=$$replaceAll^%zewdAPI(text,"&quot;","&amp;quot;")
+ . . . s text=$$replaceAll^%zewdAPI(text,"&apos;","&amp;apos;")
  . . w text
  . . i +escape=11 w "';"
  . i endWithCR d
  . . i +escape=11 w "\r\n" q
- . . w $c(13,10)
+ . . d lf
  ;
  i nodeType=4 d  QUIT returnValue
  . n lineNo,text,textArray
@@ -1012,7 +1014,7 @@ outputNode(nodeOID,indent,escape,format)
  . . w textArray(lineNo)
  . w "]]>"
  . i +escape=11 w "';"
- . i endWithCR w $c(13,10) 
+ . i endWithCR d lf 
  ;
  i nodeType=7 d  QUIT returnValue
  . n target,data
@@ -1024,7 +1026,7 @@ outputNode(nodeOID,indent,escape,format)
  . i data'="" w " "_data
  . w "?>"
  . i +escape=11 w "';"
- . i endWithCR w $c(13,10) 
+ . i endWithCR d lf 
  ;
  i nodeType=8 d  QUIT returnValue
  . n data
@@ -1033,7 +1035,7 @@ outputNode(nodeOID,indent,escape,format)
  . i +escape=11 w var_"="_var_"+'"
  . w lt_"!-- "_data_" -->"
  . i +escape=11 w "';"
- . i endWithCR w $c(13,10) 
+ . i endWithCR d lf 
  ;
  i nodeType=10 d  QUIT returnValue
  . n publicId,systemId,qualifiedName
@@ -1048,7 +1050,7 @@ outputNode(nodeOID,indent,escape,format)
  . . i systemId'="" w " """_systemId_""""
  . w ">"
  . i +escape=11 w "';"
- . i endWithCR w $c(13,10) 
+ . i endWithCR d lf 
  ;
  QUIT ""
  ;
@@ -1758,3 +1760,9 @@ documentation(rou) ;
  . w line,!!
  c docFile
  QUIT
+ ;
+lf ;
+ i $g(outputLocation)="file" w ! break  q
+ w $c(13,10)
+ QUIT
+ ;

@@ -1,7 +1,7 @@
 %zewdPHP	; Enterprise Web Developer PHP run-time functions and processing
  ;
- ; Product: Enterprise Web Developer (Build 867)
- ; Build Date: Thu, 16 Jun 2011 18:10:22
+ ; Product: Enterprise Web Developer (Build 876)
+ ; Build Date: Tue, 26 Jul 2011 15:46:33
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -100,6 +100,7 @@ startSession(page,requestArray,serverArray,sessionArray,filesArray) ;
  d putSession(sessid,.sessionArray)
  d setSessionValue("ewd_date",$$decDate^%zewdAPI($h),sessid)
  d setSessionValue("ewd_time",$$inetTime^%zewdAPI($h),sessid)
+ d setSessionValue("ewd_port",$g(serverArray("SERVER_PORT")),sessid)
  s browserType=$$getBrowser(.serverArray,.os)
  d setSessionValue("ewd.browserType",browserType,sessid)
  i browserType="iphone" d 
@@ -214,6 +215,7 @@ createNewSession(page,requestArray,sessionArray)
  d setSessionValue("ewd_nextPage","",sessid)
  d setSessionValue("ewd_date",$$decDate^%zewdAPI($h),sessid)
  d setSessionValue("ewd_time",$$inetTime^%zewdAPI($h),sessid)
+ d setSessionValue("ewd_port",$g(serverArray("SERVER_PORT")),sessid)
  s browserType=$$getBrowser(.serverArray,.os)
  d setSessionValue("ewd.browserType",browserType,sessid)
  d setSessionValue("ewd.browserOS",os,sessid)

@@ -1,7 +1,7 @@
 %zewdST ; Sencha Touch Tag Processors and runtime logic
  ;
- ; Product: Enterprise Web Developer (Build 867)
- ; Build Date: Thu, 16 Jun 2011 18:10:22
+ ; Product: Enterprise Web Developer (Build 876)
+ ; Build Date: Tue, 26 Jul 2011 15:46:33
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -589,7 +589,7 @@ stclass(nodeOID,attrValue,docOID,technology)
  ;
 panel(nodeOID,attrValue,docOID,technology)
  ;
- n bodyxOID,childNo,childOID,extName,i,itemsAdded,itemsOID,mainAttrs,OIDArray,ok
+ n bodyxOID,bodyOID,childNo,childOID,extName,i,itemsAdded,itemsOID,mainAttrs,OIDArray,ok
  n panelOID,parentOID,parentTagName,postSTOID,return,stop,tagName,text,thisOID
  n widgetId,widgetObj,widgetObjName
  ;
@@ -610,6 +610,7 @@ panel(nodeOID,attrValue,docOID,technology)
  ;
  s panelOID=$$renameTag^%zewdDOM("st:class",nodeOID)
  s bodyxOID=$$getParentNode^%zewdDOM(panelOID)
+ s bodyOID=$$getTagOID^%zewdDOM("body",docName) i bodyOID'="" s bodyxOID=bodyOID 
  s tagName=$$getTagName^%zewdDOM(nodeOID)
  s extName="Ext.Panel"
  i $g(mainAttrs("layout"))="" d setAttribute^%zewdDOM("layout","fit",panelOID)
@@ -651,6 +652,7 @@ panel(nodeOID,attrValue,docOID,technology)
  . i tagName="st:panel" s stop=1 q
  . i tagName="st:cardpanel" s stop=1 q
  . i tagName="st:tabpanel" s stop=1 q
+ . i tagName="st:tabbar" s stop=1 q
  . i tagName="st:menu" s stop=1 q
  . i tagName="st:button" s stop=1 q
  . i tagName="st:form" s stop=1 q
@@ -1164,8 +1166,9 @@ subPanel(nodeOID,bodyOID,itemsOID)
  s xtype="panel"
  i tagName="st:carousel" s xtype="carousel"
  i tagName="st:tabpanel" s xtype="tabpanel"
+ i tagName="st:icon" s xtype=""
  s itemOID=$$addElementToDOM^%zewdDOM("st:item",itemsOID)
- d setAttribute^%zewdDOM("xtype",xtype,itemOID)
+ i xtype'="" d setAttribute^%zewdDOM("xtype",xtype,itemOID)
  i $g(mainAttrs("fitwidth"))'="" d
  . s mainAttrs("minwidth")=".EWD.sencha.nestedList.width"
  . s mainAttrs("maxwidth")=".EWD.sencha.nestedList.width"
@@ -1188,7 +1191,7 @@ subPanel(nodeOID,bodyOID,itemsOID)
  . s childOID=OIDArray(childNo)
  . s tagName=$$getTagName^%zewdDOM(childOID)
  . i tagName="st:pageitem" d pageItem^%zewdST2(childOID,,docOID,technology)
- . i tagName="st:layout" d panelLayout^%zewdST2(childOID,itemOID)
+ . i tagName="st:layout"!(tagName="st:tabbar")!(tagName="st:defaults") d panelLayout^%zewdST2(childOID,itemOID)
  ;
  d getChildrenInOrder^%zewdDOM(nodeOID,.OIDArray)
  s childNo="",subItemsOID=""
@@ -1201,8 +1204,11 @@ subPanel(nodeOID,bodyOID,itemsOID)
  . . s xOID=$$appendChild^%zewdDOM(childOID,bodyxOID)
  . . s id=$$getAttribute^%zewdDOM("id",childOID)
  . . i id="" d
+ . . . n sOID
  . . . s id="zewdSTMarkup"_$$uniqueId^%zewdAPI(childOID,filename)
  . . . d setAttribute^%zewdDOM("id",id,childOID)
+ . . . s sOID=$$insertNewParentElement^%zewdDOM(childOID,"span",docOID)
+ . . . d setAttribute^%zewdDOM("style","display:none",sOID)
  . . d setAttribute^%zewdDOM("contentEl",id,itemOID)
  . . s class=$$getAttribute^%zewdDOM("class",childOID)
  . . s postSTOID=$$getElementById^%zewdDOM("ewdPostST",docOID)
@@ -1213,6 +1219,10 @@ subPanel(nodeOID,bodyOID,itemsOID)
  . . . s preSTOID=$$getElementById^%zewdDOM("ewdPreST",docOID)
  . . . s jsOID=$$addElementToDOM^%zewdDOM("ewd:jsline",preSTOID,,,jsText)
  . ;
+ . ;i tagName="st:tabbar"!(tagName="st:defaults") d  q
+ . ;. s xOID=$$removeChild^%zewdDOM(childOID)
+ . ;. s xOID=$$appendChild^%zewdDOM(childOID,itemOID)
+ . ;
  . i tagName="st:form" d  q
  . . s xOID=$$removeChild^%zewdDOM(childOID)
  . . s xOID=$$appendChild^%zewdDOM(childOID,bodyxOID)
@@ -1221,7 +1231,7 @@ subPanel(nodeOID,bodyOID,itemsOID)
  . . d setAttribute^%zewdDOM("placeattop","true",childOID)
  . . d setAttribute^%zewdDOM("items",".["_return_"]",itemOID)
  . ;
- . i tagName="st:panel"!(tagName="st:tabpanel")!(tagName="st:carousel")!(tagName="st:list")!(tagName="st:touchgrid") d
+ . i tagName="st:panel"!(tagName="st:icon")!(tagName="st:tabpanel")!(tagName="st:carousel")!(tagName="st:list")!(tagName="st:touchgrid") d
  . . i subItemsOID="" s subItemsOID=$$addElementToDOM^%zewdDOM("st:items",itemOID)
  . . i tagName="st:list" d list(childOID,subItemsOID) q
  . . i tagName="st:touchgrid" d touchGridSub^%zewdST2(childOID,subItemsOID) q
@@ -1264,7 +1274,15 @@ toolbar(nodeOID,parentOID)
  f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d
  . s childOID=OIDArray(childNo)
  . s tagName=$$getTagName^%zewdDOM(childOID)
- . i tagName="st:toolbarbutton"!(tagName="st:button") d toolbarButton(childOID,itemsOID) 
+ . i tagName="st:toolbarbutton"!(tagName="st:button") d toolbarButton(childOID,itemsOID)
+ . i tagName="st:icon" d
+ . . n iconAttrs,itemOID
+ . . do getAttributeValues^%zewdCustomTags(childOID,.iconAttrs) break
+ . . ;i $g(iconAttrs("iconcls"))'="" d
+ . . . ;s iconAttrs("iconMask")="."_iconAttrs("iconmask")
+ . . . ;s iconAttrs("iconCls")=iconAttrs("iconcls")
+ . . . ;k iconAttrs("iconcls"),iconAttrs("iconmask")
+ . . s itemOID=$$addElementToDOM^%zewdDOM("st:item",itemsOID,,.iconAttrs)
  . i tagName="st:spacer" d
  . . n attr,spacerOID
  . . s attr("xtype")="spacer"
@@ -1328,13 +1346,17 @@ toolbarButton(nodeOID,parentOID)
  ;
  s id=$g(mainAttrs("id"))
  i id="" s id="zewdSTToolbar"_$$uniqueId^%zewdAPI(nodeOID,filename)
- i $g(mainAttrs("type"))'="" s attr("ui")=mainAttrs("type")
- i $g(mainAttrs("type"))="autoback" s attr("ui")="back"
+ i type'="",type'="icon" s attr("ui")=mainAttrs("type")
+ i type="autoback" s attr("ui")="back"
  i $g(mainAttrs("text"))'="" s attr("text")=mainAttrs("text")
  s attr("id")=id
  i $g(mainAttrs("hidden"))'="" s attr("hidden")=mainAttrs("hidden")
- s attr("xtype")="button"
- i $g(mainAttrs("ui"))'="",$g(mainAttrs("type"))="" s attr("ui")=mainAttrs("ui")
+ i type'="icon" s attr("xtype")="button"
+ i type="icon" d
+ . i $g(mainAttrs("iconcls"))'="" s attr("iconCls")=mainAttrs("iconcls")
+ . i $g(mainAttrs("iconmask"))'="" s attr("iconMask")=mainAttrs("iconmask")
+ . i $g(mainAttrs("ui"))'="" s attr("ui")=mainAttrs("ui")
+ i $g(mainAttrs("ui"))'="",type="" s attr("ui")=mainAttrs("ui")
  i $g(mainAttrs("handler"))'="" d
  . s attr("handler")="."_mainAttrs("handler")
  s itemOID=$$addElementToDOM^%zewdDOM("st:item",parentOID,,.attr)
@@ -1393,6 +1415,7 @@ subTag(subTagName,nodeOID,parentOID)
  . d removeIntermediateNode^%zewdDOM(nodeOID)
  . s subTagOID=parentOID
  e  d
+ . i subTagName="tabbar" s subTagName="tabBar"
  . s attr("name")=subTagName
  . s attr("type")="object"
  . i subTagName="items"!(subTagName="dockedItems") s attr("type")="array"
@@ -1406,7 +1429,7 @@ subTag(subTagName,nodeOID,parentOID)
  . s childOID=OIDArray(childNo)
  . s tagName=$$getTagName^%zewdDOM(childOID)
  . s subName=$p(tagName,"st:",2)
- . i subTagName="items"!(subTagName="dockedItems") s subTagOID=$$addElementToDOM^%zewdDOM("ewd:jsobject",stOID)
+ . i subTagName="items"!(subTagName="dockedItems")  s subTagOID=$$addElementToDOM^%zewdDOM("ewd:jsobject",stOID)
  . s sOID=$$subTag(subName,childOID,subTagOID)
  d removeIntermediateNode^%zewdDOM(nodeOID)
  QUIT subTagOID
