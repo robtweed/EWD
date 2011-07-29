@@ -2,11 +2,19 @@
  
 EWD is a Free Open Source Ajax Framework for GT.M
 
-Build 876
+Build 877
 
 This build includes a new, optional Realtime web capability that makes use of Node.js to provide
 the webserver and gateway to GT.M.  See [https://github.com/robtweed/ewdGateway](https://github.com/robtweed/ewdGateway) for full details.
 
+Build 877 removes a rogue break, fixes a CSP-specific error in ExtJS forms, and also adds the ability to 
+switch apps using an additional parameter for the setRedirect command:
+
+ do setRedirect^%zewdAPI("myPage",sessid,"newApp")
+
+ and to reset:
+ 
+ do changeApp^%zewdAPI("oldApp",sessid)
 
 ## License
 
