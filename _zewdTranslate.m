@@ -1,7 +1,7 @@
 %zewdTranslate	; Auto translation Utility using BabelFish
  ;
- ; Product: Enterprise Web Developer (Build 876)
- ; Build Date: Tue, 26 Jul 2011 15:46:33
+ ; Product: Enterprise Web Developer (Build 877)
+ ; Build Date: Fri, 29 Jul 2011 16:29:47
 	;
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |

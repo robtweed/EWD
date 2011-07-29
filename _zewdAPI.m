@@ -1,7 +1,7 @@
 %zewdAPI	; Enterprise Web Developer run-time functions and user APIs
  ;
- ; Product: Enterprise Web Developer (Build 876)
- ; Build Date: Tue, 26 Jul 2011 15:46:32
+ ; Product: Enterprise Web Developer (Build 877)
+ ; Build Date: Fri, 29 Jul 2011 16:29:46
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -90,16 +90,29 @@ deleteSession(sessid)
  ;
  QUIT
  ;
-setRedirect(toPage,sessid)
- d setJump(toPage,sessid)
+changeApp(appName,sessid)
+ i $g(appName)="" QUIT
+ i $g(sessid)="" QUIT
+ d setSessionValue("ewd_appName",appName,sessid)
  QUIT
  ;
-setJump(toPage,sessid)
+setRedirect(toPage,sessid,app)
+ i $g(app)'="" d
+ . d setSessionValue("ewd_appName",app,sessid)
+ d setJump(toPage,sessid,$g(app))
+ QUIT
+ ;
+setJump(toPage,sessid,app)
  ;
  n token
  ;
- d setSessionValue("ewd_nextPage",toPage,sessid)
+ i $g(app)'="",$e(sessid,1,4)="csp:" d
+ . n path
+ . s path=^zewd("config","rootURL","csp")
+ . i $e(path,$l(path))'="/" s path=path_"/"
+ . s toPage=path_app_"/"_toPage
  d setSessionValue("ewd_jump",toPage,sessid)
+ d setSessionValue("ewd_nextPage",toPage,sessid)
  QUIT:$e(sessid,1,4)="csp:"
  s token=$$setNextPageToken(toPage,sessid)
  d setSessionValue("ewd_pageToken",token,sessid)
