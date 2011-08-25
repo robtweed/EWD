@@ -1,7 +1,7 @@
 %zewdCompiler13	; Enterprise Web Developer Compiler Functions
  ;
- ; Product: Enterprise Web Developer (Build 877)
- ; Build Date: Fri, 29 Jul 2011 16:29:46
+ ; Product: Enterprise Web Developer (Build 881)
+ ; Build Date: Thu, 25 Aug 2011 12:47:46
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -492,10 +492,15 @@ walkArray(json,name,dojo,subscripts,isObject,mixed)
  . . i value="true"!(value="false") s type="boolean"
  . . i $e(value,1)="{",$e(value,$l(value))="}" s type="variable"
  . . i dojo=2,value["<?=",value["?>" d
+ . . . n p1,p2
+ . . . s p1=$p(value,"<?=",1)
+ . . . s p2=$p(value,"?>",2)
  . . . s value=$p(value,"<?=",2)
  . . . s value=$p(value,"?>",1)
  . . . s value=$$stripSpaces^%zewdAPI(value)
  . . . s type="variable"
+ . . . i p1'="" d
+ . . . . s value=p1_value_p2
  . . ;i type="literal" s value=""""_value_""""
  . . i type="literal" s value=valquot_value_valquot
  . . i dojo=1,type="numeric" s value=valquot_value_valquot

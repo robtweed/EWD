@@ -1,7 +1,7 @@
 %zewdNode	; Enterprise Web Developer global access APIs for Node.js
  ;
- ; Product: Enterprise Web Developer (Build 877)
- ; Build Date: Fri, 29 Jul 2011 16:29:47
+ ; Product: Enterprise Web Developer (Build 881)
+ ; Build Date: Thu, 25 Aug 2011 12:47:46
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -28,12 +28,15 @@
  ;
  QUIT
  ;
+ ; Thanks to Stephen Chadwick for enhancements and bug fixes
+ ;
 globalAccessMethod ;
  ;
- n crlf,eor,global,method,subscripts,value
+ n crlf,eor,global,method,sor,subscripts,value
  ;
  s crlf=$c(13,10)
  s eor=$c(17,18,19,20,13,10)
+ s sor=$c(13,10,20,19,18,17)
  r method
  i $g(^zewd("trace"))=1 d trace^%zewdAPI($j_": method="_method)
  i method="get" d
@@ -76,13 +79,13 @@ get(global,subscripts)
  s $zt=$$zt()
  x x
  s $zt=""
- i exists'=1,exists'=11 w "undefined"_crlf_0_crlf_eor QUIT
+ i exists'=1,exists'=11 w sor_"undefined"_crlf_0_crlf_eor QUIT
  s x="s data="_gloRef
  s $zt=$$zt()
  x x
  s $zt=""
  ;
- w crlf_exists_crlf_$$esc(data)_eor
+ w sor_crlf_exists_crlf_$$esc(data)_eor
  QUIT
  ;
 set(global,subscripts,value)
@@ -102,7 +105,7 @@ set(global,subscripts,value)
  s $zt=$$zt()
  x x
  s $zt=""
- w crlf_1_eor
+ w sor_crlf_1_eor
  QUIT
  ;
 kill(global,subscripts)
@@ -121,7 +124,7 @@ kill(global,subscripts)
  x x
  s $zt=""
  ;
- w crlf_1_eor
+ w sor_crlf_1_eor
  QUIT
  ;
 getJSON(global,subscripts)
@@ -136,8 +139,8 @@ getJSON(global,subscripts)
  ;
  m arr=@gloRef
  ;
- i '$d(arr) w crlf_"{}"_eor
- e  w crlf_$$arrayToJSON("arr")_eor
+ i '$d(arr) w sor_crlf_"{}"_eor
+ e  w sor_crlf_$$arrayToJSON("arr")_eor
  QUIT
  ;
 getSubscripts(global,subscripts,from,to)
@@ -165,7 +168,7 @@ getSubscripts(global,subscripts,from,to)
  x x
  s $zt=""
  i $g(^zewd("trace"))=1 d trace^%zewdAPI("exists="_exists)
- i 'exists!(exists=1)  w crlf_"[]"_eor QUIT
+ i 'exists!(exists=1)  w sor_crlf_"[]"_eor QUIT
  ;
  s subs=from
  s subs1=subs i subs1["""" s subs1=$$replaceAll^%zewdAPI(subs1,"""","""""")
@@ -195,8 +198,7 @@ getSubscripts(global,subscripts,from,to)
  ;
  s response=response_"]"
  ;
- w crlf_response_eor
- i $g(^zewd("trace"))=1 d trace^%zewdAPI("5 response="_response)
+ w sor_crlf_response_eor
  ;
  QUIT
  ;
@@ -215,7 +217,7 @@ increment(global,subscripts)
  x x
  s $zt=""
  ;
- w crlf_value_eor
+ w sor_crlf_value_eor
  QUIT
  ;
 mFunction(functionName,parameters)
@@ -231,8 +233,8 @@ mFunction(functionName,parameters)
  s functionName=$g(functionName)
  s parameters=$g(parameters)
  i $e(parameters,1)="[" s parameters=$e(parameters,2,$l(parameters)-1)
- i functionName="" w "Missing Function Name"_crlf_0_crlf_eor QUIT
- i functionName'["^" w "Invalid Function Name: "_functionName_crlf_0_crlf_eor QUIT
+ i functionName="" w sor_"Missing Function Name"_crlf_0_crlf_eor QUIT
+ i functionName'["^" w sor_"Invalid Function Name: "_functionName_crlf_0_crlf_eor QUIT
  i functionName["^",$e(functionName,1,2)'="$$" s functionName="$$"_functionName
  s x="s value="_functionName_"("_parameters_")"
  ;
@@ -241,7 +243,7 @@ mFunction(functionName,parameters)
  x x
  s $zt=""
  ;
- w crlf_value_eor
+ w sor_crlf_value_eor
  QUIT
  ;
 unesc(string)
@@ -256,7 +258,7 @@ zt() ;
  QUIT "executeError^%zewdNode"
  ;
 executeError
- w "Process "_$j_": Invalid command: "_x_crlf_crlf_crlf_eor
+ w sor_"Process "_$j_": Invalid command: "_x_crlf_crlf_crlf_eor
  s $zt=""
  QUIT
  ;
@@ -452,8 +454,8 @@ checkGlobalRef(global,subscripts)
  s subscripts=$$unesc($g(subscripts))
  i $g(^zewd("trace"))=1 d trace^%zewdAPI("subscripts unescaped to "_subscripts)
  s global=$g(global)
- i global="" w "Missing global"_crlf_0_crlf_eor QUIT ""
- i global["^zmwire" w "No access allowed to this global"_crlf_0_crlf_eor QUIT ""
+ i global="" w sor_"Missing global"_crlf_0_crlf_eor QUIT ""
+ i global["^zmwire" w sor_"No access allowed to this global"_crlf_0_crlf_eor QUIT ""
  i subscripts="" QUIT "^"_global
  i subscripts="[]" QUIT "^"_global
  i subscripts="""""" QUIT "^"_global
@@ -572,6 +574,8 @@ nodeHTTP ;
  s %CGIEVAR("SERVER_SOFTWARE")="Node.js"
  s host=$G(%CGIEVAR("HTTP_HOST"))
  s port=$p(host,":",2)
+ i port="" s port=$g(^zewd("defaultWebPort"))
+ i port="" s port=80
  s host=$p(host,":",1)
  k %CGIEVAR("HTTP_HOST")
  s %CGIEVAR("SERVER_PORT")=port
@@ -756,14 +760,17 @@ createServerMessage(type,message,sessid,trigger)
  ;
 triggerServerMessage ;
  ;
- n pid,stop
+ n cmd,pid,stop
  ;
  s pid=""
+ s cmd=$g(^zewd("websocketTriggerCommand"))
+ i cmd="" s cmd="kill -USR1"
  s stop=0
  f  s pid=$o(^zewd("nodeProcesses",pid)) q:pid=""  d  q:stop
  . i ^zewd("nodeProcesses",pid)=2 d
  . . s stop=1
- . . zsy "kill -USR1 "_pid
+ . . ;zsy "kill -USR1 "_pid
+ . . zsy cmd_" "_pid
  QUIT
  ;
 stopEventListener

@@ -1,7 +1,7 @@
 %zewdJS	; Enterprise Web Developer: Main Javascript files
  ;
- ; Product: Enterprise Web Developer (Build 877)
- ; Build Date: Fri, 29 Jul 2011 16:29:46
+ ; Product: Enterprise Web Developer (Build 881)
+ ; Build Date: Thu, 25 Aug 2011 12:47:46
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -417,6 +417,16 @@ jsBlock ;
  ;;        var txtNode = document.createTextNode(cssText) ;
  ;;        lnk.appendChild(txtNode);
  ;;      }
+ ;;   },
+ ;;   setBaseHref: function(basehref) {
+ ;;     var thebase = document.getElementsByTagName("base");
+ ;;     if (typeof thebase[0] === 'undefined') {
+ ;;       thebase = document.createElement("base");
+ ;;       thebase = document.getElementsByTagName("head")[0].appendChild(thebase);
+ ;;       thebase.setAttribute('href','');
+ ;;       thebase = document.getElementsByTagName("base");
+ ;;     }
+ ;;     thebase[0].href = basehref; 
  ;;   }
  ;;};
  ;;EWD.page.chartIndex = {} ;

@@ -1,7 +1,7 @@
 %zewdAPI	; Enterprise Web Developer run-time functions and user APIs
  ;
- ; Product: Enterprise Web Developer (Build 877)
- ; Build Date: Fri, 29 Jul 2011 16:29:46
+ ; Product: Enterprise Web Developer (Build 881)
+ ; Build Date: Thu, 25 Aug 2011 12:47:46
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -108,7 +108,7 @@ setJump(toPage,sessid,app)
  ;
  i $g(app)'="",$e(sessid,1,4)="csp:" d
  . n path
- . s path=^zewd("config","rootURL","csp")
+ . s path=$$getRootURL("csp")
  . i $e(path,$l(path))'="/" s path=path_"/"
  . s toPage=path_app_"/"_toPage
  d setSessionValue("ewd_jump",toPage,sessid)
