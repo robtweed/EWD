@@ -1,7 +1,7 @@
 %zewdST2 ; Sencha Touch Tag Processors and runtime logic
  ;
- ; Product: Enterprise Web Developer (Build 881)
- ; Build Date: Thu, 25 Aug 2011 12:47:46
+ ; Product: Enterprise Web Developer (Build 882)
+ ; Build Date: Thu, 08 Sep 2011 17:35:10
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -399,7 +399,8 @@ list(nodeOID,attrValue,docOID,technology)
  ;
 touchGridSub(nodeOID,itemsOID)
  ;
- n colDef,dataStore,editable,id,itemOID,mainAttrs,name,onBeforeEdit,onEdit,onTap,store,tagName,xtype
+ n colDef,dataStore,editable,id,itemOID,mainAttrs,name,nextPage
+ n onBeforeEdit,onEdit,onTap,store,tagName,xtype
  ;
  do getAttributeValues^%zewdCustomTags(nodeOID,.mainAttrs)
  ;
@@ -430,6 +431,12 @@ touchGridSub(nodeOID,itemsOID)
  ;
  s onBeforeEdit=$g(mainAttrs("onbeforeedit"))
  k mainAttrs("onbeforeedit")
+ ;
+ s nextPage=$g(mainAttrs("nextpage"))
+ i nextPage'="" d
+ . s editable=0
+ . s onTap="EWD.sencha.touchGrid.getPage"
+ . k mainAttrs("nextpage")
  ;
  i editable d
  . n attr,fsOID,parentOID,xOID
@@ -465,7 +472,7 @@ touchGridSub(nodeOID,itemsOID)
  . i name="object" q
  . d setAttribute^%zewdDOM(name,mainAttrs(name),itemOID)
  ;
- d touchGridCode(itemOID,dataStore,store,colDef,onTap,onEdit,onBeforeEdit)
+ d touchGridCode(itemOID,dataStore,store,colDef,onTap,onEdit,onBeforeEdit,nextPage)
  d removeIntermediateNode^%zewdDOM(nodeOID)
  ;
  QUIT
@@ -496,7 +503,7 @@ touchGrid(nodeOID,attrValue,docOID,technology)
  ;
  QUIT
  ;
-touchGridCode(nodeOID,dataStore,store,colDef,onTap,onEdit,onBeforeEdit)
+touchGridCode(nodeOID,dataStore,store,colDef,onTap,onEdit,onBeforeEdit,nextPage)
  ;
  n attr,i,jsOID,lOID,lsOID,stOID,text
  ;
@@ -512,6 +519,10 @@ touchGridCode(nodeOID,dataStore,store,colDef,onTap,onEdit,onBeforeEdit)
  ;
  i $g(onBeforeEdit)'="" d
  . s text="EWD.sencha.touchGrid.allowEdit="_onBeforeEdit_";"_$c(13,10)
+ . s jsOID=$$addElementToDOM^%zewdDOM("ewd:jsline",stOID,,,text)
+ ;
+ i $g(nextPage)'="" d
+ . s text="EWD.sencha.touchGrid.nextPage='"_nextPage_"';"_$c(13,10)
  . s jsOID=$$addElementToDOM^%zewdDOM("ewd:jsline",stOID,,,text)
  ;
  d setAttribute^%zewdDOM("store","."_store,nodeOID)

@@ -1,7 +1,7 @@
 %zewdST ; Sencha Touch Tag Processors and runtime logic
  ;
- ; Product: Enterprise Web Developer (Build 881)
- ; Build Date: Thu, 25 Aug 2011 12:47:46
+ ; Product: Enterprise Web Developer (Build 882)
+ ; Build Date: Thu, 08 Sep 2011 17:35:10
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -167,6 +167,11 @@ form(nodeOID,attrValue,docOID,technology)
  . s childOID=OIDArray(childNo)
  . s tagName=$$getTagName^%zewdDOM(childOID)
  . i tagName="st:fieldset" d fieldSets(childOID,itemsOID)
+ . ; move any listeners to form st:class tag
+ . i tagName="st:listeners" d
+ . . n lsOID
+ . . s lsOID=$$removeChild^%zewdDOM(childOID)
+ . . s lsOID=$$appendChild^%zewdDOM(lsOID,formOID)
  ;
  d removeIntermediateNode^%zewdDOM(nodeOID)
  ;
