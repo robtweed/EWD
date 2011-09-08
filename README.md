@@ -2,7 +2,7 @@
  
 EWD is a Free Open Source Ajax Framework for GT.M
 
-Build 881
+Build 882
 
 This build includes a new, optional Realtime web capability that makes use of Node.js to provide
 the webserver and gateway to GT.M.  See [https://github.com/robtweed/ewdGateway](https://github.com/robtweed/ewdGateway) for full details.
