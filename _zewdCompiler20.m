@@ -1,7 +1,7 @@
 %zewdCompiler20	; Enterprise Web Developer Compiler : Combo+ tag processor
  ;
- ; Product: Enterprise Web Developer (Build 882)
- ; Build Date: Thu, 08 Sep 2011 17:35:10
+ ; Product: Enterprise Web Developer (Build 884)
+ ; Build Date: Tue, 13 Sep 2011 11:17:26
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |

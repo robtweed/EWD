@@ -1,7 +1,7 @@
 %zewdST ; Sencha Touch Tag Processors and runtime logic
  ;
- ; Product: Enterprise Web Developer (Build 882)
- ; Build Date: Thu, 08 Sep 2011 17:35:10
+ ; Product: Enterprise Web Developer (Build 884)
+ ; Build Date: Tue, 13 Sep 2011 11:17:27
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -1224,6 +1224,11 @@ subPanel(nodeOID,bodyOID,itemsOID)
  . . . s preSTOID=$$getElementById^%zewdDOM("ewdPreST",docOID)
  . . . s jsOID=$$addElementToDOM^%zewdDOM("ewd:jsline",preSTOID,,,jsText)
  . ;
+ . i tagName="st:toolbar" d  q
+ . . s xOID=$$removeChild^%zewdDOM(childOID)
+ . . s xOID=$$appendChild^%zewdDOM(childOID,itemOID)
+ . . d toolbar(xOID,,1)
+ . ;
  . ;i tagName="st:tabbar"!(tagName="st:defaults") d  q
  . ;. s xOID=$$removeChild^%zewdDOM(childOID)
  . ;. s xOID=$$appendChild^%zewdDOM(childOID,itemOID)
@@ -1247,7 +1252,7 @@ subPanel(nodeOID,bodyOID,itemsOID)
  QUIT
  ;
  ;
-toolbar(nodeOID,parentOID)
+toolbar(nodeOID,parentOID,isSubpanel)
  ;
  n attr,childNo,childOID,diOID,itemOID,itemsOID,jsOID
  n mainAttrs,OIDArray,preSTOID,tagName,text
@@ -1258,8 +1263,11 @@ toolbar(nodeOID,parentOID)
  ;
  do getAttributeValues^%zewdCustomTags(nodeOID,.mainAttrs)
  ;
- s diOID=$$getTagOID^%zewdDOM("st:dockeditems",docName)
- i diOID="" s diOID=$$insertNewNextSibling^%zewdST2("st:dockeditems",nodeOID)
+ i '$g(isSubpanel) d
+ . s diOID=$$getTagOID^%zewdDOM("st:dockeditems",docName)
+ . i diOID="" s diOID=$$insertNewNextSibling^%zewdST2("st:dockeditems",nodeOID)
+ e  d
+ . s diOID=$$insertNewNextSibling^%zewdST2("st:dockedItems",nodeOID)
  ;
  i $g(mainAttrs("style"))'="" d
  . s mainAttrs("ui")=mainAttrs("style")
@@ -1282,7 +1290,7 @@ toolbar(nodeOID,parentOID)
  . i tagName="st:toolbarbutton"!(tagName="st:button") d toolbarButton(childOID,itemsOID)
  . i tagName="st:icon" d
  . . n iconAttrs,itemOID
- . . do getAttributeValues^%zewdCustomTags(childOID,.iconAttrs) break
+ . . do getAttributeValues^%zewdCustomTags(childOID,.iconAttrs)
  . . ;i $g(iconAttrs("iconcls"))'="" d
  . . . ;s iconAttrs("iconMask")="."_iconAttrs("iconmask")
  . . . ;s iconAttrs("iconCls")=iconAttrs("iconcls")

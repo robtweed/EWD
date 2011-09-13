@@ -1,7 +1,7 @@
 %zewdST2 ; Sencha Touch Tag Processors and runtime logic
  ;
- ; Product: Enterprise Web Developer (Build 882)
- ; Build Date: Thu, 08 Sep 2011 17:35:10
+ ; Product: Enterprise Web Developer (Build 884)
+ ; Build Date: Tue, 13 Sep 2011 11:17:27
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -527,7 +527,8 @@ touchGridCode(nodeOID,dataStore,store,colDef,onTap,onEdit,onBeforeEdit,nextPage)
  ;
  d setAttribute^%zewdDOM("store","."_store,nodeOID)
  d setAttribute^%zewdDOM("selModel",".{singleSelect:true}",nodeOID)
- d setAttribute^%zewdDOM("colModel",".EWD.sencha.colModel",nodeOID)
+ ;d setAttribute^%zewdDOM("colModel",".EWD.sencha.colModel",nodeOID)
+ d setAttribute^%zewdDOM("colModel",".EWD.sencha."_colDef,nodeOID)
  i $g(onTap)'="" d
  . s lsOID=$$addElementToDOM^%zewdDOM("st:listeners",nodeOID)
  . s attr("rowTap")="."_onTap
@@ -689,7 +690,8 @@ writeRegModel(sessionName,store,colDefName,sessid)
  s no=""
  d streamArrayToJSON^%zewdJSON("data")
  w "});"_$c(13,10)
- w "EWD.sencha.colModel=["
+ ;w "EWD.sencha.colModel=["
+ w "EWD.sencha."_colDefName_"=["
  s col="",comma=""
  f  s col=$o(colDef(col)) q:col=""  d
  . w comma_"{header:'"_$g(colDef(col,"header"))_"',"

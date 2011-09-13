@@ -287,6 +287,7 @@ CHILD3 ; Read Request
 CHILDE ; Error
  d EVENT($ZS)
  i $ZS["READ" g HALT
+ i $ze["%GTM-E-IOEOF" g HALT
  G CHILD2
  ;
 HALT ; Halt
@@ -490,7 +491,7 @@ HEADE ; Error
  Q $$DDATE(+$H)_" at "_$$DTIME($P($H,",",2))_"~"_$G(%ZCS("PORT"))_"~"_%UCI
  ;
 HMACSHA256(string,key,b64,context) ; HMAC-SHA256
- Q $$CRYPT("127.0.0.1",$s(context:80,1:7040),"HMAC-SHA256",string,key,b64,context)
+ Q $$CRYPT("127.0.0.1",$s(context=1:80,context>1:context,1:7040),"HMAC-SHA256",string,key,b64,context)
  ;
 HMACSHA1(string,key,b64,context) ; HMAC-SHA1
  Q $$CRYPT("127.0.0.1",$s(context:80,1:7040),"HMAC-SHA1",string,key,b64,context)
@@ -505,7 +506,11 @@ SHA256(string,b64,context) ; SHA256
  Q $$CRYPT("127.0.0.1",$s(context:80,1:7040),"SHA256",string,"",b64,context)
  ;
 SHA1(string,b64,context) ; SHA1
- Q $$CRYPT("127.0.0.1",$s(context:80,1:7040),"SHA1",string,"",b64,context)
+ n port
+ s port=80
+ i context=0 s port=7040
+ i context>1 s port=context,context=1
+ Q $$CRYPT("127.0.0.1",port,"SHA1",string,"",b64,context)
  ;
 SHA(string,b64,context) ; SHA
  Q $$CRYPT("127.0.0.1",$s(context:80,1:7040),"SHA",string,"",b64,context)

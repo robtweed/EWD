@@ -1,7 +1,7 @@
 %zewdPHP	; Enterprise Web Developer PHP run-time functions and processing
  ;
- ; Product: Enterprise Web Developer (Build 882)
- ; Build Date: Thu, 08 Sep 2011 17:35:10
+ ; Product: Enterprise Web Developer (Build 884)
+ ; Build Date: Tue, 13 Sep 2011 11:17:27
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -378,7 +378,7 @@ updateSessionFromRequest(requestArray,sessid)
  . . s rname=name
  . . i type="textarea",'$d(^%zewdSession("session",sessid,"ewd_textarea",sessName)) s ^%zewdSession("session",sessid,"ewd_textarea",sessName)=""
  . . s nameList(rname)=type
- . . i type="checkbox",$o(requestArray(rname,""))="" d
+ . . i ((type="checkbox")!(type="selectMultiple")),$o(requestArray(rname,""))="" d
  . . . n value
  . . . s value=$g(requestArray(rname))
  . . . s:value'="" requestArray(rname,value)=value
