@@ -1,7 +1,7 @@
 %zewdCompiler9	; Enterprise Web Developer Compiler : ajax fixed text
  ;
- ; Product: Enterprise Web Developer (Build 884)
- ; Build Date: Tue, 13 Sep 2011 11:17:26
+ ; Product: Enterprise Web Developer (Build 885)
+ ; Build Date: Wed, 14 Sep 2011 16:02:36
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -579,6 +579,12 @@ ajaxLoader ;
 	;;  connect: function(messageFunction, port, token) {
 	;;    //this.socket = io.connect(null, {port: port, rememberTransport: false});
 	;;    this.socket = io.connect();
+	;;    this.socket.on('connect', function() {
+	;;      if (typeof EWD.sockets.token !== 'undefined') {
+    ;;        console.log('WebSocket connected');
+    ;;        EWD.sockets.sendMessage({type: 'register', token: EWD.sockets.token});
+    ;;      }
+	;;    });
 	;;    this.socket.on('message', function(obj){
 	;;      if (typeof console !== 'undefined') console.log("onMessage: " + JSON.stringify(obj));
 	;;      if (typeof obj === 'string') {
@@ -599,7 +605,7 @@ ajaxLoader ;
 	;;      messageFunction(obj);
 	;;    });
 	;;    this.token = token;
-	;;    this.sendMessage({type: "register", token: token});
+	;;    //this.sendMessage({type: "register", token: token});
 	;;  } 
 	;;};
 	;;***END***

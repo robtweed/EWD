@@ -1,7 +1,7 @@
 %zewdPHP	; Enterprise Web Developer PHP run-time functions and processing
  ;
- ; Product: Enterprise Web Developer (Build 884)
- ; Build Date: Tue, 13 Sep 2011 11:17:27
+ ; Product: Enterprise Web Developer (Build 885)
+ ; Build Date: Wed, 14 Sep 2011 16:02:39
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
