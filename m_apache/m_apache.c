@@ -2935,8 +2935,21 @@ int mgwsi_db_receive_ex(MGWSIREQ *lp_request, unsigned char * data, int size, sh
    else {
       len = 0;
       for (;;) {
-
+         
          n = MGWSI_NET_RECV(lp_request->lp_mgwsicon->sockfd, data + len, size - len, 0);
+         
+	 //smh - fix the bug of 100% cpu apache processes which don't die! 
+     //This part of the routine does not check if the connection is broken
+     //and then get out. I do that here. See below for broken conditions.
+     //
+	 //http://publib.boulder.ibm.com/infocenter/iseries/v5r3/index.jsp?topic=%2Fapis%2Frecv.htm
+         
+	 if (n == 0) {  //CONNECTION IS BROKEN!
+	    //errno has the error code, but it isn't useful to check
+            len = n;
+	    break;
+         }
+	//end smh changes
 
          if (n < 0) {
             len = n;
