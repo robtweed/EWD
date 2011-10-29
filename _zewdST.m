@@ -1,7 +1,7 @@
 %zewdST ; Sencha Touch Tag Processors and runtime logic
  ;
- ; Product: Enterprise Web Developer (Build 885)
- ; Build Date: Wed, 14 Sep 2011 16:02:39
+ ; Product: Enterprise Web Developer (Build 887)
+ ; Build Date: Sat, 29 Oct 2011 16:16:02
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -350,7 +350,7 @@ field(nodeOID,parentOID,return,nameList)
  . i $g(mainAttrs("value"))="" s mainAttrs("value")=phpVar
  ;
  i type="date" d
- . n id,phpVarDat,phpVarMonth,phpVarYear,value
+ . n id,phpVarDay,phpVarMonth,phpVarYear,value
  . s id=$g(mainAttrs("id")) i id="" s id="missingDateId"
  . s phpVarDay=$$addPhpVar^%zewdCustomTags("#"_id_".day")
  . s phpVarMonth=$$addPhpVar^%zewdCustomTags("#"_id_".month")

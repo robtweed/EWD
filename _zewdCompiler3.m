@@ -1,7 +1,7 @@
 %zewdCompiler3	; Enterprise Web Developer Compiler Functions (extension routine)
  ;
- ; Product: Enterprise Web Developer (Build 885)
- ; Build Date: Wed, 14 Sep 2011 16:02:36
+ ; Product: Enterprise Web Developer (Build 887)
+ ; Build Date: Sat, 29 Oct 2011 16:16:01
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -83,7 +83,11 @@ createPHPFormHeader(formDeclarations,phpHeaderArray,technology,dataTypeList,conf
  . . s ^%zewdIndex($$zcvt^%zewdAPI(app,"l"),"scriptCalls",$$zcvt^%zewdAPI(pageName,"l"),action)="action"
  . . s ^%zewdIndex($$zcvt^%zewdAPI(app,"l"),"scriptCalledBy",action,$$zcvt^%zewdAPI(pageName,"l"))="action"
  ;
- d pre2^%zewdGTMRuntime QUIT
+ d
+ . n appx
+ . s appx=app
+ . d pre2^%zewdGTMRuntime
+ QUIT
  ;
 createPHPConfigHeader(config,phpHeaderArray,technology,docName,dataTypeList,inputPath,filename,multilingual,pageName)
  ;

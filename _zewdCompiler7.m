@@ -1,7 +1,7 @@
 %zewdCompiler7	; Enterprise Web Developer Compiler Functions
  ;
- ; Product: Enterprise Web Developer (Build 885)
- ; Build Date: Wed, 14 Sep 2011 16:02:36
+ ; Product: Enterprise Web Developer (Build 887)
+ ; Build Date: Sat, 29 Oct 2011 16:16:01
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -587,6 +587,7 @@ pageIndex(app,filename,nextPageList) ;
  n nextPage,np
  ;
  i technology="wl"!(technology="gtm")!(technology="ewd") s app=appx
+ i $g(rawApp)'="" s app=rawApp
  i $e(filename,1,3)'="ewd",isAjax s ^%zewdIndex($$zcvt^%zewdAPI(app,"l"),"pages",$p(filename,".ewd",1))=$g(config("isFirstPage"))
  s nextPage=""
  f  s nextPage=$o(nextPageList(nextPage)) q:nextPage=""  d

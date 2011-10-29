@@ -1,7 +1,7 @@
 %zewdCompiler	; Enterprise Web Developer Compiler
  ;
- ; Product: Enterprise Web Developer (Build 885)
- ; Build Date: Wed, 14 Sep 2011 16:02:35
+ ; Product: Enterprise Web Developer (Build 887)
+ ; Build Date: Sat, 29 Oct 2011 16:16:01
  ; 
  ; 
  ; ----------------------------------------------------------------------------
@@ -85,8 +85,9 @@ getDelim()
  ;
 compileAll(app,mode,technology,outputPath,multilingual,templateFilename,maxLines)
  ;
- n appx,backend,dlim,error,ewd,files,ok,outputAs,path
+ n appx,backend,dlim,error,ewd,files,ok,outputAs,path,rawApp
  ;
+ s rawApp=$g(app)
  i '$d(^zewd) d install^%zewdGTM i '$d(^zewd) QUIT
  s ^%zewd("relink")=1 k ^%zewd("relink","process")
  s ok=$$getConfig^%zewdCompiler16(.ewd)
