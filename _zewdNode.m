@@ -550,7 +550,16 @@ nodeHTTP ;
  . . s nvp=$p(content,"&",i)
  . . s name=$p(nvp,"=",1)
  . . s value=$p(nvp,"=",2,$l(nvp))
- . . s %KEY(name)=$$urlUnescape(value)
+ . . i '$d(%KEY(name)) d
+ . . . s %KEY(name)=$$urlUnescape(value)
+ . . e  d
+ . . . n index
+ . . . i '$d(%KEY(name,1)) d
+ . . . . n value
+ . . . . s value=%KEY(name)
+ . . . . s %KEY(name,1)=value
+ . . . s index=$o(%KEY(name,""),-1)+1
+ . . . s %KEY(name,index)=$$urlUnescape(value)
  ;k ^rltkey m ^rltkey=%KEY
  i $$parseJSON^%zewdJSON(headers,.headArray,1)
  ;d trace^%zewdAPI("headers parsed")
