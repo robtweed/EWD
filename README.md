@@ -2,9 +2,18 @@
  
 EWD is a Free Open Source Ajax Framework for GT.M
 
-Build 885
+Build 892
 
-This build includes a new, optional Realtime web capability that makes use of Node.js to provide
+Main changes:
+
+- Cross-site scripting protection using output encoding
+- various ExtJS bug fixes
+- enhancements to the Node.js-based ewdGateway, including the ability to 
+  modify parameters via the ^zewd("ewdGateway") global
+
+#Previous Build Notes
+
+Build 885 includes a new, optional Realtime web capability that makes use of Node.js to provide
 the webserver and gateway to GT.M.  See [https://github.com/robtweed/ewdGateway](https://github.com/robtweed/ewdGateway) for full details.
 
 Build 877 removes a rogue break, fixes a CSP-specific error in ExtJS forms, and also adds the ability to 
