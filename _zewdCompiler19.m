@@ -1,7 +1,7 @@
 %zewdCompiler19	; Runtime Functions
  ;
- ; Product: Enterprise Web Developer (Build 885)
- ; Build Date: Wed, 14 Sep 2011 16:02:36
+ ; Product: Enterprise Web Developer (Build 892)
+ ; Build Date: Mon, 05 Dec 2011 16:18:59
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -637,6 +637,7 @@ forEach(nodeOID,attrValues,docOID,technology)
 	. ;
 	. s dummyOID=$$addNewFirstChild^%zewdCompiler4("temp",docOID,cwOID)
 	. i sessionName'="""""" d
+	. . ;s text=" s "_index_"=$o("_obj_sessionName_subList_","_index_"))"_$c(13,10)
 	. . s text=" s "_index_"=$o("_obj_sessionName_subList_","_index_"))"_$c(13,10)
 	. . s text=text_" s "_return_"=$g("_obj_sessionName_subList_","_index_"))"
 	. e  d

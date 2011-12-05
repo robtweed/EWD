@@ -1,7 +1,7 @@
 %zewdAPI	; Enterprise Web Developer run-time functions and user APIs
  ;
- ; Product: Enterprise Web Developer (Build 885)
- ; Build Date: Wed, 14 Sep 2011 16:02:35
+ ; Product: Enterprise Web Developer (Build 892)
+ ; Build Date: Mon, 05 Dec 2011 16:18:58
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -156,14 +156,20 @@ displayOptions(fieldName,listName,escape)
  . . s textValue=$p(%d,$c(1),1)
  . . ;
  . . s textValueEsc=textValue
- . . s textValueEsc=$$replaceAll(textValueEsc,"&#39;","'")
- . . i escape s textValueEsc=$$zcvt(textValue,"o","HTML")
+ . . i $g(^zewd("xssEncoding")) d
+ . . . s textValueEsc=$$htmlOutputEncode^%zewdAPI2(textValueEsc)
+ . . e  d 
+ . . . s textValueEsc=$$replaceAll(textValueEsc,"&#39;","'")
+ . . . i escape s textValueEsc=$$zcvt(textValue,"o","HTML")
  . . ;
  . . s codeValue=$p(%d,$c(1),2)
  . . i codeValue="" s codeValue=textValue
  . . s codeValueEsc=codeValue
- . . s codeValueEsc=$$replaceAll(codeValueEsc,"&#39;","'")
- . . i escape s codeValueEsc=$$zcvt(codeValue,"o","HTML")
+ . . i $g(^zewd("xssEncoding")) d
+ . . . s codeValueEsc=$$htmlOutputEncode^%zewdAPI2(codeValueEsc)
+ . . e  d 
+ . . . s codeValueEsc=$$replaceAll(codeValueEsc,"&#39;","'")
+ . . . i escape s codeValueEsc=$$zcvt(codeValue,"o","HTML")
  . . w "<option value='"_codeValueEsc_"'"
  . . i $e(fieldName,1)'="$" d
  . . . n fn
@@ -1794,6 +1800,32 @@ zcvt(string,param,param2)
  i $g(param)="" s param="l"
  i param="l"!(param="L") QUIT $tr(string,"ABCDEFGHIJKLMNOPQRSTUVWXYZ","abcdefghijklmnopqrstuvwxyz")
  i param="u"!(param="U") QUIT $tr(string,"abcdefghijklmnopqrstuvwxyz","ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+ i param="O",param2="HTML" d  QUIT string
+ . s string=$$replaceAll^%zewdAPI(string,"&",$c(1))
+ . s string=$$replaceAll^%zewdAPI(string,"""","&quot;")
+ . s string=$$replaceAll^%zewdAPI(string,"'","&#39;")
+ . s string=$$replaceAll^%zewdAPI(string,"<","&lt;")
+ . s string=$$replaceAll^%zewdAPI(string,">","&gt;")
+ . s string=$$replaceAll^%zewdAPI(string,$c(1),"&amp;")
+ i param="I",param2="HTML" d  QUIT string
+ . n c,no,no2,p1,p2,p3,stop
+ . s string=$$replaceAll^%zewdAPI(string,"&quot;","""")
+ . s string=$$replaceAll^%zewdAPI(string,"&#39;","'")
+ . s string=$$replaceAll^%zewdAPI(string,"&amp;","&")
+ . s string=$$replaceAll^%zewdAPI(string,"&lt;","<")
+ . s string=$$replaceAll^%zewdAPI(string,"&gt;",">")
+ . s stop=0
+ . f  d  q:stop
+ . . s no=$l(string,"&#")
+ . . i string'["&#" s stop=1 q
+ . . s p1=$p(string,"&#",1)
+ . . s p2=$p(string,"&#",2,no+1)
+ . . s no2=$l(p2,";")
+ . . s p3=$p(p2,";",1)
+ . . i $l(p3)'=2 s stop=1 q
+ . . s p2=$p(p2,";",2,no2+1)
+ . . s c=$c(p3)
+ . . s string=p1_c_p2
  QUIT string
  ;
 getIP() ; Get own IP address

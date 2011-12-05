@@ -1,7 +1,7 @@
 %zewdCompiler13	; Enterprise Web Developer Compiler Functions
  ;
- ; Product: Enterprise Web Developer (Build 885)
- ; Build Date: Wed, 14 Sep 2011 16:02:36
+ ; Product: Enterprise Web Developer (Build 892)
+ ; Build Date: Mon, 05 Dec 2011 16:18:58
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -1100,8 +1100,11 @@ displayTextArea(fieldName)
  . f  s lineNo=$o(^%zewdSession("session",sessid,"ewd_textarea",fieldName,lineNo)) q:lineNo=""  d
  . . k text
  . . s text=^%zewdSession("session",sessid,"ewd_textarea",fieldName,lineNo)
- . . s text=$$replaceAll^%zewdHTMLParser(text,"&#39;","'")
- . . w $$zcvt^%zewdAPI(text,"o","HTML")
+ . . i $g(^zewd("xssEncoding")) d
+ . . . w $$htmlOutputEncode^%zewdAPI2(text)
+ . . e  d
+ . . . s text=$$replaceAll^%zewdHTMLParser(text,"&#39;","'")
+ . . . w $$zcvt^%zewdAPI(text,"o","HTML")
  . . i lineNo'=lastLineNo w $c(13,10)
  QUIT
  ;

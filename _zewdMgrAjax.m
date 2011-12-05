@@ -1,7 +1,7 @@
 %zewdMgrAjax	; Enterprise Web Developer Manager Functions
  ;
- ; Product: Enterprise Web Developer (Build 885)
- ; Build Date: Wed, 14 Sep 2011 16:02:38
+ ; Product: Enterprise Web Developer (Build 892)
+ ; Build Date: Mon, 05 Dec 2011 16:18:59
  ;
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -255,8 +255,11 @@ compilePage(sessid) ;
  ;
  s outputFile=outputPath_dlim_$p(page,".ewd",1)_"."_technology
  i technology="gtm" d
+ . n rouPath
  . s page=$p(page,".ewd",1)
- . s outputFile=$g(^zewd("config","routinePath","gtm"))_"ewdWL"_$$zcvt^%zewdAPI(app,"l")_$$zcvt^%zewdAPI(page,"l")_".m"
+ . s rouPath=$g(^zewd("config","routinePath","gtm"))
+ . i $e(rouPath,$l(rouPath))'="/" s rouPath=rouPath_"/"
+ . s outputFile=rouPath_"ewdWL"_$$zcvt^%zewdAPI(app,"l")_$$zcvt^%zewdAPI(page,"l")_".m"
  . s technology="m"
  d getFileInfo^%zewdGTM(outputFile,technology,.compInfo)
  s size=$p(compInfo(outputFile),$c(1),3)
@@ -538,6 +541,7 @@ configPrepage(sessid) ;
  ;
  ;
  s routinePath=$g(^zewd("config","routinePath","gtm"))
+ i $e(routinePath,$l(routinePath))'="/" s routinePath=routinePath_"/"
  i routinePath'="" d setSessionValue^%zewdAPI("gtmRoutinePath",routinePath,sessid)
  ;
  QUIT ""
@@ -629,6 +633,7 @@ saveTechnologyConfig(technology,sessid)
  . n routinePath
  . s routinePath=$$getSessionValue^%zewdAPI("gtmRoutinePath",sessid)
  . i routinePath="" s error="You must enter the Routine Path" q
+ . i $e(routinePath,$l(routinePath))'="/" s routinePath=routinePath_"/"
  . s ^zewd("config","routinePath","gtm")=routinePath
  QUIT error
  ;

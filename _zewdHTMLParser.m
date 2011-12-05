@@ -1,7 +1,7 @@
 %zewdHTMLParser	; Enterprise Web Developer HTML to XHTML Converter
  ;
- ; Product: Enterprise Web Developer (Build 885)
- ; Build Date: Wed, 14 Sep 2011 16:02:38
+ ; Product: Enterprise Web Developer (Build 892)
+ ; Build Date: Mon, 05 Dec 2011 16:18:59
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -622,16 +622,34 @@ tokenisePHPVariables(phpVars)
 tokenise(sig,varNo,lineNo)
  ;
  ; sig is ? for PHP, % for JSP
+ ;   <?= #var ?> : direct substitution (dangerous but for backward compatibility)
+ ;   <?h #var ?> : HTML encoded substitution
+ ;   <?j #var ?> : Javascript encoded substitution
+ ;   <?u #var ?> : URL encoded substitution
  ;
- n line,%p1,%p2,%p3,%p4,str1,str2
+ ;   phpVars(no,"esc")=h|j|u to ensure compiler adds correct escaping around value
  ;
- s str1="<"_sig_"=",str2=sig_">"
+ n i,line,lineB4,str1,strx,str2
+ ;
+ s str1="<"_sig,str2=sig_">"
+ f i="=","h","j","u" s strx(i)=str1_i
  s line=^CacheTempEWD($j,lineNo)
+ s lineB4=line
+ f i="=","h","j","u" d
+ . s str1=strx(i)
+ . s line=$$tokeniseLine(line,.varNo,i,lineNo,str1,str2)
+ i line'=lineB4 s ^CacheTempEWD($j,lineNo)=line
+ QUIT
+ ;
+tokeniseLine(line,varNo,type,lineNo,str1,str2)
+ ;
+ n p1,p2,p3,p4
+ ;
  f  q:line'[str1  d
  . s varNo=varNo+1
- . s %p1=$p(line,str1,1)
- . s %p2=$p(line,str1,2,500)
- . i %p2'[str2 d
+ . s p1=$p(line,str1,1)
+ . s p2=$p(line,str1,2,500)
+ . i p2'[str2 d
  . . n line2
  . . s line2=$g(^CacheTempEWD($j,lineNo+1))
  . . i line2'="" d
@@ -640,14 +658,14 @@ tokenise(sig,varNo,lineNo)
  . . . s c1=$p(line2,">",1)_">"
  . . . s c2=$p(line2,">",2,np+2)
  . . . s line=line_c1
- . . . s %p2=%p2_c1
+ . . . s p2=p2_c1
  . . . s ^CacheTempEWD($j,lineNo+1)=c2
- . s %p3=$p(%p2,str2,1)
- . s %p4=$p(%p2,str2,2,500)
- . s phpVars(varNo)=%p3
- . s line=%p1_"&php;"_varNo_"&php;"_%p4
- . s ^CacheTempEWD($j,lineNo)=line
- QUIT
+ . s p3=$p(p2,str2,1)
+ . s p4=$p(p2,str2,2,500)
+ . s phpVars(varNo)=p3
+ . s phpVars(varNo,"esc")=type
+ . s line=p1_"&php;"_varNo_"&php;"_p4
+ QUIT line
  ;
 pTagClosure(buf,nextLine,parentOID)
  ;
@@ -1500,10 +1518,13 @@ replaceVars(string,cspVars,phpVars,technology)
  . . s %p3=$p(string,entity,3,npieces)
  . . i entity="&cspVar;" s string=%p1_"#("_$g(cspVars(%p2))_")#"_%p3
  . . i entity="&php;" d  q
+ . . . n type
  . . . s var=$$stripSpaces^%zewdAPI($g(phpVars(%p2)))
+ . . . s type=$g(phpVars(%p2,"esc")) i type="" s type="="
  . . . i $e(var,1)="$" d
  . . . . s var=$e(var,2,$l(var))
  . . . . i $e(var,1)="\" s var="$$escapeQuotes^%zewdAPI("_$e(var,2,$l(var))_")"
+ . . . . s var=$$outputEncode(var,type)
  . . . i $e(var,1)="#" d
  . . . . n esc
  . . . . s esc=0
@@ -1531,6 +1552,7 @@ replaceVars(string,cspVars,phpVars,technology)
  . . . . . s var="$$getSessionValue^%zewdAPI("""_$e(var,2,$l(var))_""",sessid)"
  . . . . i esc d
  . . . . . s var="$$escapeQuotes^%zewdAPI("_var_")"
+ . . . . s var=$$outputEncode(var,type)
  . . . i $e(var,1)="@" d
  . . . . n arrayValue
  . . . . s arrayValue=$g(attrValues($e(var,2,$l(var))))
@@ -1592,6 +1614,13 @@ replaceVars(string,cspVars,phpVars,technology)
  . . . . . e  s var=" isset($ewd_session['"_$e(var,2,$l(var))_"']) ? $ewd_session['"_$e(var,2,$l(var))_"'] : ''"
  . . . s string=%p1_"<?= "_var_" ?>"_%p3
  ;break:string["_tech"
+ QUIT string
+ ;
+outputEncode(string,type)
+ i '$g(^zewd("xssEncoding")) QUIT string
+ i type="h" QUIT "$$htmlOutputEncode^%zewdAPI2("_string_")"
+ i type="j" QUIT "$$jsOutputEncode^%zewdAPI2("_string_")"
+ i type="u" QUIT "$$urlOutputEncode^%zewdAPI2("_string_")"
  QUIT string
  ;
 getOS() ;

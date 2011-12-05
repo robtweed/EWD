@@ -1,7 +1,7 @@
 %zewdCompiler	; Enterprise Web Developer Compiler
  ;
- ; Product: Enterprise Web Developer (Build 887)
- ; Build Date: Sat, 29 Oct 2011 16:16:01
+ ; Product: Enterprise Web Developer (Build 892)
+ ; Build Date: Mon, 05 Dec 2011 16:18:58
  ; 
  ; 
  ; ----------------------------------------------------------------------------
@@ -252,8 +252,9 @@ getRootURL(technology)
  ;
  s technology="gtm"
  s url=$g(^zewd("config","RootURL",technology))
+ i $e(url,$l(url))'="/" s url=url_"/"
  i technology="gtm",url="" s url="/ewd/"
- i url="" s url="/"_technology
+ i url="" s url="/"_technology_"/"
  QUIT url
  ;
 setRootURL(url,technology)
@@ -822,7 +823,7 @@ expandPageURL(url,nextPageList,technology)
 	. . s url=url_"ewd_token=#($g(^%zewdSession(""session"",sessid,""ewd_token"")))#&n=#(tokens("""_pageName_"""))#"
 	. s url=%p1_url_%p2
 	. i pageName'="" s nextPageList(pageName)=""
-	i technology="ewd" s url=$$replace^%zewdAPI(url,".mgwsi",".ewd")
+	;i technology="ewd" s url=$$replace^%zewdAPI(url,".mgwsi",".ewd")
 	s url=$$replaceAll^%zewdHTMLParser(url,$c(1),"&php;")
 	QUIT url
 	;

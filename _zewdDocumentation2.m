@@ -1,7 +1,7 @@
 %zewdDocumentation2 ;
  ;
- ; Product: Enterprise Web Developer (Build 885)
- ; Build Date: Wed, 14 Sep 2011 16:02:37
+ ; Product: Enterprise Web Developer (Build 892)
+ ; Build Date: Mon, 05 Dec 2011 16:18:59
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
  ; | Copyright (c) 2004-11 M/Gateway Developments Ltd,                        |
@@ -494,9 +494,9 @@ DOM2 ;
  ;;</parameter>
  ;;<parameter no="2" name="jsTextArray" mandatory="true">
  ;;A local array containing the lines of text that comprise the JavaScript function, eg:
- ;;   jsTextArray(1)=”function myFunc() {“
- ;;   jsTextArray(2)=” alert('test function') '
- ;;   jsTextArray(3)=”}”
+ ;;   jsTextArray(1)="function myFunc() {"
+ ;;   jsTextArray(2)=" alert('test function')"
+ ;;   jsTextArray(3)="};"
  ;;
  ;;Passed by Reference
  ;;</parameter>
@@ -520,9 +520,9 @@ DOM2 ;
  ;;<parameter no="2" name="jsTextArray" mandatory="true">
  ;;A local array containing the lines of text that comprise the JavaScript object, eg:
  ;;
- ;;jsTextArray(1)=”myObj.test = function() {“ 
- ;;jsTextArray(2)=” alert('test function') '
- ;;jsTextArray(3)=”} ;”
+ ;;jsTextArray(1)="myObj.test = function() {" 
+ ;;jsTextArray(2)=" alert('test function')"
+ ;;jsTextArray(3)="} ;"
  ;;
  ;;Passed by Reference
  ;;</parameter>
@@ -601,8 +601,8 @@ DOM2 ;
  ;;
  ;;Note that the body of the specified Javascript function is returned as a
  ;;single string, with line breaks denoted by CRLF [$c(13,10)] characters,
- ;;and also note that the body does not include the “function myFunction
- ;;{“ declaration line or the closing brace [ } ]
+ ;;and also note that the body does not include the "function myFunction
+ ;;{" declaration line or the closing brace [ } ]
  ;;
  ;;This method will search for the specified javascript function in all
  ;;&lt;script&gt; tags within the EWD page DOM
@@ -644,7 +644,7 @@ DOM2 ;
  ;;Note that the body of the specified Javascript object definition is
  ;;returned as a single string, with line breaks denoted by CRLF [$c
  ;;(13,10)] characters, and also note that the body does not include the
- ;;“myObj.myFunction = function() {“ declaration line or the closing
+ ;;"myObj.myFunction = function() {" declaration line or the closing
  ;;brace [ } ]
  ;;
  ;;This method will search for the specified javascript object in all
@@ -691,7 +691,7 @@ DOM2 ;
  ;;  ....
  ;; }
  ;;
- ;;then the function name would be “myFunc”
+ ;;then the function name would be "myFunc"
  ;;</parameter>
  ;;<parameter no="2" name="docName" mandatory="true">
  ;;The name of the EWD Page DOM containing the function
@@ -719,7 +719,7 @@ DOM2 ;
  ;; grabbed = false ;
  ;; }
  ;;
- ;;then you would be able to determine that the declaration exists if you specify the objectName as “myObj.myFunc”
+ ;;then you would be able to determine that the declaration exists if you specify the objectName as "myObj.myFunc"
  ;;</parameter>
  ;;<parameter no="2" name="docName" mandatory="true">
  ;;The name of the EWD Page DOM containing the function
@@ -737,13 +737,13 @@ DOM2 ;
  ;;<purpose>
  ;;Finds a specified Javascript function in the EWD page DOM and replaces its contents.
  ;;The new function body content is held in a single text variable with line breaks denoted by CRLF [$c(13,10)] characters
- ;;Note that this function performs a complete body replacement – the original contents of the JavaScript function will be discarded
+ ;;Note that this function performs a complete body replacement: the original contents of the JavaScript function will be discarded
  ;;
  ;;For example:
  ;;
- ;;Set newBody=” alert('testing') ;”
- ;;set newBody=newBody_$c(13,10)_” var x = 123 ;”
- ;;set ok=$$replaceJavascriptFunctionBody^%zewdDOM(“myFunc”,newBody,docName)
+ ;;Set newBody=" alert('testing') ;"
+ ;;set newBody=newBody_$c(13,10)_" var x = 123 ;"
+ ;;set ok=$$replaceJavascriptFunctionBody^%zewdDOM('myFunc',newBody,docName)
  ;;
  ;;This would result in:
  ;;
@@ -775,13 +775,13 @@ DOM2 ;
  ;;<purpose>
  ;;Finds a specified Javascript object declaration in the EWD page DOM and replaces its contents.
  ;;The new object declaration body content is held in a single text variable with line breaks denoted by CRLF [$c(13,10)] characters.
- ;;Note that this function performs a complete body replacement – the original contents of the JavaScript object declaration will be discarded
+ ;;Note that this function performs a complete body replacement - the original contents of the JavaScript object declaration will be discarded
  ;;
  ;;For example:
  ;;
- ;;set newBody=” alert('testing') ;”
- ;;set newBody=newBody_$c(13,10)_” var x = 123 ;”
- ;;set ok=$$replaceJavascriptObjectBody^%zewdAPI(“myObj.myFunc”,newBody,docName)
+ ;;set newBody=" alert('testing') ;"
+ ;;set newBody=newBody_$c(13,10)_" var x = 123 ;"
+ ;;set ok=$$replaceJavascriptObjectBody^%zewdAPI('myObj.myFunc',newBody,docName)
  ;;
  ;;This would result in:
  ;;

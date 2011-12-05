@@ -1,7 +1,7 @@
 %zewdCompiler7	; Enterprise Web Developer Compiler Functions
  ;
- ; Product: Enterprise Web Developer (Build 887)
- ; Build Date: Sat, 29 Oct 2011 16:16:01
+ ; Product: Enterprise Web Developer (Build 892)
+ ; Build Date: Mon, 05 Dec 2011 16:18:59
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -926,15 +926,18 @@ processTag(tagName,attrList,procName,include,defFile,docName,technology,error)
 	. s %p=$g(^%zewd("customTag",tagName))
 	. s func=$p(%p,$c(1),1)
 	. ;i func'="",func'["^%zewd" d
+	. s isCustomTag=1
 	. s isCustomTag=0
-	. i tagName'["ewd:" s isCustomTag=1
+	. i tagName[":" s isCustomTag=1
 	. ;i func'["^%zewd" d
 	. i isCustomTag d
 	. . n appName
 	. . s appName=$$zcvt^%zewdAPI(subPath,"l")
 	. . s appName=app
-	. . s ^%zewdIndex(appName,"tagCalls",$$zcvt^%zewdAPI($p(filename,".ewd",1),"l"),tagName)=""
-	. . s ^%zewdIndex(appName,"tagCalledBy",tagName,$$zcvt^%zewdAPI($p(filename,".ewd",1),"l"))=""
+	. . ;s ^%zewdIndex(appName,"tagCalls",$$zcvt^%zewdAPI($p(filename,".ewd",1),"l"),tagName)=""
+	. . ;s ^%zewdIndex(appName,"tagCalledBy",tagName,$$zcvt^%zewdAPI($p(filename,".ewd",1),"l"))=""
+	. . s ^%zewdIndex($$zcvt^%zewdAPI(appName,"l"),"tagCalls",$$zcvt^%zewdAPI($p(filename,".ewd",1),"l"),tagName)=""
+	. . s ^%zewdIndex($$zcvt^%zewdAPI(appName,"l"),"tagCalledBy",tagName,$$zcvt^%zewdAPI($p(filename,".ewd",1),"l"))=""
 	. i tagName="ewd:include" s includeFound=1
 	QUIT
 	;

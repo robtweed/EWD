@@ -1,7 +1,7 @@
 %zewdST2 ; Sencha Touch Tag Processors and runtime logic
  ;
- ; Product: Enterprise Web Developer (Build 885)
- ; Build Date: Wed, 14 Sep 2011 16:02:39
+ ; Product: Enterprise Web Developer (Build 892)
+ ; Build Date: Mon, 05 Dec 2011 16:18:59
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -166,7 +166,7 @@ container(nodeOID,attrValue,docOID,technology)
  . s text=text_"EWD.sencha.init();"_$c(13,10)
  ;
  s text=text_"if (EWD.sencha.combo) EWD.sencha.combo.init();"_$c(13,10)
- s phpVar=$$addPhpVar^%zewdCustomTags("#ewd_sessid_timeout")
+ s phpVar=$$addPhpVar^%zewdCustomTags("#ewd_sessid_timeout","j")
  ;s text=text_"EWD.sencha.loadContentPage()"_$c(13,10)
  s text=text_"}"_$c(13,10)
  s text=text_"});"_$c(13,10)

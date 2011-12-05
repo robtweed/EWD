@@ -1,7 +1,7 @@
 %zewdGTMRuntime ; EWD for GT.M.  Runtime interface  
  ;
- ; Product: Enterprise Web Developer (Build 885)
- ; Build Date: Wed, 14 Sep 2011 16:02:37
+ ; Product: Enterprise Web Developer (Build 892)
+ ; Build Date: Mon, 05 Dec 2011 16:18:59
  ;
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -346,7 +346,7 @@ createEwdError(maxLines)
  ;
 buildRoutine(pageName,maxLines)
  ;
- n i,ifCond,io,ix,level,line,linex,lineNo,outputFilepath,rn,rouName,rouNo,x
+ n i,ifCond,io,ix,level,line,linex,lineNo,outputFilepath,rn,rouName,rouNo,rouPath,x
  ;
  s rouName="ewdWL"_$$zcvt^%zewdAPI(app,"l")_$$zcvt^%zewdAPI(pageName,"l")
  s rouName=$$replaceAll^%zewdAPI(rouName,"_","95")
@@ -422,7 +422,9 @@ buildRoutine(pageName,maxLines)
  . ;i level=1,ifCond'="",i'<maxLines,'$$isElseNext(lineNo) d splitRoutine(.rouNo,.lineNo,.i,1,ifCond)
  s lineNo(rouNo)=i-1
  ;
- s outputFilepath=$g(^zewd("config","routinePath","gtm"))_rouName_".m"
+ s rouPath=$g(^zewd("config","routinePath","gtm"))
+ i $e(rouPath,$l(rouPath))'="/" s rouPath=rouPath_"/"
+ s outputFilepath=rouPath_rouName_".m"
  s io=$io
  i '$$openNewFile^%zewdAPI(outputFilepath) s error="Unable to open the output file "_outputFilepath
  i $g(error)'="" u io w !,error QUIT
@@ -791,8 +793,12 @@ replaceVars(string,cspVars,phpVars,technology)
  . . s %p3=$p(string,entity,3,npieces)
  . . i entity="&cspVar;" s string=%p1_"#("_$g(cspVars(%p2))_")#"_%p3
  . . i $g(technology)="gtm",entity="&php;" d  q
+ . . . n type
  . . . s var=$$stripSpaces^%zewdAPI($g(phpVars(%p2)))
- . . . i $e(var,1)="$" s var=$e(var,2,$l(var))
+ . . . s type=$g(phpVars(%p2,"esc"))
+ . . . i $e(var,1)="$" d
+ . . . . s var=$e(var,2,$l(var))
+ . . . . s var=$$outputEncode^%zewdHTMLParser(var,type)
  . . . i $e(var,1)="#" d
  . . . . n esc
  . . . . s esc=0
@@ -819,6 +825,7 @@ replaceVars(string,cspVars,phpVars,technology)
  . . . . . s var="$$getSessionValue^%zewdAPI("""_$e(var,2,$l(var))_""",sessid)"
  . . . . i esc d
  . . . . . s var="$$escapeQuotes^%zewdAPI("_var_")"
+ . . . . s var=$$outputEncode^%zewdHTMLParser(var,type)
  . . . i $e(var,1)="@" d
  . . . . n arrayValue
  . . . . s arrayValue=$g(attrValues($e(var,2,$l(var))))

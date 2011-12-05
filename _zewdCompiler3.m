@@ -1,7 +1,7 @@
 %zewdCompiler3	; Enterprise Web Developer Compiler Functions (extension routine)
  ;
- ; Product: Enterprise Web Developer (Build 887)
- ; Build Date: Sat, 29 Oct 2011 16:16:01
+ ; Product: Enterprise Web Developer (Build 892)
+ ; Build Date: Mon, 05 Dec 2011 16:18:59
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -83,11 +83,10 @@ createPHPFormHeader(formDeclarations,phpHeaderArray,technology,dataTypeList,conf
  . . s ^%zewdIndex($$zcvt^%zewdAPI(app,"l"),"scriptCalls",$$zcvt^%zewdAPI(pageName,"l"),action)="action"
  . . s ^%zewdIndex($$zcvt^%zewdAPI(app,"l"),"scriptCalledBy",action,$$zcvt^%zewdAPI(pageName,"l"))="action"
  ;
- d
+ d  QUIT
  . n appx
  . s appx=app
  . d pre2^%zewdGTMRuntime
- QUIT
  ;
 createPHPConfigHeader(config,phpHeaderArray,technology,docName,dataTypeList,inputPath,filename,multilingual,pageName)
  ;
@@ -356,7 +355,7 @@ getFormFields(submitOID)
  ; Find the parent <form> for the submit button, and return a list of
  ; form field names for this form <input>, <select> and <textarea>
  ;
- new nameList,parentOID,nFields,OIDArray,fieldName,fieldType,fieldNo
+ new nameList,parentOID,nFields,OIDArray,fieldName,fieldType,fieldNo,nlType
  ;
  set nameList="",fieldNo=0
  set parentOID=submitOID
@@ -382,9 +381,10 @@ getFormFields(submitOID)
  . . . do setAttribute^%zewdDOM("name",fieldName,nodeOID)
  . . set typex=$$getAttributeValue^%zewdDOM("type",0,nodeOID)
  . . if typex'="" set type=$$zcvt^%zewdAPI(typex)
- . . if type="select",$$getAttributeValue^%zewdDOM("multiple",0,nodeOID)="multiple" set type="selectMultiple"
+ . . s nlType=type
+ . . if type="select",$$getAttributeValue^%zewdDOM("multiple",0,nodeOID)="multiple" set nlType="selectMultiple"
  . . if fieldName["&php;" set fieldName=$piece(fieldName,"&php;",1)_"$"
- . . set nameList(fieldName)=type
+ . . set nameList(fieldName)=nlType
  s nameList("ewd_pressed")="hidden"
  set fieldName=""
  for  set fieldName=$order(nameList(fieldName)) quit:fieldName=""  do

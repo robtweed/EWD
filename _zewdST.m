@@ -1,7 +1,7 @@
 %zewdST ; Sencha Touch Tag Processors and runtime logic
  ;
- ; Product: Enterprise Web Developer (Build 887)
- ; Build Date: Sat, 29 Oct 2011 16:16:02
+ ; Product: Enterprise Web Developer (Build 892)
+ ; Build Date: Mon, 05 Dec 2011 16:18:59
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -346,28 +346,28 @@ field(nodeOID,parentOID,return,nameList)
  i type="text"!(type="number")!(type="combo")!(type="hidden")!(type="email")!(type="toggle")!(type="url")!(type="spinner")!(type="select")!(type="textarea")!(type="slider") d
  . n id,phpVar
  . s id=$g(mainAttrs("id")) i id="" s id="missingTextId"
- . s phpVar=$$addPhpVar^%zewdCustomTags("#"_id)
+ . s phpVar=$$addPhpVar^%zewdCustomTags("#"_id,"j")
  . i $g(mainAttrs("value"))="" s mainAttrs("value")=phpVar
  ;
  i type="date" d
  . n id,phpVarDay,phpVarMonth,phpVarYear,value
  . s id=$g(mainAttrs("id")) i id="" s id="missingDateId"
- . s phpVarDay=$$addPhpVar^%zewdCustomTags("#"_id_".day")
- . s phpVarMonth=$$addPhpVar^%zewdCustomTags("#"_id_".month")
- . s phpVarYear=$$addPhpVar^%zewdCustomTags("#"_id_".year")
+ . s phpVarDay=$$addPhpVar^%zewdCustomTags("#"_id_".day","j")
+ . s phpVarMonth=$$addPhpVar^%zewdCustomTags("#"_id_".month","j")
+ . s phpVarYear=$$addPhpVar^%zewdCustomTags("#"_id_".year","j")
  . i $g(mainAttrs("value"))="" s mainAttrs("value")=".{day:'"_phpVarDay_"',month:'"_phpVarMonth_"',year:'"_phpVarYear_"'}"
  ;
  i type="radio" d
  . n name,phpVar,value
  . s name=$g(mainAttrs("name")) i name="" s name="missingRadioName"
- . s phpVar=$$addPhpVar^%zewdCustomTags("#"_name)
+ . s phpVar=$$addPhpVar^%zewdCustomTags("#"_name,"j")
  . s value=$g(mainAttrs("value"))
  . s mainAttrs("checked")=".'"_phpVar_"' === '"_value_"'"
  ;
  i type="checkbox" d
  . n id,phpVar,value
  . s id=$g(mainAttrs("id")) i id="" s id="missingRadioId"
- . s phpVar=$$addPhpVar^%zewdCustomTags("#"_id)
+ . s phpVar=$$addPhpVar^%zewdCustomTags("#"_id,"j")
  . s value=$g(mainAttrs("value"))
  . s mainAttrs("checked")=".'"_phpVar_"' === '"_value_"'"
  ;

@@ -1,7 +1,7 @@
 %zewdNode	; Enterprise Web Developer global access APIs for Node.js
  ;
- ; Product: Enterprise Web Developer (Build 885)
- ; Build Date: Wed, 14 Sep 2011 16:02:39
+ ; Product: Enterprise Web Developer (Build 892)
+ ; Build Date: Mon, 05 Dec 2011 16:18:59
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -30,38 +30,63 @@
  ;
  ; Thanks to Stephen Chadwick for enhancements and bug fixes
  ;
-globalAccessMethod ;
+globalAccessMethod(message) ;
  ;
- n crlf,eor,global,method,sor,subscripts,value
+ n crlf,eor,global,method,requestNo,sor,subscripts,value
  ;
  s crlf=$c(13,10)
  s eor=$c(17,18,19,20,13,10)
- s sor=$c(13,10,20,19,18,17)
- r method
+ s sor=$c(20,19,18,17)
+ ;
+ s requestNo=$p(message,$c(1),1)
+ w requestNo_$c(20,19,18,17)
+ s method=$p(message,$c(1),3)
+ ;
+ ;r method
  i $g(^zewd("trace"))=1 d trace^%zewdAPI($j_": method="_method)
  i method="get" d
- . r global,subscripts
+ . s global=$p(message,$c(1),4)
+ . s subscripts=$p(message,$c(1),5)
+ . ;r global,subscripts
  . d get(global,subscripts)
  i method="set" d
- . r global,subscripts,value
+ . s global=$p(message,$c(1),4)
+ . s subscripts=$p(message,$c(1),5)
+ . s value=$p(message,$c(1),6)
+ . ;r global,subscripts,value
  . d set(global,subscripts,value)
  i method="kill" d
- . r global,subscripts
+ . s global=$p(message,$c(1),4)
+ . s subscripts=$p(message,$c(1),5)
+ . ;r global,subscripts
  . d kill(global,subscripts)
  i method="getJSON" d
- . r global,subscripts
+  . s global=$p(message,$c(1),4)
+ . s subscripts=$p(message,$c(1),5)
+ . ;r global,subscripts
  . d getJSON(global,subscripts)
  i method="getSubscripts" d
- . r global,subscripts,from,to
+ . s global=$p(message,$c(1),4)
+ . s subscripts=$p(message,$c(1),5)
+ . s from=$p(message,$c(1),7)
+ . s to=$p(message,$c(1),8)
+ . ;r global,subscripts,from,to
  . d getSubscripts(global,subscripts,from,to)
  i method="increment" d
- . r global,subscripts
+ . s global=$p(message,$c(1),4)
+ . s subscripts=$p(message,$c(1),5)
+ . ;r global,subscripts
  . d increment(global,subscripts)
+ i method="halt" d
+ . ;d trace^%zewdAPI("process "_$j_" has been instructed to halt now")
+ . HALT
  i method="mFunction" d
  . ;
  . n functionName,parameters
  . ;
- . r functionName,parameters
+ . s functionName=$p(message,$c(1),4)
+ . s parameters=$p(message,$c(1),5)
+ . ;r functionName,parameters
  . d mFunction(functionName,parameters)
  QUIT
  ;
@@ -214,10 +239,12 @@ increment(global,subscripts)
  ;
  s x="s value=$increment("_gloRef_")"
  s $zt=$$zt()
+ ;d trace^%zewdAPI("increment: x="_x)
  x x
  s $zt=""
  ;
  w sor_crlf_value_eor
+ ;d trace^%zewdAPI("increment: sent value="_value)
  QUIT
  ;
 mFunction(functionName,parameters)
@@ -482,9 +509,7 @@ nodeListener ;
  ;   this is a queueing-capable gateway and an improvement on the basic
  ;   m_apache gateway substitute
  ;
- n app,array,%CGIEVAR,dev,bodyStarted,eor,ewdAppName,ewdPageName,headArray,hname,i,io,isFirstListener
- n isNode,%KEY,json,line,message,messageType,name,np,nvp,nvps,ok,pageName,path,p1,p2,p3,response
- n rouName,script,sessid,type,value,x,zt
+ n eor,input,isFirstListener,isNode,message,no,noOfMessages,type
  ;
  s isFirstListener=1
  l +^zewd("nodeListener")
@@ -498,36 +523,56 @@ nodeListener ;
  l -^zewd("nodeListener")
  ;
  s isNode=1
- s eor=$c(17,18,19,20,13,10)
+ s eor=$c(17,18,19,20)
  ;
  i $g(^zewd("trace"))=1 d trace^%zewdAPI("NodeListener started: "_$j)
 nodeLoop ;
  ;
+ s $zt="g nodeError"
  s ^zewd("nodeProcesses",$j)=1 ; available
- i $g(^zewd("trace"))=1 d trace^%zewdAPI("NodeListener "_$j_" awaiting read")
- r type:60 e  d  g nodeLoop
+ d trace^%zewdAPI("NodeListener "_$j_" awaiting read")
+ ;s input=""
+ ;f i=1:1 r *x d trace^%zewdAPI("x="_x)
+ r input:60 e  d  g nodeLoop
  . i $g(^zewd("stopProcess",$j))'="" HALT
  s ^zewd("nodeProcesses",$j)=0 ; busy
- i $g(^zewd("trace"))=1 d trace^%zewdAPI("type="_type)
- s type=$$removeCR(type)
- i $g(^%zewd("relink"))=1,'$d(^%zewd("relink","process",$j)) i $$relink^%zewdGTMRuntime()
- i type="http" g nodeHTTP
- i type="socket" g nodeSocket
- i type="globalAccess" d globalAccessMethod 
+ i $g(^zewd("trace"))=1 d
+ . d trace^%zewdAPI($j_": input length ="_$l(input))
+ . d trace^%zewdAPI($j_": input="_input)
+ i input="" g nodeLoop
+ s noOfMessages=$l(input,$c(2))-1
+ f no=1:1:noOfMessages d
+ . s message=$p(input,$c(2),no)
+ . s type=$p(message,$c(1),2)
+ . i type="http" d nodeHTTP(message)
+ . i type="globalAccess" d globalAccessMethod(message)
+ . i type="socket" d nodeSocket(message)
  g nodeLoop
  ;
-nodeHTTP ;
+ ;s type=$$removeCR(type)
+ ;i $g(^%zewd("relink"))=1,'$d(^%zewd("relink","process",$j)) i $$relink^%zewdGTMRuntime()
+ ;i type="http" g nodeHTTP
+ ;i type="socket" g nodeSocket
+ ;i type="globalAccess" d globalAccessMethod 
+ ;g nodeLoop
  ;
- k %CGIEVAR,%KEY
+nodeHTTP(message) ;
  ;
- ;d trace^%zewdAPI($j_" at nodeLoop read..")
- r query,headers,method,content
+ n %CGIEVAR,%KEY
+ n content,ext,headers,method,p1,p2,p3,query,requestNo
+ ;
+ ;r query,headers,method,content
+ s requestNo=$p(message,$c(1),1)
+ s query=$p(message,$c(1),3)
+ s headers=$p(message,$c(1),4)
+ s method=$p(message,$c(1),5)
+ s content=$p(message,$c(1),6)
  ;
  ; remove trailing CR
- s query=$$removeCR(query)
- s headers=$$removeCR(headers)
- s method=$$removeCR(method)
- s content=$$removeCR(content)
+ ;s query=$$removeCR(query)
+ ;s headers=$$removeCR(headers)
+ ;s method=$$removeCR(method)
+ ;s content=$$removeCR(content)
  ;
  s query=$$urlUnescape(query)
  ;
@@ -557,6 +602,7 @@ nodeHTTP ;
  . . . i '$d(%KEY(name,1)) d
  . . . . n value
  . . . . s value=%KEY(name)
+ . . . . k %KEY(name)
  . . . . s %KEY(name,1)=value
  . . . s index=$o(%KEY(name,""),-1)+1
  . . . s %KEY(name,index)=$$urlUnescape(value)
@@ -596,9 +642,13 @@ nodeHTTP ;
  ;k ^robCGI m ^robCGI=%CGIEVAR
  s %KEY("app")=$p(%CGIEVAR("SCRIPT_NAME"),"/",3)
  s %KEY("page")=$p(%CGIEVAR("SCRIPT_NAME"),"/",4)
- s %KEY("page")=$p(%KEY("page"),".ewd",1)
+ s ext=".ewd"
+ i %KEY("page")[".mgwsi" s ext=".mgwsi"
+ s %KEY("page")=$p(%KEY("page"),ext,1)
  ;
  ;d trace^%zewdAPI("invoking nodeEntry")
+ ; write back requestNo so response can be associated with request object in Node
+ w requestNo_$c(20,19,18,17)
  d nodeEntry^%zewdGTMRuntime
  ;d trace^%zewdAPI("returned from nodeEntry")
  ;
@@ -608,11 +658,22 @@ nodeHTTP ;
  . k ^zewd("nodeModules","updated")
  w $c(13,10)
  ;d trace^%zewdAPI("returning to nodeLoop start")
- g nodeLoop
+ QUIT
  ;
-nodeSocket ;
+nodeError ;
+ i $g(^zewd("trace")) d trace^%zewdAPI("Error: "_$j_"; ze="_$ze)
+ QUIT
  ;
- r messageType,token,message
+nodeSocket(socketMessage) ;
+ ;
+ n message,messageType,requestNo,token
+ ;
+ s requestNo=$p(socketMessage,$c(1),1)
+ w requestNo_$c(20,19,18,17)
+ s messageType=$p(socketMessage,$c(1),3)
+ s token=$p(socketMessage,$c(1),4)
+ s message=$p(socketMessage,$c(1),5)
+ ;r messageType,token,message
  s token=$$removeCR(token)
  s message=$$removeCR(message)
  s messageType=$$removeCR(messageType)
@@ -628,9 +689,11 @@ nodeSocket ;
  . . d sendSocketMessage("alert","$zv= "_$zv)
  . i messageType="ewdGetFragment" d  q
  . . n app,eor,json,%KEY,n,nvp,page,rouName,stop,targetId,x
- . . s eor=$c(17,18,19,20,13,10)
+ . . s eor=$c(17,18,19,20)
  . . s page=message
- . . r targetId,nvp
+ . . s targetId=$p(socketMessage,$c(1),6)
+ . . s nvp=$p(socketMessage,$c(1),7)
+ . . ;r targetId,nvp
  . . s targetId=$$removeCR(targetId)
  . . s nvp=$$removeCR(nvp)
  . . i nvp'="" d
@@ -667,7 +730,8 @@ nodeSocket ;
  . . s x="d "_rou_"("""_message_""","_sessid_")"
  . . i $g(^zewd("trace"))=1 d trace^%zewdAPI("socketHandler: x="_x)
  . . x x
- g nodeLoop
+ QUIT
+ ;g nodeLoop
  ;
 wlRunErr ;
  ;
@@ -691,7 +755,7 @@ sendSocketMessage(type,message)
  ;
  n eor,json
  ;
- s eor=$c(17,18,19,20,13,10)
+ s eor=$c(17,18,19,20)
  s message=$$replaceAll^%zewdAPI(message,"""","\""")
  s json="{""type"":"""_type_""",""message"":"""_message_"""}"
  w json_eor
@@ -711,7 +775,7 @@ server ;
  h 1
  l +^zewd("nodeProcess")
  l -^zewd("nodeProcess")
- s eor=$c(17,18,19,20,13,10)
+ s eor=$c(17,18,19,20)
  s $zint="d serverSend"
 serverLoop
  s ^zewd("nodeProcesses",$j)=2 ; available
@@ -727,7 +791,7 @@ serverLoop
  ;
 serverSend ;
  n eor,no,token
- s eor=$c(17,18,19,20,13,10)
+ s eor=$c(17,18,19,20)
  ;d trace^%zewdAPI("serverSend invoked for "_$j)
  s ^zewd("nodeProcesses",$j)=0 ; busy
  s no=""

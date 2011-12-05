@@ -1,7 +1,7 @@
 %zewdGTM	;Enterprise Web Developer GT.M/ Virtual Appliance Functions
  ;
- ; Product: Enterprise Web Developer (Build 885)
- ; Build Date: Wed, 14 Sep 2011 16:02:37
+ ; Product: Enterprise Web Developer (Build 892)
+ ; Build Date: Mon, 05 Dec 2011 16:18:59
 	;
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -949,6 +949,7 @@ install2 ;
  w !,"Routine Path ("_default_"): " r x
  i $zb=$c(27) w ! g install1
  i x="" s x=default w x
+ i $e(x,$l(x))'="/" s x=x_"/"
  s ^zewd("config","routinePath","gtm")=x
  ;
 install3 ; 

@@ -1,7 +1,7 @@
 %zewdAPI2 ; Enterprise Web Developer run-time functions and user APIs
  ;
- ; Product: Enterprise Web Developer (Build 885)
- ; Build Date: Wed, 14 Sep 2011 16:02:35
+ ; Product: Enterprise Web Developer (Build 892)
+ ; Build Date: Mon, 05 Dec 2011 16:18:58
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -67,3 +67,125 @@ getTmpSessionObject(objectName,propertyName,sessid)
     x x
     QUIT value
     ;
+ ;
+ ; Output encoding functions to prevent XSS attacks
+ ;
+jsOutputEncode(string,max)
+ ;
+ n stop,str
+ ;
+ s max=$g(max)
+ i max="" s max=10
+ s stop=0
+ f i=1:1:max d  q:stop
+ . s str=$$jsDecode(string)
+ . i str=string s stop=1
+ . s string=str
+ ;
+ QUIT $$jsEncode(string)
+ ;
+jsEncode(string)
+ ;
+ ; Output encode untrusted value for use within Javascript
+ ;
+ n a,buff,c,encode,i
+ s buff=""
+ f i=1:1:$l(string) d
+ . s c=$e(string,i)
+ . s a=$a(c)
+ . s encode=1
+ . i a=32 s encode=0 ; space
+ . i a>47,a<58 s encode=0 ; number
+ . i a>63,a<91 s encode=0 ; upper case
+ . i a>96,a<123 s encode=0 ; lower case
+ . i 'encode s buff=buff_c q
+ . ;
+ . s buff=buff_"\x"_$$hexEncode(a)
+ s buff=$$replaceAll^%zewdAPI(buff,"\x5Cn","\n")
+ s buff=$$replaceAll^%zewdAPI(buff,"\x5Cr","\r")
+ QUIT buff
+ ;
+hexEncode(number)
+ n hex,no,str
+ s hex=""
+ s str="123456789ABCDEF"
+ f  d  q:number=0
+ . s no=number#16
+ . s number=number\16
+ . i no s no=$e(str,no)
+ . s hex=no_hex
+ QUIT hex
+ ;
+hexDecode(hex)
+ QUIT $$hexToDecimal^%zewdGTMRuntime(hex)
+ ;
+jsDecode(string)
+ ;
+ n a,c,c1,c12,c2,np,pos
+ ;
+ s pos=$f(string,"\x")
+ f  q:pos=0  d
+ . s pos=$f(string,"\x")
+ . q:pos=0
+ . s np=$l(string,"\x")+2
+ . s c12=$e(string,pos,pos+1)
+ . i $tr(c12,"0123456789ABCDEFabcdef","")'="" d
+ . . ; \x wasn't followed by 2 hex chars: temporarily escape out \x
+ . . s string=$p(string,"\x",1)_$c(1)_$p(string,"\x",2,np)
+ . e  d
+ . . s c1=$e(c12,1)
+ . . s c2=$e(c12,2)
+ . . s a=($$hexDecode(c1)*16)+$$hexDecode(c2)
+ . . s c=$c(a)
+ . . s string=$p(string,"\x",1)_c_$e(string,pos+2,$l(string))
+ s string=$$REPLALL^%wlduta(string,$c(1),"\x")
+ QUIT string
+ ;
+htmlOutputEncode(string,max)
+ ;
+ n stop,str
+ ;
+ s max=$g(max)
+ i max="" s max=10
+ s stop=0
+ f i=1:1:max d  q:stop
+ . s str=$$zcvt^%zewdAPI(string,"I","HTML")
+ . i str=string s stop=1
+ . s string=str
+ ;
+ QUIT $$zcvt^%zewdAPI(string,"O","HTML")
+ ;
+urlOutputEncode(string,max)
+ ;
+ n stop,str
+ ;
+ s max=$g(max)
+ i max="" s max=10
+ s stop=0
+ f i=1:1:max d  q:stop
+ . s str=$$urlEscape^%zewdGTMLRuntime(str)
+ . i str=string s stop=1
+ . s string=str
+ ;
+ QUIT $$urlUnescape^%zewdGTMLRuntime(string)
+ ;
+test()
+ n ver
+ s ver=$$version^%zewdAPI()
+ s ver="<script>alert('"_ver_"')</script>"
+ QUIT ver
+ ;
+getNextSessionName(name,sessid)
+ ;
+ QUIT $o(^%zewdSession("session",sessid,name))
+ ;
+getSessionNames(arrayOfNames,sessid)
+ ;
+ n name
+ ;
+ k arrayOfNames
+ s name=""
+ f  s name=$$getNextSessionName(name,sessid) q:name=""  d
+ . s arrayOfNames(name)=""
+ QUIT
+ ;
