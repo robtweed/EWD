@@ -1,7 +1,7 @@
 %zewdCompiler16	; Enterprise Web Developer Compiler Functions
  ;
- ; Product: Enterprise Web Developer (Build 892)
- ; Build Date: Mon, 05 Dec 2011 16:18:59
+ ; Product: Enterprise Web Developer (Build 893)
+ ; Build Date: Tue, 13 Dec 2011 09:45:37
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |

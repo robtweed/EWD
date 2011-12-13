@@ -1,7 +1,7 @@
 %zewdNode	; Enterprise Web Developer global access APIs for Node.js
  ;
- ; Product: Enterprise Web Developer (Build 892)
- ; Build Date: Mon, 05 Dec 2011 16:18:59
+ ; Product: Enterprise Web Developer (Build 893)
+ ; Build Date: Tue, 13 Dec 2011 09:45:38
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -561,6 +561,7 @@ nodeHTTP(message) ;
  n %CGIEVAR,%KEY
  n content,ext,headers,method,p1,p2,p3,query,requestNo
  ;
+ i $g(^%zewd("relink"))=1,'$d(^%zewd("relink","process",$j)) i $$relink^%zewdGTMRuntime()
  ;r query,headers,method,content
  s requestNo=$p(message,$c(1),1)
  s query=$p(message,$c(1),3)
@@ -674,9 +675,9 @@ nodeSocket(socketMessage) ;
  s token=$p(socketMessage,$c(1),4)
  s message=$p(socketMessage,$c(1),5)
  ;r messageType,token,message
- s token=$$removeCR(token)
- s message=$$removeCR(message)
- s messageType=$$removeCR(messageType)
+ ;s token=$$removeCR(token)
+ ;s message=$$removeCR(message)
+ ;s messageType=$$removeCR(messageType)
  i $g(^zewd("trace"))=1 d trace^%zewdAPI("messageType: "_messageType_": token="_token_"; message="_message)
  s sessid=$$getSessid^%zewdPHP(token)
  i $$isTokenExpired^%zewdPHP(token) s sessid=""
@@ -694,8 +695,8 @@ nodeSocket(socketMessage) ;
  . . s targetId=$p(socketMessage,$c(1),6)
  . . s nvp=$p(socketMessage,$c(1),7)
  . . ;r targetId,nvp
- . . s targetId=$$removeCR(targetId)
- . . s nvp=$$removeCR(nvp)
+ . . ;s targetId=$$removeCR(targetId)
+ . . ;s nvp=$$removeCR(nvp)
  . . i nvp'="" d
  . . . n i,name,np,value
  . . . s np=$l(nvp,"&")
@@ -758,7 +759,7 @@ sendSocketMessage(type,message)
  s eor=$c(17,18,19,20)
  s message=$$replaceAll^%zewdAPI(message,"""","\""")
  s json="{""type"":"""_type_""",""message"":"""_message_"""}"
- w json_eor
+ w json_$c(17,17,17,17)_eor
  QUIT
  ;
 removeCR(string)
@@ -794,6 +795,7 @@ serverSend ;
  s eor=$c(17,18,19,20)
  ;d trace^%zewdAPI("serverSend invoked for "_$j)
  s ^zewd("nodeProcesses",$j)=0 ; busy
+ w "-99"_$c(20,19,18,17)
  s no=""
  f  s no=$o(^zewd("message",no)) q:no=""  d
  . s sessid=$g(^zewd("message",no,"sessid"))
@@ -808,8 +810,9 @@ serverSend ;
  . . . ;s message=$p(message,$c(1),4)
  . . . s json="{""type"":""serverSend"",""subType"":"""_type_""",""token"":"""_token_""",""message"":"""_message_"""}"
  . . . ;w "serverSend:"_type_":"_token_":"_message_eor
- . . . w json_eor
+ . . . w json_$c(17,17,17,17)
  . k ^zewd("message",no)
+ w eor
  s ^zewd("nodeProcesses",$j)=2 ; available
  QUIT
  ;
