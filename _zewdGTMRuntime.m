@@ -1,7 +1,7 @@
 %zewdGTMRuntime ; EWD for GT.M.  Runtime interface  
  ;
- ; Product: Enterprise Web Developer (Build 893)
- ; Build Date: Tue, 13 Dec 2011 09:45:38
+ ; Product: Enterprise Web Developer (Build 894)
+ ; Build Date: Wed, 14 Dec 2011 08:43:22
  ;
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -931,6 +931,7 @@ pre1 ;
  s text=text_" s sessionArray(""ewd_pageName"")="""_pageName_""""_$c(13,10)
  s text=text_" s sessionArray(""ewd_translationMode"")="""_multilingual_""""_$c(13,10)
  s text=text_" s sessionArray(""ewd_technology"")=""gtm"""_$c(13,10)
+ i $g(config("websockets"))="true" s text=text_" s sessionArray(""ewd_websockets"")=""true"""_$c(13,10)
  if $g(config("errorClass"))'="" s text=$$createSessionArray("errorClass","errorClass",text)
  i $g(config("cachePage"))="false" d
  . s text=text_" s sessionArray(""ewd_header"",""Expires"")=0"_$c(13,10)

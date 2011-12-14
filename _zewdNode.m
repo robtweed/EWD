@@ -1,7 +1,7 @@
 %zewdNode	; Enterprise Web Developer global access APIs for Node.js
  ;
- ; Product: Enterprise Web Developer (Build 893)
- ; Build Date: Tue, 13 Dec 2011 09:45:38
+ ; Product: Enterprise Web Developer (Build 894)
+ ; Build Date: Wed, 14 Dec 2011 08:43:22
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -530,7 +530,7 @@ nodeLoop ;
  ;
  s $zt="g nodeError"
  s ^zewd("nodeProcesses",$j)=1 ; available
- d trace^%zewdAPI("NodeListener "_$j_" awaiting read")
+ i $g(^zewd("trace"))=1 d trace^%zewdAPI("NodeListener "_$j_" awaiting read")
  ;s input=""
  ;f i=1:1 r *x d trace^%zewdAPI("x="_x)
  r input:60 e  d  g nodeLoop
@@ -768,6 +768,7 @@ removeCR(string)
  ; WebSockets code for server-generated messages
  ;
 server ;
+ i $g(^zewd("trace"))=1 d trace^%zewdAPI("Node Sockets broadbast process starting on "_$j)
  ;
  ; GT.M interrupt mechanism
  ;
@@ -821,7 +822,7 @@ createServerMessage(type,message,sessid,trigger)
  n no,resourceName,token,value
  ;
  i $g(sessid)="" QUIT 0
- s token=$$getSessionValue^%zewdAPI("ewd_token",sessid)
+ s token=$$getSessionValue^%zewdAPI("ewd_wstoken",sessid)
  i token="" QUIT 0
  i $$isTokenExpired^%zewdPHP(token) QUIT 0
  d updateSession(sessid)

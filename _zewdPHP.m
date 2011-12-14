@@ -1,7 +1,7 @@
 %zewdPHP	; Enterprise Web Developer PHP run-time functions and processing
  ;
- ; Product: Enterprise Web Developer (Build 893)
- ; Build Date: Tue, 13 Dec 2011 09:45:38
+ ; Product: Enterprise Web Developer (Build 894)
+ ; Build Date: Wed, 14 Dec 2011 08:43:22
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -107,7 +107,9 @@ startSession(page,requestArray,serverArray,sessionArray,filesArray) ;
  . d setSessionValue("ewd.touchEvent","ontouchstart",sessid)
  e  d
  . d setSessionValue("ewd.touchEvent","onclick",sessid)
- d setSessionValue("ewd.browserOS",os,sessid) 
+ d setSessionValue("ewd.browserOS",os,sessid)
+ i $$getSessionValue("ewd_websockets",sessid)="true",$$getSessionValue("ewd_wstoken",sessid)="" d
+ . d setSessionValue("ewd.wstoken",$$getSessionValue("ewd_token",sessid),sessid)
  ;k ^rlt("sessionArray") m ^rlt("sessionArray")=sessionArray
  i $$getSessionValue("ewd_persistRequest",sessid)="true" d  d updateSessionFromRequest(.requestArray,sessid)
  . ;d trace^%zewdAPI("updating session from request")
@@ -219,6 +221,8 @@ createNewSession(page,requestArray,sessionArray)
  s browserType=$$getBrowser(.serverArray,.os)
  d setSessionValue("ewd.browserType",browserType,sessid)
  d setSessionValue("ewd.browserOS",os,sessid)
+ i $$getSessionValue("ewd_websockets",sessid)="true",$$getSessionValue("ewd_wstoken",sessid)="" d
+ . d setSessionValue("ewd.wstoken",$$getSessionValue("ewd_token",sessid),sessid) 
  i browserType="iphone" d 
  . d setSessionValue("ewd.touchEvent","ontouchstart",sessid)
  e  d

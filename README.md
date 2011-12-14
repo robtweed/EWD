@@ -2,12 +2,12 @@
  
 EWD is a Free Open Source Ajax Framework for GT.M
 
-Build 893
+Build 894
 
 Main changes:
 
 Websockets support: bug fixes
-Use with build 21 of ewdGateway.js
+Use with build 22 of ewdGateway.js
 
 #Previous Build Notes
 
