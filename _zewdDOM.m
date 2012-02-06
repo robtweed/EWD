@@ -1,11 +1,11 @@
 %zewdDOM	; Enterprise Web Developer support functions
  ;
- ; Product: Enterprise Web Developer (Build 894)
- ; Build Date: Wed, 14 Dec 2011 08:43:21
+ ; Product: Enterprise Web Developer (Build 896)
+ ; Build Date: Mon, 06 Feb 2012 14:48:18
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
- ; | Copyright (c) 2004-11 M/Gateway Developments Ltd,                        |
+ ; | Copyright (c) 2004-12 M/Gateway Developments Ltd,                        |
  ; | Reigate, Surrey UK.                                                      |
  ; | All rights reserved.                                                     |
  ; |                                                                          |
@@ -995,6 +995,9 @@ outputNode(nodeOID,indent,escape,format)
  . . . s text=$$replaceAll^%zewdAPI(text,$c(9),"\t")
  . . . s text=$$replaceAll^%zewdAPI(text,$c(10),"\n")
  . . . s text=$$replaceAll^%zewdAPI(text,$c(13),"\r")
+ . . . s text=$$replaceAll^%zewdAPI(text,"&amp;","&amp;amp;") ;DLW
+ . . . s text=$$replaceAll^%zewdAPI(text,"&lt;","&amp;lt;") ;DLW
+ . . . s text=$$replaceAll^%zewdAPI(text,"&gt;","&amp;gt;") ;DLW
  . . . s text=$$replaceAll^%zewdAPI(text,"&quot;","&amp;quot;")
  . . . s text=$$replaceAll^%zewdAPI(text,"&apos;","&amp;apos;")
  . . w text

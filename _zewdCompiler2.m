@@ -1,11 +1,11 @@
 %zewdCompiler2	; Enterprise Web Developer Compiler : fixed text
  ;
- ; Product: Enterprise Web Developer (Build 894)
- ; Build Date: Wed, 14 Dec 2011 08:43:21
+ ; Product: Enterprise Web Developer (Build 896)
+ ; Build Date: Mon, 06 Feb 2012 14:48:18
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
- ; | Copyright (c) 2004-11 M/Gateway Developments Ltd,                        |
+ ; | Copyright (c) 2004-12 M/Gateway Developments Ltd,                        |
  ; | Reigate, Surrey UK.                                                      |
  ; | All rights reserved.                                                     |
  ; |                                                                          |
@@ -27,8 +27,8 @@
  ; ----------------------------------------------------------------------------
  ;
  ;
-version ;; 894
-date	;; 13 December 2011
+version ;; 896
+date	;; 06 February 2012
  ;
 ewdError ;
  ;;*jsp*<%@ page contentType="text/html" %>
@@ -81,7 +81,7 @@ ewdError ;
  ;;     </div>
  ;;
  ;;     <div class=footerBlock>
- ;;              <p id="footerText">&nbsp;&copy; 2004-2010 M/Gateway Developments Ltd All Rights Reserved</p>
+ ;;              <p id="footerText">&nbsp;&copy; 2004-2012 M/Gateway Developments Ltd All Rights Reserved</p>
  ;;     </div>
  ;;</body>
  ;;</html>

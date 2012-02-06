@@ -1,11 +1,11 @@
 %zewdPHP	; Enterprise Web Developer PHP run-time functions and processing
  ;
- ; Product: Enterprise Web Developer (Build 894)
- ; Build Date: Wed, 14 Dec 2011 08:43:22
+ ; Product: Enterprise Web Developer (Build 896)
+ ; Build Date: Mon, 06 Feb 2012 14:48:18
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
- ; | Copyright (c) 2004-11 M/Gateway Developments Ltd,                        |
+ ; | Copyright (c) 2004-12 M/Gateway Developments Ltd,                        |
  ; | Reigate, Surrey UK.                                                      |
  ; | All rights reserved.                                                     |
  ; |                                                                          |
@@ -578,7 +578,9 @@ prePageScript(sessid)
  . ; note: don't drop a do level in the next 2 lines!
  . i $g(^zewd("config","customErrorTrap",appName))'="" s $zt="zg "_$zl_":"_^zewd("config","customErrorTrap",appName)
  . e  s $zt="zg "_$zl_":prePageError^%zewdPHP"
- . x x
+ . d
+ . . n (%CGIEVAR,error,%KEY,%request,requestArray,serverArray,%session,sessid,x)
+ . . x x
  . u io
  ;
  s $zt="errorTrap^%zewdPHP"
@@ -594,7 +596,9 @@ prePageScript(sessid)
  e  d
  . s $zt="zg "_$zl_":prePageError^%zewdPHP" 
  i $g(^zewd("trace")) d trace^%zewdAPI("About to execute prepage script: x="_x)
- x x
+ d
+ . n (%CGIEVAR,error,%KEY,%request,requestArray,serverArray,%session,sessid,x)
+ . x x
  u io
  s $zt="g errorTrap^%zewdPHP"
  i $g(^zewd("trace")) d trace^%zewdAPI("Prepage script completed. error="_$g(error))
@@ -639,7 +643,9 @@ actionScript(sessid)
  s x="s error=$$"_method_"(sessid)"
  s $zt="zg "_$zl_":actionError^%zewdPHP"
  i $g(^zewd("trace")) d trace^%zewdAPI("about to run action script: x="_x)
- x x
+ d
+ . n (%CGIEVAR,error,%KEY,%request,requestArray,serverArray,%session,sessid,x)
+ . x x
  u io
  s $zt="g errorTrap^%zewdPHP"
  i error="",$$getSessionValue^%zewdAPI("ewd.pageName",sessid)="zextDesktopLoginForm" d
@@ -654,7 +660,9 @@ actionScript(sessid)
  . i method'="" d
  . . s x="s ok=$$"_method_"(sessid)"
  . . s $zt="zg "_$zl_":actionError^%zewdPHP"
- . . x x
+ . . d
+ . . . n (%CGIEVAR,error,%KEY,%request,requestArray,serverArray,%session,sessid,x)
+ . . . x x
  . . u io
  ;
  QUIT error
@@ -914,7 +922,9 @@ customError(sessid,sessionArray)
  QUIT:appName=""
  i $g(^zewd("errorProcessing",appName))'="" d
  . s x="d "_^zewd("errorProcessing",appName)
- . x x
+ . d
+ . . n (%CGIEVAR,error,%KEY,%request,requestArray,serverArray,%session,sessid,x)
+ . . x x
  QUIT
  ;
 closeSession(requestArray) ;
@@ -965,7 +975,9 @@ event(requestArray)
  . s x=$e(x,1,$l(x)-1)_sessString_")"
  s $zt="zg "_$zl_":eventErrorTrap^%zewdPHP"
  i $g(^zewd("trace")) d trace^%zewdAPI("Event broker call invocation: x="_x)
- x x
+ d
+ . n (%CGIEVAR,error,%KEY,%request,requestArray,serverArray,%session,sessid,x)
+ . x x
  ;
  QUIT responseString
  ;

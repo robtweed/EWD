@@ -1,11 +1,11 @@
 %zewdCustomTags	; Enterprise Web Developer Custom Tag Library Functions
  ;
- ; Product: Enterprise Web Developer (Build 894)
- ; Build Date: Wed, 14 Dec 2011 08:43:21
+ ; Product: Enterprise Web Developer (Build 896)
+ ; Build Date: Mon, 06 Feb 2012 14:48:18
  ;
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
- ; | Copyright (c) 2004-11 M/Gateway Developments Ltd,                        |
+ ; | Copyright (c) 2004-12 M/Gateway Developments Ltd,                        |
  ; | Reigate, Surrey UK.                                                      |
  ; | All rights reserved.                                                     |
  ; |                                                                          |
@@ -350,7 +350,7 @@ register(tagName,method,text,impliedClose)
  i $g(impliedClose)="" s impliedClose=0
  i impliedClose'=1,impliedClose'=0 s impliedClose=0
  ;
- s ^%zewd("customTag",tagName)=tagMethod_$c(1)_tagImpliedClose_$c(1,1,1)_"ewd"
+ s ^%zewd("customTag",tagName)=method_$c(1)_impliedClose_$c(1,1,1)_"ewd"
  m ^%zewd("customTag",tagName,"tagNotes")=text
  QUIT ""
  ;

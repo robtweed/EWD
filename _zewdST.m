@@ -1,11 +1,11 @@
 %zewdST ; Sencha Touch Tag Processors and runtime logic
  ;
- ; Product: Enterprise Web Developer (Build 894)
- ; Build Date: Wed, 14 Dec 2011 08:43:22
+ ; Product: Enterprise Web Developer (Build 896)
+ ; Build Date: Mon, 06 Feb 2012 14:48:18
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
- ; | Copyright (c) 2004-11 M/Gateway Developments Ltd,                        |
+ ; | Copyright (c) 2004-12 M/Gateway Developments Ltd,                        |
  ; | Reigate, Surrey UK.                                                      |
  ; | All rights reserved.                                                     |
  ; |                                                                          |
@@ -870,7 +870,16 @@ list(nodeOID,itemsOID)
  . . s text=text_"'"_mainAttrs("nextpage")_"';"
  . e  d
  . . s text=text_$e(mainAttrs("nextpage"),2,$l(mainAttrs("nextpage")))_";"
- . s text=text_"EWD.ajax.getPage({page:page,nvp:nvp});"
+ . ; + DLW
+ . i $g(mainAttrs("synch"))'="" d
+ . . s text=text_"var synch="
+ . . s text=text_mainAttrs("synch")_";"
+ . . s text=text_"EWD.ajax.getPage({page:page,synch:synch,nvp:nvp});"
+ . . k mainAttrs("synch")
+ . e  d
+ . . s text=text_"EWD.ajax.getPage({page:page,nvp:nvp});"
+ . ; - DLW
+ . ;s text=text_"EWD.ajax.getPage({page:page,nvp:nvp});"
  . ;s fn=$$ewdAjaxRequest(mainAttrs("nextpage"),"ewdNullId",1,listOID)
  . ;s text=text_fn_"(nvp);"
  . k mainAttrs("nextpage")
