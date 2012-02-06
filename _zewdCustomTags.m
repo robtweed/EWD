@@ -1,7 +1,7 @@
 %zewdCustomTags	; Enterprise Web Developer Custom Tag Library Functions
  ;
  ; Product: Enterprise Web Developer (Build 896)
- ; Build Date: Mon, 06 Feb 2012 14:48:18
+ ; Build Date: Mon, 06 Feb 2012 17:28:14
  ;
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -253,7 +253,8 @@ loadFiles(appName,type,sessid)
  . s deferAttr=""
  . i defer s deferAttr=" defer='defer'"
  . s src=file
- . i $e(file,1)'="/" s src=path_file 
+ . i $e(file,1)'="/",$e(file,1,7)'="http://",$e(file,1,8)'="https://" s src=path_file
+ . ;i $e(file,1)'="/" s src=path_file 
  . i type="js" w "<script src='"_src_"' type='text/javascript'"_deferAttr_"></script>"_$c(13,10)
  . i type="css" w "<link href='"_src_"' rel='stylesheet' type='text/css' />"_$c(13,10)
  ;
@@ -265,7 +266,8 @@ loadFiles(appName,type,sessid)
  . s deferAttr=""
  . i defer s deferAttr=" defer='defer'"
  . s src=file
- . i $e(file,1)'="/" s src=path_file 
+ . i $e(file,1)'="/",$e(file,1,7)'="http://",$e(file,1,8)'="https://" s src=path_file
+ . ;i $e(file,1)'="/" s src=path_file 
  . i type="js" w "<script src='"_src_"' type='text/javascript'"_deferAttr_"></script>"_$c(13,10)
  . i type="css" w "<link href='"_src_"' rel='stylesheet' type='text/css' />"_$c(13,10)
  ;

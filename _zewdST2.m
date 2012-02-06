@@ -1,7 +1,7 @@
 %zewdST2 ; Sencha Touch Tag Processors and runtime logic
  ;
  ; Product: Enterprise Web Developer (Build 896)
- ; Build Date: Mon, 06 Feb 2012 14:48:18
+ ; Build Date: Mon, 06 Feb 2012 17:28:14
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -125,10 +125,11 @@ container(nodeOID,attrValue,docOID,technology)
  . i tagName="st:content" d
  . . d containerContent(childOID,headOID)
  . i tagName="script" d
- . . n src
+ . . n defer,src
+ . . s defer=$$getAttribute^%zewdDOM("defer",childOID)="true"
  . . s src=$$getAttribute^%zewdDOM("src",childOID)
  . . s xOID=$$removeChild^%zewdDOM(childOID)
- . . d registerResource^%zewdCustomTags("js",src,"",app)
+ . . d registerResource^%zewdCustomTags("js",src,"",app,defer)
  . . ;s xOID=$$appendChild^%zewdDOM(childOID,headOID)
  . i tagName="link" d
  . . n src
