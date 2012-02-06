@@ -6,9 +6,9 @@ Build 896
 
 Main changes:
 
-Automatic clear-down of symbol table after users' scripts terminate
-Copyright date update to 2012
-David Wicksell's enhancements to Sencha Touch tags
+- Automatic clear-down of symbol table after users' scripts terminate
+- Copyright date update to 2012
+- David Wicksell's enhancements to Sencha Touch tags
 
 #Previous Build Notes
 
