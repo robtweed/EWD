@@ -1,7 +1,7 @@
 %zewdCompiler7	; Enterprise Web Developer Compiler Functions
  ;
- ; Product: Enterprise Web Developer (Build 896)
- ; Build Date: Mon, 06 Feb 2012 17:28:14
+ ; Product: Enterprise Web Developer (Build 906)
+ ; Build Date: Wed, 28 Mar 2012 12:51:59
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -944,6 +944,7 @@ processTag(tagName,attrList,procName,include,defFile,docName,technology,error)
 processTagError ;
 	;
 	i $g(%zt)'="" s $zt=%zt
+	;d ^%STACK
 	;s error="Error in custom tag processing of the <"_tagName_"> tag : "_procName_" not found in the "_$$namespace^%zewdAPI()_" namespace"
 	s error="Error in custom tag processing of the <"_$g(tagName)_"> tag : "_$ze
 	QUIT
@@ -1180,7 +1181,7 @@ ewdConfig(docName,phpHeaderArray,routineName,technology,dataTypeList,inputPath,f
 	; If missing, set page to be allowed to be used as a first page,
 	; and no pre-page Script
 	; 
-	n nodeOID,secureRequest,prePageScript,multiLingual,onErrorScript,templatePrePageScript
+	n multiLingual,nodeOID,onErrorScript,prePageScript,preProcess,secureRequest,templatePrePageScript
 	;
 	i $$isXSLFO^%zewdCompiler(docName) d  QUIT 0
 	. s pageName=$$XSLFO^%zewdCompiler7(docName)
@@ -1227,6 +1228,7 @@ ewdConfig(docName,phpHeaderArray,routineName,technology,dataTypeList,inputPath,f
 	. . . s page=$p(filename,".ewd",1)
 	. . . s ^zewd("nodeModules","methods",$$zcvt^%zewdAPI(app,"l"),$$zcvt^%zewdAPI(page,"l"))=$p(prePageScript,"js:",2)
 	. s templatePrePageScript=$$getAttributeValue^%zewdDOM("templateprepagescript",1,nodeOID)
+	. s preProcess=$$getAttributeValue^%zewdDOM("preprocess",1,nodeOID)
 	. d
 	. . i filename="ewdAjaxError.ewd" q
 	. . i filename="ewdAjaxErrorRedirect.ewd" q
@@ -1235,6 +1237,10 @@ ewdConfig(docName,phpHeaderArray,routineName,technology,dataTypeList,inputPath,f
 	. . i $e(templatePrePageScript,1)="$" s config("templatePrePageScript")=templatePrePageScript_"($ewd_session)" q
 	. . i templatePrePageScript["^" s config("templatePrePageScript")=templatePrePageScript
 	. . s config("templatePrePageScript")=templatePrePageScript
+	. . i preProcess'["^",$e(preProcess,1,7)'="##class",$e(preProcess,1)'="$",$g(routineName)'="" s config("preProcess")=config("preProcess")_"^"_routineName q
+	. . i $e(preProcess,1)="$" s config("preProcess")=preProcess_"($ewd_session)" q
+	. . i preProcess["^" s config("preProcess")=preProcess
+	. . s config("preProcess")=preProcess
 	. s onErrorScript=$$getAttributeValue^%zewdDOM("onerrorscript",1,nodeOID)
 	. d
 	. . i onErrorScript'["^",$e(onErrorScript,1,7)'="##class",$e(onErrorScript,1)'="$",$g(routineName)'="" s config("onErrorScript")=config("onErrorScript")_"^"_routineName q

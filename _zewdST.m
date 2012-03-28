@@ -1,7 +1,7 @@
 %zewdST ; Sencha Touch Tag Processors and runtime logic
  ;
- ; Product: Enterprise Web Developer (Build 896)
- ; Build Date: Mon, 06 Feb 2012 17:28:14
+ ; Product: Enterprise Web Developer (Build 906)
+ ; Build Date: Wed, 28 Mar 2012 12:52:00
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -1363,6 +1363,7 @@ toolbarButton(nodeOID,parentOID)
  . . s targetId=$g(mainAttrs("targetid")) i targetId="" s targetId="st-uui-nullId"
  . . s jsText="ewd.ajaxRequest("""_nextPage_""","""_targetId_""");"
  . . s funcOID=$$addElementToDOM^%zewdDOM("ewd:jsfunction",preSTOID,,.attr,jsText)
+ . . s mainAttrs("handler")=handler
  ;e  d
  ;. s handler="EWD.sencha.onToolbarBack"
  ;

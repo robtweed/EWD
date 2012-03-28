@@ -1,7 +1,7 @@
 %zewdJSON	; Enterprise Web Developer JSON functions
  ;
- ; Product: Enterprise Web Developer (Build 896)
- ; Build Date: Mon, 06 Feb 2012 17:28:14
+ ; Product: Enterprise Web Developer (Build 906)
+ ; Build Date: Wed, 28 Mar 2012 12:52:00
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -183,6 +183,7 @@ getJSONValue(buff)
  QUIT value
  ;
 numeric(value)
+ i value?1"0."1N.N QUIT 1
  i $e(value,1)=0,$l(value)>1 QUIT 0
  i $e(value,1,2)="-0",$l(value)>2,$e(value,1,3)'="-0." QUIT 0
  i value?1N.N QUIT 1

@@ -2,15 +2,20 @@
  
 EWD is a Free Open Source Ajax Framework for GT.M
 
-Build 896
+Build 906
 
 Main changes:
+
+- ExtJS version 4 Custom Tags
+- David Wicksell's enhancements to XML/XSLT handling
+
+#Previous Build Notes
+
+Build 896 included:
 
 - Automatic clear-down of symbol table after users' scripts terminate
 - Copyright date update to 2012
 - David Wicksell's enhancements to Sencha Touch tags
-
-#Previous Build Notes
 
 Build 894 included:
 

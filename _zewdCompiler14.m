@@ -1,7 +1,7 @@
 %zewdCompiler14	; Enterprise Web Developer Compiler : ajax fixed text
  ;
- ; Product: Enterprise Web Developer (Build 896)
- ; Build Date: Mon, 06 Feb 2012 17:28:14
+ ; Product: Enterprise Web Developer (Build 906)
+ ; Build Date: Wed, 28 Mar 2012 12:51:59
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |

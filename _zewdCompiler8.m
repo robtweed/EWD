@@ -1,7 +1,7 @@
 %zewdCompiler8	; Enterprise Web Developer Compiler Functions
  ;
- ; Product: Enterprise Web Developer (Build 896)
- ; Build Date: Mon, 06 Feb 2012 17:28:14
+ ; Product: Enterprise Web Developer (Build 906)
+ ; Build Date: Wed, 28 Mar 2012 12:52:00
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -282,6 +282,13 @@ ajax(docName,technology,idList)
 	;
 	s nodeOID=$$getTagOID^%zewdCompiler("ewd:config",docName)
 	s pageType=$$zcvt^%zewdAPI($$getAttributeValue^%zewdDOM("pagetype",1,nodeOID),"l")
+	i pageType="" d
+	. n nsOID,tagName
+	. s nsOID=$$getNextSibling^%zewdDOM(nodeOID)
+	. s tagName=$$getTagName^%zewdDOM(nsOID)
+	. i tagName[":fragment" d
+	. . s pageType="ajax"
+	. . d setAttribute^%zewdDOM("pagetype",pageType,nodeOID)
 	;
 	s isAjax=0
 	i pageType="ajax" d

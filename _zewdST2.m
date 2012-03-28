@@ -1,7 +1,7 @@
 %zewdST2 ; Sencha Touch Tag Processors and runtime logic
  ;
- ; Product: Enterprise Web Developer (Build 896)
- ; Build Date: Mon, 06 Feb 2012 17:28:14
+ ; Product: Enterprise Web Developer (Build 906)
+ ; Build Date: Wed, 28 Mar 2012 12:52:00
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -976,65 +976,265 @@ convertToCamelCase(string)
  ;
 camelCaseTerms
  ;;activeCls
+ ;;activeError
+ ;;activeErrorsTpl
  ;;activeItem
+ ;;activeTab
+ ;;allowBlank
+ ;;allowDomMove
+ ;;allQuery
+ ;;altFormats
+ ;;animCollapse
+ ;;applyTo
  ;;autoCapitalize
  ;;autoDestroy
+ ;;autoEl
+ ;;autoFitErrors
+ ;;autoLoad
+ ;;autoHeight
+ ;;autoRender
+ ;;autoScroll
+ ;;autoShow
+ ;;autoWidth
+ ;;baseBodyCls
  ;;baseCls
  ;;baseParams
+ ;;blankText
  ;;bodyBorder
+ ;;bodyCls
  ;;bodyMargin
+ ;;bodyStyle
  ;;bodyPadding
+ ;;boxLabel
  ;;bubbleEvents
+ ;;buttonAlign
  ;;cardSwitchAnimation
+ ;;checkChangeBuffer
+ ;;checkChangeEvents
+ ;;childEls
+ ;;clearCls
+ ;;clicksToEdit
+ ;;closeAction
+ ;;collapseDirection
+ ;;collapseFirst
+ ;;collapseMode
+ ;;collapsedCls
+ ;;collectData
+ ;;columnLines
+ ;;columnWidth
  ;;componentCls
  ;;componentLayout
  ;;contentEl
+ ;;createLinkText
+ ;;dataIndex
  ;;dayText
+ ;;defaultDockWeights
+ ;;defaultLinkValue
+ ;;defaultListConfig
  ;;defaultType
+ ;;defaultValue
+ ;;deferHeight
+ ;;deferredRender
+ ;;deferRowRender
+ ;;depthToIndent
+ ;;dirtyCls
  ;;disabledClass
  ;;disabledCls
+ ;;disabledDates
+ ;;disabledDatesText
+ ;;disabledDays
+ ;;disabledDaysText
+ ;;disableKeyFilter
  ;;displayField
+ ;;displayInfo
  ;;dockedItems
  ;;doneButton
+ ;;emptyCls
+ ;;emptyText
+ ;;enableAlignments
+ ;;enableColors
+ ;;enableColumnHide
+ ;;enableColumnMove
+ ;;enableColumnResize
+ ;;enableFont
+ ;;enableFontSize
+ ;;enableFormat
+ ;;enableGroupingMeny
+ ;;enableKeyEvents
+ ;;enableLinks
+ ;;enableLists
+ ;;enableLocking
+ ;;enableNoGroups
+ ;;enableSourceEdit
+ ;;enforceMaxLength
  ;;enterAnimation
+ ;;errorMsgCls
+ ;;eventPrefix
+ ;;eventSelector
  ;;exitAnimation
+ ;;falseText
+ ;;fieldBodyCls
+ ;;fieldCls
+ ;;fieldDefaults
+ ;;fieldLabel
+ ;;fieldStyle
+ ;;fieldSubTpl
  ;;floatingCls
+ ;;focusCls
+ ;;focusOnToFront
+ ;;fontFamilies
+ ;;forceFit
+ ;;forceSelection
+ ;;forId
+ ;;formItemCls
+ ;;frameHeader
+ ;;groupByText
+ ;;groupHeaderTpl
+ ;;growAppend
+ ;;growMax
+ ;;growMin
+ ;;hasFeatureEvent
+ ;;headerPosition
+ ;;hideCollapseTool
+ ;;hideEmptyLabel
+ ;;hideGroupedHeader
+ ;;hideHeaders
+ ;;hideLabel
+ ;;hideMode
+ ;;hideMode
  ;;hideOnMaskTap
+ ;;hideParent
+ ;;hideTrigger
  ;;iconCls
  ;;iconMask
+ ;;inputId
+ ;;inputType
+ ;;inputValue
+ ;;invalidCls
+ ;;invalidText
+ ;;itemClick
+ ;;itemId
  ;;itemTpl
+ ;;labelAlign
+ ;;labelCls
+ ;;labelClsExtra
+ ;;labelPad
+ ;;labelableRenderTpl
+ ;;labelSeparator
+ ;;labelStyle
  ;;labelWidth
  ;;layoutConfig
  ;;layoutOnOrientationChange
- ;;labelAlign
+ ;;lazyRender
+ ;;listClass
+ ;;listConfig
+ ;;maintainFlex
+ ;;maskRe
+ ;;matchFieldWidth
  ;;maxHeight
+ ;;maxLength
+ ;;maxLengthText
+ ;;maxTabWidth
+ ;;maxText
  ;;maxValue
  ;;maxWidth
+ ;;minButtonWidth
+ ;;minChars
  ;;minHeight
+ ;;minLength
+ ;;minLengthText
+ ;;minTabWidth
+ ;;minText
  ;;minValue
  ;;minWidth
  ;;monitorOrientation
+ ;;monitorResize
  ;;monthText
+ ;;msgTarget
+ ;;multiSelect
+ ;;openCls
  ;;overCls
+ ;;overlapHeader
+ ;;pageSize
+ ;;pickerAlign
+ ;;pickerOffset
  ;;placeHolder
+ ;;pollForChanges
+ ;;pollInterval
+ ;;preventHeader
+ ;;preventMark
+ ;;queryDelay
+ ;;queryMode
+ ;;queryParam
+ ;;quickStart
+ ;;readOnly
+ ;;readOnlyCls
+ ;;regexText
+ ;;remoteRoot
+ ;;removePanelHeader
+ ;;renderData
  ;;renderSelectors
  ;;renderTo
  ;;renderTpl
+ ;;repeatTriggerClick
+ ;;resizeHandles
+ ;;rootVisible
+ ;;saveDelay
+ ;;scrollData
+ ;;selectOnFocus
+ ;;selectOnTab
+ ;;selModel
+ ;;selType
  ;;showAnimation
+ ;;showGroupsText
+ ;;showSummaryRow
+ ;;showToday
+ ;;simpleSelect
  ;;slotOrder
+ ;;sortableColumns
  ;;standardSubmit
+ ;;startCollapsed
+ ;;startDay
+ ;;stateEvents
+ ;;stateId
  ;;stopMaskTapEvent
  ;;stretchX
  ;;stretchY
+ ;;stripCharsRe
  ;;styleHtmlCls
  ;;styleHtmlContent
+ ;;submitFormat
  ;;submitOnAction
+ ;;submitValue
+ ;;suspendLayout
  ;;tabBar
+ ;;tabIndex
+ ;;tabPosition
+ ;;titleCollapse
+ ;;tipText
+ ;;toFrontOnShow
  ;;tplWriteMode
+ ;;triggerAction
+ ;;triggerBaseCls
+ ;;triggerCls
+ ;;triggerWrapCls
+ ;;trueText
+ ;;typeAhead
+ ;;typeAheadDelay
+ ;;undefinedText
  ;;useClearIcon
+ ;;useCurrentLocation
+ ;;useTips
  ;;useTitles
+ ;;validateOnBlur
+ ;;validateOnChange
  ;;valueField
+ ;;valueNotFoundText
+ ;;viewConfig
+ ;;viewType
+ ;;vtypeText
  ;;waitTpl
+ ;;windowIconCls
  ;;yearFrom
  ;;yearText
  ;;yearTo

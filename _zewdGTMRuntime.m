@@ -1,7 +1,7 @@
 %zewdGTMRuntime ; EWD for GT.M.  Runtime interface  
  ;
- ; Product: Enterprise Web Developer (Build 896)
- ; Build Date: Mon, 06 Feb 2012 17:28:14
+ ; Product: Enterprise Web Developer (Build 906)
+ ; Build Date: Wed, 28 Mar 2012 12:52:00
  ;
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -925,6 +925,7 @@ pre1 ;
  s text=$$createSessionArray("pageTitle","pageTitle",text)
  s text=$$createSessionArray("errorPage","errorPage",text)
  s text=$$createSessionArray("templatePrePageScript","templatePrePageScript",text)
+ s text=$$createSessionArray("preProcess","preProcess",text)
  s text=$$createSessionArray("onErrorScript","onErrorScript",text)
  ;s text=text_" s sessionArray(""ewd_appName"")="""_appName_""""_$c(13,10)
  s text=text_" s sessionArray(""ewd_appName"")="""_app_""""_$c(13,10)

@@ -1,7 +1,7 @@
 %zewdCustomTags	; Enterprise Web Developer Custom Tag Library Functions
  ;
- ; Product: Enterprise Web Developer (Build 896)
- ; Build Date: Mon, 06 Feb 2012 17:28:14
+ ; Product: Enterprise Web Developer (Build 906)
+ ; Build Date: Wed, 28 Mar 2012 12:52:00
  ;
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -275,7 +275,8 @@ loadFiles(appName,type,sessid)
  ;
 registerResource(type,fileName,source,app,defer)
  ;
- i fileName'[("."_type) s fileName=fileName_"."_type
+ i $e(fileName,1,7)'="http://",$e(fileName,1,8)'="https://" d
+ . i fileName'[("."_type) s fileName=fileName_"."_type
  s defer=$g(defer)
  s ^zewd("loader",$$zcvt^%zewdAPI(app,"l"),type,fileName)=source_$c(1)_defer
  ;

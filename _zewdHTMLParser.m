@@ -1,7 +1,7 @@
 %zewdHTMLParser	; Enterprise Web Developer HTML to XHTML Converter
  ;
- ; Product: Enterprise Web Developer (Build 896)
- ; Build Date: Mon, 06 Feb 2012 17:28:14
+ ; Product: Enterprise Web Developer (Build 906)
+ ; Build Date: Wed, 28 Mar 2012 12:52:00
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -266,8 +266,9 @@ addChild(%line,parentOID,docOID,nextLine,%buf,%error,impliedClose,isHTML)
  . . . n textOID,textx
  . . . i %text[$c(9) d  q:%text=""
  . . . . s %text=$$replaceAll^%zewdAPI(%text,$c(9)," ")
- . . . . s textx=$$replaceAll^%zewdAPI(%text,"  "," ")
- . . . . i textx=" " s %text=""
+ . . . . i $g(tagName)'="xsl:text" d  ;DLW
+ . . . . . s textx=$$replaceAll^%zewdAPI(%text,"  "," ")
+ . . . . . i textx=" " s %text=""
  . . . s textOID=$$createTextNode^%zewdDOM(%text,docOID)
  . . . s textOID=$$appendChild^%zewdDOM(textOID,parentOID)
  . . . s childOID=textOID
@@ -355,7 +356,7 @@ tidyText(text)
  . . s os=$$os^%zewdHTMLParser()
  . . i os="windows" s dlim=$c(13,10)
  . s xtext=$$replaceAll^%zewdAPI(text,dlim,"")
- . s xtext=$$replaceAll^%zewdAPI(xtext," ","")
+ . i $g(tagName)'="xsl:text" s xtext=$$replaceAll^%zewdAPI(xtext," ","") ; DLW
  . i xtext="" s text="" q
  . i dlim'="" d
  . . n np,stop

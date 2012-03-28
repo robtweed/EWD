@@ -1,7 +1,7 @@
 %zewdCompiler20	; Enterprise Web Developer Compiler : Combo+ tag processor
  ;
- ; Product: Enterprise Web Developer (Build 896)
- ; Build Date: Mon, 06 Feb 2012 17:28:14
+ ; Product: Enterprise Web Developer (Build 906)
+ ; Build Date: Wed, 28 Mar 2012 12:51:59
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -326,7 +326,8 @@ js(nodeOID,attrValues,docOID,technology)
 	;
 	; replace <ewd:js"> with <div id="ewdscript">
 	; 
-	n childNo,childOID,found,id,jsText,jsTextArray,jsTextOID,lineNo,np,nvp,OIDArray,p1,p2,p3,p4,p5,textArray,trace,url
+	n childNo,childOID,found,id,jsText,jsTextArray,jsTextOID,lineNo
+	n np,nvp,OIDArray,p1,p2,p3,p4,p5,textArray,trace,url
 	;
 	s nodeOID=$$renameTag^%zewdDOM("pre",nodeOID) ; ***
 	d setAttribute^%zewdDOM("id","ewdscript",nodeOID)
@@ -409,7 +410,6 @@ jsSection(nodeOID,attrValues,docOID,technology)
 	. . s textOID=$$convertNodeToText^%zewdDOM(nodeOID)
 	. e  d
 	. . d removeIntermediateNode^%zewdDOM(nodeOID)
-	i id="ewdSTJS" break
 	QUIT
 	;
 convertNodeToText(nodeOID)
@@ -549,12 +549,16 @@ jsSet(nodeOID,attrValues,docOID,technology)
 	;
 jsMethod(nodeOID,attrValues,docOID,technology)
 	;
-	; create a Javascript Set statement
+	; Invoke a Javascript function statement
 	;
-	n comma,jsText,name,ok,paramsOID,textOID,type
+	n comma,jsText,name,ok,paramsOID,return,textOID,type,var
 	;
 	s name=$$getAttribute^%zewdDOM("name",nodeOID)
+	s return=$$getAttribute^%zewdDOM("return",nodeOID)
+	s var=$$getAttribute^%zewdDOM("var",nodeOID)
 	s jsText=name_"("
+	i return'="" s jsText=return_"="_jsText
+	i var="true" s jsText="var "_jsText
 	s comma=""
 	s paramsOID=$$getFirstChild^%zewdDOM(nodeOID)
 	i paramsOID'="" d
@@ -624,10 +628,27 @@ jsObject(nodeOID)
  . . . n json2
  . . . s json2=$$jsArray(childOID)
  . . . s json=json_json2
+ . . i type="function" d  q
+ . . . n json2
+ . . . s json2=$$jsFn(childOID)
+ . . . i $e(json2,$l(json2))=";" s json2=$e(json2,1,$l(json2)-1)
+ . . . s json=json_json2
  . . i type="literal" s json=json_""""
  . . s json=json_value
  . . i type="literal" s json=json_""""
- QUIT json_"}"
+ QUIT json_"}"_$c(13,10)
+ ;
+jsFn(nodeOID)
+ ;
+ n fnOID,jsText,json,no,textArr
+ ;
+ s fnOID=$$getFirstChild^%zewdDOM(nodeOID)
+ d jsFunction(fnOID,,docOID)
+ s jsText=$$getElementText^%zewdDOM(nodeOID,.textArr)
+ s no="",json=""
+ f  s no=$o(textArr(no)) q:no=""  d
+ . s json=json_textArr(no)
+ QUIT json
  ;
 jsArray(nodeOID)
  ;
@@ -659,19 +680,30 @@ jsArray(nodeOID)
  . . s json2=$$jsArray(childOID)
  . . s json=json_comma_json2
  . . s comma=","
- QUIT json_"]"
+ QUIT json_"]"_$c(13,10)
  ;
 jsFunction(nodeOID,attrValues,docOID,technology)
  ;<ewd:jsFunction return="xxx" addVar="true">...</ewd:jsFunction>
  ;
- n addVar,attrs,jsText,nsOID,params,return,textOID
+ n addVar,attrs,childNo,childOID,codeOID,jsText,nsOID,OIDArray,params
+ n return,tagName,textOID
  ;
  d getAttributeValues^%zewdCustomTags(nodeOID,.attrs)
  s return=$g(attrs("return"))
  s addVar=$g(attrs("addvar"))
- s params=$g(attrs("parameters"))
- s jsText="" i addVar="true" s jsText="var "
- s jsText=jsText_return_"=function("_params_") {"
+ d getChildrenInOrder^%zewdDOM(nodeOID,.OIDArray)
+ s childNo="",params="",codeOID=""
+ f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d
+ . s childOID=OIDArray(childNo)
+ . s tagName=$$getTagName^%zewdDOM(childOID)
+ . i tagName="ewd:arguments" d
+ . . s params=$$getFnArguments(childOID)
+ . i tagName="ewd:code" d removeIntermediateNode^%zewdDOM(childOID)
+ i params="" s params=$g(attrs("parameters"))
+ s jsText="" 
+ i addVar="true" s jsText="var "
+ i return'="" s jsText=jsText_return_"="
+ s jsText=jsText_"function("_params_") {"
  s textOID=$$createTextNode^%zewdDOM(jsText,docOID)
  s textOID=$$insertBefore^%zewdDOM(textOID,nodeOID)
  s textOID=$$createTextNode^%zewdDOM("};",docOID)
@@ -684,6 +716,26 @@ jsFunction(nodeOID,attrValues,docOID,technology)
  . s textOID=$$appendChild^%zewdDOM(textOID,parOID)
  d removeIntermediateNode^%zewdDOM(nodeOID)
  QUIT
+ ;
+getFnArguments(nodeOID)
+ ;
+ n attrs,childNo,childOID,comma,OIDArray,param,params,tagName
+ ;
+ s params="",comma=""
+ d getChildrenInOrder^%zewdDOM(nodeOID,.OIDArray)
+ s childNo=""
+ f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d
+ . s childOID=OIDArray(childNo)
+ . s tagName=$$getTagName^%zewdDOM(childOID)
+ . i tagName="ewd:argument" d
+ . . d getAttributeValues^%zewdCustomTags(childOID,.attrs)
+ . . s param=$g(attrs("name"))
+ . . i $g(attrs("quoted"))'="false" s param=""""_param_""""
+ . . s params=params_comma_param
+ . . s comma=","
+ ;
+ i $$removeChild^%zewdDOM(nodeOID,1)
+ QUIT params
  ;
 linkToParentSession(sessid)
  ;

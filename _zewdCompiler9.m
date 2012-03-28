@@ -1,7 +1,7 @@
 %zewdCompiler9	; Enterprise Web Developer Compiler : ajax fixed text
  ;
- ; Product: Enterprise Web Developer (Build 896)
- ; Build Date: Mon, 06 Feb 2012 17:28:14
+ ; Product: Enterprise Web Developer (Build 906)
+ ; Build Date: Wed, 28 Mar 2012 12:52:00
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -446,7 +446,12 @@ ajaxLoader ;
 	;;   fetchPage: {},
 	;;   getPage: function(params) {
 	;;      var page = params.page;
-	;;      EWD.ajax.fetchPage[page.toLowerCase()](params);
+	;;      if (typeof EWD.ajax.fetchPage[page.toLowerCase()] != 'undefined') {
+	;;        EWD.ajax.fetchPage[page.toLowerCase()](params);
+	;;      }
+	;;      else {
+	;;        alert("Error: fragment " + page + " does not exist");
+	;;      }
 	;;   },
 	;;   getURL: function(params) {
 	;;      var url = params.url;

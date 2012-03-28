@@ -1,7 +1,7 @@
 %zewdDOM	; Enterprise Web Developer support functions
  ;
- ; Product: Enterprise Web Developer (Build 896)
- ; Build Date: Mon, 06 Feb 2012 17:28:14
+ ; Product: Enterprise Web Developer (Build 906)
+ ; Build Date: Wed, 28 Mar 2012 12:52:00
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -1706,6 +1706,18 @@ getTagOID(tagName,docName,lowerCase)
  ;
 getTagByNameAndAttr(tagName,attrName,attrValue,matchCase,docName)
  QUIT $$getTagByNameAndAttr^%zewdCompiler3($g(tagName),$g(attrName),$g(attrValue),$g(matchCase),$g(docName))
+ ;
+hasChildTag(nodeOID,tagName,childOID)
+ ;
+ n childNo,exists,OIDArray
+ ;
+ s exists=0
+ d getChildrenInOrder^%zewdDOM(nodeOID,.OIDArray)
+ s childNo=""
+ f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d  q:exists
+ . s childOID=OIDArray(childNo)
+ . i tagName=$$getTagName^%zewdDOM(childOID) s exists=1
+ QUIT exists
  ;
 getFormTag(inputOID)
 	n parentOID

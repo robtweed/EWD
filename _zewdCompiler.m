@@ -1,7 +1,7 @@
 %zewdCompiler	; Enterprise Web Developer Compiler
  ;
- ; Product: Enterprise Web Developer (Build 896)
- ; Build Date: Mon, 06 Feb 2012 17:28:14
+ ; Product: Enterprise Web Developer (Build 906)
+ ; Build Date: Wed, 28 Mar 2012 12:51:59
  ; 
  ; 
  ; ----------------------------------------------------------------------------
@@ -85,7 +85,7 @@ getDelim()
  ;
 compileAll(app,mode,technology,outputPath,multilingual,templateFilename,maxLines)
  ;
- n appx,backend,dlim,error,ewd,files,ok,outputAs,path,rawApp
+ n appx,backend,dlim,error,ewd,files,ok,outputAs,passNo,path,rawApp
  ;
  s rawApp=$g(app)
  i '$d(^zewd) d install^%zewdGTM i '$d(^zewd) QUIT
@@ -299,10 +299,12 @@ processApplication(inputPath,outputPath,verbose,outputStyle,results,technology,c
 	i $e(outputPath,$l(outputPath))'=delim s outputPath=outputPath_delim
 	;
 	; clear down custom resource loader records for this application
-	k ^zewd("loader",$$zcvt^%zewdAPI(app))
-	k ^zewd("comboMethod",$$zcvt^%zewdAPI(app))
-	k ^zewd("nodeModules","methods",$$zcvt^%zewdAPI(app))
-	k ^zewd("form",$$zcvt^%zewdAPI(app))
+	s passNo=$g(passNo)+1
+	i passNo=1 d
+	. k ^zewd("loader",$$zcvt^%zewdAPI(app))
+	. k ^zewd("comboMethod",$$zcvt^%zewdAPI(app))
+	. k ^zewd("nodeModules","methods",$$zcvt^%zewdAPI(app))
+	. k ^zewd("form",$$zcvt^%zewdAPI(app))
 	;
 	d getDirectoriesInPath^%zewdHTMLParser(inputPath,.dirs)
 	d getFilesInPath^%zewdHTMLParser(inputPath,"ewd",.files)
@@ -628,6 +630,38 @@ bypassMode(docName)
 	; Bypass mode can be controlled explicitly from within the <ewd:config> tag
 	;
 	s nodeOID=$$getTagOID("ewd:config",docName)
+	i nodeOID="" d
+	. n tagName
+	. ; does it contain a <***:fragment> or <***:container> tag? 
+	. ;If so, add an appropriate <ewd:config> tag
+	. s nodeOID=$$getDocumentElement^%zewdDOM(docName)
+	. s tagName=$$getTagName^%zewdDOM(nodeOID)
+	. i tagName[":fragment"!(tagName[":container") d
+	. . n configOID,docOID,pps
+	. . s docOID=$p(nodeOID,"-",1)_"-1"
+	. . s configOID=$$createElement^%zewdDOM("ewd:config",docOID)
+	. . i tagName[":fragment" d
+	. . . d setAttribute^%zewdDOM("pagetype","ajax",configOID)
+	. . . i $$getAttribute^%zewdDOM("isfirstpage",nodeOID)'="true" d
+	. . . . d setAttribute^%zewdDOM("isfirstpage","false",configOID)
+	. . . e  d
+	. . . . d setAttribute^%zewdDOM("isfirstpage","true",configOID)	
+	. . i tagName[":container" d
+	. . . i $$getAttribute^%zewdDOM("isfirstpage",nodeOID)'="false" d
+	. . . . d setAttribute^%zewdDOM("isfirstpage","true",configOID)
+	. . . . d setAttribute^%zewdDOM("cachepage","false",configOID)
+	. . . . d removeAttribute^%zewdDOM("isfirstpage",nodeOID)
+	. . . e  d
+	. . . . d setAttribute^%zewdDOM("isfirstpage","false",configOID)
+	. . d removeAttribute^%zewdDOM("isfirstpage",nodeOID)
+	. . s pps=$$getAttribute^%zewdDOM("onbeforerender",nodeOID)
+	. . i pps="" s pps=$$getAttribute^%zewdDOM("prepagescript",nodeOID)
+	. . i pps'="" d
+	. . . d setAttribute^%zewdDOM("prepagescript",pps,configOID)
+	. . . d removeAttribute^%zewdDOM("onbeforerender",nodeOID)
+	. . s nodeOID=$$insertBefore^%zewdDOM(configOID,nodeOID)
+	. e  d
+	. . s nodeOID=""
 	i nodeOID="" QUIT 1
 	s bypassMode=$$getAttributeValue^%zewdDOM("bypassmode",0,nodeOID)
 	QUIT $$zcvt^%zewdAPI(bypassMode,"l")="true"

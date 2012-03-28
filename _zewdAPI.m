@@ -1,7 +1,7 @@
 %zewdAPI	; Enterprise Web Developer run-time functions and user APIs
  ;
- ; Product: Enterprise Web Developer (Build 896)
- ; Build Date: Mon, 06 Feb 2012 17:28:14
+ ; Product: Enterprise Web Developer (Build 906)
+ ; Build Date: Wed, 28 Mar 2012 12:51:59
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -516,7 +516,7 @@ setSessionObject(objectName,propertyName,propertyValue,sessid)
     i $e(objectName,1,4)="tmp_" d
     . s x="s zewdSession(",comma=""
 	e  d
-    . s x="s ^%zewdSession(""session"","_sessid
+    . s x="s ^%zewdSession(""session"","""_sessid_""""
     i propertyValue["""" d
     . s propertyValue=$$replaceAll^%zewdAPI(propertyValue,"""",$c(4))
     . s propertyValue=$$replaceAll^%zewdAPI(propertyValue,$c(4),"""""")
@@ -537,7 +537,7 @@ getSessionObject(objectName,propertyName,sessid)
     i np=1 QUIT $g(^%zewdSession("session",sessid,(objectName_"_"_propertyName)))
     ;
     f i=1:1:np-1 s p(i)=$p(objectName,".",i)
-    s x="s value=$g(^%zewdSession(""session"","_sessid
+    s x="s value=$g(^%zewdSession(""session"","""_sessid_""""
     f i=1:1:np-1 s x=x_","""_p(i)_""""
     s x=x_","""_propertyName_"""))"
     x x

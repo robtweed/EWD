@@ -1,7 +1,7 @@
 %zewdPHP	; Enterprise Web Developer PHP run-time functions and processing
  ;
- ; Product: Enterprise Web Developer (Build 896)
- ; Build Date: Mon, 06 Feb 2012 17:28:14
+ ; Product: Enterprise Web Developer (Build 906)
+ ; Build Date: Wed, 28 Mar 2012 12:52:00
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -157,6 +157,7 @@ startSession(page,requestArray,serverArray,sessionArray,filesArray) ;
  i $$getSessionValue("ewd_technology",sessid)="jsp" QUIT error
  ;
  i $g(^zewd("trace")) d trace^%zewdAPI("completed. error="_$g(error))
+ i $e(error,1,3)="js:" QUIT "javascript:"_$e(error,4,$l(error))
  QUIT $$zcvt(error,"o","JS")
  ;
 escapeError(error,sessid)
@@ -344,7 +345,6 @@ putSession(sessid,sessionArray)
 updateSessionFromRequest(requestArray,sessid)
  ;
  ;d trace^%zewdAPI("in updateSessionFromRequest")
- ;k ^rltRequest m ^rltRequest=requestArray
  n ewdAction,i,invalid,name,nameList,npieces,nvp,rname,sessName,type
  ;
  s ewdAction=$g(requestArray("ewd_action"))
@@ -413,7 +413,6 @@ updateSessionFromRequest(requestArray,sessid)
  . . . . i $g(^zewd("trace"))=1 d trace^%zewdAPI("XSS attempt (3) detected: nvp="_nvp_"; all request values were deleted")
  . . . . s invalid=1
  . i '$$allowed(name,.nameList,sessid) q
- . ;d trace^%zewdAPI("allowed name "_name)
  . ;  textareas
  . s sessName=$tr(name,".","_")
  . i $d(^%zewdSession("session",sessid,"ewd_textarea",sessName)) d  q
@@ -569,6 +568,15 @@ prePageScript(sessid)
  ;d trace^%zewdAPI("running prepage script")
  s appName=$$getSessionValue^%zewdAPI("ewd_appName",sessid)
  s appName=$$zcvt^%zewdAPI(appName,"l")
+ ;
+ ; Framework-specific pre-processing
+ ;
+ s method=$$getSessionValue("ewd_preProcess",sessid)
+ i method'="" d
+ . n x
+ . s x="d "_method_"(sessid)"
+ . x x
+ ;
  s error=""
  s method=$$getSessionValue("ewd_templatePrePageScript",sessid)
  i $g(^zewd("trace"))=1 d trace^%zewdAPI("templatePrePageScript method="_method)
