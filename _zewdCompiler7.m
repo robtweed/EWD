@@ -1,7 +1,7 @@
 %zewdCompiler7	; Enterprise Web Developer Compiler Functions
  ;
- ; Product: Enterprise Web Developer (Build 906)
- ; Build Date: Wed, 28 Mar 2012 12:51:59
+ ; Product: Enterprise Web Developer (Build 907)
+ ; Build Date: Fri, 20 Apr 2012 11:29:32
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -1273,6 +1273,8 @@ ewdConfig(docName,phpHeaderArray,routineName,technology,dataTypeList,inputPath,f
 	. i $$os^%zewdHTMLParser()="gtm" s config("mgwsiServer")="gtm"
 	. s config("cachePage")=$$getAttributeValue^%zewdDOM("cachepage",1,nodeOID)
 	. i config("cachePage")="" s config("cachePage")="true"
+	. s config("disableGetPage")=$$getAttributeValue^%zewdDOM("disablegetpage",1,nodeOID)
+	. i config("disableGetPage")="" s config("disableGetPage")="false"
 	. s config("escapeText")=$$getAttributeValue^%zewdDOM("escapetext",1,nodeOID)
 	. i config("escapeText")="" s config("escapeText")="false"
 	. s config("redirection")=$$getAttributeValue^%zewdDOM("redirection",1,nodeOID)

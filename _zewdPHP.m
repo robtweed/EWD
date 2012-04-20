@@ -1,7 +1,7 @@
 %zewdPHP	; Enterprise Web Developer PHP run-time functions and processing
  ;
- ; Product: Enterprise Web Developer (Build 906)
- ; Build Date: Wed, 28 Mar 2012 12:52:00
+ ; Product: Enterprise Web Developer (Build 907)
+ ; Build Date: Fri, 20 Apr 2012 11:29:32
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -74,6 +74,7 @@ startSession(page,requestArray,serverArray,sessionArray,filesArray) ;
  ; sessid will be null if token was either invalid or timed out
  i inError="",sessid="" d  QUIT standardError
  . s error=standardError
+ i '$$isGetPageEnabled^%zewdCompiler24(page,sessid) QUIT "Access to "_page_" is not allowed!"
  i inError'="",sessid="" QUIT ""
  ;
  ; session has been recognised. 

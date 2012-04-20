@@ -1,7 +1,7 @@
 %zewdCompiler8	; Enterprise Web Developer Compiler Functions
  ;
- ; Product: Enterprise Web Developer (Build 906)
- ; Build Date: Wed, 28 Mar 2012 12:52:00
+ ; Product: Enterprise Web Developer (Build 907)
+ ; Build Date: Fri, 20 Apr 2012 11:29:32
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -744,6 +744,7 @@ inputStar(docName,technology,config,idList) ;
 	. . . . . s p1=$p(id,"_",i)
 	. . . . . i $e(p1,1)'="""",$e(p1,1)'="$" s $p(id,"_",i)=""""_p1_""""
 	. . . s id=$$replaceAll^%zewdAPI(id,"_$","_")
+	. . . i $e(id,1)="$" s id=$e(id,2,$l(id))
 	. . . ;
 	. . . s text=" s idList("_id_")="""_class_""""_$c(13,10)
 	. . . s text=text_" d mergeArrayToSession^%zewdAPI(.idList,""ewd_idList"",sessid)"_$c(13,10)

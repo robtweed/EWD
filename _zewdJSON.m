@@ -1,7 +1,7 @@
 %zewdJSON	; Enterprise Web Developer JSON functions
  ;
- ; Product: Enterprise Web Developer (Build 906)
- ; Build Date: Wed, 28 Mar 2012 12:52:00
+ ; Product: Enterprise Web Developer (Build 907)
+ ; Build Date: Fri, 20 Apr 2012 11:29:32
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -116,7 +116,9 @@ parseJSONArray(buff,subs)
  . s c=$e(buff,1)
  . i c="" s error=1,stop=1 q
  . s buff=$e(buff,2,$l(buff))
- . i c=":" s error=1,stop=1 q
+ . i c=":" d  q:stop
+ . . i name'="" q
+ . . s error=1,stop=1
  . i c="]" d  q
  . . s stop=1
  . . i name="" q

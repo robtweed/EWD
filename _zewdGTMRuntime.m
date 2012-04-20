@@ -1,7 +1,7 @@
 %zewdGTMRuntime ; EWD for GT.M.  Runtime interface  
  ;
- ; Product: Enterprise Web Developer (Build 906)
- ; Build Date: Wed, 28 Mar 2012 12:52:00
+ ; Product: Enterprise Web Developer (Build 907)
+ ; Build Date: Fri, 20 Apr 2012 11:29:32
  ;
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -939,7 +939,8 @@ pre1 ;
  . s text=text_" s sessionArray(""ewd_header"",""Cache-Control"")=""no-cache"""_$c(13,10)
  . s text=text_" s sessionArray(""ewd_header"",""Pragma"")=""no-cache"""_$c(13,10)
  s pageType="ajax"
- i $g(config("pageType"))'="ajax" s pageType=""
+ i $g(config("pageType"))'="ajax" d
+ . s pageType=""
  s text=text_" s sessionArray(""ewd_pageType"")="""_pageType_""""_$c(13,10)
  ; 
  s lineNo=""
@@ -1003,6 +1004,14 @@ pre2 ;
  s text=text_" s Error=$$startSession^%zewdPHP("""_pageName_""",.%KEY,.%CGIEVAR,.sessionArray,.filesArray)"_$c(13,10)
  s stop=0
  s text=text_" s sessid=$g(sessionArray(""ewd_sessid""))"_$c(13,10)
+ i $g(config("pageType"))'="ajax" d
+ . ; container pages only
+ . i $e(pageName,1,3)="ewd" q
+ . i $e(pageName,1,4)="zewd" q
+ . s text=text_" d getPageEnabledInit^%zewdCompiler24(sessid)"_$c(13,10)
+ . i $g(config("disableGetPage"))'="true" d
+ . . ; create the getPageEnabled session array
+ . . s text=text_" d createGetPageEnabled^%zewdCompiler24(sessid)"_$c(13,10)
  i $d(config("responseHeader")) d
  . s text=text_" d mergeArrayFromSession^%zewdAPI(.headers,""ewd.header"",sessid)"_$c(13,10)
  . s hname=""

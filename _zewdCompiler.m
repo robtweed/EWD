@@ -1,7 +1,7 @@
 %zewdCompiler	; Enterprise Web Developer Compiler
  ;
- ; Product: Enterprise Web Developer (Build 906)
- ; Build Date: Wed, 28 Mar 2012 12:51:59
+ ; Product: Enterprise Web Developer (Build 907)
+ ; Build Date: Fri, 20 Apr 2012 11:29:31
  ; 
  ; 
  ; ----------------------------------------------------------------------------
@@ -647,12 +647,15 @@ bypassMode(docName)
 	. . . e  d
 	. . . . d setAttribute^%zewdDOM("isfirstpage","true",configOID)	
 	. . i tagName[":container" d
+	. . . n disable
 	. . . i $$getAttribute^%zewdDOM("isfirstpage",nodeOID)'="false" d
 	. . . . d setAttribute^%zewdDOM("isfirstpage","true",configOID)
 	. . . . d setAttribute^%zewdDOM("cachepage","false",configOID)
 	. . . . d removeAttribute^%zewdDOM("isfirstpage",nodeOID)
 	. . . e  d
 	. . . . d setAttribute^%zewdDOM("isfirstpage","false",configOID)
+	. . . s disable=$$getAttribute^%zewdDOM("disablegetpage",nodeOID)
+	. . . i disable'="" d setAttribute^%zewdDOM("disablegetpage",disable,configOID)
 	. . d removeAttribute^%zewdDOM("isfirstpage",nodeOID)
 	. . s pps=$$getAttribute^%zewdDOM("onbeforerender",nodeOID)
 	. . i pps="" s pps=$$getAttribute^%zewdDOM("prepagescript",nodeOID)

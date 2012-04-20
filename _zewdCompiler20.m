@@ -1,7 +1,7 @@
 %zewdCompiler20	; Enterprise Web Developer Compiler : Combo+ tag processor
  ;
- ; Product: Enterprise Web Developer (Build 906)
- ; Build Date: Wed, 28 Mar 2012 12:51:59
+ ; Product: Enterprise Web Developer (Build 907)
+ ; Build Date: Fri, 20 Apr 2012 11:29:32
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -989,20 +989,25 @@ addPhpVar(sessionValue)
 	;
 writePageLinks(app,sessid)
  ;
- n page
- ;
  d loadFiles^%zewdCustomTags($$zcvt^%zewdAPI(app,"l"),"js",sessid)
  i $g(^zewd("config","stopTokenisedURLs",app))=1 QUIT
  i $g(^zewd("config","stopTokenizedURLs",app))=1 QUIT
  ;
  w "<script type='text/javascript'>"_$c(13,10)
+ d writeFetchPages(app,sessid)
+ w "</script>"_$c(13,10)
+ ;
+ QUIT
+ ;
+writeFetchPages(app,sessid)
+ ;
+ n page
+ ;
  s page=""
  f  s page=$o(^%zewdIndex(app,"pages",page)) q:page=""  d
  . w "EWD.ajax.fetchPage['"_$$zcvt^%zewdAPI(page,"l")_"']=function(params) {"_$c(13,10)
  . w " params.url='"_$$tokeniseURL^%zewdCompiler16(page,sessid)_"';"_$c(13,10)
  . w " EWD.ajax.getURL(params);"_$c(13,10)
  . w "};"_$c(13,10)
- w "</script>"_$c(13,10)
- ;
  QUIT
  ;

@@ -1,7 +1,7 @@
 %zewdExt4Map ; Extjs Tag Processor Mappings
  ;
- ; Product: Enterprise Web Developer (Build 906)
- ; Build Date: Wed, 28 Mar 2012 12:52:00
+ ; Product: Enterprise Web Developer (Build 907)
+ ; Build Date: Fri, 20 Apr 2012 11:29:32
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -35,7 +35,7 @@ mappingObjects
  ;;{tagName:"ext4:bbar",parse:{method:"arrayOfOptions",optionName:"bbar"}}
  ;;{tagName:"ext4:bodystyle",parse:{method:"object",optionName:"bodyStyle"}}
  ;;{tagName:"ext4:booleancolumn",className:"Ext.grid.column.Boolean",xtype:"booleancolumn",xtypeTagName:"ext4:item",containerTag:"ext4:columns"}
- ;;{tagName:"ext4:button",className:"Ext.button.Button",xtype:"button",xtypeTagName:"ext4:item",containerTag:"ext4:items",parse:{method:"item"}}
+ ;;{tagName:"ext4:button",className:"Ext.button.Button",xtype:"button",xtypeTagName:"ext4:item",containerTag:"ext4:items",allowedContainers:["ext4:buttons","ext4:bbar","ext4:fbar","ext4:rbar","ext4:tbar"],parse:{method:"item"}}
  ;;{tagName:"ext4:buttongroup",className:"Ext.container.ButtonGroup",xtype:"buttongroup",xtypeTagName:"ext4:item",containerTag:"ext4:tbar"}
  ;;{tagName:"ext4:buttonmenu",expandMethod:"expandButtonMenu",parse:{method:"arrayOfOptions",optionName:"menu"}}
  ;;{tagName:"ext4:buttons",parse:{method:"arrayOfOptions",optionName:"buttons"}}
@@ -130,7 +130,7 @@ mappingObjects
  ;;{tagName:"ext4:tools",parse:{method:"arrayOfOptions",optionName:"tools"}}
  ;;{tagName:"ext4:tool",parse:{method:"item"}}
  ;;{tagName:"ext4:tooltip",className:"Ext.tip.ToolTip",xtype:"tooltip",xtypeTagName:"ext4:item",containerTag:"ext4:items"}
- ;;{tagName:"ext4:treepanel",className:"Ext.tree.Panel",instanceMethod:"treePanelInstance",pass1Method:"treePanelListener"}
+ ;;{tagName:"ext4:treepanel",className:"Ext.tree.Panel",xtype:"treepanel",xtypeTagName:"ext4:item",containerTag:"ext4:items",expandMethod:"expandTreePanel",instanceMethod:"treePanelInstance",pass1Method:"treePanelListener"}
  ;;{tagName:"ext4:viewconfig",parse:{method:"object",optionName:"viewConfig"}}
  ;;{tagName:"ext4:viewport",className:"Ext.container.Viewport"}
  ;;{tagName:"ext4:view",className:"Ext.view.View"}

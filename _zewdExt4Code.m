@@ -1,7 +1,7 @@
 %zewdExt4Code ; Extjs 4 Runtime Logic
  ;
- ; Product: Enterprise Web Developer (Build 906)
- ; Build Date: Wed, 28 Mar 2012 12:52:00
+ ; Product: Enterprise Web Developer (Build 907)
+ ; Build Date: Fri, 20 Apr 2012 11:29:32
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -183,12 +183,12 @@ writeGridStore(sessionName,columnDef,id,storeId,sessid)
  ;
  QUIT
  ;
-writeTreeStore(sessionName,storeId,page,addTo,expanded,sessid)
+writeTreeStore(sessionName,storeId,page,addTo,replace,expanded,sessid)
  ;
  n data,xArray,yArray
  ;
  d mergeArrayFromSession^%zewdAPI(.data,sessionName,sessid)
- d expandTreeArray(.data,.xArray,page,addTo)
+ d expandTreeArray(.data,.xArray,page,addTo,replace)
  m yArray("root","children")=xArray
  s yArray("id")=storeId
  s yArray("expanded")="false"
@@ -199,7 +199,7 @@ writeTreeStore(sessionName,storeId,page,addTo,expanded,sessid)
  ;
  QUIT
  ;
-expandTreeArray(inArray,outArray,page,addTo)
+expandTreeArray(inArray,outArray,page,addTo,replace)
  ;
  n data,index
  ;
@@ -209,13 +209,16 @@ expandTreeArray(inArray,outArray,page,addTo)
  . i $d(inArray(index,"child")) d
  . . n arr,out
  . . m arr=inArray(index,"child")
- . . d expandTreeArray(.arr,.out,page,addTo)
+ . . d expandTreeArray(.arr,.out,page,addTo,replace)
  . . m outArray(index,"children")=out
  . . i $g(inArray(index,"text"))'="" s outArray(index,"text")=inArray(index,"text")
  . . i $g(page)'="" s outArray(index,"page")=page
  . . i $g(addTo)'="" s outArray(index,"addTo")=page
+ . . i $g(inArray(index,"page"))="",$g(inArray(index,"nextPage"))="",$g(replace)'="" s outArray(index,"replace")=replace
  . . i $g(inArray(index,"page"))'="" s outArray(index,"page")=inArray(index,"page")
+ . . i $g(inArray(index,"nextPage"))'="" s outArray(index,"page")=inArray(index,"nextPage")
  . . i $g(inArray(index,"addTo"))'="" s outArray(index,"addTo")=inArray(index,"addTo")
+ . . i $g(inArray(index,"replacePreviousPage"))="true" s outArray(index,"replace")=1
  . . i $g(outArray(index,"page"))'="" d
  . . . s outArray(index,"nvp")=$g(inArray(index,"nvp"))
  . i $g(inArray(index,"text"))'="" d
@@ -225,8 +228,11 @@ expandTreeArray(inArray,outArray,page,addTo)
  . . s outArray(index,"text")=value
  . . i $g(page)'="" s outArray(index,"page")=page
  . . i $g(addTo)'="" s outArray(index,"addTo")=addTo
+ . . i $g(inArray(index,"page"))="",$g(inArray(index,"nextPage"))="",$g(replace)'="" s outArray(index,"replace")=replace
  . . i $g(inArray(index,"page"))'="" s outArray(index,"page")=inArray(index,"page")
+ . . i $g(inArray(index,"nextPage"))'="" s outArray(index,"page")=inArray(index,"nextPage")
  . . i $g(inArray(index,"addTo"))'="" s outArray(index,"addTo")=inArray(index,"addTo")
+ . . i $g(inArray(index,"replacePreviousPage"))="true" s outArray(index,"replace")=1
  . . i $g(outArray(index,"page"))'="" s outArray(index,"nvp")=$g(inArray(index,"nvp"))
  ;
  QUIT
@@ -272,8 +278,9 @@ expandMenuArray(inArray,outArray,page,addTo,replace,menuId,id)
  . . i $g(inArray(index,"text"))'="" s outArray(index,"text")=inArray(index,"text")
  . . i $g(page)'="" s outArray(index,"page")=page
  . . i $g(addTo)'="" s outArray(index,"addTo")=addTo
- . . i $g(replace)'="" s outArray(index,"replace")=replace
+ . . i $g(inArray(index,"page"))="",$g(inArray(index,"nextPage"))="",$g(replace)'="" s outArray(index,"replace")=replace
  . . i $g(inArray(index,"page"))'="" s outArray(index,"page")=inArray(index,"page")
+ . . i $g(inArray(index,"nextPage"))'="" s outArray(index,"page")=inArray(index,"nextPage")
  . . i $g(inArray(index,"addTo"))'="" s outArray(index,"addTo")=inArray(index,"addTo")
  . . i $g(inArray(index,"replacePreviousPage"))="true" s outArray(index,"replace")=1
  . . i $g(outArray(index,"page"))'="" d
@@ -284,8 +291,9 @@ expandMenuArray(inArray,outArray,page,addTo,replace,menuId,id)
  . . s outArray(index,"text")=value
  . . i $g(page)'="" s outArray(index,"page")=page
  . . i $g(addTo)'="" s outArray(index,"addTo")=addTo
- . . i $g(replace)'="" s outArray(index,"replace")=replace
+ . . i $g(inArray(index,"page"))="",$g(inArray(index,"nextPage"))="",$g(replace)'="" s outArray(index,"replace")=replace
  . . i $g(inArray(index,"page"))'="" s outArray(index,"page")=inArray(index,"page")
+ . . i $g(inArray(index,"nextPage"))'="" s outArray(index,"page")=inArray(index,"nextPage")
  . . i $g(inArray(index,"addTo"))'="" s outArray(index,"addTo")=inArray(index,"addTo")
  . . i $g(inArray(index,"replacePreviousPage"))="true" s outArray(index,"replace")=1
  . . i $g(outArray(index,"page"))'="" s outArray(index,"nvp")=$g(inArray(index,"nvp"))

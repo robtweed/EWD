@@ -1,7 +1,7 @@
 %zewdAPI	; Enterprise Web Developer run-time functions and user APIs
  ;
- ; Product: Enterprise Web Developer (Build 906)
- ; Build Date: Wed, 28 Mar 2012 12:51:59
+ ; Product: Enterprise Web Developer (Build 907)
+ ; Build Date: Fri, 20 Apr 2012 11:29:31
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -860,6 +860,16 @@ getCookieValueErr ; --- Come here if error occurred in 'getCookieValue' ---
  ;
 deleteCookie(cookieName,sessid)
  d setCookieValue(cookieName,"",-3600,sessid)
+ QUIT
+ ;
+ ;-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+ ;
+enableGetPage(page,sessid)
+ d enableGetPage^%zewdCompiler24($g(page),$g(sessid))
+ QUIT
+ ;
+disableGetPage(page,sessid)
+ d disableGetPage^%zewdCompiler24($g(page),$g(sessid))
  QUIT
  ;
  ;-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
