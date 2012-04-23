@@ -1,7 +1,7 @@
 %zewdExt4Code ; Extjs 4 Runtime Logic
  ;
- ; Product: Enterprise Web Developer (Build 907)
- ; Build Date: Fri, 20 Apr 2012 11:29:32
+ ; Product: Enterprise Web Developer (Build 908)
+ ; Build Date: Mon, 23 Apr 2012 11:56:19
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -67,11 +67,22 @@ writeGridStore(sessionName,columnDef,id,storeId,sessid)
  ;
  s grouping=0
  ;
+ s no=""
+ f  s no=$o(cols(no)) q:no=""  d
+ . i $d(cols(no,"dataIndex")),'$d(cols(no,"name")) d
+ . . s cols(no,"name")=cols(no,"dataIndex")
+ . k cols(no,"dataIndex")
+ . i $d(cols(no,"text")),'$d(cols(no,"header")) d
+ . . s cols(no,"header")=cols(no,"text")
+ . k cols(no,"text")
+ ;
  d
  . w "Ext.define('"_id_"Model',{"
  . w "extend:'Ext.data.Model',"
  . w "fields:["
- . s no="",comma=""
+ . ;s no="",comma=""
+ . s no="",comma=","
+ . w "{name: 'zewdRowNo'}"
  . f  s no=$o(cols(no)) q:no=""  d
  . . s name=$g(cols(no,"name"))
  . . w comma_"{name:'"_name_"'"
@@ -94,15 +105,12 @@ writeGridStore(sessionName,columnDef,id,storeId,sessid)
  s no="",comma=""
  f  s no=$o(data(no)) q:no=""  d
  . w comma_"{"
- . s name="",comma2=""
+ . ;s name="",comma2=""
+ . s name="",comma2=","
+ . w "zewdRowNo: '"_no_"'"
  . f  s name=$o(data(no,name)) q:name=""  d
  . . s value=data(no,name)
- . . d
- . . . i value="true"!(value="false") q
- . . . i $$numeric^%zewdJSON(value) q
- . . . i $e(value,1)="." s value=$e(value,2,$l(value)) q
- . . . s value="'"_value_"'"
- . . w comma2_name_":"_value
+ . . w comma2_name_":"_$$quotedValue(value)
  . . s comma2=","
  . s comma=","
  . w "}"
@@ -123,7 +131,8 @@ writeGridStore(sessionName,columnDef,id,storeId,sessid)
  . . . w comma_"['"_$g(cols(no,"options",ono,"value"))_"','"_$g(cols(no,"options",ono,"displayValue"))_"']"
  . . . s comma=","
  . . w "];"_$c(13,10)
- . . w "comboIndex['"_(no-1)_"']={"_$c(13,10)
+ . . ;w "comboIndex['"_(no-1)_"']={"_$c(13,10)
+ . . w "comboIndex['"_(no)_"']={"_$c(13,10)
  . . s ono="",comma=""
  . . f  s ono=$o(cols(no,"options",ono)) q:ono=""  d
  . . . w comma_"'"_$g(cols(no,"options",ono,"value"))_"':'"_$g(cols(no,"options",ono,"displayValue"))_"'"
@@ -135,7 +144,9 @@ writeGridStore(sessionName,columnDef,id,storeId,sessid)
  ;
  i columnDef'="" d
  . w "var "_id_"Cols=["
- . s no="",comma=""
+ . ;s no="",comma=""
+ . s no="",comma=","
+ . w "{dataIndex:'zewdRowNo', hidden: true}"
  . f  s no=$o(cols(no)) q:no=""  d
  . . w comma_"{"
  . . s name="",comma2=""
@@ -149,6 +160,22 @@ writeGridStore(sessionName,columnDef,id,storeId,sessid)
  . . . i name="editor" q
  . . . i name="options" q
  . . . s value=$g(cols(no,name))
+ . . . i name="icon" d  q
+ . . . . n attr,iconNo,comma3,comma4,value
+ . . . . i $d(cols(no,"icon")) d
+ . . . . . w comma2_"items:["
+ . . . . . s comma2=","
+ . . . . s iconNo="",comma3=""
+ . . . . f  s iconNo=$o(cols(no,"icon",iconNo)) q:iconNo=""  d
+ . . . . . w comma3_"{"
+ . . . . . s comma4="",attr=""
+ . . . . . f  s attr=$o(cols(no,"icon",iconNo,attr)) q:attr=""  d
+ . . . . . . s value=cols(no,"icon",iconNo,attr)
+ . . . . . . w comma4_attr_":"_$$quotedValue(value)
+ . . . . . . s comma4=","
+ . . . . . w "}"
+ . . . . . s comma3=","
+ . . . . w "]"
  . . . i name="editas" d  q
  . . . . n key,value2
  . . . . w comma2_"editor: {xtype:'"_value_"'"
@@ -162,26 +189,26 @@ writeGridStore(sessionName,columnDef,id,storeId,sessid)
  . . . . s key=""
  . . . . f  s key=$o(cols(no,"editor",key)) q:key=""  d
  . . . . . s value2=cols(no,"editor",key)
- . . . . . d
- . . . . . . i value2="true"!(value2="false") q
- . . . . . . i $$numeric^%zewdJSON(value2) q
- . . . . . . i $e(value2,1)="." s value2=$e(value2,2,$l(value2)) q
- . . . . . . s value2="'"_value2_"'"
- . . . . . w ","_key_":"_value2
+ . . . . . w ","_key_":"_$$quotedValue(value2)
  . . . . w "}"_$c(13,10)
  . . . . s comma2=","
- . . . d
- . . . . i value="true"!(value="false") q
- . . . . i $$numeric^%zewdJSON(value) q
- . . . . i $e(value,1)="." s value=$e(value,2,$l(value)) q
- . . . . s value="'"_value_"'"
- . . . w comma2_namex_":"_value
+ . . . w comma2_namex_":"_$$quotedValue(value)
  . . . s comma2=","
  . . s comma=","
  . . w "}"
  . w "];"_$c(13,10)
  ;
  QUIT
+ ;
+quotedValue(value)
+ d
+ . i value="true"!(value="false") q
+ . i $$numeric^%zewdJSON(value) q
+ . i $e(value,1)="." s value=$e(value,2,$l(value)) q
+ . i $e(value,1,9)="function(" q
+ . i $e(value,1)="|" s value=$e(value,2,$l(value))
+ . s value="'"_value_"'"
+ QUIT value
  ;
 writeTreeStore(sessionName,storeId,page,addTo,replace,expanded,sessid)
  ;

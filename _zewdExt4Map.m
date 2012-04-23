@@ -1,7 +1,7 @@
 %zewdExt4Map ; Extjs Tag Processor Mappings
  ;
- ; Product: Enterprise Web Developer (Build 907)
- ; Build Date: Fri, 20 Apr 2012 11:29:32
+ ; Product: Enterprise Web Developer (Build 908)
+ ; Build Date: Mon, 23 Apr 2012 11:56:19
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -86,10 +86,11 @@ mappingObjects
  ;;{tagName:"ext4:label",className:"Ext.form.Label",xtype:"label",xtypeTagName:"ext4:item",containerTag:"ext4:items"}
  ;;{tagName:"ext4:layout",parse:{method:"object",optionName:"layout"}}
  ;;{tagName:"ext4:listeners",parse:{method:"listeners"}}
- ;;{tagName:"ext4:menu",className:"Ext.menu.Menu",xtype:"menu",xtypeTagName:"ext4:item",containerTag:"ext4:items"}
+ ;;{tagName:"ext4:menu",className:"Ext.menu.Menu",xtype:"menu",xtypeTagName:"ext4:item",containerTag:"ext4:items",pass1Method:"convertMenu",expandMethod:"expandButtonMenu"}
  ;;{tagName:"ext4:menucheckitem",className:"Ext.menu.CheckItem",xtype:"menucheckitem",xtypeTagName:"ext4:item",containerTag:"ext4:items"}
  ;;{tagName:"ext4:menucolorpicker",className:"Ext.menu.ColorPicker"}
  ;;{tagName:"ext4:menudatepicker",className:"Ext.menu.DatePicker"}
+ ;;{tagName:"ext4:menuitem",className:"Ext.menu.Item",xtype:"menuitem",xtypeTagName:"ext4:item",containerTag:"ext4:items",allowedContainers:["ext4:buttonmenu"],pass1Method:"convertMenuItem"}
  ;;{tagName:"ext4:menuseparator",className:"Ext.menu.Separator",xtype:"menuseparator",xtypeTagName:"ext4:item",containerTag:"ext4:items"}
  ;;{tagName:"ext4:modalwindow",pass1Method:"replaceModalWindow"}
  ;;{tagName:"ext4:multislider",className:"Ext.slider.Multi",xtype:"multislider",xtypeTagName:"ext4:item",containerTag:"ext4:items"}

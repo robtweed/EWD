@@ -1,7 +1,7 @@
 %zewdExt4 ; Extjs Tag Processors
  ;
- ; Product: Enterprise Web Developer (Build 907)
- ; Build Date: Fri, 20 Apr 2012 11:29:32
+ ; Product: Enterprise Web Developer (Build 908)
+ ; Build Date: Mon, 23 Apr 2012 11:56:19
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -127,6 +127,11 @@ container(nodeOID,attrValue,docOID,technology)
  s xOID=$$addElementToDOM^%zewdDOM("ewd:jssection",jsOID,,.attr)
  s text=""
  s text=text_"EWD.ext4={"_$c(13,10)
+ s text=text_"  grid: {"_$c(13,10)
+ s text=text_"    getRowNo: function(grid,rowIndex) {"_$c(13,10)
+ s text=text_"      return grid.store.getAt(rowIndex).get('zewdRowNo');"_$c(13,10)
+ s text=text_"    }"_$c(13,10)
+ s text=text_"  },"_$c(13,10)
  s text=text_"  submit: function (formPanelId,nextPage,addTo,replace) {"_$c(13,10)
  s text=text_"    var nvp='';"_$c(13,10)
  s text=text_"    var amp='';"_$c(13,10)
@@ -292,6 +297,7 @@ ExtCreate(nodeOID,parentOID,isFragment)
  . . i $e(attr("value"),1)="." d
  . . . s attr("type")="reference"
  . . . s attr("value")=$e(attr("value"),2,$l(attr("value")))
+ . . i $e(attr("value"),1)="|" s attr("value")=$e(attr("value"),2,$l(attr("value")))
  . . i name="id" s id=mainAttrs(name)
  . . s xOID=$$addElementToDOM^%zewdDOM("ewd:jsnvp",objOID,,.attr)
  . ;
@@ -412,6 +418,7 @@ ExtDefine(nodeOID)
  . . i $e(attr("value"),1)="." d
  . . . s attr("type")="reference"
  . . . s attr("value")=$e(attr("value"),2,$l(attr("value")))
+ . . i $e(attr("value"),1)="|" s attr("value")=$e(attr("value"),2,$l(attr("value")))
  . . s xOID=$$addElementToDOM^%zewdDOM("ewd:jsnvp",objOID,,.attr)
  . ;
  . ; find any lower-level objects
@@ -498,6 +505,7 @@ topLevelTag(tagName,nodeOID,jsSectionOID,tagNameMap)
  . i $e(attr("value"),1)="." d
  . . s attr("type")="reference"
  . . s attr("value")=$e(attr("value"),2,$l(attr("value")))
+ . i $e(attr("value"),1)="|" s attr("value")=$e(attr("value"),2,$l(attr("value")))
  . s xOID=$$addElementToDOM^%zewdDOM("ewd:jsnvp",objOID,,.attr)
  ;
  ; find and add any listeners etc
@@ -847,6 +855,7 @@ createNVPs(nodeOID,parentOID)
  . . . s value=$e(value,2,$l(value))
  . . . s attr("type")="reference"
  . . . s attr("value")=value
+ . . i $e(attr("value"),1)="|" s attr("value")=$e(attr("value"),2,$l(attr("value")))
  . . s xOID=$$addElementToDOM^%zewdDOM("ewd:jsnvp",parentOID,,.attr)
  QUIT
  ;
@@ -923,6 +932,26 @@ expandSubmitButton(nodeOID)
  d setAttribute^%zewdDOM("handler",handler,nodeOID)
  ;s xOID=$$addElementToDOM^%zewdDOM("ext4:item",btnsOID,,.attr)
  ;d removeIntermediateNode^%zewdDOM(nodeOID)
+ ;
+ QUIT
+ ;
+convertMenu(nodeOID)
+ ;
+ n parentOID,xOID
+ ;
+ s parentOID=$$getParentNode^%zewdDOM(nodeOID)
+ i $$getTagName^%zewdDOM(parentOID)="ext4:menuitem" d
+ . s xOID=$$renameTag^%zewdDOM("ext4:buttonmenu",nodeOID)
+ ;
+ QUIT
+ ;
+convertMenuItem(nodeOID)
+ ;
+ n parentOID,xOID
+ ;
+ s parentOID=$$getParentNode^%zewdDOM(nodeOID)
+ i $$getTagName^%zewdDOM(parentOID)="ext4:menuitem" d
+ . s xOID=$$insertNewIntermediateElement^%zewdDOM(parentOID,"ext4:buttonmenu",docOID)
  ;
  QUIT
  ;
@@ -1124,7 +1153,7 @@ expandComboBox(nodeOID,attr,parentOID)
  ;
 expandButtonMenu(nodeOID,attr,parentOID)
  ;
- n addTo,cspOID,id,menuId,page,replacePreviousPage,sessionName,text,xOID
+ n addTo,attrName,cspOID,id,menuId,page,replacePreviousPage,sessionName,tagName,text,xOID
  ;
  s sessionName=$g(attr("sessionname"))
  q:sessionName=""
@@ -1141,7 +1170,12 @@ expandButtonMenu(nodeOID,attr,parentOID)
  s id=$g(attr("id"))
  i id="" s id=$$uniqueId(nodeOID)
  s menuId=id_"Menu"
- s attr("menu")="."_menuId
+ s tagName=$$getTagName^%zewdDOM(nodeOID)
+ i tagName="ext4:buttonmenu" d
+ . s attrName="menu"
+ e  d
+ . s attrName="items"
+ s attr(attrName)="."_menuId
  s xOID=$$createElement^%zewdDOM("cspTemp",docOID)
  s xOID=$$insertBefore^%zewdDOM(xOID,nodeOID)
  s text=" d writeButtonMenu^%zewdExt4Code("""_sessionName_""","""_menuId_""","""_page_""","""_addTo_""","_replacePreviousPage_",sessid)"
@@ -1327,7 +1361,8 @@ gridPanelInstance(attrs,nodeOID,instanceOID)
  . . s attr("quoted")="false"
  . . s argOID=$$addElementToDOM^%zewdDOM("ewd:argument",argsOID,,.attr)
  . . s text="EWD.ext4.e = e;"_$c(13,10)
- . . s text=text_"var nvp = 'row=' + e.rowIdx + '&col=' + e.colIdx + '&colName=' + e.field + '&value=' + e.value + '&originalValue=' + e.originalValue;"_$c(13,10)
+ . . ;s text=text_"var nvp = 'row=' + e.rowIdx + '&col=' + e.colIdx + '&colName=' + e.field + '&value=' + e.value + '&originalValue=' + e.originalValue;"_$c(13,10)
+ . . s text=text_"var nvp = 'row=' + e.record.data.zewdRowNo + '&colName=' + e.field + '&value=' + e.value + '&originalValue=' + e.originalValue;"_$c(13,10)
  . . s text=text_"EWD.ajax.getPage({page:'"_validationPage_"',nvp:nvp});"_$c(13,10)
  . . s codeOID=$$addElementToDOM^%zewdDOM("ewd:code",fnOID,,,text)
  ;

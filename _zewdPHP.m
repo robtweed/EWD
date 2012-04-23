@@ -1,7 +1,7 @@
 %zewdPHP	; Enterprise Web Developer PHP run-time functions and processing
  ;
- ; Product: Enterprise Web Developer (Build 907)
- ; Build Date: Fri, 20 Apr 2012 11:29:32
+ ; Product: Enterprise Web Developer (Build 908)
+ ; Build Date: Mon, 23 Apr 2012 11:56:20
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -601,9 +601,9 @@ prePageScript(sessid)
  s x="s error=$$"_method_"(sessid)"
  ;s $zt="zg "_$zl_":prePageError^%zewdPHP"
  i $g(^zewd("config","customErrorTrap",appName))'="" d
- . s $zt="zg "_$zl_":"_^zewd("config","customErrorTrap",appName)
+ . s $zt="zg "_($zl-1)_":"_^zewd("config","customErrorTrap",appName)
  e  d
- . s $zt="zg "_$zl_":prePageError^%zewdPHP" 
+ . s $zt="zg "_($zl-1)_":prePageError^%zewdPHP" 
  i $g(^zewd("trace")) d trace^%zewdAPI("About to execute prepage script: x="_x)
  d
  . n (%CGIEVAR,error,%KEY,%request,requestArray,serverArray,%session,sessid,x)
