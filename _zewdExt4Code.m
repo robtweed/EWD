@@ -1,7 +1,7 @@
 %zewdExt4Code ; Extjs 4 Runtime Logic
  ;
  ; Product: Enterprise Web Developer (Build 908)
- ; Build Date: Mon, 23 Apr 2012 11:56:19
+ ; Build Date: Mon, 23 Apr 2012 14:03:25
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -215,18 +215,18 @@ writeTreeStore(sessionName,storeId,page,addTo,replace,expanded,sessid)
  n data,xArray,yArray
  ;
  d mergeArrayFromSession^%zewdAPI(.data,sessionName,sessid)
- d expandTreeArray(.data,.xArray,page,addTo,replace)
+ d expandTreeArray(.data,.xArray,page,addTo,replace,expanded)
  m yArray("root","children")=xArray
  s yArray("id")=storeId
- s yArray("expanded")="false"
- i expanded s yArray("expanded")="true"
+ s yArray("root","expanded")="false"
+ i expanded s yArray("root","expanded")="true"
  w "var "_storeId_"=Ext.create('Ext.data.TreeStore',"
  d streamArrayToJSON^%zewdJSON("yArray")
  w ");"_$c(13,10)
  ;
  QUIT
  ;
-expandTreeArray(inArray,outArray,page,addTo,replace)
+expandTreeArray(inArray,outArray,page,addTo,replace,expanded)
  ;
  n data,index
  ;
@@ -236,7 +236,7 @@ expandTreeArray(inArray,outArray,page,addTo,replace)
  . i $d(inArray(index,"child")) d
  . . n arr,out
  . . m arr=inArray(index,"child")
- . . d expandTreeArray(.arr,.out,page,addTo,replace)
+ . . d expandTreeArray(.arr,.out,page,addTo,replace,expanded)
  . . m outArray(index,"children")=out
  . . i $g(inArray(index,"text"))'="" s outArray(index,"text")=inArray(index,"text")
  . . i $g(page)'="" s outArray(index,"page")=page
@@ -251,7 +251,10 @@ expandTreeArray(inArray,outArray,page,addTo,replace)
  . i $g(inArray(index,"text"))'="" d
  . . n value
  . . s value=inArray(index,"text")
- . . i '$d(inArray(index,"child")) s outArray(index,"leaf")="true"
+ . . i '$d(inArray(index,"child")) d
+ . . . s outArray(index,"leaf")="true"
+ . . e  d
+ . . . i expanded s outArray(index,"expanded")="true" 
  . . s outArray(index,"text")=value
  . . i $g(page)'="" s outArray(index,"page")=page
  . . i $g(addTo)'="" s outArray(index,"addTo")=addTo
