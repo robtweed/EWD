@@ -1,7 +1,7 @@
 %zewdExt4 ; Extjs Tag Processors
  ;
- ; Product: Enterprise Web Developer (Build 908)
- ; Build Date: Mon, 23 Apr 2012 11:56:19
+ ; Product: Enterprise Web Developer (Build 910)
+ ; Build Date: Wed, 25 Apr 2012 17:59:25
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -955,6 +955,47 @@ convertMenuItem(nodeOID)
  ;
  QUIT
  ;
+editableColumn(nodeOID)
+ ;
+ n childNo,childOID,editAs
+ ;
+ s editAs=$$getAttribute^%zewdDOM("editas",nodeOID)
+ i editAs="textfield" d
+ . n OIDArray,stop
+ . s stop=0
+ . d getChildrenInOrder^%zewdDOM(nodeOID,.OIDArray)
+ . s childNo=""
+ . f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d  q:stop
+ . . s childOID=OIDArray(childNo)
+ . . i $$getTagName^%zewdDOM(childOID)="ext4:editor" s stop=1
+ . i childNo="" d addEditor(nodeOID,"textfield")
+ ;
+ QUIT
+ ;
+addEditor(nodeOID,type)
+ ;
+ n attr,xOID
+ ;
+ s attr("xtype")=type
+ s xOID=$$addElementToDOM^%zewdDOM("ext4:editor",nodeOID,,.attr)
+ d addCellEditor(nodeOID)
+ QUIT
+ ;
+addCellEditor(nodeOID)
+ ;
+ n ceOID,parentOID
+ ;
+ s parentOID=$$getParentNode^%zewdDOM(nodeOID)
+ i $$getTagName^%zewdDOM(parentOID)="ext4:gridpanel" d
+ . i $$getAttribute^%zewdDOM("clickstoedit",parentOID)="" d
+ . . d setAttribute^%zewdDOM("clickstoedit",2,parentOID)
+ . ;i '$$hasChildTag^%zewdDOM(parentOID,"ext4:cellediting",.ceOID) d
+ . ;. s ceOID=$$addElementToDOM^%zewdDOM("ext4:cellediting",parentOID)
+ . ;i $$getAttribute^%zewdDOM("clickstoedit",ceOID)'="" d
+ . ;. d setAttribute^%zewdDOM("clickstoedit",2,ceOID)
+ ;
+ QUIT
+ ;
 setNameList(nodeOID)
  ;
  n name,id,tagName,type
@@ -1341,7 +1382,7 @@ gridPanelInstance(attrs,nodeOID,instanceOID)
  . s attr("ftype")="grouping"
  . i $g(mainAttrs("groupingsummary"))="true" s attr("ftype")="groupingsummary"
  . s xOID=$$addElementToDOM^%zewdDOM("ext4:item",featuresOID,,.attr)
- i validationPage'="",clicksToEdit'="" d
+ i clicksToEdit'="" d
  . n pluginsOID,xOID
  . i '$$hasChildTag^%zewdDOM(argumentsOID,"ext4:plugins",.pluginsOID) d
  . . s pluginsOID=$$addElementToDOM^%zewdDOM("ext4:plugins",argumentsOID)
@@ -1430,7 +1471,10 @@ expand(nodeOID,parentOID,tagNameMap)
  . s itemsOID=parentOID
  . i containerTag'="",$d(itemsAdded(containerTag)) s itemsOID=itemsAdded(containerTag)
  . s itemOID=$$addElementToDOM^%zewdDOM(xtypeTagName,itemsOID,,.attr)
- . i $$getAttribute^%zewdDOM("nextpage",itemOID)'="" d nextPageHandler(itemOID)
+ . i $$getAttribute^%zewdDOM("nextpage",itemOID)'="" d
+ . . i $$getTagName^%zewdDOM(nodeOID)="ext4:actioncolumn" d
+ . . . d setAttribute^%zewdDOM("xtype","actioncolumn",itemOID)
+ . . d nextPageHandler(itemOID)
  . i $$hasChildNodes^%zewdDOM(childOID)="true" d expand(childOID,itemOID,.tagNameMap)
  . d removeIntermediateNode^%zewdDOM(childOID)
  ;
@@ -1490,8 +1534,9 @@ expandPanel(nodeOID,attr,parentOID)
  ;
 nextPageHandler(nodeOID)
  ;
- n addTo,codeOID,fnOID,handlerOID,nextPage,replace,text
+ n actionCol,addTo,argOID,argsOID,attr,codeOID,fnOID,handlerOID,nextPage,replace,text
  ;
+ s actionCol=$$getAttribute^%zewdDOM("xtype",nodeOID)="actioncolumn"
  s nextPage=$$getAttribute^%zewdDOM("nextpage",nodeOID)
  i nextPage="" QUIT
  d removeAttribute^%zewdDOM("nextpage",nodeOID)
@@ -1501,15 +1546,28 @@ nextPageHandler(nodeOID)
  d removeAttribute^%zewdDOM("replacepreviouspage",nodeOID)
  s handlerOID=$$addElementToDOM^%zewdDOM("ext4:handler",nodeOID)
  s fnOID=$$addElementToDOM^%zewdDOM("ewd:jsfunction",handlerOID)
+ s argsOID=$$addElementToDOM^%zewdDOM("ewd:arguments",fnOID)
+ s attr("name")="me"
+ s attr("quoted")="false"
+ s argOID=$$addElementToDOM^%zewdDOM("ewd:argument",argsOID,,.attr)
+ i actionCol d
+ . s attr("name")="rowIndex"
+ . s attr("quoted")="false"
+ . s argOID=$$addElementToDOM^%zewdDOM("ewd:argument",argsOID,,.attr)
  s text=""
  i addTo'="" d
  . s text=text_"var nvp='ext4_addTo="_addTo
  . i replace="true" d
  . . s text=text_"&ext4_removeAll=true"
+ . i actionCol s text=text_"&row=' + EWD.ext4.grid.getRowNo(me,rowIndex) + '"
  . s text=text_"';"_$c(13,10)
- . s text=text_"EWD.ajax.getPage({page:'"_nextPage_"',nvp:nvp});"
  e  d
- . s text=text_"EWD.ajax.getPage({page:'"_nextPage_"'});"
+ . i actionCol d
+ . . s text="var nvp='row=' + EWD.ext4.grid.getRowNo(me,rowIndex)"
+ . e  d
+ . . s text="var nvp='';"
+ . s text=text_";"_$c(13,10)
+ s text=text_"EWD.ajax.getPage({page:'"_nextPage_"',nvp:nvp});"
  s codeOID=$$addElementToDOM^%zewdDOM("ewd:code",fnOID,,,text)
  ;
  QUIT

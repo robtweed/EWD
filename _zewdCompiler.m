@@ -1,7 +1,7 @@
 %zewdCompiler	; Enterprise Web Developer Compiler
  ;
- ; Product: Enterprise Web Developer (Build 908)
- ; Build Date: Mon, 23 Apr 2012 11:56:19
+ ; Product: Enterprise Web Developer (Build 910)
+ ; Build Date: Wed, 25 Apr 2012 17:59:25
  ; 
  ; 
  ; ----------------------------------------------------------------------------
@@ -252,6 +252,9 @@ getRootURL(technology)
  ;
  s technology="gtm"
  s url=$g(^zewd("config","RootURL",technology))
+ i technology="wl" d  QUIT url
+ . i url="" s url="/scripts/mgwms32.dll"
+ ;
  i $e(url,$l(url))'="/" s url=url_"/"
  i technology="gtm",url="" s url="/ewd/"
  i url="" s url="/"_technology_"/"

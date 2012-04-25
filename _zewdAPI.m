@@ -1,7 +1,7 @@
 %zewdAPI	; Enterprise Web Developer run-time functions and user APIs
  ;
- ; Product: Enterprise Web Developer (Build 908)
- ; Build Date: Mon, 23 Apr 2012 11:56:19
+ ; Product: Enterprise Web Developer (Build 910)
+ ; Build Date: Wed, 25 Apr 2012 17:59:25
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -78,7 +78,7 @@ getSessid(token)
  ;
  i token="" QUIT ""
  i $$isTokenExpired(token) QUIT ""
- QUIT +^%zewdSession("tokens",token)
+ QUIT $p(^%zewdSession("tokens",token),"~",1)
  ;
 initialiseSession(sessid)
  k ^%zewdSession("session",sessid)
@@ -1370,7 +1370,7 @@ getTokenExpiry(token)
  n sessid
  ;
  i $g(token)="" QUIT 0
- s sessid=+$g(^%zewdSession("tokens",token))
+ s sessid=$p($g(^%zewdSession("tokens",token)),"~",1)
  i sessid="" QUIT 0
  QUIT $$getSessionValue("ewd_sessionExpiry",sessid)
  ;

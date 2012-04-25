@@ -1,7 +1,7 @@
 %zewdExt4Map ; Extjs Tag Processor Mappings
  ;
- ; Product: Enterprise Web Developer (Build 908)
- ; Build Date: Mon, 23 Apr 2012 11:56:19
+ ; Product: Enterprise Web Developer (Build 910)
+ ; Build Date: Wed, 25 Apr 2012 17:59:25
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -74,7 +74,7 @@ mappingObjects
  ;;{tagName:"ext4:fieldset",className:"Ext.form.FieldSet",xtype:"fieldset",xtypeTagName:"ext4:item",containerTag:"ext4:items"}
  ;;{tagName:"ext4:fill",className:"Ext.toolbar.Fill",xtype:"tbfill",xtypeTagName:"ext4:item",containerTag:"ext4:items"}
  ;;{tagName:"ext4:formpanel",className:"Ext.form.Panel",xtype:"form",xtypeTagName:"ext4:item",containerTag:"ext4:items",expandMethod:"expandPanel",instanceMethod:"panelInstance",pass1Method:"addEwdActionField"}
- ;;{tagName:"ext4:gridcolumn",className:"Ext.grid.column.Column",xtype:"gridcolumn",xtypeTagName:"ext4:column",containerTag:"ext4:columns"}
+ ;;{tagName:"ext4:gridcolumn",className:"Ext.grid.column.Column",xtype:"gridcolumn",xtypeTagName:"ext4:column",containerTag:"ext4:columns",pass1Method:"editableColumn"}
  ;;{tagName:"ext4:gridpanel",className:"Ext.grid.Panel",xtype:"gridpanel",xtypeTagName:"ext4:item",containerTag:"ext4:items",expandMethod:"expandGridPanel",instanceMethod:"gridPanelInstance"}
  ;;{tagName:"ext4:hiddenfield",className:"Ext.form.field.Hidden",xtype:"hiddenfield",fieldType:"text",xtypeTagName:"ext4:item",containerTag:"ext4:items",pass1Method:"setNameList"}
  ;;{tagName:"ext4:htmleditorfield",className:"Ext.form.field.HtmlEditor",xtype:"htmleditor",fieldType:"text",xtypeTagName:"ext4:item",containerTag:"ext4:items",expandMethod:"addQuickTipManager",pass1Method:"setNameList"}

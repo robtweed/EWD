@@ -1,7 +1,7 @@
 %zewdExt4Code ; Extjs 4 Runtime Logic
  ;
- ; Product: Enterprise Web Developer (Build 908)
- ; Build Date: Mon, 23 Apr 2012 14:03:25
+ ; Product: Enterprise Web Developer (Build 910)
+ ; Build Date: Wed, 25 Apr 2012 17:59:25
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -169,6 +169,16 @@ writeGridStore(sessionName,columnDef,id,storeId,sessid)
  . . . . f  s iconNo=$o(cols(no,"icon",iconNo)) q:iconNo=""  d
  . . . . . w comma3_"{"
  . . . . . s comma4="",attr=""
+ . . . . . i $g(cols(no,"icon",iconNo,"nextPage"))'="" d
+ . . . . . . n fn,i
+ . . . . . . s fn="function(me,rowIndex) {"
+ . . . . . . s fn=fn_"var nvp='row='+EWD.ext4.grid.getRowNo(me,rowIndex);"
+ . . . . . . i $g(cols(no,"icon",iconNo,"addTo"))'="" s fn=fn_"nvp=nvp+'&ext4_addTo="_cols(no,"icon",iconNo,"addTo")_"';"
+ . . . . . . i $g(cols(no,"icon",iconNo,"replacePreviousPage"))="true" s fn=fn_"nvp=nvp+'&ext4_removeAll=true';"
+ . . . . . . s fn=fn_"; EWD.ajax.getPage({page:'"_cols(no,"icon",iconNo,"nextPage")_"',nvp:nvp});"
+ . . . . . . s fn=fn_"}"
+ . . . . . . s cols(no,"icon",iconNo,"handler")=fn
+ . . . . . . f i="nextPage","addTo","replacePreviousPage" k cols(no,"icon",iconNo,i)
  . . . . . f  s attr=$o(cols(no,"icon",iconNo,attr)) q:attr=""  d
  . . . . . . s value=cols(no,"icon",iconNo,attr)
  . . . . . . w comma4_attr_":"_$$quotedValue(value)
@@ -260,6 +270,7 @@ expandTreeArray(inArray,outArray,page,addTo,replace,expanded)
  . . i $g(addTo)'="" s outArray(index,"addTo")=addTo
  . . i $g(inArray(index,"page"))="",$g(inArray(index,"nextPage"))="",$g(replace)'="" s outArray(index,"replace")=replace
  . . i $g(inArray(index,"page"))'="" s outArray(index,"page")=inArray(index,"page")
+ . . i $g(inArray(index,"expanded"))'="" s outArray(index,"expanded")=inArray(index,"expanded")
  . . i $g(inArray(index,"nextPage"))'="" s outArray(index,"page")=inArray(index,"nextPage")
  . . i $g(inArray(index,"addTo"))'="" s outArray(index,"addTo")=inArray(index,"addTo")
  . . i $g(inArray(index,"replacePreviousPage"))="true" s outArray(index,"replace")=1

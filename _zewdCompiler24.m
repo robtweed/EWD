@@ -1,7 +1,7 @@
 %zewdCompiler24	; Enterprise Web Developer Compiler : HTML5 Functionality
  ;
- ; Product: Enterprise Web Developer (Build 908)
- ; Build Date: Mon, 23 Apr 2012 11:56:19
+ ; Product: Enterprise Web Developer (Build 910)
+ ; Build Date: Wed, 25 Apr 2012 17:59:25
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -94,12 +94,18 @@ isGetPageAllowed(pageName,sessid)
  i '$$isGetPageEnabled(pageName,sessid) QUIT "Access to "_pageName_" is not allowed!"
  QUIT ""
  ;
-isGetPageEnabled(page,sessid)
+isGetPageEnabled(page,sessid,sessionArray)
  ;
- n pages
+ n pages,pageType
  ;
  i $e(page,1,3)="ewd" QUIT 1
  i $e(page,1,4)="zewd" QUIT 1
+ i $d(sessionArray) d
+ . ; called before sessionArray merged into session!
+ . s pageType=$g(sessionArray("ewd_pageType"))
+ e  d
+ . s pageType=$$getSessionValue^%zewdAPI("ewd_pageType",sessid)
+ i pageType="" QUIT 1
  d mergeArrayFromSession^%zewdAPI(.pages,"ewd_getPageEnabled",sessid)
  i $d(pages(page)) QUIT 1
  QUIT 0

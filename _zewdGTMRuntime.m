@@ -1,7 +1,7 @@
 %zewdGTMRuntime ; EWD for GT.M.  Runtime interface  
  ;
- ; Product: Enterprise Web Developer (Build 908)
- ; Build Date: Mon, 23 Apr 2012 11:56:20
+ ; Product: Enterprise Web Developer (Build 910)
+ ; Build Date: Wed, 25 Apr 2012 17:59:25
  ;
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -202,8 +202,8 @@ writeHTTPHeader(app,nextpage,token,pageToken,sessid,Error)
  . i $g(Error)'="" s url=url_amp_"error="_$$urlEscape(Error),amp="&"
  ;
  i $g(^zewd("trace"))=1 d trace^%zewdAPI("Sending HTTP 301 to URL "_url)
- w "HTTP/1.1 301 moved permanently",$c(13,10)
- w "Location: "_url,$c(13,10,13,10)
+ w "HTTP/1.1 301 moved permanently"_$c(13,10)
+ w "Location: "_url_$c(13,10,13,10)
  w !
  QUIT
  ;

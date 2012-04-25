@@ -1,7 +1,7 @@
 %zewdPHP	; Enterprise Web Developer PHP run-time functions and processing
  ;
- ; Product: Enterprise Web Developer (Build 908)
- ; Build Date: Mon, 23 Apr 2012 11:56:20
+ ; Product: Enterprise Web Developer (Build 910)
+ ; Build Date: Wed, 25 Apr 2012 17:59:26
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -74,7 +74,7 @@ startSession(page,requestArray,serverArray,sessionArray,filesArray) ;
  ; sessid will be null if token was either invalid or timed out
  i inError="",sessid="" d  QUIT standardError
  . s error=standardError
- i '$$isGetPageEnabled^%zewdCompiler24(page,sessid) QUIT "Access to "_page_" is not allowed!"
+ i '$$isGetPageEnabled^%zewdCompiler24(page,sessid,.sessionArray) d  QUIT "Access to "_page_" is not allowed!"
  i inError'="",sessid="" QUIT ""
  ;
  ; session has been recognised. 
@@ -588,7 +588,7 @@ prePageScript(sessid)
  . i $g(^zewd("config","customErrorTrap",appName))'="" s $zt="zg "_$zl_":"_^zewd("config","customErrorTrap",appName)
  . e  s $zt="zg "_$zl_":prePageError^%zewdPHP"
  . d
- . . n (%CGIEVAR,error,%KEY,%request,requestArray,serverArray,%session,sessid,x)
+ . . n (%CGIEVAR,error,%KEY,%request,requestArray,serverArray,%session,sessid,x,zewdSession)
  . . x x
  . u io
  ;
@@ -606,7 +606,7 @@ prePageScript(sessid)
  . s $zt="zg "_($zl-1)_":prePageError^%zewdPHP" 
  i $g(^zewd("trace")) d trace^%zewdAPI("About to execute prepage script: x="_x)
  d
- . n (%CGIEVAR,error,%KEY,%request,requestArray,serverArray,%session,sessid,x)
+ . n (%CGIEVAR,error,%KEY,%request,requestArray,serverArray,%session,sessid,x,zewdSession)
  . x x
  u io
  s $zt="g errorTrap^%zewdPHP"
@@ -653,7 +653,7 @@ actionScript(sessid)
  s $zt="zg "_$zl_":actionError^%zewdPHP"
  i $g(^zewd("trace")) d trace^%zewdAPI("about to run action script: x="_x)
  d
- . n (%CGIEVAR,error,%KEY,%request,requestArray,serverArray,%session,sessid,x)
+ . n (%CGIEVAR,error,%KEY,%request,requestArray,serverArray,%session,sessid,x,zewdSession)
  . x x
  u io
  s $zt="g errorTrap^%zewdPHP"
@@ -670,7 +670,7 @@ actionScript(sessid)
  . . s x="s ok=$$"_method_"(sessid)"
  . . s $zt="zg "_$zl_":actionError^%zewdPHP"
  . . d
- . . . n (%CGIEVAR,error,%KEY,%request,requestArray,serverArray,%session,sessid,x)
+ . . . n (%CGIEVAR,error,%KEY,%request,requestArray,serverArray,%session,sessid,x,zewdSession)
  . . . x x
  . . u io
  ;
@@ -766,7 +766,7 @@ deleteToken(token)
  ;
  n sessid
  ;
- s sessid=+$g(^%zewdSession("tokens",token))
+ s sessid=$p($g(^%zewdSession("tokens",token)),"~",1)
  QUIT:sessid=0
  k ^%zewdSession("tokens",token)
  k ^%zewdSession("tokensBySession",sessid,token)
@@ -932,7 +932,7 @@ customError(sessid,sessionArray)
  i $g(^zewd("errorProcessing",appName))'="" d
  . s x="d "_^zewd("errorProcessing",appName)
  . d
- . . n (%CGIEVAR,error,%KEY,%request,requestArray,serverArray,%session,sessid,x)
+ . . n (%CGIEVAR,error,%KEY,%request,requestArray,serverArray,%session,sessid,x,zewdSession)
  . . x x
  QUIT
  ;
@@ -942,7 +942,7 @@ closeSession(requestArray) ;
  ;
  s token=$g(requestArray("ewd_token"))
  i token="" QUIT "No token sent in request"
- s sessid=+$g(^%zewdSession("tokens",token)) ;$$getSessid(token)
+ s sessid=$p($g(^%zewdSession("tokens",token)),"~",1) ;$$getSessid(token)
  ;d trace^%zewdAPI("closing down session "_sessid)
  i sessid=0 QUIT "/default.htm"  ;Invalid token or session timed out"
  s homePage=$$getSessionValue("ewd_homePage",sessid)
@@ -985,7 +985,7 @@ event(requestArray)
  s $zt="zg "_$zl_":eventErrorTrap^%zewdPHP"
  i $g(^zewd("trace")) d trace^%zewdAPI("Event broker call invocation: x="_x)
  d
- . n (%CGIEVAR,error,%KEY,%request,requestArray,serverArray,%session,sessid,x)
+ . n (%CGIEVAR,error,%KEY,%request,requestArray,serverArray,%session,sessid,x,zewdSession)
  . x x
  ;
  QUIT responseString
@@ -1248,6 +1248,12 @@ getTokenExpiry(token)
  ;
 isTokenExpired(token)
  ;
+ n sessid
+ ;
+ i $g(token)="" QUIT 0
+ s sessid=$p($g(^%zewdSession("tokens",token)),"~",1)
+ i sessid="" QUIT 1
+ i $$getSessionValue("ewd_sessionExpiry",sessid)="" QUIT 1
  QUIT $$getTokenExpiry(token)'>$$convertDateToSeconds($h)
  ;
 randChar()
