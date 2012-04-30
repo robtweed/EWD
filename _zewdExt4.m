@@ -1,7 +1,7 @@
 %zewdExt4 ; Extjs Tag Processors
  ;
- ; Product: Enterprise Web Developer (Build 910)
- ; Build Date: Wed, 25 Apr 2012 17:59:25
+ ; Product: Enterprise Web Developer (Build 911)
+ ; Build Date: Mon, 30 Apr 2012 12:37:21
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -108,17 +108,6 @@ container(nodeOID,attrValue,docOID,technology)
  s cspScriptsOID=$$addElementToDOM^%zewdDOM("ewd:jssection",headOID,,.attr)
  ;
  ;s attr("id")="cspScripts"
- s cspScriptsOID=$$addElementToDOM^%zewdDOM("ewd:jssection",headOID,,.attr)
- i technology="csp" d
- . n attr,cspOID
- . s text=" w ""<""_""script type='text/javascript'>"""_$c(13,10)
- . s cspOID=$$addCSPServerScript^%zewdAPI(cspScriptsOID,text)
- . d setAttribute^%zewdDOM("id","cspScripts",cspScriptsOID)
- e  d
- . n attr
- . s attr("type")="text/javascript"
- . s attr("id")="cspScripts"
- . s cspScriptsOID=$$addElementToDOM^%zewdDOM("script",cspScriptsOID,,.attr)
  ;
  s attr("type")="text/javascript"
  s jsOID=$$addElementToDOM^%zewdDOM("script",headOID,,.attr)
@@ -127,10 +116,14 @@ container(nodeOID,attrValue,docOID,technology)
  s xOID=$$addElementToDOM^%zewdDOM("ewd:jssection",jsOID,,.attr)
  s text=""
  s text=text_"EWD.ext4={"_$c(13,10)
- s text=text_"  grid: {"_$c(13,10)
- s text=text_"    getRowNo: function(grid,rowIndex) {"_$c(13,10)
- s text=text_"      return grid.store.getAt(rowIndex).get('zewdRowNo');"_$c(13,10)
- s text=text_"    }"_$c(13,10)
+ s text=text_"  grid: {},"_$c(13,10)
+ ;s text=text_"    combo: {"_$c(13,10)
+ ;s text=text_"      index: {},"_$c(13,10)
+ ;s text=text_"      store: {}"_$c(13,10)
+ ;s text=text_"    },"_$c(13,10)
+ s text=text_"  getGridRowNo: function(grid,rowIndex) {"_$c(13,10)
+ s text=text_"    return grid.store.getAt(rowIndex).get('zewdRowNo');"_$c(13,10)
+ ;s text=text_"   }"_$c(13,10)
  s text=text_"  },"_$c(13,10)
  s text=text_"  submit: function (formPanelId,nextPage,addTo,replace) {"_$c(13,10)
  s text=text_"    var nvp='';"_$c(13,10)
@@ -156,6 +149,18 @@ container(nodeOID,attrValue,docOID,technology)
  s text=text_"  }"_$c(13,10)
  s text=text_"};"_$c(13,10)
  s xOID=$$addElementToDOM^%zewdDOM("ewd:jsline",xOID,,,text)
+ ;
+ s cspScriptsOID=$$addElementToDOM^%zewdDOM("ewd:jssection",headOID,,.attr)
+ i technology="csp" d
+ . n attr,cspOID
+ . s text=" w ""<""_""script type='text/javascript'>"""_$c(13,10)
+ . s cspOID=$$addCSPServerScript^%zewdAPI(cspScriptsOID,text)
+ . d setAttribute^%zewdDOM("id","cspScripts",cspScriptsOID)
+ e  d
+ . n attr
+ . s attr("type")="text/javascript"
+ . s attr("id")="cspScripts"
+ . s cspScriptsOID=$$addElementToDOM^%zewdDOM("script",cspScriptsOID,,.attr)
  ;
  ; Create container for any user defined script code
  s attr("id")="UserDefinedCode"
@@ -188,6 +193,16 @@ container(nodeOID,attrValue,docOID,technology)
  . s cspOID=$$addCSPServerScript^%zewdAPI(cspScriptsOID,text)
  s xOID=$$getElementById^%zewdDOM("cspScripts",docOID)
  d removeAttribute^%zewdDOM("id",xOID)
+ ; move any endOfHead code
+ ;
+ s ocOID=$$getTagOID^%zewdDOM("ext4:optioncode",docName)
+ i ocOID'="" d
+ . s ocOID=$$removeChild^%zewdDOM(ocOID)
+ . s attr("type")="text/javascript"
+ . s sOID=$$addElementToDOM^%zewdDOM("script",headOID,,.attr)
+ . s ocOID=$$appendChild^%zewdDOM(ocOID,sOID)
+ . d removeIntermediateNode^%zewdDOM(ocOID)
+ ;
  ; process nameList if it was created
  d removeIntermediateNode^%zewdDOM(nodeOID)
  d processNameList(.nameList,.formDeclarations)
@@ -231,6 +246,13 @@ childTags(nodeOID,jsSectionOID)
  . . i $$removeChild^%zewdDOM(childOID,1)
  . i tagName="ext4:defineclass" d ExtDefine(childOID) q
  . i tagName="ext4:createinstance" d ExtCreate(childOID,jsSectionOID,isFragment) q
+ . i tagName="meta" d
+ . . n headOID,tempOID
+ . . s xOID=$$removeChild^%zewdDOM(childOID)
+ . . s headOID=$$getTagOID^%zewdDOM("head",docName)
+ . . s tempOID=$$insertNewFirstChildElement^%zewdDOM(headOID,"temp",docOID)
+ . . s xOID=$$appendChild^%zewdDOM(xOID,tempOID)
+ . . d removeIntermediateNode^%zewdDOM(tempOID)
  . i tagName="link" d
  . . n src,xOID
  . . s src=$$getAttribute^%zewdDOM("href",childOID)
@@ -960,26 +982,113 @@ editableColumn(nodeOID)
  n childNo,childOID,editAs
  ;
  s editAs=$$getAttribute^%zewdDOM("editas",nodeOID)
- i editAs="textfield" d
- . n OIDArray,stop
- . s stop=0
- . d getChildrenInOrder^%zewdDOM(nodeOID,.OIDArray)
- . s childNo=""
- . f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d  q:stop
- . . s childOID=OIDArray(childNo)
- . . i $$getTagName^%zewdDOM(childOID)="ext4:editor" s stop=1
- . i childNo="" d addEditor(nodeOID,"textfield")
+ i editAs'="" d addEditor(nodeOID,editAs)
+ ;
+ i $$getAttribute^%zewdDOM("groupfield",nodeOID)="true" d
+ . n dataIndex,gpOID
+ . ; move to the gridPanel tag as a groupField tag
+ . s gpOID=$$getParentNode^%zewdDOM(nodeOID)
+ . s dataIndex=$$getAttribute^%zewdDOM("dataindex",nodeOID)
+ . d setAttribute^%zewdDOM("groupfield",dataIndex,gpOID)
+ . if $$getAttribute^%zewdDOM("grouping",gpOID)="" d setAttribute^%zewdDOM("grouping","true",gpOID)
+ d removeAttribute^%zewdDOM("groupfield",nodeOID)
  ;
  QUIT
  ;
 addEditor(nodeOID,type)
  ;
- n attr,xOID
+ n attr,OIDArray,stop,xOID
  ;
- s attr("xtype")=type
- s xOID=$$addElementToDOM^%zewdDOM("ext4:editor",nodeOID,,.attr)
- d addCellEditor(nodeOID)
+ s stop=0
+ d getChildrenInOrder^%zewdDOM(nodeOID,.OIDArray)
+ s childNo=""
+ f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d  q:stop
+ . s childOID=OIDArray(childNo)
+ . i $$getTagName^%zewdDOM(childOID)="ext4:editor" s stop=1
+ i childNo="" d
+ . s attr("xtype")=type
+ . i type="combobox" d
+ . . n colName,fn,id
+ . . s attr("lazyRender")="true"
+ . . s attr("listClass")="x-combo-list-small"
+ . . s attr("selectOnTab")="true"
+ . . s attr("triggerAction")="all"
+ . . s attr("typeAhead")="true"
+ . . s colName=$$getAttribute^%zewdDOM("dataindex",nodeOID)
+ . . s id=$$getGridPanelId(nodeOID)
+ . . s attr("store")=".EWD.ext4.grid['"_id_"'].combo.store['"_colName_"']"
+ . . s fn=".function (value, metaData, record, rowIndex, colIndex) {return EWD.ext4.grid['"_id_"'].combo.index['"_colName_"'][value];}"
+ . . d setAttribute^%zewdDOM("renderer",fn,nodeOID)
+ . . d getOptionTags(nodeOID,id)
+ . s xOID=$$addElementToDOM^%zewdDOM("ext4:editor",nodeOID,,.attr)
+ . d addCellEditor(nodeOID)
  QUIT
+ ;
+getOptionTags(nodeOID,id)
+ ;
+ n array1,array2,childNo,childOID,comma,display,OIDArray,optionsOID,useList,value
+ ;
+ s array1="",array2="",comma=""
+ s useList=$$getAttribute^%zewdDOM("uselist",nodeOID)
+ i useList'="" d  QUIT
+ . n dataIndex,gpOID,jsOID,text,xOID
+ . s xOID=$$createElement^%zewdDOM("temp",docOID)
+ . s gpOID=$$getParentNode^%zewdDOM(nodeOID)
+ . s xOID=$$appendChild^%zewdDOM(xOID,$$getParentNode^%zewdDOM(gpOID))
+ . ;. s jsOID=$$getElementById^%zewdDOM("cspScripts",docOID)
+ . s dataIndex=$$getAttribute^%zewdDOM("dataindex",nodeOID)
+ . s text=" d optionsFromList^%zewdExt4Code("""_useList_""","""_dataIndex_""","""_id_""",sessid)"
+ . i $$addCSPServerScript^%zewdAPI(xOID,text)
+ . d removeIntermediateNode^%zewdDOM(xOID)
+ ;
+ s optionsOID=$$getOptionsTag(nodeOID)
+ i optionsOID="" QUIT
+ d getChildrenInOrder^%zewdDOM(optionsOID,.OIDArray)
+ s childNo=""
+ f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d
+ . s childOID=OIDArray(childNo)
+ . s value=$$getAttribute^%zewdDOM("value",childOID)
+ . s display=$$getAttribute^%zewdDOM("displayvalue",childOID)
+ . s array1=array1_comma_"['"_value_"','"_display_"']"
+ . s array2=array2_comma_"'"_value_"':'"_display_"'"
+ . s comma=","
+ d addOptionCode(nodeOID,id,array1,array2)
+ ;
+ QUIT
+ ;
+addOptionCode(nodeOID,id,array1,array2)
+ ;
+ n comma,dataIndex,display,ocOID,text,textOID
+ ;
+ s ocOID=$$getTagOID^%zewdDOM("ext4:optioncode",docName)
+ i ocOID="" d
+ . n cOID
+ . s cOID=$$getTagOID^%zewdDOM("ext4:container",docName)
+ . s ocOID=$$addElementToDOM^%zewdDOM("ext4:optioncode",cOID)
+ ;
+ s dataIndex=$$getAttribute^%zewdDOM("dataindex",nodeOID)
+ s text="EWD.ext4.grid['"_id_"'].combo.store['"_dataIndex_"'] = ["
+ s text=text_array1
+ s text=text_"];"_$c(13,10)
+ s text=text_"EWD.ext4.grid['"_id_"'].combo.index['"_dataIndex_"'] = {"
+ s text=text_array2
+ s text=text_"};"
+ s textOID=$$createTextNode^%zewdDOM(text,docOID)
+ s textOID=$$appendChild^%zewdDOM(textOID,ocOID)
+ ;
+ QUIT
+ ;
+getOptionsTag(nodeOID)
+ ;
+ n childNo,childOID,OIDArray,stop
+ ;
+ s childOID=""
+ d getChildrenInOrder^%zewdDOM(nodeOID,.OIDArray)
+ s childNo="",stop=0
+ f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d  q:stop
+ . s childOID=OIDArray(childNo)
+ . i $$getTagName^%zewdDOM(childOID)="ext4:options" s stop=1
+ QUIT childOID
  ;
 addCellEditor(nodeOID)
  ;
@@ -995,6 +1104,34 @@ addCellEditor(nodeOID)
  . ;. d setAttribute^%zewdDOM("clickstoedit",2,ceOID)
  ;
  QUIT
+ ;
+getGridPanelId(nodeOID)
+ ;
+ n gpOID,id
+ ;
+ s id=""
+ s gpOID=$$getParentNode^%zewdDOM(nodeOID)
+ i $$getTagName^%zewdDOM(gpOID)="ext4:gridpanel" d
+ . s id=$$getAttribute^%zewdDOM("id",gpOID)
+ . i id="" s id=$$uniqueId(gpOID)
+ QUIT id
+ ;
+getColNo(nodeOID)
+ ;
+ n gpOID,no
+ ;
+ s no=0
+ s gpOID=$$getParentNode^%zewdDOM(nodeOID)
+ i $$getTagName^%zewdDOM(gpOID)="ext4:gridpanel" d
+ . n childNo,childOID,OIDArray,stop
+ . d getChildrenInOrder^%zewdDOM(gpOID,.OIDArray)
+ . s childNo="",stop=0
+ . f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d  q:stop
+ . . s childOID=OIDArray(childNo)
+ . . i $$getTagName^%zewdDOM(childOID)="ext4:gridcolumn" d
+ . . . s no=no+1
+ . . . i childOID=nodeOID s stop=1
+ QUIT no
  ;
 setNameList(nodeOID)
  ;
@@ -1336,7 +1473,7 @@ treePanelInstance(attrs,nodeOID,instanceOID)
  ;
 gridPanelInstance(attrs,nodeOID,instanceOID)
  ;
- n argumentsOID,clicksToEdit,colDef,cspOID,grouping,id
+ n argumentsOID,clicksToEdit,colDef,cspOID,groupField,grouping,id
  n mainAttrs,sessionName,storeId,tagName,text,validationPage,xOID
  ;
  m mainAttrs=attrs
@@ -1345,6 +1482,7 @@ gridPanelInstance(attrs,nodeOID,instanceOID)
  s storeId=$g(attrs("storeid"))
  s clicksToEdit=$g(attrs("clicksToEdit"))
  s validationPage=$g(attrs("validationpage"))
+ s groupField=$g(attrs("groupfield"))
  i validationPage'="",clicksToEdit="" s clicksToEdit=1
  ;s grouping=$g(attrs("grouping"))
  s id=$g(attrs("id"))
@@ -1364,11 +1502,11 @@ gridPanelInstance(attrs,nodeOID,instanceOID)
  k attrs("validationpage")
  i storeId="" s storeId=id_"Store"
  i $g(attrs("store"))="" s attrs("store")="."_storeId
- i colDef'="" s attrs("columns")="."_id_"Cols"
+ i colDef'="" s attrs("columns")=".EWD.ext4.grid['"_id_"'].cols"
  i sessionName'="" d
  . s xOID=$$createElement^%zewdDOM("temp",docOID)
  . s xOID=$$insertBefore^%zewdDOM(xOID,nodeOID)
- . s text=" d writeGridStore^%zewdExt4Code("""_sessionName_""","""_colDef_""","""_id_""","""_storeId_""",sessid)"
+ . s text=" d writeGridStore^%zewdExt4Code("""_sessionName_""","""_colDef_""","""_id_""","""_storeId_""","""_groupField_""",sessid)"
  . s cspOID=$$addCSPServerScript^%zewdAPI(xOID,text)
  ;
  i $g(attrs("xtype"))'="gridpanel" d
@@ -1402,9 +1540,17 @@ gridPanelInstance(attrs,nodeOID,instanceOID)
  . . s attr("quoted")="false"
  . . s argOID=$$addElementToDOM^%zewdDOM("ewd:argument",argsOID,,.attr)
  . . s text="EWD.ext4.e = e;"_$c(13,10)
- . . ;s text=text_"var nvp = 'row=' + e.rowIdx + '&col=' + e.colIdx + '&colName=' + e.field + '&value=' + e.value + '&originalValue=' + e.originalValue;"_$c(13,10)
- . . s text=text_"var nvp = 'row=' + e.record.data.zewdRowNo + '&colName=' + e.field + '&value=' + e.value + '&originalValue=' + e.originalValue;"_$c(13,10)
- . . s text=text_"EWD.ajax.getPage({page:'"_validationPage_"',nvp:nvp});"_$c(13,10)
+ . . s text=text_"var ov = e.originalValue;"_$c(13,10)
+ . . s text=text_"var value = e.value;"_$c(13,10)
+ . . s text=text_"var editAs = e.grid.columns[e.colIdx].editas;"_$c(13,10)
+ . . s text=text_"if (editAs === 'datefield') {"_$c(13,10)
+ . . s text=text_"  value = Ext.Date.format(value,'m/d/Y');"_$c(13,10)
+ . . s text=text_"  if (ov.toString().indexOf('/') === -1) ov = Ext.Date.format(ov, 'm/d/Y');"_$c(13,10)
+ . . s text=text_"}"_$c(13,10)
+ . . s text=text_"if (value !== ov) {"_$c(13,10)
+ . . s text=text_" var nvp = 'row=' + e.record.data.zewdRowNo + '&colName=' + e.field + '&value=' + value + '&originalValue=' + ov;"_$c(13,10)
+ . . s text=text_" EWD.ajax.getPage({page:'"_validationPage_"',nvp:nvp});"_$c(13,10)
+ . . s text=text_"}"_$c(13,10)
  . . s codeOID=$$addElementToDOM^%zewdDOM("ewd:code",fnOID,,,text)
  ;
  i sessionName'="" d removeIntermediateNode^%zewdDOM(xOID)
@@ -1559,11 +1705,11 @@ nextPageHandler(nodeOID)
  . s text=text_"var nvp='ext4_addTo="_addTo
  . i replace="true" d
  . . s text=text_"&ext4_removeAll=true"
- . i actionCol s text=text_"&row=' + EWD.ext4.grid.getRowNo(me,rowIndex) + '"
+ . i actionCol s text=text_"&row=' + EWD.ext4.getGridRowNo(me,rowIndex) + '"
  . s text=text_"';"_$c(13,10)
  e  d
  . i actionCol d
- . . s text="var nvp='row=' + EWD.ext4.grid.getRowNo(me,rowIndex)"
+ . . s text="var nvp='row=' + EWD.ext4.getGridRowNo(me,rowIndex)"
  . e  d
  . . s text="var nvp='';"
  . s text=text_";"_$c(13,10)

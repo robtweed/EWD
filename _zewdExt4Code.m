@@ -1,7 +1,7 @@
 %zewdExt4Code ; Extjs 4 Runtime Logic
  ;
- ; Product: Enterprise Web Developer (Build 910)
- ; Build Date: Wed, 25 Apr 2012 17:59:25
+ ; Product: Enterprise Web Developer (Build 911)
+ ; Build Date: Mon, 30 Apr 2012 12:37:21
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -53,7 +53,7 @@ gridValidationFail(sessid,alertMessage,alertTitle)
  s alertMessage=$g(alertMessage) i alertMessage="" s alertMessage="Invalid value: "_value
  QUIT "js:var e=EWD.ext4.e;e.record.data[e.field] = '"_originalValue_"'; e.record.commit();Ext.Msg.alert('"_alertTitle_"','"_alertMessage_"');"
  ; 
-writeGridStore(sessionName,columnDef,id,storeId,sessid)
+writeGridStore(sessionName,columnDef,id,storeId,groupField,sessid)
  ;
  ; Generate and write out the Model, Store and Column 
  ; definitions for a gridPanel
@@ -63,9 +63,17 @@ writeGridStore(sessionName,columnDef,id,storeId,sessid)
  i columnDef'="" d mergeArrayFromSession^%zewdAPI(.cols,columnDef,sessid)
  d mergeArrayFromSession^%zewdAPI(.data,sessionName,sessid)
  ;
+ w "EWD.ext4.grid['"_id_"'] = {"_$c(13,10)
+ w "  combo: {"_$c(13,10)
+ w "    index: {},"_$c(13,10)
+ w "    store: {}"_$c(13,10)
+ w "  }"_$c(13,10)
+ w "};"_$c(13,10)
+ ;
  ; Model
  ;
  s grouping=0
+ i $g(groupField)'="" s grouping=groupField
  ;
  s no=""
  f  s no=$o(cols(no)) q:no=""  d
@@ -121,29 +129,37 @@ writeGridStore(sessionName,columnDef,id,storeId,sessid)
  ; ComboBox editor Options
  ;
  s no=""
- w "var comboIndex = {};"_$c(13,10)
  f  s no=$o(cols(no)) q:no=""  d
+ . i $g(cols(no,"useList"))'="" d  q
+ . . n dataIndex,listName
+ . . s listName=cols(no,"useList")
+ . . k cols(no,"useList")
+ . . s dataIndex=$g(cols(no,"name"))
+ . . d optionsFromList(listName,dataIndex,id,sessid)
+ . . s cols(no,"renderer")=".function (value, metaData, record, rowIndex, colIndex) {return EWD.ext4.grid['"_id_"'].combo.index['"_dataIndex_"'][value];}"
+ . ;
  . i $d(cols(no,"options")) d
- . . n comma,ono
- . . w "var combo"_no_"Store=["_$c(13,10)
+ . . n comma,dataIndex,ono
+ . . s dataIndex=$g(cols(no,"name"))
+ . . w "EWD.ext4.grid['"_id_"'].combo.store['"_dataIndex_"']=["_$c(13,10)
  . . s ono="",comma=""
  . . f  s ono=$o(cols(no,"options",ono)) q:ono=""  d
  . . . w comma_"['"_$g(cols(no,"options",ono,"value"))_"','"_$g(cols(no,"options",ono,"displayValue"))_"']"
  . . . s comma=","
  . . w "];"_$c(13,10)
- . . ;w "comboIndex['"_(no-1)_"']={"_$c(13,10)
- . . w "comboIndex['"_(no)_"']={"_$c(13,10)
+ . . w "EWD.ext4.grid['"_id_"'].combo.index['"_dataIndex_"']={"_$c(13,10)
  . . s ono="",comma=""
  . . f  s ono=$o(cols(no,"options",ono)) q:ono=""  d
  . . . w comma_"'"_$g(cols(no,"options",ono,"value"))_"':'"_$g(cols(no,"options",ono,"displayValue"))_"'"
  . . . s comma=","
  . . w "};"_$c(13,10)
- . . s cols(no,"renderer")=".function (value, metaData, record, rowIndex, colIndex) {return comboIndex[colIndex][value];}"
+ . . s cols(no,"renderer")=".function (value, metaData, record, rowIndex, colIndex) {return EWD.ext4.grid['"_id_"'].combo.index['"_dataIndex_"'][value];}"
  ;
  ; Columns
  ;
  i columnDef'="" d
- . w "var "_id_"Cols=["
+ . w "EWD.ext4.grid['"_id_"'].cols=["
+ . ;w "var "_id_"Cols=["
  . ;s no="",comma=""
  . s no="",comma=","
  . w "{dataIndex:'zewdRowNo', hidden: true}"
@@ -172,7 +188,7 @@ writeGridStore(sessionName,columnDef,id,storeId,sessid)
  . . . . . i $g(cols(no,"icon",iconNo,"nextPage"))'="" d
  . . . . . . n fn,i
  . . . . . . s fn="function(me,rowIndex) {"
- . . . . . . s fn=fn_"var nvp='row='+EWD.ext4.grid.getRowNo(me,rowIndex);"
+ . . . . . . s fn=fn_"var nvp='row='+EWD.ext4.getGridRowNo(me,rowIndex);"
  . . . . . . i $g(cols(no,"icon",iconNo,"addTo"))'="" s fn=fn_"nvp=nvp+'&ext4_addTo="_cols(no,"icon",iconNo,"addTo")_"';"
  . . . . . . i $g(cols(no,"icon",iconNo,"replacePreviousPage"))="true" s fn=fn_"nvp=nvp+'&ext4_removeAll=true';"
  . . . . . . s fn=fn_"; EWD.ajax.getPage({page:'"_cols(no,"icon",iconNo,"nextPage")_"',nvp:nvp});"
@@ -186,16 +202,18 @@ writeGridStore(sessionName,columnDef,id,storeId,sessid)
  . . . . . w "}"
  . . . . . s comma3=","
  . . . . w "]"
- . . . i name="editas" d  q
+ . . . i name="editas" d  ;  q
  . . . . n key,value2
  . . . . w comma2_"editor: {xtype:'"_value_"'"
  . . . . i value="combobox" d
+ . . . . . n dataIndex
+ . . . . . s dataIndex=$g(cols(no,"name"))
  . . . . . i $g(cols(no,"editor","typeAhead"))="" s cols(no,"editor","typeAhead")="true"
  . . . . . i $g(cols(no,"editor","triggerAction"))="" s cols(no,"editor","triggerAction")="all"
  . . . . . i $g(cols(no,"editor","selectOnTab"))="" s cols(no,"editor","selectOnTab")="true"
  . . . . . i $g(cols(no,"editor","lazyRender"))="" s cols(no,"editor","lazyRender")="true"
  . . . . . i $g(cols(no,"editor","listClass"))="" s cols(no,"editor","listClass")="x-combo-list-small"
- . . . . . s cols(no,"editor","store")=".combo"_no_"Store"
+ . . . . . s cols(no,"editor","store")=".EWD.ext4.grid['"_id_"'].combo.store['"_dataIndex_"']"
  . . . . s key=""
  . . . . f  s key=$o(cols(no,"editor",key)) q:key=""  d
  . . . . . s value2=cols(no,"editor",key)
@@ -360,6 +378,28 @@ writeComboBoxStore(fieldName,sessid)
  w " ]"_$c(13,10)
  w "});"_$c(13,10)
  ;
+ QUIT
+ ;
+optionsFromList(listName,dataIndex,gridId,sessid)
+ ;
+ n array1,array2,comma,d,display,lists,no,value
+ ;
+ d mergeArrayFromSession^%zewdAPI(.lists,"ewd_list",sessid)
+ s array1="",array2="",comma=""
+ s no=""
+ f  s no=$o(lists(listName,no)) q:no=""  d
+ . s d=lists(listName,no)
+ . s display=$p(d,$c(1),1)
+ . s value=$p(d,$c(1),2)
+ . s array1=array1_comma_"['"_value_"','"_display_"']"
+ . s array2=array2_comma_"'"_value_"':'"_display_"'"
+ . s comma=","
+ w "EWD.ext4.grid['"_gridId_"'].combo.store['"_dataIndex_"']=["_$c(13,10)
+ w array1_$c(13,10)
+ w "];"_$c(13,10)
+ w "EWD.ext4.grid['"_gridId_"'].combo.index['"_dataIndex_"']={"_$c(13,10)
+ w array2_$c(13,10)
+ w "};"_$c(13,10)
  QUIT
  ;
 writeDesktopConfig(sessionName,sessid)
