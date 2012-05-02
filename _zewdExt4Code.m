@@ -1,7 +1,7 @@
 %zewdExt4Code ; Extjs 4 Runtime Logic
  ;
- ; Product: Enterprise Web Developer (Build 911)
- ; Build Date: Mon, 30 Apr 2012 12:37:21
+ ; Product: Enterprise Web Developer (Build 912)
+ ; Build Date: Wed, 02 May 2012 16:47:56
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -31,14 +31,21 @@
  ;
 preProcess(sessid)
  ;
- n name,var
+ n name,page,var,xname
  ;
  ; Panel addTo pre-processing
  ;
+ ;s page=$$getRequestValue^%zewdAPI("page",sessid)
  f name="ext4_addTo","ext4_removeAll" d
- . d deleteFromSession^%zewdAPI(name,sessid)
+ . s xname="tmp_"_$p(name,"_",2)
+ . d deleteFromSession^%zewdAPI(xname,sessid)
+ . ;d deleteSessionArrayValue^%zewdAPI(name,page,sessid)
  . s var=$$getRequestValue^%zewdAPI(name,sessid)
- . i var'="" d setSessionValue^%zewdAPI(name,var,sessid)
+ . i var'="" d
+ . . ;n arr
+ . . ;s arr(page)=var
+ . . ;d mergeArrayToSession^%zewdAPI(.arr,name,sessid)
+ . . d setSessionValue^%zewdAPI(xname,var,sessid)
  ;
  QUIT
  ;
@@ -52,7 +59,35 @@ gridValidationFail(sessid,alertMessage,alertTitle)
  s alertTitle=$g(alertTitle) i alertTitle="" s alertTitle="Validation Error"
  s alertMessage=$g(alertMessage) i alertMessage="" s alertMessage="Invalid value: "_value
  QUIT "js:var e=EWD.ext4.e;e.record.data[e.field] = '"_originalValue_"'; e.record.commit();Ext.Msg.alert('"_alertTitle_"','"_alertMessage_"');"
- ; 
+ ;
+setTextAreaValue(array,fieldName,sessid)
+ ;
+ n lf,lineNo,text
+ ;
+ s text=""
+ s lf=""
+ s lineNo=""
+ f  s lineNo=$o(array(lineNo)) q:lineNo=""  d
+ . s text=text_lf_array(lineNo)
+ . s lf="\n"
+ d setSessionValue^%zewdAPI(fieldName,text,sessid)
+ ;
+ QUIT
+ ;
+setHtmlEditorValue(array,fieldName,sessid)
+ ;
+ n lf,lineNo,text
+ ;
+ s text=""
+ s lf=""
+ s lineNo=""
+ f  s lineNo=$o(array(lineNo)) q:lineNo=""  d
+ . s text=text_lf_array(lineNo)
+ . s lf="<br>"
+ d setSessionValue^%zewdAPI(fieldName,text,sessid)
+ ;
+ QUIT
+ ;
 writeGridStore(sessionName,columnDef,id,storeId,groupField,sessid)
  ;
  ; Generate and write out the Model, Store and Column 
@@ -362,7 +397,7 @@ expandMenuArray(inArray,outArray,page,addTo,replace,menuId,id)
  ;
 writeComboBoxStore(fieldName,sessid)
  ;
- n comma,d,list,name,no,value
+ n comma,d,list,name,no,value,values
  ;
  d mergeArrayFromSession^%zewdAPI(.list,"ewd_list",sessid)
  w "var "_fieldName_"=Ext.create('Ext.data.Store',{"_$c(13,10)
@@ -377,6 +412,15 @@ writeComboBoxStore(fieldName,sessid)
  . s comma=","
  w " ]"_$c(13,10)
  w "});"_$c(13,10)
+ ;
+ d getMultipleSelectValues^%zewdAPI(fieldName,.values,sessid)
+ i $d(values) d
+ . w "EWD.ext4.form['"_fieldName_"'] = ["
+ . s value="",comma=""
+ . f  s value=$o(values(value)) q:value=""  d
+ . . w comma_"'"_value_"'"
+ . . s comma=","
+ . w "];"_$c(13,10)
  ;
  QUIT
  ;
@@ -423,6 +467,10 @@ writeDesktopConfig(sessionName,sessid)
  w "EWD.desktop="
  d streamArrayToJSON^%zewdJSON("desktop")
  w ";"_$c(13,10)
+ QUIT
+ ;
+clearFieldErrors(sessid)
+ d deleteFromSession^%zewdAPI("ewd_form",sessid)
  QUIT
  ;
 setFieldError(field,error,sessid)

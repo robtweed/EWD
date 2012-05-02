@@ -1,7 +1,7 @@
 %zewdDOM	; Enterprise Web Developer support functions
  ;
- ; Product: Enterprise Web Developer (Build 910)
- ; Build Date: Wed, 25 Apr 2012 17:59:25
+ ; Product: Enterprise Web Developer (Build 912)
+ ; Build Date: Wed, 02 May 2012 16:47:56
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -497,13 +497,27 @@ setTextData(data,nodeOID)
 getTagName(nodeOID)
  QUIT $$getNodeName(nodeOID)
  ;
-renameTag(tagName,nodeOID)
+renameTag(tagName,nodeOID,insitu)
  ;
  n attrArray,attrName,attrValue,docOID,newOID,ok
  ;
  i $g(tagName)="" QUIT ""
  i $g(nodeOID)="" QUIT ""
  i nodeOID'["-" QUIT ""
+ ;
+ i $g(insitu)=1 d  QUIT nodeOID
+ . n docNo,nodeNo,oldName
+ . s oldName=$$getTagName(nodeOID)
+ . s docNo=$$getDocNo(nodeOID)
+ . s nodeNo=$$getNodeNo(nodeOID)
+ . s $p(^zewdDOM("dom",docNo,"node",nodeNo),"|",1)=tagName
+ . i $$getNodeType(nodeOID)=1 d
+ . . k ^zewdDOM("dom",docNo,"nodeNameIndex",oldName,nodeNo)
+ . . s ^zewdDOM("dom",docNo,"nodeNameIndex",tagName,nodeNo)=""
+ . . i tagName[":" d
+ . . . i oldName[":" k ^zewdDOM("dom",docNo,"localNameIndex",$p(oldName,":",2),nodeNo)
+ . . . s ^zewdDOM("dom",docNo,"localNameIndex",$p(tagName,":",2),nodeNo)=""
+ ;
  s docOID=$p(nodeOID,"-",1)_"-1"
  s newOID=$$insertNewIntermediateElement^%zewdDOM(nodeOID,tagName,docOID)
  s ok=$$getAttributes^%zewdCompiler(nodeOID,.attrArray)

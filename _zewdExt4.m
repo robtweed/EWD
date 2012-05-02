@@ -1,7 +1,7 @@
 %zewdExt4 ; Extjs Tag Processors
  ;
- ; Product: Enterprise Web Developer (Build 911)
- ; Build Date: Mon, 30 Apr 2012 12:37:21
+ ; Product: Enterprise Web Developer (Build 912)
+ ; Build Date: Wed, 02 May 2012 16:47:56
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -116,6 +116,7 @@ container(nodeOID,attrValue,docOID,technology)
  s xOID=$$addElementToDOM^%zewdDOM("ewd:jssection",jsOID,,.attr)
  s text=""
  s text=text_"EWD.ext4={"_$c(13,10)
+ s text=text_"  form: {},"_$c(13,10)
  s text=text_"  grid: {},"_$c(13,10)
  ;s text=text_"    combo: {"_$c(13,10)
  ;s text=text_"      index: {},"_$c(13,10)
@@ -128,18 +129,38 @@ container(nodeOID,attrValue,docOID,technology)
  s text=text_"  submit: function (formPanelId,nextPage,addTo,replace) {"_$c(13,10)
  s text=text_"    var nvp='';"_$c(13,10)
  s text=text_"    var amp='';"_$c(13,10)
+ s text=text_"    var value;"_$c(13,10)
  s text=text_"    Ext.getCmp(formPanelId).getForm().getFields().eachKey("_$c(13,10)
  s text=text_"      function(key,item) {"_$c(13,10)
- s text=text_"        if ((item.xtype !== 'radiogroup')&&(item.xtype !== 'checkboxgroup')) {"_$c(13,10)
- s text=text_"          var value = '';"_$c(13,10)
- s text=text_"          if (item.xtype === 'htmleditor') {"_$c(13,10)
- s text=text_"            value = item.getValue();"_$c(13,10)
+ s text=text_"        if (item.xtype === 'combobox') {"_$c(13,10)
+ s text=text_"          var values=item.getSubmitValue();"_$c(13,10)
+ s text=text_"          for (var i=0; i<values.length; i++) {"_$c(13,10)
+ s text=text_"            value=values[i];"_$c(13,10)
+ s text=text_"            nvp = nvp + amp + item.getName() + '=' + escape(value);"_$c(13,10)
+ s text=text_"            amp='&';"_$c(13,10)
+ s text=text_"          }"_$c(13,10)
+ s text=text_"        }"_$c(13,10)
+ s text=text_"        else if ((item.xtype !== 'radiogroup')&&(item.xtype !== 'checkboxgroup')) {"_$c(13,10)
+ s text=text_"          value = '';"_$c(13,10)
+ s text=text_"          if (item.xtype === 'textareafield') {"_$c(13,10)
+ s text=text_"            value = escape(item.getValue());"_$c(13,10)
+ s text=text_"            value = value.replace(/\+/g, '%2B');"_$c(13,10)
+ s text=text_"          }"_$c(13,10)
+ s text=text_"          else if (item.xtype === 'htmleditor') {"_$c(13,10)
+ s text=text_"            value = escape(item.getValue());"_$c(13,10)
  s text=text_"          }"_$c(13,10)
  s text=text_"          else {"_$c(13,10)
  s text=text_"            if (item.getSubmitValue() !== null) value = item.getSubmitValue();"_$c(13,10)
- s text=text_"          }"
- s text=text_"          nvp = nvp + amp + item.getName() + '=' + value;"_$c(13,10)
- s text=text_"          amp='&';"_$c(13,10)
+ s text=text_"          }"_$c(13,10)
+ s text=text_"          if ((item.xtype !== 'radiofield')&&(item.xtype !== 'checkboxfield')) {"_$c(13,10)
+ s text=text_"            nvp = nvp + amp + item.getName() + '=' + value;"_$c(13,10)
+ s text=text_"            amp='&';"_$c(13,10)
+ s text=text_"          }"_$c(13,10)
+ s text=text_"          else {"_$c(13,10)
+ s text=text_"            if (value !== '') {"_$c(13,10)
+ s text=text_"              nvp = nvp + amp + item.getName() + '=' + value;"_$c(13,10)
+ s text=text_"            }"_$c(13,10)
+ s text=text_"          }"_$c(13,10)
  s text=text_"        }"_$c(13,10)
  s text=text_"      }"_$c(13,10)
  s text=text_"    );"_$c(13,10)
@@ -331,8 +352,9 @@ ExtCreate(nodeOID,parentOID,isFragment)
  . n addTo,remove,text
  . q:className["Store"
  . q:'add
- . s addTo=$$addPhpVar^%zewdCustomTags("#ext4_addTo")
- . s remove=$$addPhpVar^%zewdCustomTags("#ext4_removeAll")
+ . s addTo=$$addPhpVar^%zewdCustomTags("#tmp.addTo")
+ . s remove=$$addPhpVar^%zewdCustomTags("#tmp.removeAll")
+ . ;s text="var addTo='"_addTo_"';"_$c(13,10)
  . s text="var addTo='"_addTo_"';"_$c(13,10)
  . s text=text_"var remove='"_remove_"';"_$c(13,10)
  . s text=text_"if (remove === 'true') Ext.getCmp('"_addTo_"').removeAll(true);"_$c(13,10)
@@ -901,7 +923,7 @@ pass1(nodeOID,tagNameMap)
 replaceModalWindow(nodeOID)
  ;
  n xOID
- s xOID=$$renameTag^%zewdDOM("ext4:window",nodeOID)
+ s xOID=$$renameTag^%zewdDOM("ext4:window",nodeOID,1)
  d setAttribute^%zewdDOM("modal","true",xOID)
  QUIT
  ;
@@ -910,7 +932,7 @@ addEwdActionField(nodeOID)
  n attr,xOID
  ;
  s attr("name")="ewd_action"
- s attr("id")="ewd_action"
+ s attr("id")="ewd_action"_$$uniqueId^%zewdAPI(nodeOID,filename)
  s attr("value")="zewdSTForm"_$$uniqueId^%zewdAPI(nodeOID,filename)
  ;s nameList("ewd_action")="hidden|"_attr("value")
  s xOID=$$addElementToDOM^%zewdDOM("ext4:hiddenfield",nodeOID,,.attr)
@@ -1181,10 +1203,16 @@ setNameList(nodeOID)
  ;
 treePanelListener(nodeOID)
  ;
- n argOID,argsOID,attr,codeOID,fnOID,icOID,lsOID,text
+ n argOID,argsOID,attr,codeOID,fnOID,icOID,lsOID,stop,text
  ;
+ s stop=0
  i '$$hasChildTag^%zewdDOM(nodeOID,"ext4:listeners",.lsOID) d
  . s lsOID=$$addElementToDOM^%zewdDOM("ext4:listeners",nodeOID)
+ e  d
+ . n lOID
+ . i $$hasChildTag^%zewdDOM(lsOID,"ext4:listener",.lOID) d
+ . . i $$getAttribute^%zewdDOM("itemclick",lOID)'="" s stop=1
+ i stop QUIT  ; already has a custom itemClick handler defined
  s icOID=$$addElementToDOM^%zewdDOM("ext4:itemClick",lsOID)
  s fnOID=$$addElementToDOM^%zewdDOM("ewd:jsfunction",icOID)
  s argsOID=$$addElementToDOM^%zewdDOM("ewd:arguments",fnOID)
@@ -1317,10 +1345,12 @@ expandComboBox(nodeOID,attr,parentOID)
  n cspOID,fieldName,text,xOID
  ;
  i $g(attr("queryMode"))="" s attr("queryMode")="local"
+ s fieldName=$g(attr("name")) i fieldName="" s fieldName="unnamedCombobox"
+ i $g(attr("multiselect"))="true" d
+ . s attr("value")=".EWD.ext4.form['"_fieldName_"']"
  i $g(attr("store"))="" d
  . s attr("displayField")="name"
  . s attr("valueField")="value"
- . s fieldName=$g(attr("name")) i fieldName="" s fieldName="unnamedCombobox"
  . s attr("store")="."_fieldName
  . s xOID=$$createElement^%zewdDOM("cspTemp",docOID)
  . s xOID=$$insertBefore^%zewdDOM(xOID,nodeOID)
@@ -1680,12 +1710,16 @@ expandPanel(nodeOID,attr,parentOID)
  ;
 nextPageHandler(nodeOID)
  ;
- n actionCol,addTo,argOID,argsOID,attr,codeOID,fnOID,handlerOID,nextPage,replace,text
+ n actionCol,addTo,amp,argOID,argsOID,attr,codeOID,fnOID,handlerOID,nextPage,nvp,replace,text
  ;
  s actionCol=$$getAttribute^%zewdDOM("xtype",nodeOID)="actioncolumn"
  s nextPage=$$getAttribute^%zewdDOM("nextpage",nodeOID)
+ s nvp=$$getAttribute^%zewdDOM("nvp",nodeOID)
+ i $e(nvp,1)="&" s nvp=$e(nvp,2,$l(nvp))
+ i $e(nvp,$l(nvp))="&" s nvp=$e(nvp,1,$l(nvp)-1)
  i nextPage="" QUIT
  d removeAttribute^%zewdDOM("nextpage",nodeOID)
+ d removeAttribute^%zewdDOM("nvp",nodeOID)
  s addTo=$$getAttribute^%zewdDOM("addto",nodeOID)
  d removeAttribute^%zewdDOM("addto",nodeOID)
  s replace=$$getAttribute^%zewdDOM("replacepreviouspage",nodeOID)
@@ -1700,18 +1734,19 @@ nextPageHandler(nodeOID)
  . s attr("name")="rowIndex"
  . s attr("quoted")="false"
  . s argOID=$$addElementToDOM^%zewdDOM("ewd:argument",argsOID,,.attr)
- s text=""
+ s text="var nvp='"_nvp_"';"
+ s amp="" i nvp'="" s amp="&"
  i addTo'="" d
- . s text=text_"var nvp='ext4_addTo="_addTo
+ . s text=text_"nvp=nvp+'"_amp_"ext4_addTo="_addTo
  . i replace="true" d
  . . s text=text_"&ext4_removeAll=true"
  . i actionCol s text=text_"&row=' + EWD.ext4.getGridRowNo(me,rowIndex) + '"
  . s text=text_"';"_$c(13,10)
  e  d
  . i actionCol d
- . . s text="var nvp='row=' + EWD.ext4.getGridRowNo(me,rowIndex)"
- . e  d
- . . s text="var nvp='';"
+ . . s text="nvp=nvp+'"_amp_"row=' + EWD.ext4.getGridRowNo(me,rowIndex)"
+ . ;e  d
+ . ;. s text="var nvp='';"
  . s text=text_";"_$c(13,10)
  s text=text_"EWD.ajax.getPage({page:'"_nextPage_"',nvp:nvp});"
  s codeOID=$$addElementToDOM^%zewdDOM("ewd:code",fnOID,,,text)
@@ -1761,34 +1796,6 @@ processNameList(nameList,formDeclarations)
  i technology="csp" d
  . k nameList("ewd_action")
  . m ^zewd("form",$$zcvt^%zewdAPI(app,"l"),"ewd_action",name)=nameList
- ;
- QUIT
- ;
-setTextAreaValue(array,fieldName,sessid)
- ;
- n lf,lineNo,text
- ;
- s text=""
- s lf=""
- s lineNo=""
- f  s lineNo=$o(array(lineNo)) q:lineNo=""  d
- . s text=text_lf_array(lineNo)
- . s lf="\n"
- d setSessionValue^%zewdAPI(fieldName,text,sessid)
- ;
- QUIT
- ;
-setHtmlEditorValue(array,fieldName,sessid)
- ;
- n lf,lineNo,text
- ;
- s text=""
- s lf=""
- s lineNo=""
- f  s lineNo=$o(array(lineNo)) q:lineNo=""  d
- . s text=text_lf_array(lineNo)
- . s lf="<br>"
- d setSessionValue^%zewdAPI(fieldName,text,sessid)
  ;
  QUIT
  ;

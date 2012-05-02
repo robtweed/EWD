@@ -1,7 +1,7 @@
 %zewdGTMRuntime ; EWD for GT.M.  Runtime interface  
  ;
- ; Product: Enterprise Web Developer (Build 910)
- ; Build Date: Wed, 25 Apr 2012 17:59:25
+ ; Product: Enterprise Web Developer (Build 912)
+ ; Build Date: Wed, 02 May 2012 16:47:56
  ;
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -1011,7 +1011,7 @@ pre2 ;
  . s text=text_" d getPageEnabledInit^%zewdCompiler24(sessid)"_$c(13,10)
  . i $g(config("disableGetPage"))'="true" d
  . . ; create the getPageEnabled session array
- . . s text=text_" d createGetPageEnabled^%zewdCompiler24(sessid)"_$c(13,10)
+ . . s text=text_" i Error="""" d createGetPageEnabled^%zewdCompiler24(sessid)"_$c(13,10)
  i $d(config("responseHeader")) d
  . s text=text_" d mergeArrayFromSession^%zewdAPI(.headers,""ewd.header"",sessid)"_$c(13,10)
  . s hname=""

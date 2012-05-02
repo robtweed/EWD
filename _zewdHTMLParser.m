@@ -1,7 +1,7 @@
 %zewdHTMLParser	; Enterprise Web Developer HTML to XHTML Converter
  ;
- ; Product: Enterprise Web Developer (Build 910)
- ; Build Date: Wed, 25 Apr 2012 17:59:25
+ ; Product: Enterprise Web Developer (Build 912)
+ ; Build Date: Wed, 02 May 2012 16:47:56
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -87,7 +87,7 @@ processFile(filepath,docName,outputFile,outputPath)
 	. i $g(outputPath)'="" c outputPath
 	QUIT error
 	;
-parseFile(filepath,docName,cspVars,phpVars,isHTML)
+parseFile(filepath,docName,cspVars,phpVars,isHTML,maxLineLength)
  ;
  n nlines,ok,%error
  ;
@@ -98,7 +98,7 @@ parseFile(filepath,docName,cspVars,phpVars,isHTML)
  . k ^CacheTempEWD($j)
  . m ^CacheTempEWD($j)=filepath
  e  d  i %error'="" QUIT %error
- . s nlines=$$importFile(filepath)
+ . s nlines=$$importFile(filepath,$g(maxLineLength))
  . i nlines=-1 s %error="The file path "_filepath_" does not exist" q
  . i nlines=0 s %error=filepath_" is an empty file" q
  . i nlines=1,^CacheTempEWD($j,1)=$c(13,10) s %error=filepath_" is an empty file" q
@@ -125,7 +125,7 @@ testHTTP ;
  ;
  QUIT
  ;
-parseURL(server,getPath,docName,port,isHTML,responseTime,browserType,post)
+parseURL(server,getPath,docName,port,isHTML,responseTime,browserType,post,maxLineLength)
  ;
  n bsig,endTime,error,file,filename,http,ok,startTime
  ;
@@ -147,11 +147,12 @@ parseURL(server,getPath,docName,port,isHTML,responseTime,browserType,post)
  k ^CacheTempEWD($j)
  QUIT error
  ;
-importFile(filepath)
+importFile(filepath,maxLength)
  ;
  n dlim,i,x,zt
  ;
  k ^CacheTempEWD($j)
+ i $g(maxLength)="" s maxLength=10000
  ;i $zu(140,1,filepath)=-2 QUIT -1
  i '$$fileExists^%zewdAPI(filepath) QUIT -1
  c filepath

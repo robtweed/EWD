@@ -1,7 +1,7 @@
 %zewdPHP	; Enterprise Web Developer PHP run-time functions and processing
  ;
- ; Product: Enterprise Web Developer (Build 910)
- ; Build Date: Wed, 25 Apr 2012 17:59:26
+ ; Product: Enterprise Web Developer (Build 912)
+ ; Build Date: Wed, 02 May 2012 16:47:57
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -439,7 +439,7 @@ updateSessionFromRequest(requestArray,sessid)
  . . ;s ^%zewdSession("session",sessid,"ewd_textarea",sessName,0)=nlines
  . . s ^%zewdSession("session",sessid,"ewd_textarea",sessName,0)=lineNo
  . ; multi-valued fields
- . i $o(requestArray(name,""))'="" d  q
+ . i '$d(requestArray(name,0)),$o(requestArray(name,""))'="" d  q
  . . n pos,fieldValue
  . . s pos=""
  . . f  s pos=$o(requestArray(name,pos)) q:pos=""  d
@@ -448,7 +448,13 @@ updateSessionFromRequest(requestArray,sessid)
  . . . . s fieldValue=$g(requestArray(name,pos))
  . . . . d addToSelected^%zewdAPI(name,fieldValue,sessid)
  . ;d trace^%zewdAPI("sessionValue name="_name_" ;value="_requestArray(name))
- . d setSessionValue(name,requestArray(name),sessid)
+ . i $d(requestArray(name,0)) d
+ . . n array
+ . . m array=requestArray(name,0)
+ . . d deleteFromSession^%zewdAPI(name,sessid)
+ . . d mergeArrayToSession^%zewdAPI(.array,name,sessid)
+ . e  d
+ . . d setSessionValue(name,requestArray(name),sessid)
  . i $g(nameList(name))="stdate" d processDate^%zewdST2(name,requestArray(name),sessid)
  ;
  i $g(requestArray("ewdAjaxSubmit"))=1 d

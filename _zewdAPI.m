@@ -1,7 +1,7 @@
 %zewdAPI	; Enterprise Web Developer run-time functions and user APIs
  ;
- ; Product: Enterprise Web Developer (Build 910)
- ; Build Date: Wed, 25 Apr 2012 17:59:25
+ ; Product: Enterprise Web Developer (Build 912)
+ ; Build Date: Wed, 02 May 2012 16:47:56
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -898,9 +898,9 @@ parseHTMLStream(streamName,docName)
  ;
  ;-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
  ;
-parseURL(server,getPath,docName,port,isHTML,responseTime,browserType,post)
+parseURL(server,getPath,docName,port,isHTML,responseTime,browserType,post,maxLineLength)
  ;
- QUIT $$parseURL^%zewdHTMLParser($g(server),$g(getPath),$g(docName),$g(port),$g(isHTML),.responseTime,$g(browserType),$g(post))
+ QUIT $$parseURL^%zewdHTMLParser($g(server),$g(getPath),$g(docName),$g(port),$g(isHTML),.responseTime,$g(browserType),$g(post),$g(maxLineLength))
  ;
  ;-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
  ;
