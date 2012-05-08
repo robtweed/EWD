@@ -1,7 +1,7 @@
 %zewdST2 ; Sencha Touch Tag Processors and runtime logic
  ;
- ; Product: Enterprise Web Developer (Build 910)
- ; Build Date: Wed, 25 Apr 2012 17:59:26
+ ; Product: Enterprise Web Developer (Build 914)
+ ; Build Date: Tue, 08 May 2012 11:02:04
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -980,10 +980,13 @@ camelCaseTerms
  ;;activeErrorsTpl
  ;;activeItem
  ;;activeTab
+ ;;adjustMaximumByMajorUnit
+ ;;adjustMinimumByMajorUnit
  ;;allowBlank
  ;;allowDomMove
  ;;allQuery
  ;;altFormats
+ ;;angleField
  ;;animCollapse
  ;;applyTo
  ;;autoCapitalize
@@ -995,6 +998,7 @@ camelCaseTerms
  ;;autoRender
  ;;autoScroll
  ;;autoShow
+ ;;autoSize
  ;;autoWidth
  ;;baseBodyCls
  ;;baseCls
@@ -1005,10 +1009,16 @@ camelCaseTerms
  ;;bodyMargin
  ;;bodyStyle
  ;;bodyPadding
+ ;;boxFill
  ;;boxLabel
+ ;;boxStroke
+ ;;boxStrokeWidth
+ ;;boxZIndex
  ;;bubbleEvents
  ;;buttonAlign
+ ;;calculateCategoryCount
  ;;cardSwitchAnimation
+ ;;categoryNames
  ;;checkChangeBuffer
  ;;checkChangeEvents
  ;;childEls
@@ -1020,13 +1030,16 @@ camelCaseTerms
  ;;collapseMode
  ;;collapsedCls
  ;;collectData
+ ;;colorSet
  ;;columnLines
  ;;columnWidth
  ;;componentCls
  ;;componentLayout
  ;;contentEl
  ;;createLinkText
+ ;;dashSize
  ;;dataIndex
+ ;;dateFormat
  ;;dayText
  ;;defaultDockWeights
  ;;defaultLinkValue
@@ -1067,6 +1080,7 @@ camelCaseTerms
  ;;enableNoGroups
  ;;enableSourceEdit
  ;;enforceMaxLength
+ ;;enginePriority
  ;;enterAnimation
  ;;errorMsgCls
  ;;eventPrefix
@@ -1089,6 +1103,7 @@ camelCaseTerms
  ;;formItemCls
  ;;frameHeader
  ;;groupByText
+ ;;groudGutter
  ;;groupHeaderTpl
  ;;growAppend
  ;;growMax
@@ -1105,19 +1120,23 @@ camelCaseTerms
  ;;hideOnMaskTap
  ;;hideParent
  ;;hideTrigger
+ ;;highlightDuration
  ;;iconCls
  ;;iconMask
  ;;inputId
  ;;inputType
  ;;inputValue
+ ;;insetPadding
  ;;invalidCls
  ;;invalidText
  ;;itemClick
  ;;itemId
+ ;;itemSpacing
  ;;itemTpl
  ;;labelAlign
  ;;labelCls
  ;;labelClsExtra
+ ;;labelFont
  ;;labelPad
  ;;labelableRenderTpl
  ;;labelSeparator
@@ -1126,9 +1145,12 @@ camelCaseTerms
  ;;layoutConfig
  ;;layoutOnOrientationChange
  ;;lazyRender
+ ;;lengthField
  ;;listClass
  ;;listConfig
  ;;maintainFlex
+ ;;majorTickSteps
+ ;;markerConfig
  ;;maskRe
  ;;matchFieldWidth
  ;;maxHeight
@@ -1143,6 +1165,7 @@ camelCaseTerms
  ;;minHeight
  ;;minLength
  ;;minLengthText
+ ;;minorTickSteps
  ;;minTabWidth
  ;;minText
  ;;minValue
@@ -1181,12 +1204,16 @@ camelCaseTerms
  ;;rootVisible
  ;;saveDelay
  ;;scrollData
+ ;;sectionTolerance
  ;;selectOnFocus
  ;;selectOnTab
  ;;selModel
  ;;selType
+ ;;shadowAttributes
  ;;showAnimation
  ;;showGroupsText
+ ;;showInLegend
+ ;;showMarkers
  ;;showSummaryRow
  ;;showToday
  ;;simpleSelect
@@ -1210,6 +1237,7 @@ camelCaseTerms
  ;;tabBar
  ;;tabIndex
  ;;tabPosition
+ ;;titleAlign
  ;;titleCollapse
  ;;tipText
  ;;toFrontOnShow
@@ -1230,14 +1258,19 @@ camelCaseTerms
  ;;validateOnChange
  ;;valueField
  ;;valueNotFoundText
+ ;;viewBox
  ;;viewConfig
  ;;viewType
  ;;vtypeText
  ;;waitTpl
  ;;windowIconCls
+ ;;xField
+ ;;xPadding
  ;;yearFrom
  ;;yearText
  ;;yearTo
+ ;;yField
+ ;;yPadding
  ;;***END***
  ;;
 uiJS ;;

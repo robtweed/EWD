@@ -1,7 +1,7 @@
 %zewdCustomTags	; Enterprise Web Developer Custom Tag Library Functions
  ;
- ; Product: Enterprise Web Developer (Build 910)
- ; Build Date: Wed, 25 Apr 2012 17:59:25
+ ; Product: Enterprise Web Developer (Build 914)
+ ; Build Date: Tue, 08 May 2012 11:02:03
  ;
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -207,14 +207,15 @@ encodeBase64(string)
  ; for use in third party custom tags (eg as used in ExtJS.m)
 getAttributeValues(nodeOID,attr)
  ;
- n c1,name,value
+ n c1,c2,name,value
  ;
  d getAttributeValues^%zewdDOM(nodeOID,.attr)
  s name=""
  f  s name=$o(attr(name)) q:name=""  d
  . s value=attr(name)
  . s c1=$e(value,1)
- . i c1="#"!(c1="$") d  q
+ . s c2=$e(value,1,2)
+ . i ((c1="#")&(c2'="##"))!(c1="$") d  q
  . . s attr(name)=$$addPhpVar(value)
  QUIT
  ;

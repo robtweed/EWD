@@ -1,7 +1,7 @@
 %zewdCompiler20	; Enterprise Web Developer Compiler : Combo+ tag processor
  ;
- ; Product: Enterprise Web Developer (Build 910)
- ; Build Date: Wed, 25 Apr 2012 17:59:25
+ ; Product: Enterprise Web Developer (Build 914)
+ ; Build Date: Tue, 08 May 2012 11:02:03
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -610,6 +610,7 @@ jsObject(nodeOID)
  . . d getAttributeValues^%zewdCustomTags(childOID,.attr)
  . . s name=$g(attr("name"))
  . . s value=$g(attr("value"))
+ . . i value["##" s value=$e(value,2,$l(value))
  . . s type=$g(attr("type"))
  . . i type="" s type="literal"
  . . i type="url" d

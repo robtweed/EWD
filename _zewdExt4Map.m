@@ -1,7 +1,7 @@
 %zewdExt4Map ; Extjs Tag Processor Mappings
  ;
- ; Product: Enterprise Web Developer (Build 911)
- ; Build Date: Mon, 30 Apr 2012 12:37:21
+ ; Product: Enterprise Web Developer (Build 914)
+ ; Build Date: Tue, 08 May 2012 11:02:04
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -32,6 +32,13 @@ mappingObjects
  ;;{tagName:"ext4:accordionpanel",className:"Ext.tab.Panel",xtype:"panel",addAttributes:{layout:"accordion"},xtypeTagName:"ext4:item",containerTag:"ext4:items"}
  ;;{tagName:"ext4:actioncolumn",className:"Ext.grid.column.Action",xtype:"actioncolumn",xtypeTagName:"ext4:item",containerTag:"ext4:columns"}
  ;;{tagName:"ext4:autoel",parse:{method:"object",optionName:"autoEl"}}
+ ;;{tagName:"ext4:axes",parse:{method:"arrayOfOptions",optionName:"axes"}}
+ ;;{tagName:"ext4:axis",className:"Ext.chart.axis.Axis",xtype:"dummy",xtypeTagName:"ext4:item",containerTag:"ext4:axes",hasId:false,pass1Method:"fieldsAttr"}
+ ;;{tagName:"ext4:axisfield",parse:{method:"arrayItem"},pass1Method:"addAxisFields"}
+ ;;{tagName:"ext4:axisfields",parse:{method:"array",optionName:"fields"}}
+ ;;{tagName:"ext4:axisgrid",parse:{method:"object",optionName:"grid"},hasId:false}
+ ;;{tagName:"ext4:axislabel",parse:{method:"object",optionName:"label"}}
+ ;;{tagName:"ext4:background",parse:{method:"object",optionName:"background"},hasId:false}
  ;;{tagName:"ext4:bbar",parse:{method:"arrayOfOptions",optionName:"bbar"}}
  ;;{tagName:"ext4:bodystyle",parse:{method:"object",optionName:"bodyStyle"}}
  ;;{tagName:"ext4:booleancolumn",className:"Ext.grid.column.Boolean",xtype:"booleancolumn",xtypeTagName:"ext4:item",containerTag:"ext4:columns",pass1Method:"editableColumn"}
@@ -40,6 +47,7 @@ mappingObjects
  ;;{tagName:"ext4:buttonmenu",expandMethod:"expandButtonMenu",parse:{method:"arrayOfOptions",optionName:"menu"}}
  ;;{tagName:"ext4:buttons",parse:{method:"arrayOfOptions",optionName:"buttons"}}
  ;;{tagName:"ext4:cellediting",className:"Ext.grid.plugin.CellEditing",ptype:"cellediting",xtypeTagName:"ext4:item",containerTag:"ext4:plugins"}
+ ;;{tagName:"ext4:chart",className:"Ext.chart.Chart",xtype:"chart",xtypeTagName:"ext4:item",containerTag:"ext4:items",expandMethod:"expandChart",instanceMethod:"chartInstance"}
  ;;{tagName:"ext4:checkboxfield",className:"Ext.form.Checkbox",ptype:"checkboxfield",fieldType:"checkbox",xtypeTagName:"ext4:item",containerTag:"ext4:items",pass1Method:"setNameList"}
  ;;{tagName:"ext4:checkboxgroup",className:"Ext.form.CheckboxGroup",xtype:"checkboxgroup",xtypeTagName:"ext4:item",containerTag:"ext4:items"}
  ;;{tagName:"ext4:checkcolumn",className:"Ext.ux.CheckColumn",xtype:"checkcolumn",xtypeTagName:"ext4:item",containerTag:"ext4:columns",pass1Method:"editableColumn"}
@@ -54,6 +62,7 @@ mappingObjects
  ;;{tagName:"ext4:cycle",className:"Ext.button.Cycle"}
  ;;{tagName:"ext4:data",parse:{method:"object",optionName:"data"}}
  ;;{tagName:"ext4:dataarray",parse:{method:"arrayOfOptions",optionName:"data"}}
+ ;;{tagName:"ext4:dataitem",parse:{method:"item"},hasId:false}
  ;;{tagName:"ext4:datecolumn",className:"Ext.grid.column.Date",xtype:"datecolumn",xtypeTagName:"ext4:item",containerTag:"ext4:columns",pass1Method:"editableColumn"}
  ;;{tagName:"ext4:datefield",className:"Ext.form.field.Date",xtype:"datefield",fieldType:"text",xtypeTagName:"ext4:item",containerTag:"ext4:items",pass1Method:"setNameList"}
  ;;{tagName:"ext4:datepicker",className:"Ext.picker.Date",xtype:"datepicker",xtypeTagName:"ext4:item",containerTag:"ext4:items"}
@@ -69,23 +78,29 @@ mappingObjects
  ;;{tagName:"ext4:field",parse:{method:"object",optionName:"field"},pass1Method:"swapFormFields"}
  ;;{tagName:"ext4:fieldcontainer",className:"Ext.form.FieldContainer",xtype:"fieldcontainer",xtypeTagName:"ext4:item",containerTag:"ext4:items"}
  ;;{tagName:"ext4:fielddefaults",parse:{method:"object",optionName:"fieldDefaults"}}
- ;;{tagName:"ext4:fielditem",parse:{method:"item"}}
- ;;{tagName:"ext4:fields",parse:{method:"arrayOfOptions",optionName:"fields"}}
+ ;;{tagName:"ext4:fielditem",parse:{method:"item"},hasId:false}
+ ;;{tagName:"ext4:fields",parse:{method:"arrayOfOptions",optionName:"fields"},pass1Method:"switchFields"}
  ;;{tagName:"ext4:fieldset",className:"Ext.form.FieldSet",xtype:"fieldset",xtypeTagName:"ext4:item",containerTag:"ext4:items"}
  ;;{tagName:"ext4:fill",className:"Ext.toolbar.Fill",xtype:"tbfill",xtypeTagName:"ext4:item",containerTag:"ext4:items"}
  ;;{tagName:"ext4:formpanel",className:"Ext.form.Panel",xtype:"form",xtypeTagName:"ext4:item",containerTag:"ext4:items",expandMethod:"expandPanel",instanceMethod:"panelInstance",pass1Method:"addEwdActionField"}
+ ;;{tagName:"ext4:gradients",parse:{method:"arrayOfOptions",optionName:"gradients"}}
+ ;;{tagName:"ext4:gradient",parse:{method:"object",optionName:"gradient"}}
+ ;;{tagName:"ext4:grid",parse:{method:"object",optionName:"grid"},hasId:false}
  ;;{tagName:"ext4:gridcolumn",className:"Ext.grid.column.Column",xtype:"gridcolumn",xtypeTagName:"ext4:column",containerTag:"ext4:columns",pass1Method:"editableColumn"}
  ;;{tagName:"ext4:gridpanel",className:"Ext.grid.Panel",xtype:"gridpanel",xtypeTagName:"ext4:item",containerTag:"ext4:items",expandMethod:"expandGridPanel",instanceMethod:"gridPanelInstance"}
  ;;{tagName:"ext4:hiddenfield",className:"Ext.form.field.Hidden",xtype:"hiddenfield",fieldType:"text",xtypeTagName:"ext4:item",containerTag:"ext4:items",pass1Method:"setNameList"}
+ ;;{tagName:"ext4:highlight",parse:{method:"object",optionName:"highlight"}}
  ;;{tagName:"ext4:htmleditorfield",className:"Ext.form.field.HtmlEditor",xtype:"htmleditor",fieldType:"text",xtypeTagName:"ext4:item",containerTag:"ext4:items",expandMethod:"addQuickTipManager",pass1Method:"setNameList"}
  ;;{tagName:"ext4:icon",xtype:"dummy",xtypeTagName:"ext4:item",containerTag:"ext4:items"}
  ;;{tagName:"ext4:image",className:"Ext.Img",xtype:"image",xtypeTagName:"ext4:item",containerTag:"ext4:items"}
  ;;{tagName:"ext4:item",parse:{method:"item"}}
  ;;{tagName:"ext4:items",parse:{method:"arrayOfOptions",optionName:"items"}}
  ;;{tagName:"ext4:json",parse:{method:"json"}}
- ;;{tagName:"ext4:label",className:"Ext.form.Label",xtype:"label",xtypeTagName:"ext4:item",containerTag:"ext4:items"}
+ ;;{tagName:"ext4:label",className:"Ext.form.Label",xtype:"label",xtypeTagName:"ext4:item",containerTag:"ext4:items",pass1Method:"switchLabel"}
+ ;;{tagName:"ext4:legend",parse:{method:"object",optionName:"legend"},hasId:"false"}
  ;;{tagName:"ext4:layout",parse:{method:"object",optionName:"layout"}}
  ;;{tagName:"ext4:listeners",parse:{method:"listeners"}}
+ ;;{tagName:"ext4:markerconfig",parse:{method:"object",optionName:"markerConfig"}}
  ;;{tagName:"ext4:menu",className:"Ext.menu.Menu",xtype:"menu",xtypeTagName:"ext4:item",containerTag:"ext4:items",pass1Method:"convertMenu",expandMethod:"expandButtonMenu"}
  ;;{tagName:"ext4:menucheckitem",className:"Ext.menu.CheckItem",xtype:"menucheckitem",xtypeTagName:"ext4:item",containerTag:"ext4:items"}
  ;;{tagName:"ext4:menucolorpicker",className:"Ext.menu.ColorPicker"}
@@ -96,6 +111,7 @@ mappingObjects
  ;;{tagName:"ext4:multislider",className:"Ext.slider.Multi",xtype:"multislider",xtypeTagName:"ext4:item",containerTag:"ext4:items"}
  ;;{tagName:"ext4:numbercolumn",className:"Ext.grid.column.Number",xtype:"numbercolumn",xtypeTagName:"ext4:item",containerTag:"ext4:columns",pass1Method:"editableColumn"}
  ;;{tagName:"ext4:numberfield",className:"Ext.form.field.Number",xtype:"numberfield",fieldType:"text",xtypeTagName:"ext4:item",containerTag:"ext4:items",pass1Method:"setNameList"}
+ ;;{tagName:"ext4:odd",parse:{method:"object",optionName:"odd"},hasId:false,pass1Method:"odd"}
  ;;{tagName:"ext4:pagingtoolbar",className:"Ext.toolbar.Paging",xtype:"pagingtoolbar",addAttributes:{dock:"top"},xtypeTagName:"ext4:item",containerTag:"ext4:dockeditems"}
  ;;{tagName:"ext4:panel",className:"Ext.panel.Panel",xtype:"panel",xtypeTagName:"ext4:item",containerTag:"ext4:items",expandMethod:"expandPanel",instanceMethod:"panelInstance"}
  ;;{tagName:"ext4:paneltool",className:"Ext.panel.Tool",xtype:"tool",xtypeTagName:"ext4:tool",containerTag:"ext4:tools"}
@@ -109,14 +125,20 @@ mappingObjects
  ;;{tagName:"ext4:reader",parse:{method:"object",optionName:"reader"}}
  ;;{tagName:"ext4:renderdata",parse:{method:"object",optionName:"renderData"}}
  ;;{tagName:"ext4:renderselectors",parse:{method:"object",optionName:"renderSelectors"}}
+ ;;{tagName:"ext4:rotate",parse:{method:"object",optionName:"rotate"},hasId=false}
  ;;{tagName:"ext4:rownumberer",className:"Ext.grid.RowNumberer",xtype:"rownumberer",xtypeTagName:"ext4:item",containerTag:"ext4:columns"}
  ;;{tagName:"ext4:separator",className:"Ext.toolbar.Separator",xtype:"tbseparator",xtypeTagName:"ext4:item",containerTag:"ext4:items"}
+ ;;{tagName:"ext4:series",className:"Ext.chart.series.Series",xtype:"dummy",xtypeTagName:"ext4:item",containerTag:"ext4:seriesarray",hasId="false"}
+ ;;{tagName:"ext4:seriesarray",parse:{method:"arrayOfOptions",optionName:"series"}}
  ;;{tagName:"ext4:slider",className:"Ext.slider.Single",xtype:"slider",xtypeTagName:"ext4:item",containerTag:"ext4:items"}
  ;;{tagName:"ext4:sliderfield",className:"Ext.slider.Single",xtype:"sliderfield",fieldType:"text",xtypeTagName:"ext4:item",containerTag:"ext4:items",pass1Method:"setNameList"}
  ;;{tagName:"ext4:sorter",parse:{method:"item"}}
  ;;{tagName:"ext4:sorters",parse:{method:"arrayOfOptions",optionName:"sorters"}}
  ;;{tagName:"ext4:spacer",className:"Ext.toolbar.Spacer",xtype:"tbspacer",xtypeTagName:"ext4:item",containerTag:"ext4:items"}
  ;;{tagName:"ext4:splitbutton",className:"Ext.button.Split"}
+ ;;{tagName:"ext4:stop",parse:{method:"object",optionName:"stop"},hasId:false}
+ ;;{tagName:"ext4:stops",parse:{method:"object",optionName:"stops"},hasId:false}
+ ;;{tagName:"ext4:style",parse:{method:"object",optionName:"style"},hasId:false}
  ;;{tagName:"ext4:submitbutton",pass1Method:"expandSubmitButton",xtype:"button",xtypeTagName:"ext4:button",containerTag:"ext4:buttons"}
  ;;{tagName:"ext4:tabconfig",parse:{method:"object",optionName:"tabConfig"}}
  ;;{tagName:"ext4:tabpanel",className:"Ext.tab.Panel",xtype:"tabpanel",xtypeTagName:"ext4:item",containerTag:"ext4:items",pass1Method:"tabPanelActiveTab"}
@@ -125,8 +147,9 @@ mappingObjects
  ;;{tagName:"ext4:textareafield",className:"Ext.form.field.TextArea",xtype:"textareafield",fieldType:"textarea",xtypeTagName:"ext4:item",containerTag:"ext4:items",pass1Method:"setNameList"}
  ;;{tagName:"ext4:textfield",className:"Ext.form.field.Text",xtype:"textfield",fieldType:"text",xtypeTagName:"ext4:item",containerTag:"ext4:items",pass1Method:"setNameList"}
  ;;{tagName:"ext4:timefield",className:"Ext.form.field.Time",xtype:"timefield",fieldType:"text",xtypeTagName:"ext4:item",containerTag:"ext4:items",pass1Method:"setNameList"}
- ;;{tagName:"ext4:timepicker",className:"Ext.picker.Time",xtype:"timepicker",xtypeTagName:"ext4:item",containerTag:"ext4:items"}
  ;;{tagName:"ext4:textitem",className:"Ext.toolbar.TextItem",xtype:"tbtext",xtypeTagName:"ext4:item",containerTag:"ext4:items"}
+ ;;{tagName:"ext4:timepicker",className:"Ext.picker.Time",xtype:"timepicker",xtypeTagName:"ext4:item",containerTag:"ext4:items"}
+ ;;{tagName:"ext4:tips",parse:{method:"array",optionName:"tips"}}
  ;;{tagName:"ext4:toolbar",className:"Ext.toolbar.Toolbar",xtype:"toolbar",addAttributes:{dock:"top"},xtypeTagName:"ext4:item",containerTag:"ext4:dockeditems"}
  ;;{tagName:"ext4:tools",parse:{method:"arrayOfOptions",optionName:"tools"}}
  ;;{tagName:"ext4:tool",parse:{method:"item"}}
@@ -136,4 +159,8 @@ mappingObjects
  ;;{tagName:"ext4:viewport",className:"Ext.container.Viewport"}
  ;;{tagName:"ext4:view",className:"Ext.view.View"}
  ;;{tagName:"ext4:window",className:"Ext.window.Window",xtype:"window",xtypeTagName:"ext4:item",containerTag:"ext4:items",expandMethod:"expandPanel",instanceMethod:"panelInstance"}
+ ;;{tagName:"ext4:xfield",parse:{method:"arrayItem"},pass1Method:"addXFields"}
+ ;;{tagName:"ext4:xfields",parse:{method:"array",optionName:"xField"}}
+ ;;{tagName:"ext4:yfield",parse:{method:"arrayItem"},pass1Method:"addYFields"}
+ ;;{tagName:"ext4:yfields",parse:{method:"array",optionName:"yField"}}
  ;;***END***

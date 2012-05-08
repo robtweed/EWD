@@ -1,7 +1,7 @@
 %zewdExt4 ; Extjs Tag Processors
  ;
- ; Product: Enterprise Web Developer (Build 912)
- ; Build Date: Wed, 02 May 2012 16:47:56
+ ; Product: Enterprise Web Developer (Build 914)
+ ; Build Date: Tue, 08 May 2012 11:02:03
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -117,11 +117,8 @@ container(nodeOID,attrValue,docOID,technology)
  s text=""
  s text=text_"EWD.ext4={"_$c(13,10)
  s text=text_"  form: {},"_$c(13,10)
+ s text=text_"  chart: {},"_$c(13,10)
  s text=text_"  grid: {},"_$c(13,10)
- ;s text=text_"    combo: {"_$c(13,10)
- ;s text=text_"      index: {},"_$c(13,10)
- ;s text=text_"      store: {}"_$c(13,10)
- ;s text=text_"    },"_$c(13,10)
  s text=text_"  getGridRowNo: function(grid,rowIndex) {"_$c(13,10)
  s text=text_"    return grid.store.getAt(rowIndex).get('zewdRowNo');"_$c(13,10)
  ;s text=text_"   }"_$c(13,10)
@@ -352,8 +349,8 @@ ExtCreate(nodeOID,parentOID,isFragment)
  . n addTo,remove,text
  . q:className["Store"
  . q:'add
- . s addTo=$$addPhpVar^%zewdCustomTags("#tmp.addTo")
- . s remove=$$addPhpVar^%zewdCustomTags("#tmp.removeAll")
+ . s addTo=$$addPhpVar^%zewdCustomTags("#tmp_addTo")
+ . s remove=$$addPhpVar^%zewdCustomTags("#tmp_removeAll")
  . ;s text="var addTo='"_addTo_"';"_$c(13,10)
  . s text="var addTo='"_addTo_"';"_$c(13,10)
  . s text=text_"var remove='"_remove_"';"_$c(13,10)
@@ -650,6 +647,37 @@ configOption(nodeOID,parentOID)
  i type="object" d object(optionName(1),nodeOID,parentOID) QUIT
  QUIT
  ;
+array(name,nodeOID,parentOID)
+ ;
+ ;     <ext4:axisFields>
+ ;       <ext4:axisField name="data1" />
+ ;       <ext4:axisField name="data2" /> 
+ ;     </ext4:items>
+ ;
+ ; becomes:
+ ;
+ ;    <ewd:jsNVP name="fields" type="array">
+ ;      <ewd:jsliteral name="data1">
+ ;      <ewd:jsliteral name="data2">
+ ;    </ewd:jsNVP>
+ n attr,objOID
+ ;
+ s attr("name")=name
+ s attr("type")="array"
+ s objOID=$$addElementToDOM^%zewdDOM("ewd:jsnvp",parentOID,,.attr)
+ d getChildNodes(nodeOID,objOID)
+ d removeIntermediateNode^%zewdDOM(nodeOID)
+ QUIT
+ ;
+arrayItem(nodeOID,parentOID)
+ ;
+ n attr,lOID,name
+ ;
+ s name=$$getAttribute^%zewdDOM("name",nodeOID)
+ s attr("name")=name
+ s lOID=$$addElementToDOM^%zewdDOM("ewd:jsliteral",parentOID,,.attr)
+ QUIT
+ ;
 object(name,nodeOID,parentOID)
  ;
  ;     <ext4:layout type="vbox" align="left">
@@ -663,6 +691,9 @@ object(name,nodeOID,parentOID)
  ;
  n attr,objOID
  ;
+ i name="stop" d
+ . s name=$$getAttribute^%zewdDOM("value",nodeOID)
+ . d removeAttribute^%zewdDOM("value",nodeOID)
  s attr("name")=name
  s attr("type")="object"
  s objOID=$$addElementToDOM^%zewdDOM("ewd:jsnvp",parentOID,,.attr)
@@ -869,7 +900,9 @@ getAttributes(nodeOID,mainAttrs)
  s tagName=$$getTagName^%zewdDOM(nodeOID)
  do getAttributeValues^%zewdCustomTags(nodeOID,.mainAttrs)
  d convertAttrsToCamelCase^%zewdST2(.mainAttrs)
+ i tagName="ext4:item",$g(mainAttrs("id"))="",$g(mainAttrs("xtype"))="" QUIT
  i $g(mainAttrs("id"))="" s mainAttrs("id")=$$uniqueId(nodeOID)
+ i $g(tagNameMap(tagName,"hasId"))="false" k mainAttrs("id")
  QUIT
  ;
 createNVPs(nodeOID,parentOID)
@@ -942,9 +975,13 @@ swapFormFields(nodeOID)
  ;
  n type,xOID
  ;
+ i $$getTagName^%zewdDOM($$getParentNode^%zewdDOM(nodeOID))="ext4:axisfields" d  QUIT
+ . n xOID
+ . s xOID=$$renameTag^%zewdDOM("ext4:axisfield",nodeOID,1)
+ ;
  s type=$$getAttribute^%zewdDOM("type",nodeOID)
  i type["field" d
- . s xOID=$$renameTag^%zewdDOM("ext4:"_type,nodeOID)
+ . s xOID=$$renameTag^%zewdDOM("ext4:"_type,nodeOID,1)
  . d removeAttribute^%zewdDOM("type",xOID)
  . d setNameList(xOID)
  ;
@@ -985,7 +1022,7 @@ convertMenu(nodeOID)
  ;
  s parentOID=$$getParentNode^%zewdDOM(nodeOID)
  i $$getTagName^%zewdDOM(parentOID)="ext4:menuitem" d
- . s xOID=$$renameTag^%zewdDOM("ext4:buttonmenu",nodeOID)
+ . s xOID=$$renameTag^%zewdDOM("ext4:buttonmenu",nodeOID,1)
  ;
  QUIT
  ;
@@ -997,6 +1034,44 @@ convertMenuItem(nodeOID)
  i $$getTagName^%zewdDOM(parentOID)="ext4:menuitem" d
  . s xOID=$$insertNewIntermediateElement^%zewdDOM(parentOID,"ext4:buttonmenu",docOID)
  ;
+ QUIT
+ ;
+fieldsAttr(nodeOID)
+ ;
+ n fields
+ ;
+ s fields=$$getAttribute^%zewdDOM("fields",nodeOID)
+ i fields'="" d
+ . i $e(fields,1,2)=".[",$e(fields,$l(fields))="]" q
+ . i $e(fields,1)="[" d setAttribute^%zewdDOM("fields","."_fields,nodeOID) q
+ . i $e(fields,1)'="[",$e(fields,$l(fields))'="]" d setAttribute^%zewdDOM("fields",".['"_fields_"']",nodeOID) q
+ QUIT
+ ;
+addAxisFields(nodeOID)
+ ;
+ n parentOID,xOID
+ ;
+ s parentOID=$$getParentNode^%zewdDOM(nodeOID)
+ i $$getTagName^%zewdDOM(parentOID)'="ext4:axisfields" d
+ . s xOID=$$insertNewIntermediateElement^%zewdDOM(parentOID,"ext4:axisfields",docOID)
+ QUIT
+ ;
+addYFields(nodeOID)
+ ;
+ n parentOID,xOID
+ ;
+ s parentOID=$$getParentNode^%zewdDOM(nodeOID)
+ i $$getTagName^%zewdDOM(parentOID)'="ext4:yfields" d
+ . s xOID=$$insertNewIntermediateElement^%zewdDOM(parentOID,"ext4:yfields",docOID)
+ QUIT
+ ;
+addXFields(nodeOID)
+ ;
+ n parentOID,xOID
+ ;
+ s parentOID=$$getParentNode^%zewdDOM(nodeOID)
+ i $$getTagName^%zewdDOM(parentOID)'="ext4:xfields" d
+ . s xOID=$$insertNewIntermediateElement^%zewdDOM(parentOID,"ext4:xfields",docOID)
  QUIT
  ;
 editableColumn(nodeOID)
@@ -1120,10 +1195,6 @@ addCellEditor(nodeOID)
  i $$getTagName^%zewdDOM(parentOID)="ext4:gridpanel" d
  . i $$getAttribute^%zewdDOM("clickstoedit",parentOID)="" d
  . . d setAttribute^%zewdDOM("clickstoedit",2,parentOID)
- . ;i '$$hasChildTag^%zewdDOM(parentOID,"ext4:cellediting",.ceOID) d
- . ;. s ceOID=$$addElementToDOM^%zewdDOM("ext4:cellediting",parentOID)
- . ;i $$getAttribute^%zewdDOM("clickstoedit",ceOID)'="" d
- . ;. d setAttribute^%zewdDOM("clickstoedit",2,ceOID)
  ;
  QUIT
  ;
@@ -1154,6 +1225,28 @@ getColNo(nodeOID)
  . . . s no=no+1
  . . . i childOID=nodeOID s stop=1
  QUIT no
+ ;
+odd(nodeOID)
+ ;
+ n stroke
+ ;
+ s stroke=$$getAttribute^%zewdDOM("strokewidth",nodeOID)
+ i stroke'="" d
+ . d setAttribute^%zewdDOM("'stroke-width'",stroke,nodeOID)
+ . d removeAttribute^%zewdDOM("strokewidth",nodeOID)
+ QUIT
+ ;
+switchLabel(nodeOID)
+ i $$getTagName^%zewdDOM($$getParentNode^%zewdDOM(nodeOID))="ext4:axis" d
+ . n xOID
+ . s xOID=$$renameTag^%zewdDOM("ext4:axislabel",nodeOID,1)
+ QUIT
+ ;
+switchFields(nodeOID)
+ i $$getTagName^%zewdDOM($$getParentNode^%zewdDOM(nodeOID))="ext4:axis" d
+ . n xOID
+ . s xOID=$$renameTag^%zewdDOM("ext4:axisfields",nodeOID,1)
+ QUIT
  ;
 setNameList(nodeOID)
  ;
@@ -1592,7 +1685,6 @@ expand(nodeOID,parentOID,tagNameMap)
  n attr,childNo,childOID,containerTag,isMapped,itemOID,itemsAdded,itemsOID
  n OIDArray,property,tagName,text,xtypeTagName
  ;
- i $$getTagName^%zewdDOM(nodeOID)["grid"
  d getChildrenInOrder^%zewdDOM(nodeOID,.OIDArray)
  s childNo=""
  f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d
@@ -1655,6 +1747,50 @@ expand(nodeOID,parentOID,tagNameMap)
  . d removeIntermediateNode^%zewdDOM(childOID)
  ;
  QUIT
+ ;
+expandChart(nodeOID,attr,parentOID)
+ n ok
+ s ok=$$chartInstance(.attr,childOID,parentOID)
+ QUIT
+ ;
+chartInstance(attrs,nodeOID,instanceOID)
+ ;
+ n argumentsOID,chartDef,id,mainAttrs,sessionName,storeId,xOID
+ ;
+ s xOID=""
+ m mainAttrs=attrs
+ s chartDef=$g(attrs("chartdefinition"))
+ s sessionName=$g(attrs("sessionname"))
+ s storeId=$g(attrs("storeid"))
+ s id=$g(attrs("id"))
+ i storeId="",id="" d
+ . s id=$$uniqueId(nodeOID)
+ . s attrs("id")=id
+ . s mainAttrs("id")=id
+ i id="",storeId'="" d
+ . s id=$$uniqueId(nodeOID)
+ . s attrs("id")=id
+ . s mainAttrs("id")=id
+ k attrs("sessionname")
+ k attrs("storeid")
+ k attrs("chartdefinition")
+ i storeId="" s storeId=id_"Store"
+ i $g(attrs("store"))="" s attrs("store")="."_storeId
+ i chartDef'="" d
+ . s attrs("axes")=".EWD.ext4.chart['"_id_"'].axes"
+ . s attrs("series")=".EWD.ext4.chart['"_id_"'].series"
+ i sessionName'="" d
+ . s xOID=$$createElement^%zewdDOM("temp",docOID)
+ . s xOID=$$insertBefore^%zewdDOM(xOID,nodeOID)
+ . s text=" d writeJSONStore^%zewdExt4Code("""_sessionName_""","""_chartDef_""","""_id_""","""_storeId_""",sessid)"
+ . s cspOID=$$addCSPServerScript^%zewdAPI(xOID,text)
+ ;
+ i $g(attrs("xtype"))'="chart" d
+ . s argumentsOID=$$addElementToDOM^%zewdDOM("ext4:arguments",instanceOID,,.attrs)
+ e  d
+ . s argumentsOID=nodeOID
+ i sessionName'="" d removeIntermediateNode^%zewdDOM(xOID)
+ QUIT argumentsOID
  ;
 expandGridPanel(nodeOID,attr,parentOID)
  n ok

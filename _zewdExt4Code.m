@@ -1,7 +1,7 @@
 %zewdExt4Code ; Extjs 4 Runtime Logic
  ;
- ; Product: Enterprise Web Developer (Build 912)
- ; Build Date: Wed, 02 May 2012 16:47:56
+ ; Product: Enterprise Web Developer (Build 914)
+ ; Build Date: Tue, 08 May 2012 11:02:04
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -309,8 +309,9 @@ expandTreeArray(inArray,outArray,page,addTo,replace,expanded)
  . . i $g(inArray(index,"nextPage"))'="" s outArray(index,"page")=inArray(index,"nextPage")
  . . i $g(inArray(index,"addTo"))'="" s outArray(index,"addTo")=inArray(index,"addTo")
  . . i $g(inArray(index,"replacePreviousPage"))="true" s outArray(index,"replace")=1
- . . i $g(outArray(index,"page"))'="" d
- . . . s outArray(index,"nvp")=$g(inArray(index,"nvp"))
+ . . ;i $g(outArray(index,"page"))'="" d
+ . . ;. s outArray(index,"nvp")=$g(inArray(index,"nvp"))
+ . . i $g(inArray(index,"nvp"))'="" s outArray(index,"nvp")=inArray(index,"nvp")
  . i $g(inArray(index,"text"))'="" d
  . . n value
  . . s value=inArray(index,"text")
@@ -327,7 +328,8 @@ expandTreeArray(inArray,outArray,page,addTo,replace,expanded)
  . . i $g(inArray(index,"nextPage"))'="" s outArray(index,"page")=inArray(index,"nextPage")
  . . i $g(inArray(index,"addTo"))'="" s outArray(index,"addTo")=inArray(index,"addTo")
  . . i $g(inArray(index,"replacePreviousPage"))="true" s outArray(index,"replace")=1
- . . i $g(outArray(index,"page"))'="" s outArray(index,"nvp")=$g(inArray(index,"nvp"))
+ . . ;i $g(outArray(index,"page"))'="" s outArray(index,"nvp")=$g(inArray(index,"nvp"))
+ . . i $g(inArray(index,"nvp"))'="" s outArray(index,"nvp")=inArray(index,"nvp")
  ;
  QUIT
  ;
@@ -444,6 +446,45 @@ optionsFromList(listName,dataIndex,gridId,sessid)
  w "EWD.ext4.grid['"_gridId_"'].combo.index['"_dataIndex_"']={"_$c(13,10)
  w array2_$c(13,10)
  w "};"_$c(13,10)
+ QUIT
+ ;
+writeJSONStore(sessionName,chartDef,id,storeId,sessid)
+ ;
+ n array,chart,chartProps,fieldName,fieldNo,json,lastRow,recordNo,value
+ ;
+ s storeId=$g(storeId)
+ i chartDef'="" d
+ . n axes,series
+ . d mergeArrayFromSession^%zewdAPI(.chartProps,chartDef,sessid)
+ . m axes=chartProps("axes")
+ . m series=chartProps("series")
+ . w "EWD.ext4.chart['"_id_"'] = {};"_$c(13,10)
+ . w "EWD.ext4.chart['"_id_"'].axes="
+ . d streamArrayToJSON^%zewdJSON("axes")
+ . w ";"_$c(13,10)
+ . w "EWD.ext4.chart['"_id_"'].series="
+ . d streamArrayToJSON^%zewdJSON("series")
+ . w ";"_$c(13,10)
+ ;
+ w "var "_storeId_"=Ext.create('Ext.data.JsonStore',"
+ d mergeArrayFromSession^%zewdAPI(.chart,sessionName,sessid)
+ ;
+ ; find maximum row number
+ s fieldName="",maxRow=0
+ f  s fieldName=$o(chart(fieldName)) q:fieldName=""  d
+ . s lastRow=$o(chart(fieldName,""),-1)
+ . i lastRow>maxRow s maxRow=lastRow
+ ;
+ s fieldName="",fieldNo=0
+ f  s fieldName=$o(chart(fieldName)) q:fieldName=""  d
+ . s fieldNo=fieldNo+1
+ . s array("fields",fieldNo)=fieldName
+ . f recordNo=1:1:maxRow d
+ . . s value=$g(chart(fieldName,recordNo))
+ . . s array("data",recordNo,fieldName)=value
+ s array("id")=storeId
+ d streamArrayToJSON^%zewdJSON("array")
+ w ");"_$c(13,10)
  QUIT
  ;
 writeDesktopConfig(sessionName,sessid)
