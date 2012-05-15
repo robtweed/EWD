@@ -19,12 +19,12 @@ Build 915: Main changes
 - Enhancements to and bug fixes for ExtJS v4
 - Support infrastructure for SMART Apps (http://smartplatforms.org) 
 
+#Previous Build Notes
+
 Build 912 included:
 
 - ExtJS version 4 Custom Tags
 - David Wicksell's enhancements to XML/XSLT handling
-
-#Previous Build Notes
 
 Build 896 included:
 
