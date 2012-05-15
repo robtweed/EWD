@@ -2,9 +2,24 @@
  
 EWD is a Free Open Source Ajax Framework for GT.M
 
-Build 912
+Thanks to:
 
-Main changes:
+- The Health Informatics Service, Calderdale & Huddersfield NHS Foundation Trust for sponsoring development and documentation of the ExtJS tag library
+- Oroville Hospital, CA, for sponsoring development of the ExtJS Charts tags
+- Bug fixes and enhancements suggested by, identified by, and/or provided by:
+  - David Wicksell
+  - Zach Gonzales
+  - Chris Casey
+  - Kiyoshi Sawada
+  - Nikesh Gogia
+
+Build 915: Main changes
+
+- ExtJS Charts support
+- Enhancements to and bug fixes for ExtJS v4
+- Support infrastructure for SMART Apps (http://smartplatforms.org) 
+
+Build 912 included:
 
 - ExtJS version 4 Custom Tags
 - David Wicksell's enhancements to XML/XSLT handling
