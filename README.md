@@ -7,8 +7,9 @@ Thanks to:
 - The Health Informatics Service, Calderdale & Huddersfield NHS Foundation Trust for sponsoring development and documentation of the ExtJS tag library
 - Oroville Hospital, CA, for sponsoring development of the ExtJS Charts tags
 - Bug fixes and enhancements suggested by, identified by, and/or provided by:
+  - Mike Clayton & Ryan Eastman, Quest Diagnostics
   - David Wicksell
-  - Zach Gonzales
+  - Zach Gonzales, Oroville Hospital
   - Chris Casey
   - Kiyoshi Sawada
   - Nikesh Gogia
