@@ -1,7 +1,7 @@
 %zewdExt4Code ; Extjs 4 Runtime Logic
  ;
- ; Product: Enterprise Web Developer (Build 914)
- ; Build Date: Tue, 08 May 2012 11:02:04
+ ; Product: Enterprise Web Developer (Build 915)
+ ; Build Date: Tue, 15 May 2012 08:23:24
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -152,8 +152,8 @@ writeGridStore(sessionName,columnDef,id,storeId,groupField,sessid)
  . s name="",comma2=","
  . w "zewdRowNo: '"_no_"'"
  . f  s name=$o(data(no,name)) q:name=""  d
- . . s value=data(no,name)
- . . w comma2_name_":"_$$quotedValue(value)
+ . . s value=$g(data(no,name))
+ . . w comma2_$$quotedName(name)_":"_$$quotedValue(value)
  . . s comma2=","
  . s comma=","
  . w "}"
@@ -265,13 +265,18 @@ writeGridStore(sessionName,columnDef,id,storeId,groupField,sessid)
  ;
 quotedValue(value)
  d
+ . s value=$$replaceAll^%zewdAPI(value,"'","\'")
  . i value="true"!(value="false") q
  . i $$numeric^%zewdJSON(value) q
- . i $e(value,1)="." s value=$e(value,2,$l(value)) q
+ . i $e(value,1)=".",$e(value,2)'?1N s value=$e(value,2,$l(value)) q
  . i $e(value,1,9)="function(" q
  . i $e(value,1)="|" s value=$e(value,2,$l(value))
  . s value="'"_value_"'"
  QUIT value
+ ;
+quotedName(name)
+ i name'?.AN s name="'"_name_"'"
+ QUIT name
  ;
 writeTreeStore(sessionName,storeId,page,addTo,replace,expanded,sessid)
  ;

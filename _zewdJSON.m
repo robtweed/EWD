@@ -1,7 +1,7 @@
 %zewdJSON	; Enterprise Web Developer JSON functions
  ;
- ; Product: Enterprise Web Developer (Build 910)
- ; Build Date: Wed, 25 Apr 2012 17:59:26
+ ; Product: Enterprise Web Developer (Build 915)
+ ; Build Date: Tue, 15 May 2012 08:23:24
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -35,6 +35,7 @@ parseJSON(jsonString,propertiesArray,mode)
  k propertiesArray
  s error=""
  s buff=$g(jsonString)
+ s buff=$$removeSpaces(buff)
  s buff=$$replaceAll^%zewdAPI(buff,"\""","\'")
  s arrRef="array"
  s c=$e(buff,1)
@@ -103,6 +104,8 @@ parseJSONObject(buff,subs)
  . . i subs'="" s subs2=subs2_","
  . . s subs2=subs2_name
  . . i value["\'" s value=$$replaceAll^%zewdAPI(value,"\'","""""")
+ . . s subs2=$$replaceAll^%zewdAPI(subs2,$c(2),":")
+ . . s value=$$replaceAll^%zewdAPI(value,$c(2),":")
  . . s x="s "_arrRef_"("_subs2_")="_value
  . . x x
  . i c="," s name="" q
@@ -126,6 +129,8 @@ parseJSONArray(buff,subs)
  . . s subs2=subs
  . . i subs'="" s subs2=subs2_","
  . . s subs2=subs2_no
+ . . s subs2=$$replaceAll^%zewdAPI(subs2,$c(2),":")
+ . . s name=$$replaceAll^%zewdAPI(name,$c(2),":")
  . . s x="s "_arrRef_"("_subs2_")="_name
  . . x x
  . i c="[" d  q
@@ -195,6 +200,37 @@ numeric(value)
  i value?1"."1N.N QUIT 1
  i value?1"-."1N.N QUIT 1
  QUIT 0
+ ;
+removeSpaces(string)
+ ;
+ n c,i,quote,quoted,outString
+ ;
+ s quoted=0,quote=""
+ s outString=""
+ f i=1:1:$l(string) d
+ . s c=$e(string,i)
+ . i $a(c)=9 q
+ . i c="""" d
+ . . i 'quoted d
+ . . . s quoted=1
+ . . . s quote=""""
+ . . e  d
+ . . . i quote="""" d
+ . . . . s quoted=0
+ . . . . s quote=""
+ . i c="'" d
+ . . i 'quoted d
+ . . . s quoted=1
+ . . . s quote="'"
+ . . e  d
+ . . . i quote="'" d
+ . . . . s quoted=0
+ . . . . s quote=""
+ . i c=" ",'quoted q
+ . i quoted,c=":" s c=$c(2)
+ . s outString=outString_c
+ ;
+ QUIT outString
  ;
 JSON2XML(jsonString,write)
  ;

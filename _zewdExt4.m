@@ -1,7 +1,7 @@
 %zewdExt4 ; Extjs Tag Processors
  ;
- ; Product: Enterprise Web Developer (Build 914)
- ; Build Date: Tue, 08 May 2012 11:02:03
+ ; Product: Enterprise Web Developer (Build 915)
+ ; Build Date: Tue, 15 May 2012 08:23:24
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -66,6 +66,8 @@ container(nodeOID,attrValue,docOID,technology)
  ; basic pre-processing of specific widget tags
  d getMappings(.tagNameMap)
  ;
+ i $$getAttribute^%zewdDOM("smartcontainer",nodeOID)="true" d container^%zewdSmart(nodeOID)
+ ;
  d pass1(nodeOID,.tagNameMap)
  ; Expand out into items inside the outer widgets
  d pass2(nodeOID,.tagNameMap)
@@ -129,7 +131,7 @@ container(nodeOID,attrValue,docOID,technology)
  s text=text_"    var value;"_$c(13,10)
  s text=text_"    Ext.getCmp(formPanelId).getForm().getFields().eachKey("_$c(13,10)
  s text=text_"      function(key,item) {"_$c(13,10)
- s text=text_"        if (item.xtype === 'combobox') {"_$c(13,10)
+ s text=text_"        if ((item.xtype === 'combobox')&&(item.multiSelect)) {"_$c(13,10)
  s text=text_"          var values=item.getSubmitValue();"_$c(13,10)
  s text=text_"          for (var i=0; i<values.length; i++) {"_$c(13,10)
  s text=text_"            value=values[i];"_$c(13,10)
@@ -398,7 +400,7 @@ fragment(nodeOID,attrValue,docOID,technology)
  . d removeIntermediateNode^%zewdDOM(botJSOID)
  s jsOID=$$getElementById^%zewdDOM("Ext4Code",docOID)
  d childTags(nodeOID,jsOID)
- d processNameList^%zewdST2(.nameList,.formDeclarations)
+ d processNameList(.nameList,.formDeclarations)
  i $$removeChild^%zewdDOM(nodeOID,1)
  ;
  QUIT
@@ -945,6 +947,16 @@ pass1(nodeOID,tagNameMap)
  f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d
  . s childOID=OIDArray(childNo)
  . i $$getNodeType^%zewdDOM(childOID)'=1 q
+ . i $$getAttribute^%zewdDOM("smartframediv",childOID)'="" d
+ . . n div,html,lt
+ . . s div=$$getAttribute^%zewdDOM("smartframediv",childOID)
+ . . d removeAttribute^%zewdDOM("smartframediv",childOID)
+ . . s lt="<"
+ . . i $$getTagName^%zewdDOM(nodeOID)="ext4:fragment" s lt="&lt;"
+ . . s html=lt_"div id='"_div_"'>"
+ . . s html=html_"***EMPTY***"
+ . . s html=html_lt_"/div>"
+ . . d setAttribute^%zewdDOM("html",html,childOID)
  . s tagName=$$getTagName^%zewdDOM(childOID)
  . i $g(tagNameMap(tagName,"pass1Method"))'="" d
  . . n x
@@ -1876,11 +1888,11 @@ nextPageHandler(nodeOID)
  . s text=text_"nvp=nvp+'"_amp_"ext4_addTo="_addTo
  . i replace="true" d
  . . s text=text_"&ext4_removeAll=true"
- . i actionCol s text=text_"&row=' + EWD.ext4.getGridRowNo(me,rowIndex) + '"
+ . i actionCol s text=text_"&rowIndex=' + rowIndex + '&row=' + EWD.ext4.getGridRowNo(me,rowIndex) + '"
  . s text=text_"';"_$c(13,10)
  e  d
  . i actionCol d
- . . s text="nvp=nvp+'"_amp_"row=' + EWD.ext4.getGridRowNo(me,rowIndex)"
+ . . s text=text_"nvp=nvp+'"_amp_"rowIndex=' + rowIndex + '&row=' + EWD.ext4.getGridRowNo(me,rowIndex)"
  . ;e  d
  . ;. s text="var nvp='';"
  . s text=text_";"_$c(13,10)

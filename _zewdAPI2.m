@@ -1,7 +1,7 @@
 %zewdAPI2 ; Enterprise Web Developer run-time functions and user APIs
  ;
- ; Product: Enterprise Web Developer (Build 910)
- ; Build Date: Wed, 25 Apr 2012 17:59:25
+ ; Product: Enterprise Web Developer (Build 915)
+ ; Build Date: Tue, 15 May 2012 08:23:24
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -163,11 +163,11 @@ urlOutputEncode(string,max)
  i max="" s max=10
  s stop=0
  f i=1:1:max d  q:stop
- . s str=$$urlEscape^%zewdGTMLRuntime(str)
+ . s str=$$urlEscape^%zewdGTMRuntime(str)
  . i str=string s stop=1
  . s string=str
  ;
- QUIT $$urlUnescape^%zewdGTMLRuntime(string)
+ QUIT $$urlUnescape^%zewdGTMRuntime(string)
  ;
 test()
  n ver
