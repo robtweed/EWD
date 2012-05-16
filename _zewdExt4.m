@@ -1,7 +1,7 @@
 %zewdExt4 ; Extjs Tag Processors
  ;
- ; Product: Enterprise Web Developer (Build 915)
- ; Build Date: Tue, 15 May 2012 08:23:24
+ ; Product: Enterprise Web Developer (Build 916)
+ ; Build Date: Wed, 16 May 2012 16:50:05
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -35,7 +35,7 @@ container(nodeOID,attrValue,docOID,technology)
  ;QUIT
  ;
  n appName,attr,bodyOID,configOID,cspScriptsOID,headOID,htmlOID,jsOID,jsSectionOID,jsVersion
- n mainAttrs,nameList,rootPath,src,tagNameMap,text,title,xOID
+ n mainAttrs,nameList,ocOID,rootPath,src,tagNameMap,text,title,xOID
  ;
  ;<ext4:container rootPath="/ext-4" jsVersion="ext-all.js" title="Hello Ext" appName="HelloExt">
  ; .... etc
@@ -217,6 +217,7 @@ container(nodeOID,attrValue,docOID,technology)
  ;
  s ocOID=$$getTagOID^%zewdDOM("ext4:optioncode",docName)
  i ocOID'="" d
+ . n sOID
  . s ocOID=$$removeChild^%zewdDOM(ocOID)
  . s attr("type")="text/javascript"
  . s sOID=$$addElementToDOM^%zewdDOM("script",headOID,,.attr)
@@ -972,6 +973,18 @@ replaceModalWindow(nodeOID)
  d setAttribute^%zewdDOM("modal","true",xOID)
  QUIT
  ;
+seriesChildren(nodeOID)
+ ;
+ n childNo,childOID,OIDArray,xOID
+ ;
+ d getChildrenInOrder^%zewdDOM(nodeOID,.OIDArray)
+ s childNo=""
+ f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d
+ . s childOID=OIDArray(childNo)
+ . i $$getTagName^%zewdDOM(childOID)="ext4:tips" d
+ . . s xOID=$$renameTag^%zewdDOM("ext4:charttips",childOID,1)
+ QUIT
+ ;
 addEwdActionField(nodeOID)
  ;
  n attr,xOID
@@ -985,11 +998,17 @@ addEwdActionField(nodeOID)
  ;
 swapFormFields(nodeOID)
  ;
- n type,xOID
+ n parentOID,type,xOID
  ;
- i $$getTagName^%zewdDOM($$getParentNode^%zewdDOM(nodeOID))="ext4:axisfields" d  QUIT
+ s parentOID=$$getParentNode^%zewdDOM(nodeOID)
+ i $$getTagName^%zewdDOM(parentOID)="ext4:axisfields" d  QUIT
  . n xOID
  . s xOID=$$renameTag^%zewdDOM("ext4:axisfield",nodeOID,1)
+ ;
+ i $$getTagName^%zewdDOM(parentOID)="ext4:axis" d  QUIT
+ . n xOID
+ . s xOID=$$renameTag^%zewdDOM("ext4:axisfield",nodeOID,1)
+ . s xOID=$$insertNewIntermediateElement^%zewdDOM(parentOID,"ext4:axisfields",docOID)
  ;
  s type=$$getAttribute^%zewdDOM("type",nodeOID)
  i type["field" d
@@ -1767,7 +1786,7 @@ expandChart(nodeOID,attr,parentOID)
  ;
 chartInstance(attrs,nodeOID,instanceOID)
  ;
- n argumentsOID,chartDef,id,mainAttrs,sessionName,storeId,xOID
+ n argumentsOID,chartDef,cspOID,id,mainAttrs,sessionName,storeId,xOID
  ;
  s xOID=""
  m mainAttrs=attrs

@@ -1,7 +1,7 @@
 %zewdST2 ; Sencha Touch Tag Processors and runtime logic
  ;
- ; Product: Enterprise Web Developer (Build 914)
- ; Build Date: Tue, 08 May 2012 11:02:04
+ ; Product: Enterprise Web Developer (Build 916)
+ ; Build Date: Wed, 16 May 2012 16:50:05
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -986,6 +986,8 @@ camelCaseTerms
  ;;allowDomMove
  ;;allQuery
  ;;altFormats
+ ;;anchorOffset
+ ;;anchorToTarget
  ;;angleField
  ;;animCollapse
  ;;applyTo
@@ -993,8 +995,9 @@ camelCaseTerms
  ;;autoDestroy
  ;;autoEl
  ;;autoFitErrors
- ;;autoLoad
  ;;autoHeight
+ ;;autoHide
+ ;;autoLoad
  ;;autoRender
  ;;autoScroll
  ;;autoShow
@@ -1035,12 +1038,14 @@ camelCaseTerms
  ;;columnWidth
  ;;componentCls
  ;;componentLayout
+ ;;constrainPosition
  ;;contentEl
  ;;createLinkText
  ;;dashSize
  ;;dataIndex
  ;;dateFormat
  ;;dayText
+ ;;defaultAlign
  ;;defaultDockWeights
  ;;defaultLinkValue
  ;;defaultListConfig
@@ -1058,6 +1063,7 @@ camelCaseTerms
  ;;disabledDays
  ;;disabledDaysText
  ;;disableKeyFilter
+ ;;dismissDelay
  ;;displayField
  ;;displayInfo
  ;;dockedItems
@@ -1111,6 +1117,7 @@ camelCaseTerms
  ;;hasFeatureEvent
  ;;headerPosition
  ;;hideCollapseTool
+ ;;hideDelay
  ;;hideEmptyLabel
  ;;hideGroupedHeader
  ;;hideHeaders
@@ -1173,6 +1180,7 @@ camelCaseTerms
  ;;monitorOrientation
  ;;monitorResize
  ;;monthText
+ ;;mouseOffset
  ;;msgTarget
  ;;multiSelect
  ;;openCls
@@ -1211,6 +1219,7 @@ camelCaseTerms
  ;;selType
  ;;shadowAttributes
  ;;showAnimation
+ ;;showDelay
  ;;showGroupsText
  ;;showInLegend
  ;;showMarkers
@@ -1242,6 +1251,7 @@ camelCaseTerms
  ;;tipText
  ;;toFrontOnShow
  ;;tplWriteMode
+ ;;trackMouse
  ;;triggerAction
  ;;triggerBaseCls
  ;;triggerCls

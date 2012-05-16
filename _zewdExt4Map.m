@@ -1,7 +1,7 @@
 %zewdExt4Map ; Extjs Tag Processor Mappings
  ;
- ; Product: Enterprise Web Developer (Build 914)
- ; Build Date: Tue, 08 May 2012 11:02:04
+ ; Product: Enterprise Web Developer (Build 916)
+ ; Build Date: Wed, 16 May 2012 16:50:05
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -48,6 +48,7 @@ mappingObjects
  ;;{tagName:"ext4:buttons",parse:{method:"arrayOfOptions",optionName:"buttons"}}
  ;;{tagName:"ext4:cellediting",className:"Ext.grid.plugin.CellEditing",ptype:"cellediting",xtypeTagName:"ext4:item",containerTag:"ext4:plugins"}
  ;;{tagName:"ext4:chart",className:"Ext.chart.Chart",xtype:"chart",xtypeTagName:"ext4:item",containerTag:"ext4:items",expandMethod:"expandChart",instanceMethod:"chartInstance"}
+ ;;{tagName:"ext4:charttips",parse:{method:"object",optionName:"tips"}}
  ;;{tagName:"ext4:checkboxfield",className:"Ext.form.Checkbox",ptype:"checkboxfield",fieldType:"checkbox",xtypeTagName:"ext4:item",containerTag:"ext4:items",pass1Method:"setNameList"}
  ;;{tagName:"ext4:checkboxgroup",className:"Ext.form.CheckboxGroup",xtype:"checkboxgroup",xtypeTagName:"ext4:item",containerTag:"ext4:items"}
  ;;{tagName:"ext4:checkcolumn",className:"Ext.ux.CheckColumn",xtype:"checkcolumn",xtypeTagName:"ext4:item",containerTag:"ext4:columns",pass1Method:"editableColumn"}
@@ -128,7 +129,7 @@ mappingObjects
  ;;{tagName:"ext4:rotate",parse:{method:"object",optionName:"rotate"},hasId=false}
  ;;{tagName:"ext4:rownumberer",className:"Ext.grid.RowNumberer",xtype:"rownumberer",xtypeTagName:"ext4:item",containerTag:"ext4:columns"}
  ;;{tagName:"ext4:separator",className:"Ext.toolbar.Separator",xtype:"tbseparator",xtypeTagName:"ext4:item",containerTag:"ext4:items"}
- ;;{tagName:"ext4:series",className:"Ext.chart.series.Series",xtype:"dummy",xtypeTagName:"ext4:item",containerTag:"ext4:seriesarray",hasId="false"}
+ ;;{tagName:"ext4:series",className:"Ext.chart.series.Series",xtype:"dummy",xtypeTagName:"ext4:item",containerTag:"ext4:seriesarray",hasId="false",pass1Method:"seriesChildren"}
  ;;{tagName:"ext4:seriesarray",parse:{method:"arrayOfOptions",optionName:"series"}}
  ;;{tagName:"ext4:slider",className:"Ext.slider.Single",xtype:"slider",xtypeTagName:"ext4:item",containerTag:"ext4:items"}
  ;;{tagName:"ext4:sliderfield",className:"Ext.slider.Single",xtype:"sliderfield",fieldType:"text",xtypeTagName:"ext4:item",containerTag:"ext4:items",pass1Method:"setNameList"}
