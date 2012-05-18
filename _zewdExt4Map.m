@@ -1,7 +1,7 @@
 %zewdExt4Map ; Extjs Tag Processor Mappings
  ;
- ; Product: Enterprise Web Developer (Build 916)
- ; Build Date: Wed, 16 May 2012 16:50:05
+ ; Product: Enterprise Web Developer (Build 917)
+ ; Build Date: Fri, 18 May 2012 14:46:59
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -37,7 +37,7 @@ mappingObjects
  ;;{tagName:"ext4:axisfield",parse:{method:"arrayItem"},pass1Method:"addAxisFields"}
  ;;{tagName:"ext4:axisfields",parse:{method:"array",optionName:"fields"}}
  ;;{tagName:"ext4:axisgrid",parse:{method:"object",optionName:"grid"},hasId:false}
- ;;{tagName:"ext4:axislabel",parse:{method:"object",optionName:"label"}}
+ ;;{tagName:"ext4:axislabel",parse:{method:"object",optionName:"label"},hasId:false}
  ;;{tagName:"ext4:background",parse:{method:"object",optionName:"background"},hasId:false}
  ;;{tagName:"ext4:bbar",parse:{method:"arrayOfOptions",optionName:"bbar"}}
  ;;{tagName:"ext4:bodystyle",parse:{method:"object",optionName:"bodyStyle"}}
@@ -47,10 +47,10 @@ mappingObjects
  ;;{tagName:"ext4:buttonmenu",expandMethod:"expandButtonMenu",parse:{method:"arrayOfOptions",optionName:"menu"}}
  ;;{tagName:"ext4:buttons",parse:{method:"arrayOfOptions",optionName:"buttons"}}
  ;;{tagName:"ext4:cellediting",className:"Ext.grid.plugin.CellEditing",ptype:"cellediting",xtypeTagName:"ext4:item",containerTag:"ext4:plugins"}
- ;;{tagName:"ext4:chart",className:"Ext.chart.Chart",xtype:"chart",xtypeTagName:"ext4:item",containerTag:"ext4:items",expandMethod:"expandChart",instanceMethod:"chartInstance"}
+ ;;{tagName:"ext4:chart",className:"Ext.chart.Chart",xtype:"chart",xtypeTagName:"ext4:item",containerTag:"ext4:items",expandMethod:"expandChart",instanceMethod:"chartInstance",pass1Method:"expandGauge"}
  ;;{tagName:"ext4:charttips",parse:{method:"object",optionName:"tips"}}
  ;;{tagName:"ext4:checkboxfield",className:"Ext.form.Checkbox",ptype:"checkboxfield",fieldType:"checkbox",xtypeTagName:"ext4:item",containerTag:"ext4:items",pass1Method:"setNameList"}
- ;;{tagName:"ext4:checkboxgroup",className:"Ext.form.CheckboxGroup",xtype:"checkboxgroup",xtypeTagName:"ext4:item",containerTag:"ext4:items"}
+ ;;{tagName:"ext4:checkboxgroup",className:"Ext.form.CheckboxGroup",xtype:"checkboxgroup",xtypeTagName:"ext4:item",containerTag:"ext4:items",expandMethod:"expandGroupField",instanceMethod:"groupFieldInstance"}
  ;;{tagName:"ext4:checkcolumn",className:"Ext.ux.CheckColumn",xtype:"checkcolumn",xtypeTagName:"ext4:item",containerTag:"ext4:columns",pass1Method:"editableColumn"}
  ;;{tagName:"ext4:childel",parse:{method:"item"}}
  ;;{tagName:"ext4:childels",parse:{method:"arrayOfOptions",optionName:"childEls"}}
@@ -90,7 +90,7 @@ mappingObjects
  ;;{tagName:"ext4:gridcolumn",className:"Ext.grid.column.Column",xtype:"gridcolumn",xtypeTagName:"ext4:column",containerTag:"ext4:columns",pass1Method:"editableColumn"}
  ;;{tagName:"ext4:gridpanel",className:"Ext.grid.Panel",xtype:"gridpanel",xtypeTagName:"ext4:item",containerTag:"ext4:items",expandMethod:"expandGridPanel",instanceMethod:"gridPanelInstance"}
  ;;{tagName:"ext4:hiddenfield",className:"Ext.form.field.Hidden",xtype:"hiddenfield",fieldType:"text",xtypeTagName:"ext4:item",containerTag:"ext4:items",pass1Method:"setNameList"}
- ;;{tagName:"ext4:highlight",parse:{method:"object",optionName:"highlight"}}
+ ;;{tagName:"ext4:highlight",parse:{method:"object",optionName:"highlight"},hasId:false}
  ;;{tagName:"ext4:htmleditorfield",className:"Ext.form.field.HtmlEditor",xtype:"htmleditor",fieldType:"text",xtypeTagName:"ext4:item",containerTag:"ext4:items",expandMethod:"addQuickTipManager",pass1Method:"setNameList"}
  ;;{tagName:"ext4:icon",xtype:"dummy",xtypeTagName:"ext4:item",containerTag:"ext4:items"}
  ;;{tagName:"ext4:image",className:"Ext.Img",xtype:"image",xtypeTagName:"ext4:item",containerTag:"ext4:items"}
@@ -101,7 +101,7 @@ mappingObjects
  ;;{tagName:"ext4:legend",parse:{method:"object",optionName:"legend"},hasId:"false"}
  ;;{tagName:"ext4:layout",parse:{method:"object",optionName:"layout"}}
  ;;{tagName:"ext4:listeners",parse:{method:"listeners"}}
- ;;{tagName:"ext4:markerconfig",parse:{method:"object",optionName:"markerConfig"}}
+ ;;{tagName:"ext4:markerconfig",parse:{method:"object",optionName:"markerConfig"},hasId:false}
  ;;{tagName:"ext4:menu",className:"Ext.menu.Menu",xtype:"menu",xtypeTagName:"ext4:item",containerTag:"ext4:items",pass1Method:"convertMenu",expandMethod:"expandButtonMenu"}
  ;;{tagName:"ext4:menucheckitem",className:"Ext.menu.CheckItem",xtype:"menucheckitem",xtypeTagName:"ext4:item",containerTag:"ext4:items"}
  ;;{tagName:"ext4:menucolorpicker",className:"Ext.menu.ColorPicker"}
@@ -121,16 +121,18 @@ mappingObjects
  ;;{tagName:"ext4:propertygrid",className:"Ext.grid.property.Grid",xtype:"propertygrid",xtypeTagName:"ext4:item",containerTag:"ext4:items"}
  ;;{tagName:"ext4:proxy",parse:{method:"object",optionName:"proxy"}}
  ;;{tagName:"ext4:radiofield",className:"Ext.form.Radio",xtype:"radiofield",fieldType:"radio",xtypeTagName:"ext4:item",containerTag:"ext4:items",pass1Method:"setNameList"}
- ;;{tagName:"ext4:radiogroup",className:"Ext.form.RadioGroup",xtype:"radiogroup",xtypeTagName:"ext4:item",containerTag:"ext4:items"}
+ ;;{tagName:"ext4:radiogroup",className:"Ext.form.RadioGroup",xtype:"radiogroup",xtypeTagName:"ext4:item",containerTag:"ext4:items",expandMethod:"expandGroupField",instanceMethod:"groupFieldInstance"}
  ;;{tagName:"ext4:rbar",parse:{method:"arrayOfOptions",optionName:"rbar"}}
  ;;{tagName:"ext4:reader",parse:{method:"object",optionName:"reader"}}
  ;;{tagName:"ext4:renderdata",parse:{method:"object",optionName:"renderData"}}
  ;;{tagName:"ext4:renderselectors",parse:{method:"object",optionName:"renderSelectors"}}
  ;;{tagName:"ext4:rotate",parse:{method:"object",optionName:"rotate"},hasId=false}
  ;;{tagName:"ext4:rownumberer",className:"Ext.grid.RowNumberer",xtype:"rownumberer",xtypeTagName:"ext4:item",containerTag:"ext4:columns"}
+ ;;{tagName:"ext4:segment",parse:{method:"object",optionName:"segment"},hasId:false}
  ;;{tagName:"ext4:separator",className:"Ext.toolbar.Separator",xtype:"tbseparator",xtypeTagName:"ext4:item",containerTag:"ext4:items"}
  ;;{tagName:"ext4:series",className:"Ext.chart.series.Series",xtype:"dummy",xtypeTagName:"ext4:item",containerTag:"ext4:seriesarray",hasId="false",pass1Method:"seriesChildren"}
  ;;{tagName:"ext4:seriesarray",parse:{method:"arrayOfOptions",optionName:"series"}}
+ ;;{tagName:"ext4:serieslabel",parse:{method:"object",optionName:"label"},hasId:false}
  ;;{tagName:"ext4:slider",className:"Ext.slider.Single",xtype:"slider",xtypeTagName:"ext4:item",containerTag:"ext4:items"}
  ;;{tagName:"ext4:sliderfield",className:"Ext.slider.Single",xtype:"sliderfield",fieldType:"text",xtypeTagName:"ext4:item",containerTag:"ext4:items",pass1Method:"setNameList"}
  ;;{tagName:"ext4:sorter",parse:{method:"item"}}

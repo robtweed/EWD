@@ -1,7 +1,7 @@
 %zewdExt4 ; Extjs Tag Processors
  ;
- ; Product: Enterprise Web Developer (Build 916)
- ; Build Date: Wed, 16 May 2012 16:50:05
+ ; Product: Enterprise Web Developer (Build 917)
+ ; Build Date: Fri, 18 May 2012 14:46:59
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -35,7 +35,7 @@ container(nodeOID,attrValue,docOID,technology)
  ;QUIT
  ;
  n appName,attr,bodyOID,configOID,cspScriptsOID,headOID,htmlOID,jsOID,jsSectionOID,jsVersion
- n mainAttrs,nameList,ocOID,rootPath,src,tagNameMap,text,title,xOID
+ n mainAttrs,nameList,ocOID,outerOID,rootPath,src,tagNameMap,text,title,xOID
  ;
  ;<ext4:container rootPath="/ext-4" jsVersion="ext-all.js" title="Hello Ext" appName="HelloExt">
  ; .... etc
@@ -68,6 +68,7 @@ container(nodeOID,attrValue,docOID,technology)
  ;
  i $$getAttribute^%zewdDOM("smartcontainer",nodeOID)="true" d container^%zewdSmart(nodeOID)
  ;
+ s outerOID=nodeOID
  d pass1(nodeOID,.tagNameMap)
  ; Expand out into items inside the outer widgets
  d pass2(nodeOID,.tagNameMap)
@@ -116,58 +117,7 @@ container(nodeOID,attrValue,docOID,technology)
  ;
  s attr("id")="Ext4Init"
  s xOID=$$addElementToDOM^%zewdDOM("ewd:jssection",jsOID,,.attr)
- s text=""
- s text=text_"EWD.ext4={"_$c(13,10)
- s text=text_"  form: {},"_$c(13,10)
- s text=text_"  chart: {},"_$c(13,10)
- s text=text_"  grid: {},"_$c(13,10)
- s text=text_"  getGridRowNo: function(grid,rowIndex) {"_$c(13,10)
- s text=text_"    return grid.store.getAt(rowIndex).get('zewdRowNo');"_$c(13,10)
- ;s text=text_"   }"_$c(13,10)
- s text=text_"  },"_$c(13,10)
- s text=text_"  submit: function (formPanelId,nextPage,addTo,replace) {"_$c(13,10)
- s text=text_"    var nvp='';"_$c(13,10)
- s text=text_"    var amp='';"_$c(13,10)
- s text=text_"    var value;"_$c(13,10)
- s text=text_"    Ext.getCmp(formPanelId).getForm().getFields().eachKey("_$c(13,10)
- s text=text_"      function(key,item) {"_$c(13,10)
- s text=text_"        if ((item.xtype === 'combobox')&&(item.multiSelect)) {"_$c(13,10)
- s text=text_"          var values=item.getSubmitValue();"_$c(13,10)
- s text=text_"          for (var i=0; i<values.length; i++) {"_$c(13,10)
- s text=text_"            value=values[i];"_$c(13,10)
- s text=text_"            nvp = nvp + amp + item.getName() + '=' + escape(value);"_$c(13,10)
- s text=text_"            amp='&';"_$c(13,10)
- s text=text_"          }"_$c(13,10)
- s text=text_"        }"_$c(13,10)
- s text=text_"        else if ((item.xtype !== 'radiogroup')&&(item.xtype !== 'checkboxgroup')) {"_$c(13,10)
- s text=text_"          value = '';"_$c(13,10)
- s text=text_"          if (item.xtype === 'textareafield') {"_$c(13,10)
- s text=text_"            value = escape(item.getValue());"_$c(13,10)
- s text=text_"            value = value.replace(/\+/g, '%2B');"_$c(13,10)
- s text=text_"          }"_$c(13,10)
- s text=text_"          else if (item.xtype === 'htmleditor') {"_$c(13,10)
- s text=text_"            value = escape(item.getValue());"_$c(13,10)
- s text=text_"          }"_$c(13,10)
- s text=text_"          else {"_$c(13,10)
- s text=text_"            if (item.getSubmitValue() !== null) value = item.getSubmitValue();"_$c(13,10)
- s text=text_"          }"_$c(13,10)
- s text=text_"          if ((item.xtype !== 'radiofield')&&(item.xtype !== 'checkboxfield')) {"_$c(13,10)
- s text=text_"            nvp = nvp + amp + item.getName() + '=' + value;"_$c(13,10)
- s text=text_"            amp='&';"_$c(13,10)
- s text=text_"          }"_$c(13,10)
- s text=text_"          else {"_$c(13,10)
- s text=text_"            if (value !== '') {"_$c(13,10)
- s text=text_"              nvp = nvp + amp + item.getName() + '=' + value;"_$c(13,10)
- s text=text_"            }"_$c(13,10)
- s text=text_"          }"_$c(13,10)
- s text=text_"        }"_$c(13,10)
- s text=text_"      }"_$c(13,10)
- s text=text_"    );"_$c(13,10)
- s text=text_"    if (addTo !== '') nvp = nvp + '&ext4_addTo=' + addTo;"_$c(13,10)
- s text=text_"    if (replace === 1) nvp = nvp + '&ext4_removeAll=true';"_$c(13,10)
- s text=text_"    EWD.ajax.getPage({page:nextPage,nvp:nvp})"_$c(13,10)
- s text=text_"  }"_$c(13,10)
- s text=text_"};"_$c(13,10)
+ s text=$$createExtFuncs^%zewdExt4Code() ; ** Ext4 functions in container page header!
  s xOID=$$addElementToDOM^%zewdDOM("ewd:jsline",xOID,,,text)
  ;
  s cspScriptsOID=$$addElementToDOM^%zewdDOM("ewd:jssection",headOID,,.attr)
@@ -366,12 +316,13 @@ ExtCreate(nodeOID,parentOID,isFragment)
 fragment(nodeOID,attrValue,docOID,technology)
  ;
  ;
- n botJSOID,configOID,jsOID,nameList,tagNameMap,text,topJSOID,xOID
+ n botJSOID,configOID,jsOID,nameList,outerOID,tagNameMap,text,topJSOID,xOID
  ;
  ;<ext4:fragment>
  ; .... etc
  ;</ext4:fragment>
  ;
+ s outerOID=nodeOID
  s configOID=$$getTagOID^%zewdDOM("ewd:config",docName)
  d setAttribute^%zewdDOM("preprocess","preProcess^%zewdExt4Code",configOID)
  ;
@@ -1271,6 +1222,9 @@ switchLabel(nodeOID)
  i $$getTagName^%zewdDOM($$getParentNode^%zewdDOM(nodeOID))="ext4:axis" d
  . n xOID
  . s xOID=$$renameTag^%zewdDOM("ext4:axislabel",nodeOID,1)
+ i $$getTagName^%zewdDOM($$getParentNode^%zewdDOM(nodeOID))="ext4:series" d
+ . n xOID
+ . s xOID=$$renameTag^%zewdDOM("ext4:serieslabel",nodeOID,1)
  QUIT
  ;
 switchFields(nodeOID)
@@ -1625,6 +1579,94 @@ treePanelInstance(attrs,nodeOID,instanceOID)
  ;
  QUIT argumentsOID
  ;
+expandGauge(nodeOID)
+ ;
+ n attr,axisOID,color1,color2,colorSet,donut,seriesOID,store,tagName,value
+ ;
+ i $$getAttribute^%zewdDOM("type",nodeOID)'="gauge" QUIT
+ d removeAttribute^%zewdDOM("type",nodeOID)
+ s value=$$getAttribute^%zewdDOM("value",nodeOID)
+ d removeAttribute^%zewdDOM("value",nodeOID)
+ i value'=""  d
+ . n argsOID,ciOID,daOID,fieldsOID,xOID
+ . s attr("classname")="Ext.data.JsonStore"
+ . s attr("var")="true"
+ . s attr("object")=$$uniqueId(nodeOID)_"JsonStore"
+ . s store=attr("object")
+ . s ciOID=$$addElementToDOM^%zewdDOM("ext4:createinstance",outerOID,,.attr,,1)
+ . s attr("model")=$$uniqueId(nodeOID)_"Model"
+ . s argsOID=$$addElementToDOM^%zewdDOM("ext4:arguments",ciOID,,.attr)
+ . s fieldsOID=$$addElementToDOM^%zewdDOM("ext4:fields",argsOID)
+ . s attr("name")="value"
+ . s xOID=$$addElementToDOM^%zewdDOM("ext4:fielditem",fieldsOID,,.attr)
+ . s daOID=$$addElementToDOM^%zewdDOM("ext4:dataarray",argsOID)
+ . s attr("value")=value
+ . s xOID=$$addElementToDOM^%zewdDOM("ext4:dataitem",daOID,,.attr)
+ . d setAttribute^%zewdDOM("store","."_store,nodeOID)
+ ;
+ i '$$hasChildTag^%zewdDOM(nodeOID,"ext4:axis",.axisOID) d
+ . s axisOID=$$addElementToDOM^%zewdDOM("ext4:axis",nodeOID)
+ d setAttribute^%zewdDOM("type","gauge",axisOID)
+ d setAttribute^%zewdDOM("position","gauge",axisOID)
+ ;
+ i '$$hasChildTag^%zewdDOM(nodeOID,"ext4:series",.seriesOID) d
+ . s seriesOID=$$addElementToDOM^%zewdDOM("ext4:series",nodeOID)
+ d setAttribute^%zewdDOM("type","gauge",seriesOID)
+ d setAttribute^%zewdDOM("field","value",seriesOID)
+ s donut=$$getAttribute^%zewdDOM("donut",seriesOID)
+ i donut="" d setAttribute^%zewdDOM("donut","false",seriesOID)
+ s color1=$$getAttribute^%zewdDOM("color1",seriesOID)
+ s color2=$$getAttribute^%zewdDOM("color2",seriesOID)
+ s colorSet=$$getAttribute^%zewdDOM("colorset",seriesOID)
+ i colorSet="" d
+ . d removeAttribute^%zewdDOM("color1",seriesOID)
+ . d removeAttribute^%zewdDOM("color2",seriesOID)
+ . i color1="" s color1="#f49d10"
+ . i color2="" s color2="#ddd"
+ . i $e(color1,1,2)="##" s color1=$e(color1,2,$l(color1))
+ . i $e(color2,1,2)="##" s color2=$e(color2,2,$l(color2))
+ . s colorSet=".['"_color1_"','"_color2_"']"
+ . d setAttribute^%zewdDOM("colorset",colorSet,seriesOID)
+ ;
+ QUIT
+ ;
+expandGroupField(nodeOID,attr,parentOID)
+ n ok
+ s ok=$$groupFieldInstance(.attr,childOID,parentOID)
+ QUIT
+ ;
+groupFieldInstance(attrs,nodeOID,instanceOID)
+ n argumentsOID,cspOID,fieldName,id,itemsId,sessionName,tagName,text,xOID,xtype
+ ;
+ s sessionName=$g(attrs("sessionname"))
+ i sessionName'="" d
+ . s tagName=$$getTagName^%zewdDOM(nodeOID)
+ . s id=$g(attrs("id"))
+ . i id="" d
+ . . s id=$$uniqueId(nodeOID)
+ . . s attrs("id")=id
+ . s itemsId=id_"Items"
+ . s attrs("items")="."_itemsId
+ . k attrs("sessionname")
+ . s fieldName=$g(attrs("name"))
+ . i fieldName="" s fieldName="undefinedFieldName"
+ . k attrs("name")
+ . s xOID=$$createElement^%zewdDOM("temp",docOID)
+ . s xOID=$$insertBefore^%zewdDOM(xOID,nodeOID)
+ . s xtype=""
+ . i tagName="ext4:radiogroup" s xtype="radiofield"
+ . i tagName="ext4:checkboxgroup" s xtype="checkboxfield"
+ . s text=" d writeGroupFields^%zewdExt4Code("""_sessionName_""","""_id_""","""_fieldName_""","""_xtype_""",sessid)"
+ . s cspOID=$$addCSPServerScript^%zewdAPI(xOID,text)
+ ;
+ s xtype=$g(attrs("xtype"))
+ i xtype'="radiogroup",xtype'="checkboxgroup" d
+ . s argumentsOID=$$addElementToDOM^%zewdDOM("ext4:arguments",instanceOID,,.attrs)
+ e  d
+ . s argumentsOID=nodeOID
+ i sessionName'="" d removeIntermediateNode^%zewdDOM(xOID)
+ QUIT argumentsOID
+ ;
 gridPanelInstance(attrs,nodeOID,instanceOID)
  ;
  n argumentsOID,clicksToEdit,colDef,cspOID,groupField,grouping,id
@@ -1811,6 +1853,7 @@ chartInstance(attrs,nodeOID,instanceOID)
  . s attrs("axes")=".EWD.ext4.chart['"_id_"'].axes"
  . s attrs("series")=".EWD.ext4.chart['"_id_"'].series"
  i sessionName'="" d
+ . n text
  . s xOID=$$createElement^%zewdDOM("temp",docOID)
  . s xOID=$$insertBefore^%zewdDOM(xOID,nodeOID)
  . s text=" d writeJSONStore^%zewdExt4Code("""_sessionName_""","""_chartDef_""","""_id_""","""_storeId_""",sessid)"

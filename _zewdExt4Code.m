@@ -1,7 +1,7 @@
 %zewdExt4Code ; Extjs 4 Runtime Logic
  ;
- ; Product: Enterprise Web Developer (Build 915)
- ; Build Date: Tue, 15 May 2012 08:23:24
+ ; Product: Enterprise Web Developer (Build 917)
+ ; Build Date: Fri, 18 May 2012 14:46:59
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -277,6 +277,48 @@ quotedValue(value)
 quotedName(name)
  i name'?.AN s name="'"_name_"'"
  QUIT name
+ ;
+writeGroupFields(sessionName,id,name,xtype,sessid)
+ ;
+ n checkedValue,cv,fieldName,fields,itemsId,no,selected
+ ;
+ d mergeArrayFromSession^%zewdAPI(.fields,sessionName,sessid)
+ i xtype="radiofield" s checkedValue=$$getSessionValue^%zewdAPI(name,sessid)
+ i xtype="checkboxfield" d mergeFromSelected^%zewdAPI(name,.selected,sessid)
+ s itemsId=id_"Items"
+ w itemsId_"="_$c(13,10)
+ s no=""
+ f  s no=$o(fields(no)) q:no=""  d
+ . i xtype="radiofield" d
+ . . s fields(no,"xtype")="radiofield"
+ . e  d
+ . . s fields(no,"ptype")="checkboxfield"
+ . i $g(fields(no,"id"))="" s fields(no,"id")=id_no
+ . i xtype="radiofield" d
+ . . s cv=checkedValue
+ . . s fieldName=$g(fields(no,"name"))
+ . . i fieldName="" d
+ . . . s fields(no,"name")=name
+ . . e  d
+ . . . i fieldName'=name s cv=$$getSessionValue^%zewdAPI(fieldName,sessid)
+ . . i $g(fields(no,"inputValue"))=cv s fields(no,"checked")="true"
+ . i xtype="checkboxfield" d
+ . . n value
+ . . k cv
+ . . m cv=selected
+ . . s fieldName=$g(fields(no,"name"))
+ . . i fieldName="" d
+ . . . s fields(no,"name")=name
+ . . e  d
+ . . . i fieldName'=name d
+ . . . . k cv
+ . . . . d mergeFromSelected^%zewdAPI(fieldName,.cv,sessid)
+ . . s value=$g(fields(no,"inputValue"))
+ . . i value="" s value="undefinedValue"
+ . . i $d(cv(value)) s fields(no,"checked")="true"
+ d streamArrayToJSON^%zewdJSON("fields")
+ w ";"_$c(13,10)
+ QUIT
  ;
 writeTreeStore(sessionName,storeId,page,addTo,replace,expanded,sessid)
  ;
@@ -561,6 +603,78 @@ setFieldErrorAlert(title,message,sessid)
  d setSessionValue^%zewdAPI("ewd.form.alertTitle",title,sessid)
  d setSessionValue^%zewdAPI("ewd.form.alertMessage",message,sessid)
  QUIT
+ ;
+createExtFuncs()
+ n text
+ ;
+ s text=""
+ s text=text_"EWD.ext4={"_$c(13,10)
+ s text=text_"  form: {},"_$c(13,10)
+ s text=text_"  chart: {},"_$c(13,10)
+ s text=text_"  items: {},"_$c(13,10)
+ s text=text_"  grid: {},"_$c(13,10)
+ s text=text_"  setGauge: function(id,value) {"_$c(13,10)
+ s text=text_"    Ext.getCmp(id).store.loadData([{value:value}]);"_$c(13,10)
+ s text=text_"  },"_$c(13,10)
+ s text=text_"  setScatterRadius: function(series,field,factor) {"_$c(13,10)
+ s text=text_"    if (typeof(factor) === 'undefined') factor = 1;"_$c(13,10)
+ s text=text_"    var chart = series.chart;"_$c(13,10)
+ s text=text_"    var store = chart.store;"_$c(13,10)
+ s text=text_"    var items = chart.series.items[0].items;"_$c(13,10)
+ s text=text_"    var value;"_$c(13,10)
+ s text=text_"    for (var i=0; i < items.length; i++) {"_$c(13,10)
+ s text=text_"      value = store.getAt(i).get(field) * factor;"_$c(13,10)
+ s text=text_"      items[i].sprite.setAttributes({radius:value},true);"_$c(13,10)
+ s text=text_"    }"_$c(13,10)
+ s text=text_"  },"_$c(13,10)
+ s text=text_"  getGridRowNo: function(grid,rowIndex) {"_$c(13,10)
+ s text=text_"    return grid.store.getAt(rowIndex).get('zewdRowNo');"_$c(13,10)
+ ;s text=text_"   }"_$c(13,10)
+ s text=text_"  },"_$c(13,10)
+ s text=text_"  submit: function (formPanelId,nextPage,addTo,replace) {"_$c(13,10)
+ s text=text_"    var nvp='';"_$c(13,10)
+ s text=text_"    var amp='';"_$c(13,10)
+ s text=text_"    var value;"_$c(13,10)
+ s text=text_"    Ext.getCmp(formPanelId).getForm().getFields().eachKey("_$c(13,10)
+ s text=text_"      function(key,item) {"_$c(13,10)
+ s text=text_"        if ((item.xtype === 'combobox')&&(item.multiSelect)) {"_$c(13,10)
+ s text=text_"          var values=item.getSubmitValue();"_$c(13,10)
+ s text=text_"          for (var i=0; i<values.length; i++) {"_$c(13,10)
+ s text=text_"            value=values[i];"_$c(13,10)
+ s text=text_"            nvp = nvp + amp + item.getName() + '=' + escape(value);"_$c(13,10)
+ s text=text_"            amp='&';"_$c(13,10)
+ s text=text_"          }"_$c(13,10)
+ s text=text_"        }"_$c(13,10)
+ s text=text_"        else if ((item.xtype !== 'radiogroup')&&(item.xtype !== 'checkboxgroup')) {"_$c(13,10)
+ s text=text_"          value = '';"_$c(13,10)
+ s text=text_"          if (item.xtype === 'textareafield') {"_$c(13,10)
+ s text=text_"            value = escape(item.getValue());"_$c(13,10)
+ s text=text_"            value = value.replace(/\+/g, '%2B');"_$c(13,10)
+ s text=text_"          }"_$c(13,10)
+ s text=text_"          else if (item.xtype === 'htmleditor') {"_$c(13,10)
+ s text=text_"            value = escape(item.getValue());"_$c(13,10)
+ s text=text_"          }"_$c(13,10)
+ s text=text_"          else {"_$c(13,10)
+ s text=text_"            if (item.getSubmitValue() !== null) value = item.getSubmitValue();"_$c(13,10)
+ s text=text_"          }"_$c(13,10)
+ s text=text_"          if ((item.xtype !== 'radiofield')&&(item.xtype !== 'checkboxfield')) {"_$c(13,10)
+ s text=text_"            nvp = nvp + amp + item.getName() + '=' + value;"_$c(13,10)
+ s text=text_"            amp='&';"_$c(13,10)
+ s text=text_"          }"_$c(13,10)
+ s text=text_"          else {"_$c(13,10)
+ s text=text_"            if (value !== '') {"_$c(13,10)
+ s text=text_"              nvp = nvp + amp + item.getName() + '=' + value;"_$c(13,10)
+ s text=text_"            }"_$c(13,10)
+ s text=text_"          }"_$c(13,10)
+ s text=text_"        }"_$c(13,10)
+ s text=text_"      }"_$c(13,10)
+ s text=text_"    );"_$c(13,10)
+ s text=text_"    if (addTo !== '') nvp = nvp + '&ext4_addTo=' + addTo;"_$c(13,10)
+ s text=text_"    if (replace === 1) nvp = nvp + '&ext4_removeAll=true';"_$c(13,10)
+ s text=text_"    EWD.ajax.getPage({page:nextPage,nvp:nvp})"_$c(13,10)
+ s text=text_"  }"_$c(13,10)
+ s text=text_"};"_$c(13,10)
+ QUIT text
  ;
 desktopJS ;
  ;;Ext.Loader.setConfig({enabled:true});
