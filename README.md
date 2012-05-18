@@ -14,7 +14,7 @@ Thanks to:
   - Kiyoshi Sawada
   - Nikesh Gogia
 
-Build 915: Main changes
+Build 917: Main changes
 
 - ExtJS Charts support
 - Enhancements to and bug fixes for ExtJS v4
