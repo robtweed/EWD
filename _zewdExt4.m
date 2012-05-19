@@ -1,7 +1,7 @@
 %zewdExt4 ; Extjs Tag Processors
  ;
- ; Product: Enterprise Web Developer (Build 917)
- ; Build Date: Fri, 18 May 2012 14:46:59
+ ; Product: Enterprise Web Developer (Build 918)
+ ; Build Date: Sat, 19 May 2012 13:42:28
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -1852,6 +1852,7 @@ chartInstance(attrs,nodeOID,instanceOID)
  i chartDef'="" d
  . s attrs("axes")=".EWD.ext4.chart['"_id_"'].axes"
  . s attrs("series")=".EWD.ext4.chart['"_id_"'].series"
+ . s attrs("legend")=".EWD.ext4.chart['"_id_"'].legend"
  i sessionName'="" d
  . n text
  . s xOID=$$createElement^%zewdDOM("temp",docOID)

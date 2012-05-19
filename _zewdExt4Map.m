@@ -1,7 +1,7 @@
 %zewdExt4Map ; Extjs Tag Processor Mappings
  ;
- ; Product: Enterprise Web Developer (Build 917)
- ; Build Date: Fri, 18 May 2012 14:46:59
+ ; Product: Enterprise Web Developer (Build 918)
+ ; Build Date: Sat, 19 May 2012 13:42:28
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -58,6 +58,7 @@ mappingObjects
  ;;{tagName:"ext4:column",parse:{method:"item"}}
  ;;{tagName:"ext4:columns",parse:{method:"arrayOfOptions",optionName:"columns"}}
  ;;{tagName:"ext4:combobox",className:"Ext.form.field.ComboBox",expandMethod:"expandComboBox",fieldType:"text",xtype:"combobox",xtypeTagName:"ext4:item",containerTag:"ext4:items",pass1Method:"setNameList"}
+ ;;{tagName:"ext4:compositesprite",className:"Ext.draw.CompositeSprite",xtype:"dummy",xtypeTagName:"ext4:item",containerTag:"ext4:items"}
  ;;{tagName:"ext4:configoption",parse:{method:"configOption"}}
  ;;{tagName:"ext4:container",className:"Ext.container.Container",xtype:"container",xtypeTagName:"ext4:item",containerTag:"ext4:items"}
  ;;{tagName:"ext4:cycle",className:"Ext.button.Cycle"}
@@ -73,6 +74,7 @@ mappingObjects
  ;;{tagName:"ext4:displayfield",className:"Ext.form.field.Display",fieldType:"text",xtype:"displayfield",xtypeTagName:"ext4:item",containerTag:"ext4:items",pass1Method:"setNameList"}
  ;;{tagName:"ext4:dockeditems",parse:{method:"arrayOfOptions",optionName:"dockedItems"}}
  ;;{tagName:"ext4:draggable",parse:{method:"object",optionName:"draggable"}}
+ ;;{tagName:"ext4:draw",className:"Ext.draw.Component",xtype:"draw",xtypeTagName:"ext4:item",containerTag:"ext4:items"}
  ;;{tagName:"ext4:editor",parse:{method:"object",optionName:"editor"}}
  ;;{tagName:"ext4:fbar",parse:{method:"arrayOfOptions",optionName:"fbar"}}
  ;;{tagName:"ext4:features",parse:{method:"arrayOfOptions",optionName:"features"}}
@@ -139,6 +141,7 @@ mappingObjects
  ;;{tagName:"ext4:sorters",parse:{method:"arrayOfOptions",optionName:"sorters"}}
  ;;{tagName:"ext4:spacer",className:"Ext.toolbar.Spacer",xtype:"tbspacer",xtypeTagName:"ext4:item",containerTag:"ext4:items"}
  ;;{tagName:"ext4:splitbutton",className:"Ext.button.Split"}
+ ;;{tagName:"ext4:sprite",className:"Ext.draw.Sprite",xtype:"dummy",xtypeTagName:"ext4:item",containerTag:"ext4:items",hasId:false}
  ;;{tagName:"ext4:stop",parse:{method:"object",optionName:"stop"},hasId:false}
  ;;{tagName:"ext4:stops",parse:{method:"object",optionName:"stops"},hasId:false}
  ;;{tagName:"ext4:style",parse:{method:"object",optionName:"style"},hasId:false}

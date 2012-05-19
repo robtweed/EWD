@@ -14,13 +14,18 @@ Thanks to:
   - Kiyoshi Sawada
   - Nikesh Gogia
 
-Build 917: Main changes
+Build 918: Main changes
+
+- Dynamic ExtJS Charts
+- ExtJS Draw Components
+
+#Previous Build Notes
+
+Build 917 Included:
 
 - ExtJS Charts support
 - Enhancements to and bug fixes for ExtJS v4
 - Support infrastructure for SMART Apps (http://smartplatforms.org) 
-
-#Previous Build Notes
 
 Build 912 included:
 

@@ -1,7 +1,7 @@
 %zewdExt4Code ; Extjs 4 Runtime Logic
  ;
- ; Product: Enterprise Web Developer (Build 917)
- ; Build Date: Fri, 18 May 2012 14:46:59
+ ; Product: Enterprise Web Developer (Build 918)
+ ; Build Date: Sat, 19 May 2012 13:42:28
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -501,16 +501,23 @@ writeJSONStore(sessionName,chartDef,id,storeId,sessid)
  ;
  s storeId=$g(storeId)
  i chartDef'="" d
- . n axes,series
+ . n axes,legend,series
  . d mergeArrayFromSession^%zewdAPI(.chartProps,chartDef,sessid)
  . m axes=chartProps("axes")
  . m series=chartProps("series")
+ . m legend=chartProps("legend")
  . w "EWD.ext4.chart['"_id_"'] = {};"_$c(13,10)
  . w "EWD.ext4.chart['"_id_"'].axes="
  . d streamArrayToJSON^%zewdJSON("axes")
  . w ";"_$c(13,10)
  . w "EWD.ext4.chart['"_id_"'].series="
  . d streamArrayToJSON^%zewdJSON("series")
+ . w ";"_$c(13,10)
+ . w "EWD.ext4.chart['"_id_"'].legend="
+ . i $d(legend) d
+ . . d streamArrayToJSON^%zewdJSON("legend")
+ . e  d
+ . . w "false"
  . w ";"_$c(13,10)
  ;
  w "var "_storeId_"=Ext.create('Ext.data.JsonStore',"
