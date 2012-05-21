@@ -1,0 +1,36 @@
+<html>
+ <head>
+  <title>Print</title>
+  <script language="javascript">
+    function loadDiv() {
+      var params = window.dialogArguments;
+      document.getElementById("add").innerHTML = params.content;
+      if (!params.autoprint) {
+         document.getElementById("printButton").style.display = '';
+      }
+      if (params.styleSrc) EWD.page.addStylesheet(document,params.styleSrc) ;
+      if (params.autoprint) {
+         setTimeout('printAndClose()',100);
+      }
+    }
+    function printIt() {
+        document.getElementById("printButton").style.display = "none" ;
+        window.print();
+    }
+    function printAndClose() {
+         window.focus();
+         window.print();
+         window.onfocus = function() { window.close(); }
+    }
+  </script>
+ </head>
+ <body onLoad="loadDiv()">
+  <div id='printButton' style="display:none">
+    <input type='button' value='Print' onClick='document.getElementById("printButton").innerHTML = "" ; window.print()'>
+    <hr />
+  </div>
+  <div id="add">
+    <p>This is the printDiv page!</p>
+  </div>
+ </body>
+</html>
