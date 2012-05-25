@@ -1,7 +1,7 @@
 %zewdCompiler24	; Enterprise Web Developer Compiler : HTML5 Functionality
  ;
- ; Product: Enterprise Web Developer (Build 910)
- ; Build Date: Wed, 25 Apr 2012 17:59:25
+ ; Product: Enterprise Web Developer (Build 920)
+ ; Build Date: Fri, 25 May 2012 11:57:23
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -96,10 +96,18 @@ isGetPageAllowed(pageName,sessid)
  ;
 isGetPageEnabled(page,sessid,sessionArray)
  ;
- n pages,pageType
+ n app,ok,pages,pageType
  ;
  i $e(page,1,3)="ewd" QUIT 1
  i $e(page,1,4)="zewd" QUIT 1
+ i $d(^zewd("config","stopTokenisedURLs")) d  i $d(ok) QUIT ok
+ . s app=$$getSessionValue^%zewdAPI("ewd_appName",sessid)
+ . s app=$$zcvt^%zewdAPI(app,"l")
+ . i $g(^zewd("config","stopTokenisedURLs",app))=1 d
+ . . s ok=0
+ . . i '$$sessionArrayValueExists^%zewdAPI("ewd_tokenisedPage",page,sessid) s ok=1 q
+ . . i $$getSessionArrayValue^%zewdAPI("ewd_tokenisedPage",page,sessid)="enabled" s ok=1
+ ; 
  i $d(sessionArray) d
  . ; called before sessionArray merged into session!
  . s pageType=$g(sessionArray("ewd_pageType"))
@@ -128,6 +136,7 @@ createGetPageEnabled(sessid)
  ;
  s app=$$getSessionValue^%zewdAPI("ewd_appName",sessid)
  s app=$$zcvt^%zewdAPI(app,"l")
+ i $g(^zewd("config","stopTokenisedURLs",app))=1 QUIT
  m pages=^%zewdIndex(app,"pages")
  i '$$isCSP^%zewdAPI(sessid) d
  . ; remove any pages registered in the temporary disabled list
@@ -142,7 +151,16 @@ createGetPageEnabled(sessid)
  ;
 enableGetPage(page,sessid)
  ;
- n pages,stop
+ n ok,pages,stop
+ ;
+ s ok=0
+ i $d(^zewd("config","stopTokenisedURLs")) d  QUIT:ok=1
+ . n app
+ . s app=$$getSessionValue^%zewdAPI("ewd_appName",sessid)
+ . s app=$$zcvt^%zewdAPI(app,"l")
+ . i $g(^zewd("config","stopTokenisedURLs",app))=1 d
+ . . s ok=1
+ . . d setSessionArray^%zewdAPI("ewd_tokenisedPage",page,"enabled",sessid)
  ;
  s stop=0
  i '$$isCSP^%zewdAPI(sessid) d  QUIT:stop
@@ -168,7 +186,16 @@ disableGetPage(page,sessid)
  QUIT:$g(page)=""
  QUIT:$g(sessid)=""
  ;
- n pages,stop
+ n ok,pages,stop
+ ;
+ s ok=0
+ i $d(^zewd("config","stopTokenisedURLs")) d  QUIT:ok=1
+ . n app
+ . s app=$$getSessionValue^%zewdAPI("ewd_appName",sessid)
+ . s app=$$zcvt^%zewdAPI(app,"l")
+ . i $g(^zewd("config","stopTokenisedURLs",app))=1 d
+ . . s ok=1
+ . . d setSessionArray^%zewdAPI("ewd_tokenisedPage",page,"disabled",sessid) s ok=1 q
  ;
  s stop=0
  i '$$isCSP^%zewdAPI(sessid) d  QUIT:stop
@@ -189,6 +216,38 @@ disableGetPage(page,sessid)
  i $d(pages(page)) k pages(page)
  d deleteFromSession^%zewdAPI("ewd_getPageEnabled",sessid) 
  d mergeArrayToSession^%zewdAPI(.pages,"ewd_getPageEnabled",sessid)
+ QUIT
+ ;
+tokeniseFragment(page,sessid)
+ ;
+ n pages
+ ;
+ s pages(page)="enabled"
+ d mergeArrayToSession^%zewdAPI(.pages,"ewd_addTokenisedPage",sessid)
+ d mergeArrayToSession^%zewdAPI(.pages,"ewd_tokenisedPage",sessid)
+ QUIT
+ ;
+addAllowedFragments(nodeOID)
+ i $g(^zewd("config","stopTokenisedURLs",app))=1 d
+ . n text,xOID
+ . s text="zewd.mcode d writeFetchPages^%zewdCompiler24(sessid)"
+ . s xOID=$$addElementToDOM^%zewdDOM("temp",nodeOID,,,text,1)
+ . d removeIntermediateNode^%zewdDOM(xOID)
+ QUIT
+ ;
+writeFetchPages(sessid)
+ ;
+ i $g(^zewd("config","stopTokenisedURLs",app))=1 d
+ . n page,pages
+ . d mergeArrayFromSession^%zewdAPI(.pages,"ewd_addTokenisedPage",sessid)
+ . d deleteFromSession^%zewdAPI("ewd_addTokenisedPage",sessid)
+ . s page=""
+ . f  s page=$o(pages(page)) q:page=""  d
+ . . w "EWD.ajax.fetchPage['"_$$zcvt^%zewdAPI(page,"l")_"']=function(params) {"_$c(13,10)
+ . . w " params.url='"_$$tokeniseURL^%zewdCompiler16(page,sessid)_"';"_$c(13,10)
+ . . w " EWD.ajax.getURL(params);"_$c(13,10)
+ . . w "};"_$c(13,10)
+ ;
  QUIT
  ;
 createManifestPage

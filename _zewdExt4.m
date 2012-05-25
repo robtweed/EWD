@@ -1,7 +1,7 @@
 %zewdExt4 ; Extjs Tag Processors
  ;
- ; Product: Enterprise Web Developer (Build 918)
- ; Build Date: Sat, 19 May 2012 13:42:28
+ ; Product: Enterprise Web Developer (Build 920)
+ ; Build Date: Fri, 25 May 2012 11:57:23
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -732,83 +732,7 @@ arrayOfOptions(type,nodeOID,objOID)
  QUIT
  ;
 desktop(nodeOID)
- ;
- n attr,cspOID,i,line,logoutFn,parentOID,phpVar,rootPath,sessionName,srcs,stop,text,wallpaper,xOID
- ;
- s sessionName=$$getAttribute^%zewdDOM("sessionname",nodeOID)
- i sessionName'="" d
- . s text=" d writeDesktopConfig^%zewdExt4Code("""_sessionName_""",sessid)"
- e  d
- . n childNo,childOID,comma,OIDArray
- . s text=" w ""EWD.desktop = {windows:["""_$c(13,10)
- . d getChildrenInOrder^%zewdDOM(nodeOID,.OIDArray)
- . s childNo="",comma=""
- . f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d
- . . s childOID=OIDArray(childNo)
- . . i $$getTagName^%zewdDOM(childOID)="ext4:window" d
- . . . n comma2,mainAttrs,name,value
- . . . s comma2=""
- . . . d getAttributes(childOID,.mainAttrs)
- . . . i $g(mainAttrs("title"))="" s mainAttrs("title")="Unnamed Window"
- . . . i $g(mainAttrs("name"))="" s mainAttrs("name")="Unnamed Icon"
- . . . i $g(mainAttrs("iconCls"))="" s mainAttrs("iconCls")="accordion-shortcut"
- . . . i $g(mainAttrs("width"))="" s mainAttrs("width")=300
- . . . i $g(mainAttrs("height"))="" s mainAttrs("height")=400
- . . . i $g(mainAttrs("fragment"))="" s mainAttrs("title")="unspecifiedFragment"
- . . . i $g(mainAttrs("quickStart"))="" s mainAttrs("quickStart")="false"
- . . . s text=text_" w """_comma_"{"
- . . . s name=""
- . . . f  s name=$o(mainAttrs(name)) q:name=""  d
- . . . . s value=mainAttrs(name)
- . . . . d
- . . . . . i value="true"!(value="false") q
- . . . . . i $$numeric^%zewdJSON(value) q
- . . . . . s value="'"_value_"'"
- . . . . s text=text_comma2_name_":"_value
- . . . . s comma2=","
- . . . s text=text_"}"""_$c(13,10)
- . . . s comma=","
- . . i $$removeChild^%zewdDOM(childOID,1)
- . s text=text_" w ""]};"""_$c(13,10)
- s cspOID=$$addCSPServerScript^%zewdAPI(nodeOID,text)
- s parentOID=$$getParentNode^%zewdDOM(nodeOID)
- s rootPath=$$getAttribute^%zewdDOM("rootpath",parentOID)
- i $e(rootPath,$l(rootPath))'="/" s rootPath=rootPath_"/"
- s wallpaper=$$getAttribute^%zewdDOM("wallpaper",nodeOID)
- i wallpaper="" s wallpaper=rootPath_"examples/desktop/wallpapers/Blue-Sencha.jpg"
- ;
- s stop=0
- s text="if (typeof EWD.desktop.wallpaper === 'undefined') EWD.desktop.wallpaper = '"_wallpaper_"';"_$c(13,10)
- s phpVar=$$addPhpVar^%zewdCustomTags("#EWD.desktop.username","j")
- s text=text_"EWD.desktop.username = '"_phpVar_"';"_$c(13,10)
- s logoutFn=$$getAttribute^%zewdDOM("logoutfn",nodeOID)
- i logoutFn="" s logoutFn="function() {alert('undefined logout function');}"
- s text=text_"EWD.desktop.logoutFn="_logoutFn_";"
- s xOID=$$addElementToDOM^%zewdDOM("ext4:jsLine",nodeOID,,,text)
- f i=1:1 d  q:stop
- . s line=$t(desktopJS+i^%zewdExt4Code)
- . i line["***END***" s stop=1 q
- . s text=$p(line,";;",2,200)_$c(13,10)
- . s xOID=$$addElementToDOM^%zewdDOM("ext4:jsLine",nodeOID,,,text)
- s text="EWD.desktop.app = new EWDDesktop.App();"
- s xOID=$$addElementToDOM^%zewdDOM("ext4:jsLine",nodeOID,,,text)
- s attr("href")=rootPath_"examples/desktop/css/desktop.css"
- s xOID=$$addElementToDOM^%zewdDOM("link",parentOID,,.attr)
- s srcs(1)="Desktop"
- s srcs(2)="FitAllLayout"
- s srcs(3)="Module"
- s srcs(4)="ShortcutModel"
- s srcs(5)="StartMenu"
- s srcs(6)="TaskBar"
- s srcs(7)="Video"
- s srcs(8)="Wallpaper"
- s srcs(9)="App"
- f i=1:1:9 d
- . s attr("src")=rootPath_"examples/desktop/js/"_srcs(i)_".js"
- . s attr("type")="text/javascript"
- . s attr("defer")="defer"
- . s xOID=$$addElementToDOM^%zewdDOM("script",parentOID,,.attr)
- d removeIntermediateNode^%zewdDOM(nodeOID)
+ d desktop^%zewdExt4DT(nodeOID)
  QUIT
  ;
 json(nodeOID)
@@ -983,18 +907,12 @@ expandSubmitButton(nodeOID)
  i formId="" d
  . s formId=$$uniqueId(pOID)
  . d setAttribute^%zewdDOM("id",formId,pOID)
- ;d setAttribute^%zewdDOM("formid",formId,nodeOID)
- ;s text=$$getAttribute^%zewdDOM("text",nodeOID)
  s nextPage=$$getAttribute^%zewdDOM("nextpage",nodeOID)
  s addTo=$$getAttribute^%zewdDOM("addto",nodeOID)
  s replace=$$getAttribute^%zewdDOM("replacepreviouspage",nodeOID)="true"
  f attr="nextpage","addto","replacepreviouspage" d removeAttribute^%zewdDOM(attr,nodeOID)
- ;s btnsOID=$$addElementToDOM^%zewdDOM("ext4:buttons",nodeOID)
- ;s attr("text")=text
  s handler=".function() {EWD.ext4.submit('"_formId_"','"_nextPage_"','"_addTo_"',"_replace_")}"
  d setAttribute^%zewdDOM("handler",handler,nodeOID)
- ;s xOID=$$addElementToDOM^%zewdDOM("ext4:item",btnsOID,,.attr)
- ;d removeIntermediateNode^%zewdDOM(nodeOID)
  ;
  QUIT
  ;
@@ -1061,6 +979,7 @@ editableColumn(nodeOID)
  n childNo,childOID,editAs
  ;
  s editAs=$$getAttribute^%zewdDOM("editas",nodeOID)
+ d removeAttribute^%zewdDOM("editas",nodeOID)
  i editAs'="" d addEditor(nodeOID,editAs)
  ;
  i $$getAttribute^%zewdDOM("groupfield",nodeOID)="true" d
@@ -1096,7 +1015,17 @@ addEditor(nodeOID,type)
  . . s colName=$$getAttribute^%zewdDOM("dataindex",nodeOID)
  . . s id=$$getGridPanelId(nodeOID)
  . . s attr("store")=".EWD.ext4.grid['"_id_"'].combo.store['"_colName_"']"
- . . s fn=".function (value, metaData, record, rowIndex, colIndex) {return EWD.ext4.grid['"_id_"'].combo.index['"_colName_"'][value];}"
+ . . s fn=""
+ . . s fn=fn_".function (value, metaData, record, rowIndex, colIndex) {"
+ . . s fn=fn_"  var index = EWD.ext4.grid['"_id_"'].combo.index['"_colName_"']; EWD.record = record;"
+ . . s fn=fn_"  if (typeof(index[value]) !== 'undefined') {"
+ . . s fn=fn_"    return index[value];"
+ . . s fn=fn_"  }"
+ . . s fn=fn_"  else {"
+ . . s fn=fn_"    record.data['"_colName_"'] = '';"
+ . . s fn=fn_"    return '';"
+ . . s fn=fn_"  }"
+ . . s fn=fn_"}"
  . . d setAttribute^%zewdDOM("renderer",fn,nodeOID)
  . . d getOptionTags(nodeOID,id)
  . s xOID=$$addElementToDOM^%zewdDOM("ext4:editor",nodeOID,,.attr)

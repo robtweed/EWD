@@ -1,7 +1,7 @@
 %zewdExt4Code ; Extjs 4 Runtime Logic
  ;
- ; Product: Enterprise Web Developer (Build 918)
- ; Build Date: Sat, 19 May 2012 13:42:28
+ ; Product: Enterprise Web Developer (Build 920)
+ ; Build Date: Fri, 25 May 2012 11:57:23
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -50,7 +50,10 @@ preProcess(sessid)
  QUIT
  ;
 gridValidationPass()
- QUIT "js:var e=EWD.ext4.e;e.record.commit();"
+ n js
+ s js="js"
+ i $$isCSP^%zewdAPI(sessid) s js="javascript"
+ QUIT js_":var e=EWD.ext4.e;e.record.commit();"
  ;
 gridValidationFail(sessid,alertMessage,alertTitle)
  n js,originalValue,value
@@ -58,7 +61,9 @@ gridValidationFail(sessid,alertMessage,alertTitle)
  s value=$$getRequestValue^%zewdAPI("value",sessid)
  s alertTitle=$g(alertTitle) i alertTitle="" s alertTitle="Validation Error"
  s alertMessage=$g(alertMessage) i alertMessage="" s alertMessage="Invalid value: "_value
- QUIT "js:var e=EWD.ext4.e;e.record.data[e.field] = '"_originalValue_"'; e.record.commit();Ext.Msg.alert('"_alertTitle_"','"_alertMessage_"');"
+ s js="js"
+ i $$isCSP^%zewdAPI(sessid) s js="javascript"
+ QUIT js_":var e=EWD.ext4.e;e.record.data[e.field] = '"_originalValue_"'; e.record.commit();Ext.Msg.alert('"_alertTitle_"','"_alertMessage_"');"
  ;
 setTextAreaValue(array,fieldName,sessid)
  ;
@@ -119,6 +124,14 @@ writeGridStore(sessionName,columnDef,id,storeId,groupField,sessid)
  . . s cols(no,"header")=cols(no,"text")
  . k cols(no,"text")
  ;
+ d
+ . ; if columns are explicitly defined in tags, use data array to get the names for the model
+ . i '$d(cols),$d(data(1)) d
+ . . n name,no
+ . . s name="",no=0
+ . . f  s name=$o(data(1,name)) q:name=""  d
+ . . . s no=no+1
+ . . . s cols(no,"name")=name
  d
  . w "Ext.define('"_id_"Model',{"
  . w "extend:'Ext.data.Model',"
@@ -223,10 +236,10 @@ writeGridStore(sessionName,columnDef,id,storeId,groupField,sessid)
  . . . . . i $g(cols(no,"icon",iconNo,"nextPage"))'="" d
  . . . . . . n fn,i
  . . . . . . s fn="function(me,rowIndex) {"
- . . . . . . s fn=fn_"var nvp='row='+EWD.ext4.getGridRowNo(me,rowIndex);"
- . . . . . . i $g(cols(no,"icon",iconNo,"addTo"))'="" s fn=fn_"nvp=nvp+'&ext4_addTo="_cols(no,"icon",iconNo,"addTo")_"';"
- . . . . . . i $g(cols(no,"icon",iconNo,"replacePreviousPage"))="true" s fn=fn_"nvp=nvp+'&ext4_removeAll=true';"
- . . . . . . s fn=fn_"; EWD.ajax.getPage({page:'"_cols(no,"icon",iconNo,"nextPage")_"',nvp:nvp});"
+ . . . . . . s fn=fn_"var nvp=""row=""+EWD.ext4.getGridRowNo(me,rowIndex);"
+ . . . . . . i $g(cols(no,"icon",iconNo,"addTo"))'="" s fn=fn_"nvp=nvp+""&ext4_addTo="_cols(no,"icon",iconNo,"addTo")_""";"
+ . . . . . . i $g(cols(no,"icon",iconNo,"replacePreviousPage"))="true" s fn=fn_"nvp=nvp+""&ext4_removeAll=true"";"
+ . . . . . . s fn=fn_"; EWD.ajax.getPage({page:"""_cols(no,"icon",iconNo,"nextPage")_""",nvp:nvp});"
  . . . . . . s fn=fn_"}"
  . . . . . . s cols(no,"icon",iconNo,"handler")=fn
  . . . . . . f i="nextPage","addTo","replacePreviousPage" k cols(no,"icon",iconNo,i)
@@ -265,7 +278,7 @@ writeGridStore(sessionName,columnDef,id,storeId,groupField,sessid)
  ;
 quotedValue(value)
  d
- . s value=$$replaceAll^%zewdAPI(value,"'","\'")
+ . i $e(value,1,9)'="function(" s value=$$replaceAll^%zewdAPI(value,"'","\'")
  . i value="true"!(value="false") q
  . i $$numeric^%zewdJSON(value) q
  . i $e(value,1)=".",$e(value,2)'?1N s value=$e(value,2,$l(value)) q
@@ -584,10 +597,9 @@ isFormErrors(sessid)
  ;
 formErrors(sessid)
  ;
- n alertMessage,alertTitle,error,errorMsg,errors,field,fieldErrors
+ n alertMessage,alertTitle,error,errorMsg,errors,field,fieldErrors,js
  ;
  d mergeArrayFromSession^%zewdAPI(.errors,"ewd_form",sessid)
- k ^rltErrors m ^rltErrors=errors
  i '$d(errors("fieldError")) QUIT ""
  s alertMessage=$g(errors("alertMessage"))
  i alertMessage="" s alertMessage="Errors were reported in your form"
@@ -599,10 +611,11 @@ formErrors(sessid)
  f  s field=$o(errors("fieldError",field)) q:field=""  d
  . s errorMsg=errors("fieldError",field)
  . s error=error_"Ext.getCmp('"_field_"').markInvalid('"_errorMsg_"');"
- s ^rltError=error
  d deleteFromSession^%zewdAPI("ewd_form",sessid)
  ;
- QUIT "js: "_error
+ s js="js"
+ i $$isCSP^%zewdAPI(sessid) s js="javascript"
+ QUIT js_": "_error
  ;
 setFieldErrorAlert(title,message,sessid)
  s title=$$zcvt^%zewdPHP($g(title),"o","JS")
@@ -682,184 +695,4 @@ createExtFuncs()
  s text=text_"  }"_$c(13,10)
  s text=text_"};"_$c(13,10)
  QUIT text
- ;
-desktopJS ;
- ;;Ext.Loader.setConfig({enabled:true});
- ;;Ext.override(Ext.ux.desktop.Desktop, {
- ;;  shortcutTpl: [
- ;;    '<tpl for=".">',
- ;;      '<div class="ux-desktop-shortcut" id="{name}-shortcut"',
- ;;        '<tpl if="position == \'absolute\'">',
- ;;          ' style="position:absolute;left:{left}px;top:{top}px;"',
- ;;        '</tpl>',
- ;;        '>',
- ;;        '<div class="ux-desktop-shortcut-icon {iconCls}">',
- ;;          '<img src="',Ext.BLANK_IMAGE_URL,'" title="{name}">',
- ;;        '</div>',
- ;;        '<span class="ux-desktop-shortcut-text">{name}{extra}</span>',
- ;;      '</div>',
- ;;    '</tpl>',
- ;;    '<div class="x-clear"></div>'
- ;;  ],
- ;;});
- ;;Ext.define('EWDDesktop.Window', {
- ;;  extend: 'Ext.ux.desktop.Module',
- ;;  init : function(){
- ;;    var window = this;
- ;;    this.launcher = {
- ;;      text: window.name,
- ;;      iconCls:'accordion',
- ;;      handler : this.createWindow,
- ;;      scope: this
- ;;    };
- ;;  },
- ;;  createWindow : function(){
- ;;    var desktop = this.app.getDesktop();
- ;;    var win = desktop.getWindow(this.id);
- ;;    var window = this;
- ;;    EWD.window = this;
- ;;    if (typeof window.windowIconCls === 'undefined') window.windowIconCls = 'accordion';
- ;;    if (typeof window.width === 'undefined') window.width = 300;
- ;;    if (typeof window.height === 'undefined') window.height = 400;
- ;;    if (typeof window.title === 'undefined') window.title = 'Unnamed Window';
- ;;    if (typeof window.fragment === 'undefined') window.fragment = 'undefinedFragment';
- ;;    if (!win) {
- ;;      win = desktop.createWindow({
- ;;        id: window.id,
- ;;        title: window.title,
- ;;        width: window.width,
- ;;        height: window.height,
- ;;        iconCls: window.windowIconCls,
- ;;        animCollapse: false,
- ;;        constrainHeader: true,
- ;;        bodyBorder: true,
- ;;        layout: 'accordion',
- ;;        border: false,
- ;;        listeners: {
- ;;          render: function() {
- ;;            EWD.ajax.getPage({page:window.fragment, nvp:'ext4_addTo=' + window.id});
- ;;          }
- ;;        }
- ;;      });
- ;;    }
- ;;    win.show();
- ;;    return win;
- ;;  }
- ;;});
- ;;Ext.define('EWDDesktop.App', {
- ;;  extend: 'Ext.ux.desktop.App',
- ;;  init: function() {
- ;;    // custom logic before getXYZ methods get called...
- ;;    this.callParent();
- ;;    // now ready...
- ;;  },
- ;;  getModules : function(){
- ;;    var window;
- ;;    var modules = [];
- ;;    for (var no = 0; no < EWD.desktop.windows.length; no++) {
- ;;      window = EWD.desktop.windows[no];
- ;;      modules[no] = new EWDDesktop.Window(window);
- ;;    }
- ;;    return modules;
- ;;  },
- ;;  getDesktopConfig: function () {
- ;;    var me = this, ret = me.callParent();
- ;;    var configData = [];
- ;;    var window;
- ;;    for (var no = 0; no < EWD.desktop.windows.length; no++) {
- ;;      window = EWD.desktop.windows[no];
- ;;      if (typeof window.iconCls === 'undefined') window.iconCls = 'accordion-shortcut';
- ;;      if (typeof window.name === 'undefined') window.name = 'Unnamed icon';
- ;;      configData[no] = {
- ;;        name: window.name,
- ;;        iconCls: window.iconCls,
- ;;        module: window.id,
- ;;      };
- ;;      if (window.position === 'absolute') {
- ;;        configData[no].position = 'absolute';
- ;;        configData[no].left = window.left;
- ;;        configData[no].top = window.top;
- ;;      }
- ;;    } 
- ;;    return Ext.apply(ret, {
- ;;      //cls: 'ux-desktop-black',
- ;;      contextMenuItems: [
- ;;        { text: 'Change Settings', handler: me.onSettings, scope: me }
- ;;      ],
- ;;      shortcuts: Ext.create('Ext.data.Store', {
- ;;        model: 'Ext.ux.desktop.ShortcutModel',
- ;;        data: configData
- ;;      }),
- ;;      wallpaper: EWD.desktop.wallpaper,
- ;;      wallpaperStretch: false
- ;;    });
- ;;  },
- ;;  // config for the start menu
- ;;  getStartConfig : function() {
- ;;    var me = this, ret = me.callParent();
- ;;    var cfg = Ext.apply(ret, {
- ;;      title: EWD.desktop.username,
- ;;      iconCls: 'user',
- ;;      id: 'startMenuPanel',
- ;;      height: 300,
- ;;      toolConfig: {
- ;;        width: 100,
- ;;        items: [
- ;;          /*
- ;;          {
- ;;            text:'Settings',
- ;;            iconCls:'settings',
- ;;            handler: me.onSettings,
- ;;            scope: me
- ;;          },
- ;;          '-',
- ;;          */
- ;;          {
- ;;            text:'Logout',
- ;;            iconCls:'logout',
- ;;            handler: me.onLogout,
- ;;            scope: me
- ;;          }
- ;;        ]
- ;;      }
- ;;    });
- ;;    return cfg;
- ;;  },
- ;;  getTaskbarConfig: function () {
- ;;    var ret = this.callParent();
- ;;    var quickStartArr = [];
- ;;    var window;
- ;;    var index = 0;
- ;;    for (var no = 0; no < EWD.desktop.windows.length; no++) {
- ;;      window = EWD.desktop.windows[no];
- ;;      if (typeof window.windowIconCls === 'undefined') window.windowIconCls = 'accordion';
- ;;      if (window.quickStart) {
- ;;        quickStartArr[index] = {
- ;;          name: window.name,
- ;;          iconCls: window.windowIconCls,
- ;;          module: window.id
- ;;        };
- ;;        index++;
- ;;      }
- ;;    }
- ;;    return Ext.apply(ret, {
- ;;      quickStart: quickStartArr,
- ;;      trayItems: [
- ;;        { xtype: 'trayclock', flex: 1 }
- ;;      ]
- ;;    });
- ;;  },
- ;;  onLogout: function () {
- ;;    if (typeof EWD.desktop.logoutFn !== 'undefined') EWD.desktop.logoutFn();
- ;;  },
- ;;  onSettings: function () {
- ;;    return;
- ;;    // optional stuff!
- ;;    var dlg = new MyDesktop.Settings({
- ;;      desktop: this.desktop
- ;;    });
- ;;    dlg.show();
- ;;  }
- ;;});
- ;;***END***
  ;

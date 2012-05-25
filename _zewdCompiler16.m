@@ -1,7 +1,7 @@
 %zewdCompiler16	; Enterprise Web Developer Compiler Functions
  ;
- ; Product: Enterprise Web Developer (Build 910)
- ; Build Date: Wed, 25 Apr 2012 17:59:25
+ ; Product: Enterprise Web Developer (Build 920)
+ ; Build Date: Fri, 25 May 2012 11:57:23
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -846,10 +846,12 @@ scriptsTag(app,docName,technology)
 	. s text=" d loadFiles^%zewdCustomTags("""_$$zcvt^%zewdAPI(app,"l")_""",""css"",sessid)"
 	. s cspOID=$$addCSPServerScript^%zewdAPI(headOID,text,1)
 	. s cspOID=$$renameTag^%zewdDOM("script",cspOID)
-	. s attr("href")=path_"ewd.css"
-	. s attr("rel")="stylesheet"
-	. s attr("type")="text/css"
-	. s scriptOID=$$addElementToDOM^%zewdDOM("link",headOID,,.attr,"",1)
+	. i $g(config("preProcess"))="" d
+	. . ; ie ignore this for ExtJS v4, Sencha Touch 2 etc
+	. . s attr("href")=path_"ewd.css"
+	. . s attr("rel")="stylesheet"
+	. . s attr("type")="text/css"
+	. . s scriptOID=$$addElementToDOM^%zewdDOM("link",headOID,,.attr,"",1)
 	. s text=" d writePageLinks^%zewdCompiler20("""_$$zcvt^%zewdAPI(app,"l")_""",sessid)"
 	. s cspOID=$$createElement^%zewdDOM("script",docOID)
 	. s nsOID=$$getNextSibling^%zewdDOM(ewdScriptsOID)
