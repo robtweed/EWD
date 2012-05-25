@@ -14,12 +14,17 @@ Thanks to:
   - Kiyoshi Sawada
   - Nikesh Gogia
 
-Build 918: Main changes
+Build 920: Main changes
+
+- Various CSP-specific bug-fixes
+- Bug fixes to cater for ExtJS 4.1 differences (primarily in grids and desktop)
+
+#Previous Build Notes
+
+Build 918 Included:
 
 - Dynamic ExtJS Charts
 - ExtJS Draw Components
-
-#Previous Build Notes
 
 Build 917 Included:
 
