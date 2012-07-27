@@ -1,0 +1,11 @@
+<ext4:fragment onBeforeRender="identifyUser^%zewdSmart">
+
+  <ext4:window title="Change Password" id="passwordWindow" autoShow="true" height="200" width="400">
+    <ext4:formPanel bodyPadding="10" height="150">
+      <ext4:displayfield id="username" fieldLabel="Username" value="*" />
+      <ext4:textfield id="password" inputType="password" fieldLabel="New Password" allowBlank="false" value="" /> 
+      <ext4:submitbutton text="Submit" nextPage="savePassword" />
+    </ext4:formPanel>
+  </ext4:window>
+
+</ext4:fragment>

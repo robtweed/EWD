@@ -1,0 +1,9 @@
+<ext4:fragment onBeforeRender="getManifest^%zewdSmart">
+
+  <ext4:window title="SMART Manifest" id="manifestWindow" autoShow="true" width="600" height="500">
+    <ext4:formPanel id="myFormPanel" bodyPadding="10">
+      <ext4:textareafield grow="true" name="manifest" height="400" width="550" anchor="100%" value="*" />
+    </ext4:formPanel>
+  </ext4:window>
+
+</ext4:fragment>

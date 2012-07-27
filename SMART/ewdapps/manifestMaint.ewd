@@ -1,0 +1,21 @@
+<ext4:fragment onBeforeRender="getManifests^%zewdSmart">
+
+  <ext4:gridPanel title="SMART Manifests" storeId="manifestStore" frame="true" height="500" width="1000" sessionName="manifests">
+    <ext4:gridcolumn text="Name" width="100" dataIndex="name" />
+    <ext4:gridcolumn text="id" width="200" hideable="false" dataIndex="id" />
+    <ext4:gridcolumn text="Author" width="250" dataIndex="author" />
+    <ext4:gridcolumn text="Description" width="300" dataIndex="description" />
+    <ext4:gridcolumn text="Version" width="50" dataIndex="version" />
+
+    <ext4:actioncolumn width="80">
+      <ext4:icon icon="/vista/ext-4/examples/shared/icons/fam/folder_go.png" tooltip="Display As JSON" nextPage="displayAsJSON" />
+      <ext4:icon icon="/vista/ext-4/examples/shared/icons/fam/delete.gif" tooltip="Delete" nextPage="deleteManifest" />
+    </ext4:actioncolumn>
+
+    <ext4:toolbar dock="top">
+      <ext4:button text="Import Manifest" nextPage="importManifest" />
+    </ext4:toolbar>
+
+  </ext4:gridPanel>
+
+</ext4:fragment>

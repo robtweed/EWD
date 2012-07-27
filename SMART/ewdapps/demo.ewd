@@ -1,0 +1,22 @@
+<ext4:fragment onBeforeRender="demoEnabled^%zewdSmart">
+ <ext4:js at="top">
+  function loadSmartApp(divId) {
+    SMART.simple_context = { 
+      record: {
+        full_name: 'ZZ PATIENT, TEST THREE',
+        id: '3'
+      },
+      user: {
+        full_name: 'LILLY, GEORGE',
+        id: '77'
+      },
+    };
+    SMART.launchApp('api-verifier@apps.smartplatforms.org',divId);  
+  }
+ </ext4:js>
+ <ext4:panel smartFrameDiv="smartFrameHere" height="500" width="400" title="Smart Test">
+   <ext4:listeners>
+     <ext4:listener afterrender="loadSmartApp('smartFrameHere')" />
+   </ext4:listeners>
+ </ext4:panel>
+</ext4:fragment>

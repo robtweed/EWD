@@ -1,0 +1,11 @@
+<ext4:fragment>
+
+  <ext4:window title="Add Authorised User" id="addUserWindow" autoShow="true" height="200" width="300">
+    <ext4:formPanel bodyPadding="10" height="150">
+      <ext4:textfield id="username" fieldLabel="Username" allowBlank="false" value="" />
+      <ext4:textfield id="password" inputType="password" fieldLabel="Password" allowBlank="false" value="" /> 
+      <ext4:submitbutton text="Submit" nextPage="saveUser" />
+    </ext4:formPanel>
+  </ext4:window>
+
+</ext4:fragment>

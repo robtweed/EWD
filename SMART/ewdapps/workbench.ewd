@@ -1,0 +1,9 @@
+<ext4:container rootPath="/vista/ext-4" title="SMART Manifest Maintenance" appName="SmartManifests" smartContainer="true" rdfMethod="vistARDF^%zewdSmart">
+  <ext4:viewPort layout="fit">
+    <ext4:tabPanel height="200" plain="true" width="450">
+      <ext4:panel title="Maintain" isActive="true" bodyPadding="10" addPage="manifestMaint" />
+      <ext4:panel title="Authentication" addPage="authentication" />
+      <ext4:panel title="Demo" addPage="demo" />
+    </ext4:tabPanel>
+  </etx4:viewPort>
+</ext4:container>

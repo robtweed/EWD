@@ -1,0 +1,10 @@
+<ext4:fragment onBeforeRender="saveManifest^%zewdSmart">
+
+ <ext4:js at="bottom">
+  var manifest = <?= #manifestJSON ?>;
+  manifest.zewdRowNo = <?= #lastManifestNo ?>;
+  manifestStore.add(manifest);
+  Ext.getCmp("importManifestWindow").destroy();
+ </ext4:js>
+
+</ext4:fragment>

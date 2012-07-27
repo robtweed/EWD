@@ -1,0 +1,7 @@
+<ext4:fragment onBeforeRender="deleteUser^%zewdSmart">
+
+ <ext4:js at="bottom">
+  userStore.removeAt(<?= #rowIndex ?>);
+ </ext4:js>
+
+</ext4:fragment>

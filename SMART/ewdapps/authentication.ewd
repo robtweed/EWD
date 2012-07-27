@@ -1,0 +1,16 @@
+<ext4:fragment onBeforeRender="getUsers^%zewdSmart">
+
+  <ext4:gridPanel title="Authorised Users" storeId="userStore" frame="true" height="500" width="1000" sessionName="users">
+    <ext4:gridcolumn text="Username" width="150" dataIndex="username" />
+    <ext4:actioncolumn width="80">
+      <ext4:icon icon="/vista/ext-4/examples/shared/icons/fam/folder_go.png" tooltip="Edit" nextPage="editUser" />
+      <ext4:icon icon="/vista/ext-4/examples/shared/icons/fam/delete.gif" tooltip="Delete" nextPage="deleteUser" />
+    </ext4:actioncolumn>
+
+    <ext4:toolbar dock="top">
+      <ext4:button text="Add User" nextPage="addUser" />
+    </ext4:toolbar>
+
+  </ext4:gridPanel>
+
+</ext4:fragment>

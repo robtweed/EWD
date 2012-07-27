@@ -1,0 +1,10 @@
+<ext4:fragment onBeforeRender="saveUser^%zewdSmart">
+
+ <ext4:js at="bottom">
+  var user = <?= #userJSON ?>;
+  user.zewdRowNo = <?= #lastUserNo ?>;
+  userStore.add(user);
+  Ext.getCmp("addUserWindow").destroy();
+ </ext4:js>
+
+</ext4:fragment>

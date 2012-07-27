@@ -1,0 +1,6 @@
+<ewd:config isFirstPage="true" prepagescript="parseRequest^ewdSmart" />
+
+<ewd:responseHeader name="Cache-Control" value="store, no-cache, must-revalidate, post-check=0, pre-check=0">
+<ewd:responseHeader name="Content-type" value="application/rdf+xml">
+<ewd:responseHeader name="Connection" value="Keep-Alive">
+<ewd:execute method="outputRDF^ewdSmart" type="procedure" param1="#ewd_sessid" />

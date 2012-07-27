@@ -1,0 +1,11 @@
+<ext4:fragment onBeforeRender="identifyUser^%zewdSmart">
+
+ <ext4:js at="bottom">
+  Ext.Msg.confirm("Delete User","<?= #username ?>&lt;br>&lt;br>Are you sure?",function(btn) {
+    if (btn === 'yes') {
+      EWD.ajax.getPage({page:'killUser'});
+    }
+  });
+ </ext4:js>
+
+</ext4:fragment>

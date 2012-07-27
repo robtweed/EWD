@@ -1,0 +1,11 @@
+<ext4:fragment onBeforeRender="identifyManifest^%zewdSmart">
+
+ <ext4:js at="bottom">
+  Ext.Msg.confirm("Delete Manifest","<?= #manifestId ?>&lt;br>&lt;br>Are you sure?",function(btn) {
+    if (btn === 'yes') {
+      EWD.ajax.getPage({page:'killManifest'});
+    }
+  });
+ </ext4:js>
+
+</ext4:fragment>

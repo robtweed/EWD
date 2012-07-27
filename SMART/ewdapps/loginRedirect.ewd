@@ -1,0 +1,5 @@
+<ewd:fragment onBeforeRender="login^%zewdSmart">
+ <script language="javascript">
+  document.location.replace('workbench.ewd');
+ </script>
+</ewd:fragment>
