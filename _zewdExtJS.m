@@ -1,7 +1,7 @@
 %zewdExtJS	; Ext-JS tag processors
  ;
- ; Product: Enterprise Web Developer (Build 910)
- ; Build Date: Wed, 25 Apr 2012 17:59:25
+ ; Product: Enterprise Web Developer (Build 931)
+ ; Build Date: Fri, 27 Jul 2012 12:05:05
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -147,7 +147,7 @@ grid(nodeOID,attrValues,docOID,technology)
 	. i technology="php" d
 	. . s lineno=$o(phpHeaderArray(1,""),-1)+1
 	. . s phpHeaderArray(1,lineno)="   $ewd_session[""ext_GridEditFunc""]["""_$g(mainAttrs("datastore"))_"""] = '"_script_"' ;"
-	. i technology="wl"!(technology="ewd") d
+	. i technology="wl"!(technology="ewd")!(technology="node") d
 	. . s lineno=$o(phpHeaderArray(1,""),-1)+1
 	. . s phpHeaderArray(1,lineno)=" s sessionArray(""ext_GridEditFunc"","""_$g(mainAttrs("datastore"))_""")="""_script_""""
 	. i technology="csp" d
@@ -1463,7 +1463,7 @@ allowChildWindow(nodeOID,attrValues,docOID,technology)
 	. . s lineNo=lineNo+1
 	. s phpHeaderArray(1,lineNo)="  "_allowedString_"['"_toPage_"'] = '' ;"
 	;
-	i technology="wl"!(technology="gtm")!(technology="ewd") d
+	i technology="wl"!(technology="gtm")!(technology="ewd")!(technology="node") d
 	. n appDeclared,arrayDeclared,lastLineNo,line,lineNo
 	. ;
 	. s allowedString=" s sessionArray(""ext_allowPage"","""_$$zcvt^%zewdAPI(currentPage,"l")_""","

@@ -1,7 +1,7 @@
 %zewdCompiler3	; Enterprise Web Developer Compiler Functions (extension routine)
  ;
- ; Product: Enterprise Web Developer (Build 910)
- ; Build Date: Wed, 25 Apr 2012 17:59:25
+ ; Product: Enterprise Web Developer (Build 931)
+ ; Build Date: Fri, 27 Jul 2012 12:05:04
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -29,36 +29,6 @@
  QUIT
  ;
  ;
-extractMCode(docName)
-	;
-	new codeType,dlim,language,mCode,nodeOID,ntags,OIDArray
-	n routineName,%stop,textOID
-	;
-	set routineName=""
-	set ntags=$$getTagsByName^%zewdCompiler("script",docName,.OIDArray)
-	set nodeOID="",%stop=0
-	for  set nodeOID=$order(OIDArray(nodeOID)) quit:nodeOID=""  do  quit:%stop
-	. set language=$$getAttributeValue^%zewdDOM("language",1,nodeOID)
-	. quit:$$zcvt^%zewdAPI(language,"L")'="ewd"
-	. set routineName=$$getAttributeValue^%zewdDOM("routinename",1,nodeOID)
-	. quit:routineName=""
-	. ;
-	. set textOID=$$getFirstChild^%zewdDOM(nodeOID)
-	. set mCode=$$getData^%zewdDOM(textOID)
-	. s dlim=$c(13,10) i mCode'[$c(13,10),mCode[$c(10) s dlim=$c(10)
-	. set mCode=routineName_" ; Compiled from Enterprise Web Developer page "_filename_" on "_$$inetDate^%zewdAPI($h)_$char(13,10)_" ; "_$char(13,10)_mCode
-	. set codeType=$$zcvt^%zewdAPI($$getAttributeValue^%zewdDOM("codeType",1,nodeOID),"U")
-	. if codeType="" set codeType="INT"
-	. if codeType="INT" do
-	. . new nLines,x,i
-	. . set nLines=$length(mCode,dlim)
-	. . set x="zr  f i=1:1:nLines zi $p(mCode,"_dlim_",i) i i=nLines zs "_routineName
-	. . xecute x
-	. set %stop=1
-	. set nodeOID=$$removeChild^%zewdAPI(nodeOID,1)
-	;
-	QUIT routineName
-	;
 createPHPFormHeader(formDeclarations,phpHeaderArray,technology,dataTypeList,config,pageName)
  ;
  ; formDeclaration(n)=fieldName~actionScript~nextPage~nameList
@@ -502,7 +472,7 @@ checkbox(docName,technology) ;
 	. . . . . s name=$p(name,"&php;",1)
 	. . . . . s sname=$tr(name,".","_")
 	. . . . . set attrValue="#($s($d(%session.Data(""ewd_selected"","""_sname_"""_"_varName_","""_value_""")):""checked='checked'"",$d(^%zewdSession(""session"",sessid,""ewd_selected"","""_sname_"""_"_varName_","""_value_""")):""checked='checked'"",1:""""))#"
-	. . . . . i technology="wl"!(technology="gtm")!(technology="ewd") set attrValue="#($s($d(^%zewdSession(""session"",sessid,""ewd_selected"","""_sname_"""_"_varName_","""_value_""")):""checked='checked'"",1:""""))#"
+	. . . . . i technology="wl"!(technology="gtm")!(technology="ewd")!(technology="node") set attrValue="#($s($d(^%zewdSession(""session"",sessid,""ewd_selected"","""_sname_"""_"_varName_","""_value_""")):""checked='checked'"",1:""""))#"
 	. . . . s svalue=""""_value_""""
 	. . . . i value["&php;" s svalue=$$getPHPVarName(value,1)
 	. . . . set attrValue="#($s($d(%session.Data(""ewd_selected"","""_sname_""","_svalue_")):""checked='checked'"",$d(^%zewdSession(""session"",sessid,""ewd_selected"","""_sname_""","_svalue_")):""checked='checked'"",1:""""))#"

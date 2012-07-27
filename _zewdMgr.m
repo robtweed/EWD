@@ -1,7 +1,7 @@
 %zewdMgr	; Enterprise Web Developer Manager Functions
  ;
- ; Product: Enterprise Web Developer (Build 910)
- ; Build Date: Wed, 25 Apr 2012 17:59:26
+ ; Product: Enterprise Web Developer (Build 931)
+ ; Build Date: Fri, 27 Jul 2012 12:05:05
  ;
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -404,7 +404,7 @@ compileAll(sessid)
  i $e(outputPath,$l(outputPath))'=dlim s outputPath=outputPath_dlim
  s outputPath=outputPath_app
  s multilingual=$$getSessionValue^%zewdAPI("multilingual",sessid)
- i technology="wl"!(technology="gtm")!(technology="ewd") s outputPath=path
+ i technology="wl"!(technology="gtm")!(technology="ewd")!(technology="node") s outputPath=path
  s error=$$processApplication^%zewdCompiler(path,outputPath,2,outputStyle,.results,technology,,multilingual)
  i error'="" QUIT error
  s n=""
@@ -482,7 +482,7 @@ compilePage(sessid) ;
  s outputPath=$$getSessionValue^%zewdAPI("outputPath",sessid)
  s multilingual=$$getSessionValue^%zewdAPI("multilingual",sessid)
  ;
- i technology="wl"!(technology="gtm")!(technology="ewd") s outputPath=path
+ i technology="wl"!(technology="gtm")!(technology="ewd")!(technology="node") s outputPath=path
  s error=$$processOneFile^%zewdCompiler(filepath,outputPath,2,outputStyle,technology,multilingual)
  i error'="" QUIT error
  d deleteFromSession^%zewdAPI("compilerListing",sessid)
@@ -508,7 +508,7 @@ compileFileList(sessid)
  s dlim="/" i os="windows" s dlim="\"
  i dlim="\" s path=$tr(path,"/",dlim)
  i $e(path,$l(path))'=dlim s path=path_dlim
- i technology="wl"!(technology="gtm")!(technology="ewd") s outputPath=path
+ i technology="wl"!(technology="gtm")!(technology="ewd")!(technology="node") s outputPath=path
  s page=""
  d mergeArrayFromSession^%zewdAPI(.pageList,"fileList",sessid)
  s page="",error=""
@@ -729,10 +729,12 @@ getErrorList(sessid)
  ;
 displayError(sessid)
  ;
- n sessionNo
+ n sessionNo,web
  ;
+ s web=0
  s sessionNo=$$getSessionValue^%zewdAPI("sessionNo",sessid)
- d recoverSymbolTable^%zewdAPI(sessionNo,0)
+ i $$getSessionValue^%zewdAPI("ewd_technology",sessid)="node" s web="node"
+ d recoverSymbolTable^%zewdAPI2(sessionNo,web)
  QUIT
  ;
 getErrorSessionDetails(sessid)

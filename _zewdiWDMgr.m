@@ -1,7 +1,7 @@
 %zewdiWDMgr	;Enterprise Web Developer - iPhone Inspector scripts
  ;
- ; Product: Enterprise Web Developer (Build 910)
- ; Build Date: Wed, 25 Apr 2012 17:59:26
+ ; Product: Enterprise Web Developer (Build 931)
+ ; Build Date: Fri, 27 Jul 2012 12:05:05
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -95,7 +95,7 @@ getSessionInfo(sessid)
  i tech="wl" s tech="WebLink"
  i tech="csp" s tech="CSP"
  i tech="gtm" s tech="m_apache"
- i tech="ewd" s tech="Node.js"
+ i tech="ewd"!(tech="node") s tech="Node.js"
  d setSessionValue^%zewdAPI("mgr.appName",appName,sessid)
  d setSessionValue^%zewdAPI("mgr.timeout",timeout,sessid)
  d setSessionValue^%zewdAPI("mgr.expiry",expiry,sessid)

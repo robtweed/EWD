@@ -1,7 +1,7 @@
 %zewdCompiler13	; Enterprise Web Developer Compiler Functions
  ;
- ; Product: Enterprise Web Developer (Build 910)
- ; Build Date: Wed, 25 Apr 2012 17:59:25
+ ; Product: Enterprise Web Developer (Build 931)
+ ; Build Date: Fri, 27 Jul 2012 12:05:04
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -26,7 +26,7 @@
  ; | along with this program.  If not, see <http://www.gnu.org/licenses/>.    |
  ; ----------------------------------------------------------------------------
  ;
- QUIT
+ ;QUIT
  ;
  ;
 ifArrayExists(nodeOID,attrValues,docOID,technology)
@@ -895,7 +895,7 @@ createCSSFile(outputPath,mode,verbose,technology) ;
 	. . x x
 	. . i line["***END***" s stop=1 q
 	. . i line[";;*php*",technology'="php" q
-	. . i line[";;*csp*",((technology'="csp")!(technology="wl")!(technology="ewd")!(technology="gtm")) q
+	. . i line[";;*csp*",((technology'="csp")!(technology="node")!(technology="wl")!(technology="ewd")!(technology="gtm")) q
 	. . i line[";;*jsp*",technology'="jsp" q
 	. . i line[";;*vb.net*",technology'="vb.net" q
 	. . i line["left(up)" d
@@ -1091,8 +1091,9 @@ addServerToSession(sessid,serverArray)
  QUIT
  ;
 displayTextArea(fieldName)
- n lineNo,text,lastLineNo
+ n lineNo,text,lastLineNo,line,technology
  ;
+ s technology=$$getSessionValue^%zewdAPI("ewd.technology",sessid)
  s fieldName=$tr(fieldName,".","_")
  d
  . s lastLineNo=$o(^%zewdSession("session",sessid,"ewd_textarea",fieldName,""),-1)
@@ -1101,11 +1102,22 @@ displayTextArea(fieldName)
  . . k text
  . . s text=^%zewdSession("session",sessid,"ewd_textarea",fieldName,lineNo)
  . . i $g(^zewd("xssEncoding")) d
- . . . w $$htmlOutputEncode^%zewdAPI2(text)
+ . . . s line=$$htmlOutputEncode^%zewdAPI2(text)
+ . . . d writeLine(line,technology)
  . . e  d
  . . . s text=$$replaceAll^%zewdHTMLParser(text,"&#39;","'")
- . . . w $$zcvt^%zewdAPI(text,"o","HTML")
- . . i lineNo'=lastLineNo w $c(13,10)
+ . . . s line=$$zcvt^%zewdAPI(text,"o","HTML")
+ . . . d writeLine(line,technology)
+ . . i lineNo'=lastLineNo d
+ . . . s line=$c(13,10)
+ . . . d writeLine(line,technology)
+ QUIT
+ ;
+writeLine(line,technology)
+ i technology="node" d
+ . s ^CacheTempBuffer($j,$increment(^CacheTempBuffer($j)))=line
+ e  d
+ . w line
  QUIT
  ;
 isNextPageTokenValid(token,sessid,page)

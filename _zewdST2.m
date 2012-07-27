@@ -1,7 +1,7 @@
 %zewdST2 ; Sencha Touch Tag Processors and runtime logic
  ;
- ; Product: Enterprise Web Developer (Build 916)
- ; Build Date: Wed, 16 May 2012 16:50:05
+ ; Product: Enterprise Web Developer (Build 931)
+ ; Build Date: Fri, 27 Jul 2012 12:05:05
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -975,6 +975,7 @@ convertToCamelCase(string)
  QUIT $$getCamelCase(string,.terms)
  ;
 camelCaseTerms
+ ;;accelerateOnTapHold
  ;;activeCls
  ;;activeError
  ;;activeErrorsTpl
@@ -983,6 +984,7 @@ camelCaseTerms
  ;;adjustMaximumByMajorUnit
  ;;adjustMinimumByMajorUnit
  ;;allowBlank
+ ;;allowDeselect
  ;;allowDomMove
  ;;allQuery
  ;;altFormats
@@ -992,17 +994,25 @@ camelCaseTerms
  ;;animCollapse
  ;;applyTo
  ;;autoCapitalize
+ ;;autoComplete
+ ;;autoCorrect
  ;;autoDestroy
  ;;autoEl
+ ;;autoEvent
  ;;autoFitErrors
  ;;autoHeight
  ;;autoHide
  ;;autoLoad
+ ;;autoPaging
  ;;autoRender
  ;;autoScroll
  ;;autoShow
  ;;autoSize
  ;;autoWidth
+ ;;backButton
+ ;;backText
+ ;;badgeCls
+ ;;badgeText
  ;;baseBodyCls
  ;;baseCls
  ;;baseParams
@@ -1020,12 +1030,14 @@ camelCaseTerms
  ;;bubbleEvents
  ;;buttonAlign
  ;;calculateCategoryCount
+ ;;cancelButton
  ;;cardSwitchAnimation
  ;;categoryNames
  ;;checkChangeBuffer
  ;;checkChangeEvents
  ;;childEls
  ;;clearCls
+ ;;clearIcon
  ;;clicksToEdit
  ;;closeAction
  ;;collapseDirection
@@ -1049,12 +1061,19 @@ camelCaseTerms
  ;;defaultDockWeights
  ;;defaultLinkValue
  ;;defaultListConfig
+ ;;defaultPhonePickerConfig
+ ;;defaultTabletPickerConfig
  ;;defaultType
  ;;defaultValue
+ ;;deferEmptyText
  ;;deferHeight
  ;;deferredRender
  ;;deferRowRender
  ;;depthToIndent
+ ;;deselectOnContainerClick
+ ;;destroyPickerOnHide
+ ;;detailCard
+ ;;detailContainer
  ;;dirtyCls
  ;;disabledClass
  ;;disabledCls
@@ -1063,6 +1082,8 @@ camelCaseTerms
  ;;disabledDays
  ;;disabledDaysText
  ;;disableKeyFilter
+ ;;disableSelection
+ ;;disclosureProperty
  ;;dismissDelay
  ;;displayField
  ;;displayInfo
@@ -1085,6 +1106,7 @@ camelCaseTerms
  ;;enableLocking
  ;;enableNoGroups
  ;;enableSourceEdit
+ ;;enableToggle
  ;;enforceMaxLength
  ;;enginePriority
  ;;enterAnimation
@@ -1108,6 +1130,7 @@ camelCaseTerms
  ;;forId
  ;;formItemCls
  ;;frameHeader
+ ;;groupButtons
  ;;groupByText
  ;;groudGutter
  ;;groupHeaderTpl
@@ -1116,6 +1139,8 @@ camelCaseTerms
  ;;growMin
  ;;hasFeatureEvent
  ;;headerPosition
+ ;;hiddenCls
+ ;;hideAnimation
  ;;hideCollapseTool
  ;;hideDelay
  ;;hideEmptyLabel
@@ -1128,8 +1153,12 @@ camelCaseTerms
  ;;hideParent
  ;;hideTrigger
  ;;highlightDuration
+ ;;iconAlign
  ;;iconCls
  ;;iconMask
+ ;;indexBar
+ ;;inputAttrTpl
+ ;;inputCls
  ;;inputId
  ;;inputType
  ;;inputValue
@@ -1137,6 +1166,8 @@ camelCaseTerms
  ;;invalidCls
  ;;invalidText
  ;;itemClick
+ ;;itemCls
+ ;;itemConfig
  ;;itemId
  ;;itemSpacing
  ;;itemTpl
@@ -1149,18 +1180,22 @@ camelCaseTerms
  ;;labelSeparator
  ;;labelStyle
  ;;labelWidth
+ ;;labelWrap
  ;;layoutConfig
  ;;layoutOnOrientationChange
  ;;lazyRender
  ;;lengthField
  ;;listClass
  ;;listConfig
+ ;;loadingText
+ ;;loadMoreText
  ;;maintainFlex
  ;;majorTickSteps
  ;;markerConfig
  ;;maskRe
  ;;matchFieldWidth
  ;;maxHeight
+ ;;maxItemCache
  ;;maxLength
  ;;maxLengthText
  ;;maxTabWidth
@@ -1183,24 +1218,33 @@ camelCaseTerms
  ;;mouseOffset
  ;;msgTarget
  ;;multiSelect
+ ;;noMoreRecordsText
+ ;;onItemDisclosure
  ;;openCls
  ;;overCls
  ;;overlapHeader
  ;;pageSize
  ;;pickerAlign
  ;;pickerOffset
+ ;;pinHeaders
  ;;placeHolder
  ;;pollForChanges
  ;;pollInterval
+ ;;pressedCls
+ ;;pressedDelay
  ;;preventHeader
  ;;preventMark
+ ;;preventSelectionOnDisclose
+ ;;pullRefreshText
  ;;queryDelay
  ;;queryMode
  ;;queryParam
  ;;quickStart
  ;;readOnly
  ;;readOnlyCls
+ ;;refreshFn
  ;;regexText
+ ;;releaseRefreshText
  ;;remoteRoot
  ;;removePanelHeader
  ;;renderData
@@ -1208,10 +1252,13 @@ camelCaseTerms
  ;;renderTo
  ;;renderTpl
  ;;repeatTriggerClick
+ ;;requiredCls
  ;;resizeHandles
  ;;rootVisible
  ;;saveDelay
  ;;scrollData
+ ;;scrollToTopOnRefresh
+ ;;selectedCls
  ;;sectionTolerance
  ;;selectOnFocus
  ;;selectOnTab
@@ -1226,6 +1273,7 @@ camelCaseTerms
  ;;showSummaryRow
  ;;showToday
  ;;simpleSelect
+ ;;singleExpand
  ;;slotOrder
  ;;sortableColumns
  ;;standardSubmit
@@ -1233,10 +1281,12 @@ camelCaseTerms
  ;;startDay
  ;;stateEvents
  ;;stateId
+ ;;stepValue
  ;;stopMaskTapEvent
  ;;stretchX
  ;;stretchY
  ;;stripCharsRe
+ ;;stripeRows
  ;;styleHtmlCls
  ;;styleHtmlContent
  ;;submitFormat
@@ -1252,17 +1302,25 @@ camelCaseTerms
  ;;toFrontOnShow
  ;;tplWriteMode
  ;;trackMouse
+ ;;trackOver
  ;;triggerAction
  ;;triggerBaseCls
  ;;triggerCls
+ ;;triggerCtEvent
+ ;;triggerEvent
  ;;triggerWrapCls
  ;;trueText
  ;;typeAhead
  ;;typeAheadDelay
  ;;undefinedText
+ ;;updateTitleText
+ ;;useArrows
  ;;useClearIcon
+ ;;useComponents
  ;;useCurrentLocation
+ ;;usePicker
  ;;useTips
+ ;;useTitleAsBackText
  ;;useTitles
  ;;validateOnBlur
  ;;validateOnChange
@@ -1281,6 +1339,7 @@ camelCaseTerms
  ;;yearTo
  ;;yField
  ;;yPadding
+ ;;zIndex
  ;;***END***
  ;;
 uiJS ;;

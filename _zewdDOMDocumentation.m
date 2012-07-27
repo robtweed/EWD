@@ -1,7 +1,7 @@
 %zewdDOMDocumentation ;
  ;
- ; Product: Enterprise Web Developer (Build 910)
- ; Build Date: Wed, 25 Apr 2012 17:59:25
+ ; Product: Enterprise Web Developer (Build 931)
+ ; Build Date: Fri, 27 Jul 2012 12:05:05
  ;
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -46,7 +46,7 @@ install
  f i=1:1:j-1 w line(i),!
  c file
  s docName="zewdDocumentation"
- s ok=$$parseFile^%zewdHTMLParser(file,docName)
+ s ok=$$parseFile^%zewdHTMLParser(file,docName,,,1)
  s ok=$$deleteFile^%zewdAPI(file)
  k line
  k ^%zewd("documentation","DOM")

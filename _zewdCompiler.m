@@ -1,7 +1,7 @@
 %zewdCompiler	; Enterprise Web Developer Compiler
  ;
- ; Product: Enterprise Web Developer (Build 910)
- ; Build Date: Wed, 25 Apr 2012 17:59:25
+ ; Product: Enterprise Web Developer (Build 931)
+ ; Build Date: Fri, 27 Jul 2012 12:05:04
  ; 
  ; 
  ; ----------------------------------------------------------------------------
@@ -27,7 +27,7 @@
  ; | along with this program.  If not, see <http://www.gnu.org/licenses/>.    |
  ; ----------------------------------------------------------------------------
  ;
- QUIT
+ ;QUIT
  ;
  ;
 getVersion()
@@ -884,7 +884,7 @@ apply(docName,technology)
 parseJSText(line,scriptText)
 	i $$os^%zewdHTMLParser()="gtm" s line=$$replaceAll^%zewdAPI(line,"LOCAL","gtm")
 	i line[";;*php*",technology'="php" QUIT
-	i line[";;*csp*",technology'="csp",technology'="wl",technology'="ewd" QUIT
+	i line[";;*csp*",technology'="csp",technology'="wl",technology'="ewd",technology'="node" QUIT
 	i line[";;*jsp*",technology'="jsp" QUIT
 	i line[";;*vb.net*",technology'="vb.net" QUIT
 	i line[";;*gtm*",technology'="gtm" QUIT
@@ -1035,7 +1035,7 @@ createEwdError(outputPath,verbose,technology) ;
  u filePath
  f i=1:1 s line=$t(ewdError+i^%zewdCompiler2) q:line["***END**"  d
  . i line["ewd_Version" s line=$$replace^%zewdAPI(line,"ewd_Version",$$version^%zewdAPI())
- . i line["*wl*",technology'="wl",technology'="ewd" q
+ . i line["*wl*",technology'="wl",technology'="ewd",technology'="node" q
  . i line["*gtm*",technology'="gtm" q
  . i line["*php*",technology'="php" q
  . i line["*jsp*",technology'="jsp" q

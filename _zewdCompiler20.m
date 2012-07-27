@@ -1,7 +1,7 @@
 %zewdCompiler20	; Enterprise Web Developer Compiler : Combo+ tag processor
  ;
- ; Product: Enterprise Web Developer (Build 914)
- ; Build Date: Tue, 08 May 2012 11:02:03
+ ; Product: Enterprise Web Developer (Build 931)
+ ; Build Date: Fri, 27 Jul 2012 12:05:04
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -26,7 +26,7 @@
  ; | along with this program.  If not, see <http://www.gnu.org/licenses/>.    |
  ; ----------------------------------------------------------------------------
  ;
- QUIT
+ ;QUIT
  ;
  ;
 setNextPageToken(nextpage)
@@ -814,7 +814,7 @@ assignPageToken(page,sessid)
  ;
  s token=""
  s technology=$$getSessionValue^%zewdAPI("ewd.technology",sessid)
- i technology="wl"!(technology="ewd") d
+ i technology="wl"!(technology="ewd")!(technology="node") d
  . s token=$$setNextPageToken^%zewdWLD(page)
  . m ^%zewdSession("session",sessid)=sessionArray
  . s currentPage=$$getSessionValue^%zewdAPI("ewd.pageName",sessid)
@@ -990,25 +990,119 @@ addPhpVar(sessionValue)
 	;
 writePageLinks(app,sessid)
  ;
+ n line,technology
+ ;
  d loadFiles^%zewdCustomTags($$zcvt^%zewdAPI(app,"l"),"js",sessid)
  i $g(^zewd("config","stopTokenisedURLs",app))=1 QUIT
  i $g(^zewd("config","stopTokenizedURLs",app))=1 QUIT
  ;
- w "<script type='text/javascript'>"_$c(13,10)
- d writeFetchPages(app,sessid)
- w "</script>"_$c(13,10)
+ s technology=$$getSessionValue^%zewdAPI("ewd.technology",sessid)
+ i technology="",$zv["Cache" s technology="wl"
+ i technology="" s technology="gtm"
  ;
+ s line="<script type='text/javascript'>"_$c(13,10)
+ d writeLine(line,technology)
+ d writeFetchPages(app,sessid)
+ s line="</script>"_$c(13,10)
+ d writeLine(line,technology)
+ ;
+ QUIT
+ ;
+writeLine(line,technology)
+ i technology="node" d
+ . s ^CacheTempBuffer($j,$increment(^CacheTempBuffer($j)))=line
+ e  d
+ . w line
  QUIT
  ;
 writeFetchPages(app,sessid)
  ;
- n page
+ n line,page,technology
+ ;
+ s technology=$$getSessionValue^%zewdAPI("ewd.technology",sessid)
+ i technology="",$zv["Cache" s technology="wl"
+ i technology="" s technology="gtm"
  ;
  s page=""
  f  s page=$o(^%zewdIndex(app,"pages",page)) q:page=""  d
- . w "EWD.ajax.fetchPage['"_$$zcvt^%zewdAPI(page,"l")_"']=function(params) {"_$c(13,10)
- . w " params.url='"_$$tokeniseURL^%zewdCompiler16(page,sessid)_"';"_$c(13,10)
- . w " EWD.ajax.getURL(params);"_$c(13,10)
- . w "};"_$c(13,10)
+ . s line="EWD.ajax.fetchPage['"_$$zcvt^%zewdAPI(page,"l")_"']=function(params) {"_$c(13,10)
+ . d writeLine(line,technology)
+ . s line=" params.url='"_$$tokeniseURL^%zewdCompiler16(page,sessid)_"';"_$c(13,10)
+ . d writeLine(line,technology)
+ . s line=" EWD.ajax.getURL(params);"_$c(13,10)
+ . d writeLine(line,technology)
+ . s line="};"_$c(13,10)
+ . d writeLine(line,technology)
+ QUIT
+ ;
+extractMCode(docName)
+	;
+	new codeType,dlim,language,mCode,nodeOID,ntags,OIDArray
+	n routineName,%stop,textOID
+	;
+	set routineName=""
+	set ntags=$$getTagsByName^%zewdCompiler("script",docName,.OIDArray)
+	set nodeOID="",%stop=0
+	for  set nodeOID=$order(OIDArray(nodeOID)) quit:nodeOID=""  do  quit:%stop
+	. set language=$$getAttributeValue^%zewdDOM("language",1,nodeOID)
+	. quit:$$zcvt^%zewdAPI(language,"L")'="ewd"
+	. set routineName=$$getAttributeValue^%zewdDOM("routinename",1,nodeOID)
+	. quit:routineName=""
+	. ;
+	. set textOID=$$getFirstChild^%zewdDOM(nodeOID)
+	. set mCode=$$getData^%zewdDOM(textOID)
+	. s dlim=$c(13,10) i mCode'[$c(13,10),mCode[$c(10) s dlim=$c(10)
+	. set mCode=routineName_" ; Compiled from Enterprise Web Developer page "_filename_" on "_$$inetDate^%zewdAPI($h)_$char(13,10)_" ; "_$char(13,10)_mCode
+	. set codeType=$$zcvt^%zewdAPI($$getAttributeValue^%zewdDOM("codeType",1,nodeOID),"U")
+	. if codeType="" set codeType="INT"
+	. if codeType="INT" do
+	. . new nLines,x,i
+	. . set nLines=$length(mCode,dlim)
+	. . set x="zr  f i=1:1:nLines zi $p(mCode,"_dlim_",i) i i=nLines zs "_routineName
+	. . xecute x
+	. set %stop=1
+	. set nodeOID=$$removeChild^%zewdAPI(nodeOID,1)
+	;
+	QUIT routineName
+	;
+	;
+movetag(nodeOID,attrValues,docOID,technology)
+	;
+	; <ewd:moveTag name="qm:tags" deleteOuterTag="true">
+	; 
+	n delete,docName,ntags,OIDArray,stop,tagName,tagOID
+	;
+	s tagName=$$getNormalAttributeValue^%zewdAPI("name",nodeOID,technology)
+	s delete=$$getNormalAttributeValue^%zewdAPI("deleteoutertag",nodeOID,technology)
+	s tagName=$$removeQuotes^%zewdAPI(tagName)
+	s delete=$$removeQuotes^%zewdAPI(delete)
+	i $$zcvt^%zewdAPI(delete,"l")="true" s delete=1
+	e  s delete=0
+	s docName=$$getDocumentName^%zewdDOM(docOID)
+	s ntags=$$getTagsByName^%zewdCompiler(tagName,docName,.OIDArray)
+	s tagOID="",stop=0
+	f  s tagOID=$o(OIDArray(tagOID)) q:tagOID=""  d  q:stop
+	. i $$getParentNode^%zewdDOM(tagOID)'="" s stop=1
+	s tagOID=$$removeChild^%zewdAPI(tagOID)
+	s tagOID=$$appendChild^%zewdDOM(tagOID,nodeOID)
+	i delete do removeIntermediateNode^%zewdCompiler4(tagOID)
+	do removeIntermediateNode^%zewdCompiler4(nodeOID)
+	QUIT
+	;
+removeFromList(listName,codeValue,sessid)
+ ;
+ ;d removeFromList^%zewdCompiler7(listName,codeValue,sessid)
+ n position
+ ;
+ QUIT:$g(listName)=""
+ QUIT:$g(sessid)=""
+ QUIT:$g(codeValue)=""
+ ;
+ s position=$g(^%zewdSession("session",sessid,"ewd_listIndex",listName,codeValue))
+ QUIT:position=""
+ k ^%zewdSession("session",sessid,"ewd_list",listName,position)
+ k ^%zewdSession("session",sessid,"ewd_listIndex",listName,codeValue)
+ d setWLDSymbol^%zewdAPI("ewd_list",sessid)
+ d setWLDSymbol^%zewdAPI("ewd_listIndex",sessid)
  QUIT
  ;

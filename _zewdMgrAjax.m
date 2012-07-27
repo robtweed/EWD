@@ -1,7 +1,7 @@
 %zewdMgrAjax	; Enterprise Web Developer Manager Functions
  ;
- ; Product: Enterprise Web Developer (Build 910)
- ; Build Date: Wed, 25 Apr 2012 17:59:26
+ ; Product: Enterprise Web Developer (Build 931)
+ ; Build Date: Fri, 27 Jul 2012 12:05:05
  ;
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -49,7 +49,7 @@ indexPrepage(sessid)
  d setSessionValue^%zewdAPI("ewd_isVirtualAppliance",0,sessid)
  i fet="" d  QUIT ""
  . d setSessionValue^%zewdAPI("initialPage","configOnlyMenu",sessid)
- i fet="wl"!(fet="gtm")!(fet="ewd") d
+ i fet="wl"!(fet="gtm")!(fet="ewd")!(fet="node") d
  . s opp=$g(^zewd("config","jsScriptPath",fet,"outputPath"))
  e  d
  . s opp=$g(^zewd("config","outputRootPath",fet))
@@ -387,13 +387,14 @@ saveMainConfig(sessid)
  n cspError,error,fet,phpError,wlError
  ;
  i $$getSessionValue^%zewdAPI("appRootPath",sessid)="" QUIT "You must define the Application Root Path"
- i $$getSessionValue^%zewdAPI("frontEndTechnology",sessid)="csp"!($$getSessionValue^%zewdAPI("frontEndTechnology",sessid)="wl")!($$getSessionValue^%zewdAPI("frontEndTechnology",sessid)="ewd") d
+ s fet=$$getSessionValue^%zewdAPI("frontEndTechnology",sessid)
+ i fet="csp"!(fet="wl")!(fet="ewd")!(fet="node") d
  . d setSessionValue^%zewdAPI("backEndTechnology","cache",sessid)
  . d setSessionValue^%zewdAPI("persistenceDB","cache",sessid)
  i $$getSessionValue^%zewdAPI("frontEndTechnology",sessid)="gtm"  d
  . d setSessionValue^%zewdAPI("backEndTechnology","m",sessid)
  . d setSessionValue^%zewdAPI("persistenceDB","gtm",sessid)
- s ^zewd("config","frontEndTechnology")=$$getSessionValue^%zewdAPI("frontEndTechnology",sessid)
+ s ^zewd("config","frontEndTechnology")=fet
  s ^zewd("config","backEndTechnology")=$$getSessionValue^%zewdAPI("backEndTechnology",sessid)
  s ^zewd("config","sessionDatabase")=$$getSessionValue^%zewdAPI("persistenceDB",sessid)
  s ^zewd("config","defaultFormat")=$$getSessionValue^%zewdAPI("format",sessid)
@@ -418,7 +419,7 @@ saveMainConfig(sessid)
  . i '$d(^zewd("config","jsScriptPath","wl","outputPath")) s error=wlError q
  . i '$d(^zewd("config","RootURL","wl")) s error=wlError q
  . i '$d(^zewd("config","jsScriptPath","wl")) s error=wlError q
- i fet="ewd" d  QUIT error
+ i fet="ewd"!(fet="node") d  QUIT error
  . s wlError="You must complete the EWD/Node.js configuration before you can compile!"
  . i '$d(^zewd("config","jsScriptPath","ewd","outputPath")) s error=wlError q
  . i '$d(^zewd("config","RootURL","ewd")) s error=wlError q
@@ -475,7 +476,7 @@ configWebTechPrepage(sessid)
  d setSessionValue^%zewdAPI("frontEndTechnologyText",$$getTextFromList^%zewdAPI("frontEndTechnology",technology,sessid),sessid)
  d setSessionValue^%zewdAPI(technology_"OutputPath",$g(^zewd("config","outputRootPath",technology)),sessid)
  s rootURL=$g(^zewd("config","RootURL",technology))
- i technology'="wl",technology'="gtm",technology'="ewd",rootURL="" s rootURL="/"_technology
+ i technology'="wl",technology'="gtm",technology'="ewd",technology'="node",rootURL="" s rootURL="/"_technology
  d setSessionValue^%zewdAPI(technology_"RootURL",rootURL,sessid)
  d clearList^%zewdAPI(technology_"JsURLType",sessid)
  d appendToList^%zewdAPI(technology_"JsURLType","Absolute","fixed",sessid)
@@ -493,7 +494,7 @@ saveWebTechConfig(sessid)
  i $$getSessionValue^%zewdAPI(technology_"RootURL",sessid)="" QUIT "You must enter the Root URL"
  s ^zewd("config","jsScriptPath",technology,"mode")=$$getSessionValue^%zewdAPI(technology_"JsURLType",sessid)
  s ^zewd("config","jsScriptPath",technology,"path")=$$getSessionValue^%zewdAPI(technology_"JsURLRoot",sessid)
- i technology="wl"!(technology="gtm")!(technology="ewd") d
+ i technology="wl"!(technology="gtm")!(technology="ewd")!(technology="node") d
  . s ^zewd("config","jsScriptPath","gtm","outputPath")=$$getSessionValue^%zewdAPI(technology_"OutputPath",sessid)
  e  d
  . s ^zewd("config","outputRootPath",technology)=$$getSessionValue^%zewdAPI(technology_"OutputPath",sessid)
@@ -532,7 +533,7 @@ configPrepage(sessid) ;
  s technology="gtm" d
  . d setSessionValue^%zewdAPI(technology_"OutputPath",$g(config("technology",technology,"outputRootPath")),sessid)
  . d setSessionValue^%zewdAPI(technology_"RootURL",$g(config("technology",technology,"RootURL")),sessid)
- . i technology'="wl",technology'="gtm",technology'="ewd",$g(config("technology",technology,"RootURL"))="" d
+ . i technology'="wl",technology'="gtm",technology'="ewd",technology'="node",$g(config("technology",technology,"RootURL"))="" d
  . . d setSessionValue^%zewdAPI(technology_"RootURL","/"_technology,sessid)
  . d clearList^%zewdAPI(technology_"JsURLType",sessid)
  . d appendToList^%zewdAPI(technology_"JsURLType","Absolute","fixed",sessid)
@@ -549,12 +550,13 @@ configPrepage(sessid) ;
  ;
 configdbPrepage(sessid)
  ;
- n db
+ n db,fet
  ;
- i $$getSessionValue^%zewdAPI("frontEndTechnology",sessid)="csp" d setRedirect^%zewdAPI("goMainMenu",sessid) QUIT ""
- i $$getSessionValue^%zewdAPI("frontEndTechnology",sessid)="wl" d setRedirect^%zewdAPI("goMainMenu",sessid) QUIT ""
- i $$getSessionValue^%zewdAPI("frontEndTechnology",sessid)="ewd" d setRedirect^%zewdAPI("goMainMenu",sessid) QUIT ""
- i $$getSessionValue^%zewdAPI("frontEndTechnology",sessid)="gtm" d setRedirect^%zewdAPI("goMainMenu",sessid) QUIT ""
+ s fet=$$getSessionValue^%zewdAPI("frontEndTechnology",sessid)
+ i fet="csp" d setRedirect^%zewdAPI("goMainMenu",sessid) QUIT ""
+ i fet="wl" d setRedirect^%zewdAPI("goMainMenu",sessid) QUIT ""
+ i fet="ewd"!(fet="node") d setRedirect^%zewdAPI("goMainMenu",sessid) QUIT ""
+ i fet="gtm" d setRedirect^%zewdAPI("goMainMenu",sessid) QUIT ""
  s db=$$getSessionValue^%zewdAPI("persistenceDB",sessid)
  i db="cache" d setRedirect^%zewdAPI("cacheOnlyConfig",sessid)
  i db="gtm" d setRedirect^%zewdAPI("gtmOnlyConfig",sessid)
@@ -619,7 +621,7 @@ saveTechnologyConfig(technology,sessid)
  ;
  s ^zewd("config","jsScriptPath",technology,"mode")=$$getSessionValue^%zewdAPI(technology_"JsURLType",sessid)
  s ^zewd("config","jsScriptPath",technology,"path")=$$getSessionValue^%zewdAPI(technology_"JsURLRoot",sessid)
- i technology="wl"!(technology="gtm")!(technology="ewd") d
+ i technology="wl"!(technology="gtm")!(technology="ewd")!(technology="node") d
  . s ^zewd("config","jsScriptPath",technology,"outputPath")=$$getSessionValue^%zewdAPI(technology_"OutputPath",sessid)
  e  d
  . s ^zewd("config","outputRootPath",technology)=$$getSessionValue^%zewdAPI(technology_"OutputPath",sessid)
@@ -1012,12 +1014,20 @@ getSessionDetails(sessid)
  ;
  QUIT ""
  ;
+writeLine(line,technology)
+ i technology="node" d
+ . s ^CacheTempBuffer($j,$increment(^CacheTempBuffer($j)))=line
+ e  d
+ . w line
+ QUIT
+ ;
 displaySessionDetails(sessid)
  ;
- n end,j,session,sessionNo,lineNo,ref,data,%p1,line
+ n end,j,session,sessionNo,line,lineNo,ref,data,%p1,line,technology
  ;
  s sessionNo=$$getSessionValue^%zewdAPI("sessionNo",sessid)
  ;
+ s technology=$$getSessionValue^%zewdAPI("ewd.technology",sessid)
  k ^%work($j)
  i $$isCSP^%zewdAPI(sessid) d
  . i $e(sessionNo,1,3)="csp" s sessionNo=$e(sessionNo,5,$l(sessionNo))
@@ -1037,10 +1047,14 @@ displaySessionDetails(sessid)
  . s %p1=$e(%p1,1,$l(%p1)-1)
  . s data=$tr(data,$c(1),"|")
  . i data="" s data="&nbsp;"
- . w "<tr>"
- . w "<td width='50%' class='configRow'>"_%p1_"</td>"
- . w "<td class='configRow'>"_data_"</td>"
- . w "</tr>"_$c(13,10)
+ . s line="<tr>"
+ . d writeLine(line,technology)
+ . s line="<td width='50%' class='configRow'>"_%p1_"</td>"
+ . d writeLine(line,technology)
+ . s line="<td class='configRow'>"_data_"</td>"
+ . d writeLine(line,technology)
+ . s line="</tr>"_$c(13,10)
+ . d writeLine(line,technology)
  ;
  k ^%work($j)
  QUIT
@@ -1109,7 +1123,7 @@ webTechRedirect(sessid)
  i fet="php" d setRedirect^%zewdAPI("phpOnlyConfig",sessid)
  i fet="csp" d setRedirect^%zewdAPI("cspOnlyConfig",sessid)
  i fet="wl" d setRedirect^%zewdAPI("wlOnlyConfig",sessid)
- i fet="ewd" d setRedirect^%zewdAPI("ewdOnlyConfig",sessid)
+ i fet="ewd"!(fet="node") d setRedirect^%zewdAPI("ewdOnlyConfig",sessid)
  i fet="gtm" d setRedirect^%zewdAPI("gtmOnlyConfig",sessid)
  QUIT ""
  ;
@@ -1286,7 +1300,7 @@ getDOMMethodDetails(sessid)
  s method=$$getSessionValue^%zewdAPI("method",sessid)
  s call=$g(^%zewd("documentation","DOM","method",method,"call"))
  s purpose=$g(^%zewd("documentation","DOM","method",method,"purpose"))
- s returnValue=$g(^%zewd("documentation","DOM","method",method,"returnValue"))
+ s returnValue=$g(^%zewd("documentation","DOM","method",method,"returnvalue"))
  i returnValue="" s returnValue="n/a"
  d setSessionValue^%zewdAPI("domCall",call,sessid)
  d setSessionValue^%zewdAPI("domPurpose",purpose,sessid)

@@ -1,7 +1,7 @@
 %zewdCompiler15	; Enterprise Web Developer Compiler
  ;
- ; Product: Enterprise Web Developer (Build 910)
- ; Build Date: Wed, 25 Apr 2012 17:59:25
+ ; Product: Enterprise Web Developer (Build 931)
+ ; Build Date: Fri, 27 Jul 2012 12:05:04
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -73,7 +73,7 @@ tagDefinitions ;
 	;;ewd:mainTabMenu~~0~mainTabMenu^%zewdCompiler16
 	;;ewd:mergeToJSObject~~1~mergeToJSObject^%zewdCompiler16
 	;;ewd:modulo~return,data,modulus~1~modulo^%zewdCompiler16
-	;;ewd:movetag~~0~movetag^%zewdCompiler7
+	;;ewd:movetag~~0~movetag^%zewdCompiler10
 	;;ewd:replace~input,fromString,toString,return~1~replace^%zewdCompiler4
 	;;ewd:responseHeader~name,value,suppress~1~responseHeader^%zewdCompiler4
 	;;ewd:schemaForm~schemaName,instanceName~0~schemaForm^%zewdCompiler4~
@@ -139,6 +139,8 @@ tagDefinitions ;
 	;;st:uui~~0~uui^%zewdST
 	;;ext4:container~~0~container^%zewdExt4
 	;;ext4:fragment~~0~fragment^%zewdExt4
+	;;st2:container~~0~container^%zewdSTch2
+	;;st2:fragment~~0~fragment^%zewdSTch2
 	;;***END***
 	;;
 	;;yui:config~~0~config^%zewdYUI1

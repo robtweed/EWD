@@ -1,7 +1,7 @@
 %zewdXPath	; EWD XPath
  ;
- ; Product: Enterprise Web Developer (Build 910)
- ; Build Date: Wed, 25 Apr 2012 17:59:26
+ ; Product: Enterprise Web Developer (Build 931)
+ ; Build Date: Fri, 27 Jul 2012 12:05:05
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -549,6 +549,7 @@ getText(path,docName)
 	n nodes,ok
 	;
 	s ok=$$select^%zewdXPath(path,docName,.nodes)
+	i '$d(nodes(1)) QUIT ""
 	QUIT $$getTextValue(nodes(1))
 	;
 getDescendantNodes(nodeOID,nodes,clear)

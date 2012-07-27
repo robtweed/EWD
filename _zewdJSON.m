@@ -1,7 +1,7 @@
 %zewdJSON	; Enterprise Web Developer JSON functions
  ;
- ; Product: Enterprise Web Developer (Build 915)
- ; Build Date: Tue, 15 May 2012 08:23:24
+ ; Product: Enterprise Web Developer (Build 931)
+ ; Build Date: Fri, 27 Jul 2012 12:05:05
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -26,7 +26,7 @@
  ; | along with this program.  If not, see <http://www.gnu.org/licenses/>.    |
  ; ----------------------------------------------------------------------------
  ;
- QUIT
+ ;QUIT
  ;
 parseJSON(jsonString,propertiesArray,mode)
  ;
@@ -171,25 +171,31 @@ parseJSONArray(buff,subs)
  QUIT error
  ;
 getJSONValue(buff)
- n c,isLiteral,lc,stop,value
+ n apos,c,isLiteral,lc,stop,value
  s stop=0,value="",isLiteral=0,lc=""
  f  d  q:stop  q:buff=""
  . s c=$e(buff,1)
- . i value="",c="""" s isLiteral=1
+ . i value="" d
+ . . i c="""" s isLiteral=1,apos="""" q
+ . . i c="'" s isLiteral=1,apos="'" q
  . i 'isLiteral,c="[" s stop=1 q
  . i 'isLiteral,c="{" s stop=1 q
  . i c="}" d  q:stop
- . . i isLiteral,lc'="""" q
+ . . ;i isLiteral,lc'="""" q
+ . . i isLiteral,lc'=apos q
  . . s stop=1
  . i c="," d  q:stop
- . . i isLiteral,lc'="""" q
+ . . ;i isLiteral,lc'="""" q
+ . . i isLiteral,lc'=apos q
  . . s stop=1
  . s buff=$e(buff,2,$l(buff))
  . s value=value_c
  . s lc=c
+ i $e(value,1)="'" s value=""""_$e(value,2,$l(value)-1)_""""
  QUIT value
  ;
 numeric(value)
+ i $e(value,1,9)="function(" QUIT 1
  i value?1"0."1N.N QUIT 1
  i $e(value,1)=0,$l(value)>1 QUIT 0
  i $e(value,1,2)="-0",$l(value)>2,$e(value,1,3)'="-0." QUIT 0
@@ -724,24 +730,43 @@ streamJSON(sessionName,return,var,sessid)
  ;
  QUIT
  ;
-streamArrayToJSON(name)
- n subscripts
- i '$d(@name) w "[]" QUIT
- d streamWalkArray(name)
+writeLine(line,technology)
+ i technology="node" d
+ . s ^CacheTempBuffer($j,$increment(^CacheTempBuffer($j)))=line
+ e  d
+ . w line
  QUIT
  ;
-streamWalkArray(name,subscripts)
+streamArrayToJSON(name)
+ n line,subscripts,technology
+ ;
+ s technology=$$getSessionValue^%zewdAPI("ewd.technology",sessid)
+ i technology="",$zv["Cache" s technology="wl"
+ i technology="" s technology="gtm"
+ ;
+ i '$d(@name) d  QUIT
+ . s line="[]"
+ . d writeLine(line,technology)
+ d streamWalkArray(name,,technology)
+ QUIT
+ ;
+streamWalkArray(name,subscripts,technology)
  ;
  n allNumeric,arrComma,brace,comma,cr,dd,i,json,no,numsub,dblquot,quot,ref,sub,subNo,subscripts1,type,valquot,value,xref,zobj
+ ;
+ i '$d(technology) d
+ . s technology=$$getSessionValue^%zewdAPI("ewd.technology",sessid)
+ . i technology="",$zv["Cache" s technology="wl"
+ . i technology="" s technology="gtm"
  ;
  s json=""
  s cr=$c(13,10),comma=","
  s (dblquot,valquot)=""""
  s dd=$d(@name)
- i dd=1!(dd=11) d  i dd=1 w json QUIT
+ i dd=1!(dd=11) d  i dd=1 d writeLine(json,technology) QUIT
  . s value=@name
  . i value'[">" q
- . w json s json=""
+ . d writeLine(json,technology) s json=""
  . d streamWalkArray(value,.subscripts)
  s ref=name_"("
  s no=$o(subscripts(""),-1)
@@ -790,7 +815,7 @@ streamWalkArray(name,subscripts)
  . . . . s json=$e(json,1,$l(json)-1)_"["
  . . e  d
  . . . s json=json_""""_sub_""":"
- . . w json s json=""
+ . . d writeLine(json,technology) s json=""
  . . d streamWalkArray(name,.subscripts1)
  . . d
  . . . s json=json_","
@@ -800,6 +825,6 @@ streamWalkArray(name,subscripts)
  . s json=json_"]"
  e  d
  . s json=json_"}"
- w json
+ d writeLine(json,technology)
  QUIT
  ;

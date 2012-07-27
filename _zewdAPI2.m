@@ -1,7 +1,7 @@
 %zewdAPI2 ; Enterprise Web Developer run-time functions and user APIs
  ;
- ; Product: Enterprise Web Developer (Build 915)
- ; Build Date: Tue, 15 May 2012 08:23:24
+ ; Product: Enterprise Web Developer (Build 931)
+ ; Build Date: Fri, 27 Jul 2012 12:05:04
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -26,7 +26,7 @@
  ; | along with this program.  If not, see <http://www.gnu.org/licenses/>.    |
  ; ----------------------------------------------------------------------------
  ;
- QUIT
+ ;QUIT
  ;
  ;
 getTmpSessionValue(name,sessid)
@@ -188,4 +188,24 @@ getSessionNames(arrayOfNames,sessid)
  f  s name=$$getNextSessionName(name,sessid) q:name=""  d
  . s arrayOfNames(name)=""
  QUIT
+ ;
+recoverSymbolTable(sessid,web)
+ n (sessid,web)
+ n %zzv
+ s %zzv=""
+ f  s %zzv=$o(^%zewdError(sessid,%zzv)) QUIT:%zzv=""  d
+ . m @%zzv=^%zewdError(sessid,%zzv)
+ d writeSymbolTable(web)
+ QUIT
+ ;
+writeSymbolTable(web)
+ i $g(web)="node" d  QUIT
+ . k web
+ . ;d writeLine("<pre>","node")
+ . d buffer^%zewdNode("zwrite")
+ . ;d writeLine("<pre>","node")
+ i $g(web) w "<pre>"
+ zwrite
+ i $g(web) w "</pre>"
+ QUIT 
  ;

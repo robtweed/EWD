@@ -1,7 +1,7 @@
 %zewdCompiler19	; Runtime Functions
  ;
- ; Product: Enterprise Web Developer (Build 910)
- ; Build Date: Wed, 25 Apr 2012 17:59:25
+ ; Product: Enterprise Web Developer (Build 931)
+ ; Build Date: Fri, 27 Jul 2012 12:05:04
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -275,7 +275,7 @@ createJSFile(outputPath,verbose,technology) ;
 	. . x x
 	. . i line["***END***" s stop=1 q
 	. . i line[";;*php*",technology'="php" q
-	. . i line[";;*csp*",((technology'="csp")!(technology="wl")!(technology="gtm")!(technology="ewd")) q
+	. . i line[";;*csp*",((technology'="csp")!(technology="wl")!(technology="node")!(technology="gtm")!(technology="ewd")) q
 	. . i line[";;*jsp*",technology'="jsp" q
 	. . i line[";;*vb.net*",technology'="vb.net" q
 	. . i line["<buildnumber>" s line=$$replace^%zewdAPI(line,"<buildnumber>",$$getVersion^%zewdCompiler())
@@ -561,7 +561,7 @@ forEach(nodeOID,attrValues,docOID,technology)
 	s param="param",subs=""
 	f  s param=$o(attrValues(param)) q:param=""  q:param'["param"  d
 	. s pval=attrValues(param)
-	. i technology="csp"!(technology="wl")!(technology="gtm")!(technology="ewd") d
+	. i technology="csp"!(technology="wl")!(technology="gtm")!(technology="ewd")!(technology="node") d
 	. . i $e(pval,1)="""" s pval=$e(pval,2,$l(pval)-1) q
 	. . i $e(pval,1)'="$" s pval="$"_pval
 	. . i $e(pval,1,2)="$$" s pval=$$replaceAll^%zewdAPI(pval,",",$c(0))

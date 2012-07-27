@@ -1,7 +1,7 @@
 %zewdExt4DT ; Extjs Desktop processor
  ;
- ; Product: Enterprise Web Developer (Build 920)
- ; Build Date: Fri, 25 May 2012 11:57:23
+ ; Product: Enterprise Web Developer (Build 931)
+ ; Build Date: Fri, 27 Jul 2012 12:05:05
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -38,7 +38,10 @@ desktop(nodeOID)
  . s text=" d writeDesktopConfig^%zewdExt4Code("""_sessionName_""",sessid)"
  e  d
  . n childNo,childOID,comma,OIDArray
- . s text=" w ""EWD.desktop = {windows:["""_$c(13,10)
+ . i technology="node" d
+ . . s text=" s ^CacheTempBuffer($j,$increment(^CacheTempBuffer($j)))=""EWD.desktop = {windows:["""_$c(13,10)
+ . e  d
+ . . s text=" w ""EWD.desktop = {windows:["""_$c(13,10)
  . d getChildrenInOrder^%zewdDOM(nodeOID,.OIDArray)
  . s childNo="",comma=""
  . f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d
@@ -54,7 +57,10 @@ desktop(nodeOID)
  . . . i $g(mainAttrs("height"))="" s mainAttrs("height")=400
  . . . i $g(mainAttrs("fragment"))="" s mainAttrs("title")="unspecifiedFragment"
  . . . i $g(mainAttrs("quickStart"))="" s mainAttrs("quickStart")="false"
- . . . s text=text_" w """_comma_"{"
+ . . . i technology="node" d
+ . . . . s text=text_" s ^CacheTempBuffer($j,$increment(^CacheTempBuffer($j)))="""_comma_"{"
+ . . . e  d
+ . . . . s text=text_" w """_comma_"{"
  . . . s name=""
  . . . f  s name=$o(mainAttrs(name)) q:name=""  d
  . . . . s value=mainAttrs(name)
@@ -67,7 +73,10 @@ desktop(nodeOID)
  . . . s text=text_"}"""_$c(13,10)
  . . . s comma=","
  . . i $$removeChild^%zewdDOM(childOID,1)
- . s text=text_" w ""]};"""_$c(13,10)
+ . i technology="node" d
+ . . s text=text_" s ^CacheTempBuffer($j,$increment(^CacheTempBuffer($j)))=""]};"""_$c(13,10)
+ . e  d
+ . . s text=text_" w ""]};"""_$c(13,10)
  s cspOID=$$addCSPServerScript^%zewdAPI(nodeOID,text)
  s parentOID=$$getParentNode^%zewdDOM(nodeOID)
  s rootPath=$$getAttribute^%zewdDOM("rootpath",parentOID)

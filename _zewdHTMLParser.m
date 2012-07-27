@@ -1,7 +1,7 @@
 %zewdHTMLParser	; Enterprise Web Developer HTML to XHTML Converter
  ;
- ; Product: Enterprise Web Developer (Build 912)
- ; Build Date: Wed, 02 May 2012 16:47:56
+ ; Product: Enterprise Web Developer (Build 931)
+ ; Build Date: Fri, 27 Jul 2012 12:05:05
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -26,7 +26,7 @@
  ; | along with this program.  If not, see <http://www.gnu.org/licenses/>.    |
  ; ----------------------------------------------------------------------------
  ;
- QUIT
+ ;QUIT
  ;
  ;
 parseFilesInPath(path,extension,deep,docName,errorList,outputFile,outputPath)

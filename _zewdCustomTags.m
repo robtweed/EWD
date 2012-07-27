@@ -1,7 +1,7 @@
 %zewdCustomTags	; Enterprise Web Developer Custom Tag Library Functions
  ;
- ; Product: Enterprise Web Developer (Build 914)
- ; Build Date: Tue, 08 May 2012 11:02:03
+ ; Product: Enterprise Web Developer (Build 931)
+ ; Build Date: Fri, 27 Jul 2012 12:05:04
  ;
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -27,7 +27,7 @@
  ; ----------------------------------------------------------------------------
  ;
  ;
- QUIT
+ ;QUIT
  ;
 export(tagNames,tagProcessorRouNames,exportFilePath)
  ;
@@ -233,7 +233,7 @@ addPhpVar(sessionValue,type)
  ;
 loadFiles(appName,type,sessid)
  ;
- n defer,deferAttr,file,path,src,technology,value
+ n defer,deferAttr,file,line,path,src,technology,value
  ;
  ; type = css|js
  ;
@@ -244,7 +244,10 @@ loadFiles(appName,type,sessid)
  i $e(path,$l(path))'="/" s path=path_"/"
  i type="js",$d(^zewd("loader",appName,type,"ewdSTJS.js")) d
  . s src=path_"ewdSTJS.js"
- . w "<script src='"_src_"' type='text/javascript'></script>"_$c(13,10)
+ . i technology="node" d
+ . . s ^CacheTempBuffer($j,$increment(^CacheTempBuffer($j)))="<script src='"_src_"' type='text/javascript'></script>"_$c(13,10)
+ . e  d
+ . . w "<script src='"_src_"' type='text/javascript'></script>"_$c(13,10)
  s file=""
  f  s file=$o(^zewd("loader",appName,type,file)) q:file=""  d
  . i file="ewdSTJS.js" q
@@ -256,8 +259,13 @@ loadFiles(appName,type,sessid)
  . s src=file
  . i $e(file,1)'="/",$e(file,1,7)'="http://",$e(file,1,8)'="https://" s src=path_file
  . ;i $e(file,1)'="/" s src=path_file 
- . i type="js" w "<script src='"_src_"' type='text/javascript'"_deferAttr_"></script>"_$c(13,10)
- . i type="css" w "<link href='"_src_"' rel='stylesheet' type='text/css' />"_$c(13,10)
+ . s line=""
+ . i type="js" s line="<script src='"_src_"' type='text/javascript'"_deferAttr_"></script>"_$c(13,10)
+ . i type="css" s line="<link href='"_src_"' rel='stylesheet' type='text/css' />"_$c(13,10)
+ . i technology="node" d
+ . . s ^CacheTempBuffer($j,$increment(^CacheTempBuffer($j)))=line
+ . e  d
+ . . w line
  ;
  s file=""
  f  s file=$o(^zewd("loader",appName,type,file)) q:file=""  d
@@ -268,9 +276,14 @@ loadFiles(appName,type,sessid)
  . i defer s deferAttr=" defer='defer'"
  . s src=file
  . i $e(file,1)'="/",$e(file,1,7)'="http://",$e(file,1,8)'="https://" s src=path_file
- . ;i $e(file,1)'="/" s src=path_file 
- . i type="js" w "<script src='"_src_"' type='text/javascript'"_deferAttr_"></script>"_$c(13,10)
- . i type="css" w "<link href='"_src_"' rel='stylesheet' type='text/css' />"_$c(13,10)
+ . ;i $e(file,1)'="/" s src=path_file
+ . s line="" 
+ . i type="js" s line="<script src='"_src_"' type='text/javascript'"_deferAttr_"></script>"_$c(13,10)
+ . i type="css" s line="<link href='"_src_"' rel='stylesheet' type='text/css' />"_$c(13,10)
+ . i technology="node" d
+ . . s ^CacheTempBuffer($j,$increment(^CacheTempBuffer($j)))=line
+ . e  d
+ . . w line
  ;
  QUIT
  ;

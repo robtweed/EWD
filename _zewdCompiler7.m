@@ -1,7 +1,7 @@
 %zewdCompiler7	; Enterprise Web Developer Compiler Functions
  ;
- ; Product: Enterprise Web Developer (Build 910)
- ; Build Date: Wed, 25 Apr 2012 17:59:25
+ ; Product: Enterprise Web Developer (Build 931)
+ ; Build Date: Fri, 27 Jul 2012 12:05:04
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -586,7 +586,7 @@ pageIndex(app,filename,nextPageList) ;
  ;
  n nextPage,np
  ;
- i technology="wl"!(technology="gtm")!(technology="ewd") s app=appx
+ i technology="wl"!(technology="gtm")!(technology="ewd")!(technology="node") s app=appx
  i $g(rawApp)'="" s app=rawApp
  i $e(filename,1,3)'="ewd",isAjax s ^%zewdIndex($$zcvt^%zewdAPI(app,"l"),"pages",$p(filename,".ewd",1))=$g(config("isFirstPage"))
  s nextPage=""
@@ -694,7 +694,7 @@ getProperty(nodeOID,attrValues,docOID,technology)
 	. d
 	. . n serverOID,text,useSessGlo
 	. . s useSessGlo=+$g(^%zewd("config","csp","useSessionGlobal"))=1
-	. . i technology="wl"!(technology="gtm")!(technology="ewd") s useSessGlo=1
+	. . i technology="wl"!(technology="gtm")!(technology="ewd")!(technology="node") s useSessGlo=1
 	. . i 'useSessGlo s text=" s "_return_"=%session.Data("_sname_subList_","_propertyName_")"
 	. . i useSessGlo s text=" s "_return_"=^%zewdSession(""session"","_sname_subList_","_propertyName_")"
 	. . s serverOID=$$addCSPServerScript^%zewdCompiler4(nodeOID,text)
@@ -738,29 +738,6 @@ include(nodeOID,attrValues,docOID,technology)
 	;
 	do removeIntermediateNode^%zewdCompiler4(nodeOID)
 	;
-	QUIT
-	;
-movetag(nodeOID,attrValues,docOID,technology)
-	;
-	; <ewd:moveTag name="qm:tags" deleteOuterTag="true">
-	; 
-	n delete,docName,ntags,OIDArray,stop,tagName,tagOID
-	;
-	s tagName=$$getNormalAttributeValue^%zewdAPI("name",nodeOID,technology)
-	s delete=$$getNormalAttributeValue^%zewdAPI("deleteoutertag",nodeOID,technology)
-	s tagName=$$removeQuotes^%zewdAPI(tagName)
-	s delete=$$removeQuotes^%zewdAPI(delete)
-	i $$zcvt^%zewdAPI(delete,"l")="true" s delete=1
-	e  s delete=0
-	s docName=$$getDocumentName^%zewdDOM(docOID)
-	s ntags=$$getTagsByName^%zewdCompiler(tagName,docName,.OIDArray)
-	s tagOID="",stop=0
-	f  s tagOID=$o(OIDArray(tagOID)) q:tagOID=""  d  q:stop
-	. i $$getParentNode^%zewdDOM(tagOID)'="" s stop=1
-	s tagOID=$$removeChild^%zewdAPI(tagOID)
-	s tagOID=$$appendChild^%zewdDOM(tagOID,nodeOID)
-	i delete do removeIntermediateNode^%zewdCompiler4(tagOID)
-	do removeIntermediateNode^%zewdCompiler4(nodeOID)
 	QUIT
 	;
 testFindCustomTags
@@ -1264,7 +1241,7 @@ ewdConfig(docName,phpHeaderArray,routineName,technology,dataTypeList,inputPath,f
 	. s config("secureRequest")=$$getAttributeValue^%zewdDOM("securerequest",1,nodeOID)
 	. i config("secureRequest")="" s config("secureRequest")="true"
 	. s config("errorPage")=$$getAttributeValue^%zewdDOM("errorpage",1,nodeOID)
-	. i config("errorPage")="" s config("errorPage")="ewdError"
+	. i $g(config("isFirstPage")),config("errorPage")="" s config("errorPage")="ewdError"
 	. s config("errorClass")=$$getAttributeValue^%zewdDOM("errorclass",1,nodeOID)
 	. s config("mgwsiServer")=$$getAttributeValue^%zewdDOM("mgwsiserver",1,nodeOID)
 	. i config("mgwsiServer")="" s config("mgwsiServer")=$$getAttributeValue^%zewdDOM("mphpserver",1,nodeOID)

@@ -1,7 +1,7 @@
 %zewdCompiler16	; Enterprise Web Developer Compiler Functions
  ;
- ; Product: Enterprise Web Developer (Build 920)
- ; Build Date: Fri, 25 May 2012 11:57:23
+ ; Product: Enterprise Web Developer (Build 931)
+ ; Build Date: Fri, 27 Jul 2012 12:05:04
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -26,7 +26,7 @@
  ; | along with this program.  If not, see <http://www.gnu.org/licenses/>.    |
  ; ----------------------------------------------------------------------------
  ;
- QUIT
+ ;QUIT
  ;
  ;
 mergeToJSObject(nodeOID,attrValues,docOID,technology)

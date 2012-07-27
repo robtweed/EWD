@@ -1,7 +1,7 @@
 %zewdExt4Code ; Extjs 4 Runtime Logic
  ;
- ; Product: Enterprise Web Developer (Build 920)
- ; Build Date: Fri, 25 May 2012 11:57:23
+ ; Product: Enterprise Web Developer (Build 931)
+ ; Build Date: Fri, 27 Jul 2012 12:05:05
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -35,6 +35,7 @@ preProcess(sessid)
  ;
  ; Panel addTo pre-processing
  ;
+ ;d trace^%zewdAPI("in preProcess")
  ;s page=$$getRequestValue^%zewdAPI("page",sessid)
  f name="ext4_addTo","ext4_removeAll" d
  . s xname="tmp_"_$p(name,"_",2)
@@ -45,6 +46,7 @@ preProcess(sessid)
  . . ;n arr
  . . ;s arr(page)=var
  . . ;d mergeArrayToSession^%zewdAPI(.arr,name,sessid)
+ . . ;d trace^%zewdAPI("xname="_xname)
  . . d setSessionValue^%zewdAPI(xname,var,sessid)
  ;
  QUIT
@@ -66,31 +68,39 @@ gridValidationFail(sessid,alertMessage,alertTitle)
  QUIT js_":var e=EWD.ext4.e;e.record.data[e.field] = '"_originalValue_"'; e.record.commit();Ext.Msg.alert('"_alertTitle_"','"_alertMessage_"');"
  ;
 setTextAreaValue(array,fieldName,sessid)
- ;
- n lf,lineNo,text
- ;
- s text=""
- s lf=""
- s lineNo=""
- f  s lineNo=$o(array(lineNo)) q:lineNo=""  d
- . s text=text_lf_array(lineNo)
- . s lf="\n"
- d setSessionValue^%zewdAPI(fieldName,text,sessid)
- ;
+ d createTextArea^%zewdAPI($g(fieldName),.array,sessid)
  QUIT
  ;
+ ;n lf,lineNo,text
+ ;
+ ;s text=""
+ ;s lf=""
+ ;s lineNo=""
+ ;f  s lineNo=$o(array(lineNo)) q:lineNo=""  d
+ ;. s text=text_lf_array(lineNo)
+ ;. s lf="\n"
+ ;d setSessionValue^%zewdAPI(fieldName,text,sessid)
+ ;
+ ;QUIT
+ ;
 setHtmlEditorValue(array,fieldName,sessid)
+ d createTextArea^%zewdAPI($g(fieldName),.array,sessid)
+ QUIT
  ;
- n lf,lineNo,text
+ ;n lf,lineNo,text
  ;
- s text=""
- s lf=""
- s lineNo=""
- f  s lineNo=$o(array(lineNo)) q:lineNo=""  d
- . s text=text_lf_array(lineNo)
- . s lf="<br>"
- d setSessionValue^%zewdAPI(fieldName,text,sessid)
+ ;s text=""
+ ;s lf=""
+ ;s lineNo=""
+ ;f  s lineNo=$o(array(lineNo)) q:lineNo=""  d
+ ;. s text=text_lf_array(lineNo)
+ ;. s lf="<br>"
+ ;d setSessionValue^%zewdAPI(fieldName,text,sessid)
  ;
+ ;QUIT
+ ;
+addToText(line,textArray)
+ s textArray($increment(textArray))=line
  QUIT
  ;
 writeGridStore(sessionName,columnDef,id,storeId,groupField,sessid)
@@ -98,17 +108,17 @@ writeGridStore(sessionName,columnDef,id,storeId,groupField,sessid)
  ; Generate and write out the Model, Store and Column 
  ; definitions for a gridPanel
  ;
- n cols,comma,comma2,data,grouping,name,namex,no,value
+ n cols,comma,comma2,data,grouping,name,namex,no,text,value
  ;
  i columnDef'="" d mergeArrayFromSession^%zewdAPI(.cols,columnDef,sessid)
  d mergeArrayFromSession^%zewdAPI(.data,sessionName,sessid)
  ;
- w "EWD.ext4.grid['"_id_"'] = {"_$c(13,10)
- w "  combo: {"_$c(13,10)
- w "    index: {},"_$c(13,10)
- w "    store: {}"_$c(13,10)
- w "  }"_$c(13,10)
- w "};"_$c(13,10)
+ d addToText("EWD.ext4.grid['"_id_"'] = {"_$c(13,10),.text)
+ d addToText("  combo: {"_$c(13,10),.text)
+ d addToText("    index: {},"_$c(13,10),.text)
+ d addToText("    store: {}"_$c(13,10),.text)
+ d addToText("  }"_$c(13,10),.text)
+ d addToText("};"_$c(13,10),.text)
  ;
  ; Model
  ;
@@ -133,46 +143,46 @@ writeGridStore(sessionName,columnDef,id,storeId,groupField,sessid)
  . . . s no=no+1
  . . . s cols(no,"name")=name
  d
- . w "Ext.define('"_id_"Model',{"
- . w "extend:'Ext.data.Model',"
- . w "fields:["
+ . d addToText("Ext.define('"_id_"Model',{",.text)
+ . d addToText("extend:'Ext.data.Model',",.text)
+ . d addToText("fields:[",.text)
  . ;s no="",comma=""
  . s no="",comma=","
- . w "{name: 'zewdRowNo'}"
+ . d addToText("{name: 'zewdRowNo'}",.text)
  . f  s no=$o(cols(no)) q:no=""  d
  . . s name=$g(cols(no,"name"))
- . . w comma_"{name:'"_name_"'"
- . . i $g(cols(no,"xtype"))="booleancolumn" w ",type: 'boolean'"
- . . i $g(cols(no,"xtype"))="datecolumn" w ",type: 'date'"
- . . i $g(cols(no,"xtype"))="numbercolumn" w ",type: 'number'"
- . . w "}"
+ . . d addToText(comma_"{name:'"_name_"'",.text)
+ . . i $g(cols(no,"xtype"))="booleancolumn" d addToText(",type: 'boolean'",.text)
+ . . i $g(cols(no,"xtype"))="datecolumn" d addToText(",type: 'date'",.text)
+ . . i $g(cols(no,"xtype"))="numbercolumn" d addToText(",type: 'number'",.text)
+ . . d addToText("}",.text)
  . . i $g(cols(no,"groupField"))="true" d
  . . . s grouping=name
  . . s comma=","
- . w "]"
- . w "});"_$c(13,10)
+ . d addToText("]",.text)
+ . d addToText("});"_$c(13,10),.text)
  ;
  ; Store
  ;
- w "var "_storeId_"=Ext.create('Ext.data.Store',{"
- w "model:'"_id_"Model',"
- w "id:'"_storeId_"',"
- w "data:["
+ d addToText("var "_storeId_"=Ext.create('Ext.data.Store',{",.text)
+ d addToText("model:'"_id_"Model',",.text)
+ d addToText("id:'"_storeId_"',",.text)
+ d addToText("data:[",.text)
  s no="",comma=""
  f  s no=$o(data(no)) q:no=""  d
- . w comma_"{"
+ . d addToText(comma_"{",.text)
  . ;s name="",comma2=""
  . s name="",comma2=","
- . w "zewdRowNo: '"_no_"'"
+ . d addToText("zewdRowNo: '"_no_"'",.text)
  . f  s name=$o(data(no,name)) q:name=""  d
  . . s value=$g(data(no,name))
- . . w comma2_$$quotedName(name)_":"_$$quotedValue(value)
+ . . d addToText(comma2_$$quotedName(name)_":"_$$quotedValue(value),.text)
  . . s comma2=","
  . s comma=","
- . w "}"
- w "]"
- i grouping'=0 w ",groupField:'"_grouping_"'"
- w "});"_$c(13,10)
+ . d addToText("}",.text)
+ d addToText("]",.text)
+ i grouping'=0 d addToText(",groupField:'"_grouping_"'",.text)
+ d addToText("});"_$c(13,10),.text)
  ;
  ; ComboBox editor Options
  ;
@@ -189,30 +199,30 @@ writeGridStore(sessionName,columnDef,id,storeId,groupField,sessid)
  . i $d(cols(no,"options")) d
  . . n comma,dataIndex,ono
  . . s dataIndex=$g(cols(no,"name"))
- . . w "EWD.ext4.grid['"_id_"'].combo.store['"_dataIndex_"']=["_$c(13,10)
+ . . d addToText("EWD.ext4.grid['"_id_"'].combo.store['"_dataIndex_"']=["_$c(13,10),.text)
  . . s ono="",comma=""
  . . f  s ono=$o(cols(no,"options",ono)) q:ono=""  d
- . . . w comma_"['"_$g(cols(no,"options",ono,"value"))_"','"_$g(cols(no,"options",ono,"displayValue"))_"']"
+ . . . d addToText(comma_"['"_$g(cols(no,"options",ono,"value"))_"','"_$g(cols(no,"options",ono,"displayValue"))_"']",.text)
  . . . s comma=","
- . . w "];"_$c(13,10)
- . . w "EWD.ext4.grid['"_id_"'].combo.index['"_dataIndex_"']={"_$c(13,10)
+ . . d addToText("];"_$c(13,10),.text)
+ . . d addToText("EWD.ext4.grid['"_id_"'].combo.index['"_dataIndex_"']={"_$c(13,10),.text)
  . . s ono="",comma=""
  . . f  s ono=$o(cols(no,"options",ono)) q:ono=""  d
- . . . w comma_"'"_$g(cols(no,"options",ono,"value"))_"':'"_$g(cols(no,"options",ono,"displayValue"))_"'"
+ . . . d addToText(comma_"'"_$g(cols(no,"options",ono,"value"))_"':'"_$g(cols(no,"options",ono,"displayValue"))_"'",.text)
  . . . s comma=","
- . . w "};"_$c(13,10)
+ . . d addToText("};"_$c(13,10),.text)
  . . s cols(no,"renderer")=".function (value, metaData, record, rowIndex, colIndex) {return EWD.ext4.grid['"_id_"'].combo.index['"_dataIndex_"'][value];}"
  ;
  ; Columns
  ;
  i columnDef'="" d
- . w "EWD.ext4.grid['"_id_"'].cols=["
+ . d addToText("EWD.ext4.grid['"_id_"'].cols=[",.text)
  . ;w "var "_id_"Cols=["
  . ;s no="",comma=""
  . s no="",comma=","
- . w "{dataIndex:'zewdRowNo', hidden: true}"
+ . d addToText("{dataIndex:'zewdRowNo', hidden: true}",.text)
  . f  s no=$o(cols(no)) q:no=""  d
- . . w comma_"{"
+ . . d addToText(comma_"{",.text)
  . . s name="",comma2=""
  . . f  s name=$o(cols(no,name)) q:name=""  d
  . . . s namex=name
@@ -227,32 +237,33 @@ writeGridStore(sessionName,columnDef,id,storeId,groupField,sessid)
  . . . i name="icon" d  q
  . . . . n attr,iconNo,comma3,comma4,value
  . . . . i $d(cols(no,"icon")) d
- . . . . . w comma2_"items:["
+ . . . . . d addToText(comma2_"items:[",.text)
  . . . . . s comma2=","
  . . . . s iconNo="",comma3=""
  . . . . f  s iconNo=$o(cols(no,"icon",iconNo)) q:iconNo=""  d
- . . . . . w comma3_"{"
+ . . . . . d addToText(comma3_"{",.text)
  . . . . . s comma4="",attr=""
  . . . . . i $g(cols(no,"icon",iconNo,"nextPage"))'="" d
  . . . . . . n fn,i
  . . . . . . s fn="function(me,rowIndex) {"
  . . . . . . s fn=fn_"var nvp=""row=""+EWD.ext4.getGridRowNo(me,rowIndex);"
+ . . . . . . i $g(cols(no,"icon",iconNo,"nvp"))'="" s fn=fn_"nvp=nvp+""&"_cols(no,"icon",iconNo,"nvp")_""";"
  . . . . . . i $g(cols(no,"icon",iconNo,"addTo"))'="" s fn=fn_"nvp=nvp+""&ext4_addTo="_cols(no,"icon",iconNo,"addTo")_""";"
  . . . . . . i $g(cols(no,"icon",iconNo,"replacePreviousPage"))="true" s fn=fn_"nvp=nvp+""&ext4_removeAll=true"";"
  . . . . . . s fn=fn_"; EWD.ajax.getPage({page:"""_cols(no,"icon",iconNo,"nextPage")_""",nvp:nvp});"
  . . . . . . s fn=fn_"}"
  . . . . . . s cols(no,"icon",iconNo,"handler")=fn
- . . . . . . f i="nextPage","addTo","replacePreviousPage" k cols(no,"icon",iconNo,i)
+ . . . . . . f i="nextPage","addTo","replacePreviousPage","nvp" k cols(no,"icon",iconNo,i)
  . . . . . f  s attr=$o(cols(no,"icon",iconNo,attr)) q:attr=""  d
  . . . . . . s value=cols(no,"icon",iconNo,attr)
- . . . . . . w comma4_attr_":"_$$quotedValue(value)
+ . . . . . . d addToText(comma4_attr_":"_$$quotedValue(value),.text)
  . . . . . . s comma4=","
- . . . . . w "}"
+ . . . . . d addToText("}",.text)
  . . . . . s comma3=","
- . . . . w "]"
+ . . . . d addToText("]",.text)
  . . . i name="editas" d  ;  q
  . . . . n key,value2
- . . . . w comma2_"editor: {xtype:'"_value_"'"
+ . . . . d addToText(comma2_"editor: {xtype:'"_value_"'",.text)
  . . . . i value="combobox" d
  . . . . . n dataIndex
  . . . . . s dataIndex=$g(cols(no,"name"))
@@ -265,15 +276,21 @@ writeGridStore(sessionName,columnDef,id,storeId,groupField,sessid)
  . . . . s key=""
  . . . . f  s key=$o(cols(no,"editor",key)) q:key=""  d
  . . . . . s value2=cols(no,"editor",key)
- . . . . . w ","_key_":"_$$quotedValue(value2)
- . . . . w "}"_$c(13,10)
+ . . . . . d addToText(","_key_":"_$$quotedValue(value2),.text)
+ . . . . d addToText("}"_$c(13,10),.text)
  . . . . s comma2=","
- . . . w comma2_namex_":"_$$quotedValue(value)
+ . . . d addToText(comma2_namex_":"_$$quotedValue(value),.text)
  . . . s comma2=","
  . . s comma=","
- . . w "}"
- . w "];"_$c(13,10)
+ . . d addToText("}",.text)
+ . d addToText("];"_$c(13,10),.text)
  ;
+ i $$getSessionValue^%zewdAPI("ewd_technology",sessid)="node" d
+ . n i
+ . f i=1:1:text s ^CacheTempBuffer($j,$increment(^CacheTempBuffer($j)))=text(i)
+ e  d
+ . n i
+ . f i=1:1:text w text(i)
  QUIT
  ;
 quotedValue(value)
@@ -291,15 +308,60 @@ quotedName(name)
  i name'?.AN s name="'"_name_"'"
  QUIT name
  ;
+writeTextArea(id,sessid)
+ n lf,line,no,text,textArray
+ d mergeArrayFromSession^%zewdAPI(.text,"ewd_textarea",sessid)
+ d addToText("EWD.ext4.textarea['"_id_"']=""",.textArray)
+ s no=0,lf=""
+ f  s no=$o(text(id,no)) q:no=""  d
+ . s line=text(id,no)
+ . s line=$$replaceAll^%zewdAPI(line,"""","\""")
+ . d addToText(lf_line,.textArray)
+ . s lf="\n"
+ d addToText(""";"_$c(13,10),.textArray)
+ i $$getSessionValue^%zewdAPI("ewd_technology",sessid)="node" d
+ . n i
+ . f i=1:1:textArray s ^CacheTempBuffer($j,$increment(^CacheTempBuffer($j)))=textArray(i)
+ e  d
+ . n i
+ . f i=1:1:textArray w textArray(i)
+ QUIT
+ ;
+writeHtmlEditorText(id,sessid)
+ n lf,line,no,text,textArray
+ d mergeArrayFromSession^%zewdAPI(.text,"ewd_textarea",sessid)
+ d addToText("EWD.ext4.textarea['"_id_"']=""",.textArray)
+ s no=0,lf=""
+ f  s no=$o(text(id,no)) q:no=""  d
+ . s line=text(id,no)
+ . s line=$$replaceAll^%zewdAPI(line,"""","\""")
+ . d addToText(lf_line,.textArray)
+ . s lf="<br />"
+ d addToText(""";"_$c(13,10),.textArray)
+ i $$getSessionValue^%zewdAPI("ewd_technology",sessid)="node" d
+ . n i
+ . f i=1:1:textArray s ^CacheTempBuffer($j,$increment(^CacheTempBuffer($j)))=textArray(i)
+ e  d
+ . n i
+ . f i=1:1:textArray w textArray(i)
+ QUIT
+ ;
+writeLine(line)
+ i $$getSessionValue^%zewdAPI("ewd_technology",sessid)="node" d
+ . s ^CacheTempBuffer($j,$increment(^CacheTempBuffer($j)))=line
+ e  d
+ . w line
+ QUIT
+ ;
 writeGroupFields(sessionName,id,name,xtype,sessid)
  ;
- n checkedValue,cv,fieldName,fields,itemsId,no,selected
+ n checkedValue,cv,fieldName,fields,itemsId,no,selected,textArray
  ;
  d mergeArrayFromSession^%zewdAPI(.fields,sessionName,sessid)
  i xtype="radiofield" s checkedValue=$$getSessionValue^%zewdAPI(name,sessid)
  i xtype="checkboxfield" d mergeFromSelected^%zewdAPI(name,.selected,sessid)
  s itemsId=id_"Items"
- w itemsId_"="_$c(13,10)
+ d writeLine(itemsId_"="_$c(13,10))
  s no=""
  f  s no=$o(fields(no)) q:no=""  d
  . i xtype="radiofield" d
@@ -330,7 +392,7 @@ writeGroupFields(sessionName,id,name,xtype,sessid)
  . . i value="" s value="undefinedValue"
  . . i $d(cv(value)) s fields(no,"checked")="true"
  d streamArrayToJSON^%zewdJSON("fields")
- w ";"_$c(13,10)
+ d writeLine(";"_$c(13,10))
  QUIT
  ;
 writeTreeStore(sessionName,storeId,page,addTo,replace,expanded,sessid)
@@ -343,9 +405,9 @@ writeTreeStore(sessionName,storeId,page,addTo,replace,expanded,sessid)
  s yArray("id")=storeId
  s yArray("root","expanded")="false"
  i expanded s yArray("root","expanded")="true"
- w "var "_storeId_"=Ext.create('Ext.data.TreeStore',"
+ d writeLine("var "_storeId_"=Ext.create('Ext.data.TreeStore',")
  d streamArrayToJSON^%zewdJSON("yArray")
- w ");"_$c(13,10)
+ d writeLine(");"_$c(13,10))
  ;
  QUIT
  ;
@@ -408,12 +470,12 @@ writeButtonMenu(sessionName,menuId,page,addTo,replace,sessid)
  s text=text_"  EWD.ajax.getPage({page:item.page,nvp:nvp});"_$c(13,10)
  s text=text_"}"_$c(13,10)
  s text=text_"};"_$c(13,10)
- w text
+ d writeLine(text)
  d mergeArrayFromSession^%zewdAPI(.menu,sessionName,sessid)
  d expandMenuArray(.menu,.xArray,page,addTo,replace,menuId)
- w "var "_menuId_"="
+ d writeLine("var "_menuId_"=")
  d streamArrayToJSON^%zewdJSON("xArray")
- w ";"_$c(13,10)
+ d writeLine(";"_$c(13,10))
  QUIT
  ;
 expandMenuArray(inArray,outArray,page,addTo,replace,menuId,id)
@@ -462,27 +524,27 @@ writeComboBoxStore(fieldName,sessid)
  n comma,d,list,name,no,value,values
  ;
  d mergeArrayFromSession^%zewdAPI(.list,"ewd_list",sessid)
- w "var "_fieldName_"=Ext.create('Ext.data.Store',{"_$c(13,10)
- w " fields:['name','value'],"_$c(13,10)
- w " data:["
+ d writeLine("var "_fieldName_"=Ext.create('Ext.data.Store',{"_$c(13,10))
+ d writeLine(" fields:['name','value'],"_$c(13,10))
+ d writeLine(" data:[")
  s no="",comma=""
  f  s no=$o(list(fieldName,no)) q:no=""  d
  . s d=list(fieldName,no)
  . s name=$p(d,$c(1),1)
  . s value=$p(d,$c(1),2)
- . w comma_"  {'name':'"_name_"','value':'"_value_"'}"_$c(13,10)
+ . d writeLine(comma_"  {'name':'"_name_"','value':'"_value_"'}"_$c(13,10))
  . s comma=","
- w " ]"_$c(13,10)
- w "});"_$c(13,10)
+ d writeLine(" ]"_$c(13,10))
+ d writeLine("});"_$c(13,10))
  ;
  d getMultipleSelectValues^%zewdAPI(fieldName,.values,sessid)
  i $d(values) d
- . w "EWD.ext4.form['"_fieldName_"'] = ["
+ . d writeLine("EWD.ext4.form['"_fieldName_"'] = [")
  . s value="",comma=""
  . f  s value=$o(values(value)) q:value=""  d
- . . w comma_"'"_value_"'"
+ . . d writeLine(comma_"'"_value_"'")
  . . s comma=","
- . w "];"_$c(13,10)
+ . d writeLine("];"_$c(13,10))
  ;
  QUIT
  ;
@@ -500,12 +562,12 @@ optionsFromList(listName,dataIndex,gridId,sessid)
  . s array1=array1_comma_"['"_value_"','"_display_"']"
  . s array2=array2_comma_"'"_value_"':'"_display_"'"
  . s comma=","
- w "EWD.ext4.grid['"_gridId_"'].combo.store['"_dataIndex_"']=["_$c(13,10)
- w array1_$c(13,10)
- w "];"_$c(13,10)
- w "EWD.ext4.grid['"_gridId_"'].combo.index['"_dataIndex_"']={"_$c(13,10)
- w array2_$c(13,10)
- w "};"_$c(13,10)
+ d writeLine("EWD.ext4.grid['"_gridId_"'].combo.store['"_dataIndex_"']=["_$c(13,10))
+ d writeLine(array1_$c(13,10))
+ d writeLine("];"_$c(13,10))
+ d writeLine("EWD.ext4.grid['"_gridId_"'].combo.index['"_dataIndex_"']={"_$c(13,10))
+ d writeLine(array2_$c(13,10))
+ d writeLine("};"_$c(13,10))
  QUIT
  ;
 writeJSONStore(sessionName,chartDef,id,storeId,sessid)
@@ -519,21 +581,21 @@ writeJSONStore(sessionName,chartDef,id,storeId,sessid)
  . m axes=chartProps("axes")
  . m series=chartProps("series")
  . m legend=chartProps("legend")
- . w "EWD.ext4.chart['"_id_"'] = {};"_$c(13,10)
- . w "EWD.ext4.chart['"_id_"'].axes="
+ . d writeLine("EWD.ext4.chart['"_id_"'] = {};"_$c(13,10))
+ . d writeLine("EWD.ext4.chart['"_id_"'].axes=")
  . d streamArrayToJSON^%zewdJSON("axes")
- . w ";"_$c(13,10)
- . w "EWD.ext4.chart['"_id_"'].series="
+ . d writeLine(";"_$c(13,10))
+ . d writeLine("EWD.ext4.chart['"_id_"'].series=")
  . d streamArrayToJSON^%zewdJSON("series")
- . w ";"_$c(13,10)
- . w "EWD.ext4.chart['"_id_"'].legend="
+ . d writeLine(";"_$c(13,10))
+ . d writeLine("EWD.ext4.chart['"_id_"'].legend=")
  . i $d(legend) d
  . . d streamArrayToJSON^%zewdJSON("legend")
  . e  d
- . . w "false"
- . w ";"_$c(13,10)
+ . . d writeLine("false")
+ . d writeLine(";"_$c(13,10))
  ;
- w "var "_storeId_"=Ext.create('Ext.data.JsonStore',"
+ d writeLine("var "_storeId_"=Ext.create('Ext.data.JsonStore',")
  d mergeArrayFromSession^%zewdAPI(.chart,sessionName,sessid)
  ;
  ; find maximum row number
@@ -551,7 +613,7 @@ writeJSONStore(sessionName,chartDef,id,storeId,sessid)
  . . s array("data",recordNo,fieldName)=value
  s array("id")=storeId
  d streamArrayToJSON^%zewdJSON("array")
- w ");"_$c(13,10)
+ d writeLine(");"_$c(13,10))
  QUIT
  ;
 writeDesktopConfig(sessionName,sessid)
@@ -572,9 +634,198 @@ writeDesktopConfig(sessionName,sessid)
  i $g(desktop("logoutFn"))="" s desktop("logoutFn")="function() {alert('No Logout Function was specified');}"
  s desktop("logoutFn")="<?= "_desktop("logoutFn")_" ?>"
  i $g(desktop("username"))="" s desktop("username")="Unspecified User"
- w "EWD.desktop="
+ d writeLine("EWD.desktop=")
  d streamArrayToJSON^%zewdJSON("desktop")
- w ";"_$c(13,10)
+ d writeLine(";"_$c(13,10))
+ QUIT
+ ;
+writeJSONContent(sessionName,parentId,configOption,xtype,sessid)
+ ;
+ n def,no
+ ;
+ d mergeArrayFromSession^%zewdAPI(.def,sessionName,sessid)
+ ;i xtype="form" d formArray(configOption,.def)
+ i xtype="form" d
+ . n id,no
+ . s no=$o(def(""),-1)+1
+ . s id="ewd_action"_parentId
+ . s def(no,"name")="ewd_action"
+ . s def(no,"id")=id
+ . s def(no,"value")="zewdSTForm"_parentId
+ . s def(no,"xtype")="hiddenfield"
+ i $$substValues(.def,sessid)
+ d formArray(configOption,.def)
+ d writeLine("if (typeof EWD.ext4.items['"_parentId_"'] === 'undefined') EWD.ext4.items['"_parentId_"']={};"_$c(13,10))
+ d writeLine("EWD.ext4.items['"_parentId_"']['"_configOption_"']=")
+ d streamArrayToJSON^%zewdJSON("def")
+ d writeLine(";"_$c(13,10))
+ QUIT
+ ;
+writeArchitectContent(device,filepath,parentId,configOption,sessid)
+ ;
+ n array,def,ok
+ ;
+ i device="file" d
+ . s ok=$$ExtJSToArray(filepath,.array)
+ i device="global" d
+ . m array=^zewd("extjs",filepath,parentId)
+ i '$d(array(1)) d
+ . m def(1)=array
+ e  d
+ . m def=array
+ i $$substValues(.def,sessid)
+ d formArray(configOption,.def)
+ d writeLine("if (typeof EWD.ext4.items['"_parentId_"'] === 'undefined') EWD.ext4.items['"_parentId_"']={};"_$c(13,10))
+ d writeLine("EWD.ext4.items['"_parentId_"']['"_configOption_"']=")
+ d streamArrayToJSON^%zewdJSON("def")
+ d writeLine(";"_$c(13,10))
+ QUIT
+ ;
+substValues(def,sessid)
+ ;
+ n changed,config,value
+ ;
+ s config=""
+ s changed=0
+ f  s config=$o(def(config)) q:config=""  d
+ . s value=$g(def(config))
+ . d
+ . . i $e(value,1)="#",$e(value,2)'="#" d  q
+ . . . s value=$e(value,2,$l(value))
+ . . . s def(config)=$$getSessionValue^%zewdAPI(value,sessid)
+ . . . s changed=1
+ . . i $e(value,1)="[" d
+ . . . n array,sessionName
+ . . . s sessionName=$e(value,2,$l(value-1))
+ . . . d mergeArrayToSession^%zewdAPI(.array,sessionName,sessid)
+ . . . m def(config)=array
+ . i $d(def(config))=10 d
+ . . n subArray
+ . . m subArray=def(config)
+ . . s changed=$$substValues(.subArray,sessid)
+ . . i changed d
+ . . . k def(config)
+ . . . m def(config)=subArray
+ QUIT changed
+ ;
+formArray(configOption,def,subLevel,formInfo,formId)
+ ;
+ n array,id,info,ino,name,no,sarray,sessionArray,type,xtype
+ ;
+ i '$d(def(1)) d  q
+ . s xtype=$g(def("xtype"))
+ . i xtype="form" d
+ . . n subItems
+ . . m subItems=def("items")
+ . . i $d(subItems) d
+ . . . d formArray("items",.subItems)
+ . . . k def("items")
+ . . . m def("items")=subItems
+ ;
+ i configOption="items" d
+ . s ino=""
+ . i $g(subLevel)="" s formInfo=""
+ . f  s ino=$o(def(ino)) q:ino=""  d
+ . . s id=$g(def(ino,"id"))
+ . . s name=$g(def(ino,"name"))
+ . . i name="ewd_action" d
+ . . . d setMethodAndNextPage^%zewdWLD(def(ino,"value"),"","",formInfo,.sessionArray)
+ . . . m ^%zewdSession("action",sessid)=sessionArray("ewd_Action") break
+ . . s xtype=$g(def(ino,"xtype"))
+ . . i xtype="" s xtype=$g(def(ino,"ptype"))
+ . . ;
+ . . i xtype="form" d
+ . . . n aid,subItems
+ . . . i id="" d
+ . . . . s id=parentId_"form"_ino
+ . . . . s def(ino,"id")=id
+ . . . m subItems=def(ino,"items")
+ . . . i $d(subItems) d
+ . . . . d formArray("items",.subItems,1,.formInfo,id)
+ . . . . k def(ino,"items")
+ . . . . m def(ino,"items")=subItems
+ . . . s no=$o(def(ino,"items",""),-1)+1
+ . . . s aid="ewd_action"_id
+ . . . s def(ino,"items",no,"name")="ewd_action"
+ . . . s def(ino,"items",no,"id")=aid
+ . . . s def(ino,"items",no,"value")="zewdSTForm"_parentId
+ . . . s def(ino,"items",no,"xtype")="hiddenfield"
+ . . . d setMethodAndNextPage^%zewdWLD(def(ino,"items",no,"value"),"","",formInfo,.sessionArray)
+ . . . m ^%zewdSession("action",sessid)=sessionArray("ewd_Action") 
+ . . ;
+ . . i xtype="radiogroup"!(xtype="checkboxgroup")!(xtype="fieldset")!(xtype="fieldcontainer")!(xtype="toolbar") d  q
+ . . . n subItems
+ . . . m subItems=def(ino,"items")
+ . . . i $d(subItems) d
+ . . . . d formArray(configOption,.subItems,$g(subLevel)+1,.formInfo,$g(formId))
+ . . . . k def(ino,"items")
+ . . . . m def(ino,"items")=subItems
+ . . s type="text"
+ . . i xtype="radiofield" s type="radio"
+ . . i xtype="checkboxfield" s type="checkbox"
+ . . i xtype="textareafield" s type="textarea"
+ . . i xtype["field" d
+ . . . d
+ . . . . i id="",name'="" d  q
+ . . . . . i type="checkbox"!(type="radio") s def(ino,"id")=name_ino q
+ . . . . . s def(ino,"id")=name q
+ . . . . i id'="",name="" s def(ino,"name")=id q
+ . . . . i id="",name="" d
+ . . . . . s def(ino,"id")="undefinedField"
+ . . . . . s def(ino,"name")="undefinedField"
+ . . . s info=def(ino,"name")_"|"_type
+ . . . i formInfo'[info s formInfo=formInfo_info_"`"
+ . . . i type="text"!(type="textarea"),name'="ewd_action" s def(ino,"value")=$$getSessionValue^%zewdAPI(def(ino,"name"),sessid)
+ . . . i type="radio"!(type="checkbox") d  q
+ . . . . k def(ino,"checked")
+ . . . . i type="radio",$g(def(ino,"inputValue"))=$$getSessionValue^%zewdAPI(def(ino,"name"),sessid) s def(ino,"checked")="true"
+ . . . . i type="checkbox",$$isCheckboxOn^%zewdAPI(def(ino,"name"),$g(def(ino,"inputValue")),sessid) s def(ino,"checked")="true"
+ . . i xtype="combobox" d
+ . . . n d,fname,list,name,no,store,value
+ . . . s fname=def(ino,"name")
+ . . . k def(ino,"store")
+ . . . s def(ino,"displayField")="name"
+ . . . s def(ino,"valueField")="value"
+ . . . s def(ino,"queryMode")="local"
+ . . . s def(ino,"store","fields",1)="name"
+ . . . s def(ino,"store","fields",2)="value"
+ . . . d mergeArrayFromSession^%zewdAPI(.list,"ewd_list",sessid)
+ . . . s no=""
+ . . . f  s no=$o(list(fname,no)) q:no=""  d
+ . . . . s d=list(fname,no)
+ . . . . s name=$p(d,$c(1),1)
+ . . . . s value=$p(d,$c(1),2)
+ . . . . s def(ino,"store","data",no,"name")=name
+ . . . . s def(ino,"store","data",no,"value")=value
+ . . i xtype="button" d buttonHandler(ino,$g(formId),.def)
+ . . i xtype="form",$d(def(ino,"dockedItems")) d
+ . . . n subItems
+ . . . m subItems=def(ino,"dockedItems")
+ . . . i $d(subItems) d
+ . . . . d formArray(configOption,.subItems,$g(subLevel)+1,.formInfo,id)
+ . . . . k def(ino,"dockedItems")
+ . . . . m def(ino,"dockedItems")=subItems
+ ;
+ i configOption="buttons" d
+ . n addTo,bno,nextpage,replace
+ . s bno=""
+ . f  s bno=$o(def(bno)) q:bno=""  d
+ . . d buttonHandler(bno,parentId,.def)
+ QUIT
+ ;
+buttonHandler(no,parentId,def)
+ ;
+ n addTo,nextpage,replace
+ ;
+ s nextpage=$g(def(no,"nextpage")) k def(no,"nextpage")
+ s addTo=$g(def(no,"addTo")) 
+ k def(no,"addTo")
+ ;i addTo="" s addTo="undefinedContainer"
+ s replace=$g(def(no,"replacePreviousPage"))
+ k def(no,"replacePreviousPage")
+ i replace="" s replace=0
+ i replace="true" s replace=1
+ i nextpage'="" s def(no,"handler")="function() {EWD.ext4.submit('"_parentId_"','"_nextpage_"','"_addTo_"',"_replace_")}"
  QUIT
  ;
 clearFieldErrors(sessid)
@@ -624,6 +875,49 @@ setFieldErrorAlert(title,message,sessid)
  d setSessionValue^%zewdAPI("ewd.form.alertMessage",message,sessid)
  QUIT
  ;
+ExtJSToArray(filepath,array,maxlength)
+ ;
+ n i,io,line,nlines,ok,json
+ ;
+ s io=$io
+ k ^CacheTempEWD($j)
+ s nlines=$$importFile^%zewdHTMLParser(filepath,$g(maxLength))
+ u io
+ s json=""
+ f i=1:1:nlines d
+ . s line=$g(^CacheTempEWD($j,i))
+ . s line=$$replaceAll^%zewdAPI(line,$c(13,10),"")
+ . s line=$$replaceAll^%zewdAPI(line,$c(10),"")
+ . s json=json_line
+ k ^CacheTempEWD($j)
+ i nlines'>0 QUIT 0
+ s ok=$$parseJSON^%zewdJSON(json,.array,1)
+ i ok'="" QUIT 0
+ QUIT 1
+ ;
+importExtJS(filepath,app,id,maxlength)
+ ;
+ n array,i,line,nlines,ok,json
+ ;
+ s ok=$$ExtJSToArray(filepath,.array,$g(maxlength))
+ i 'ok QUIT 0
+ s app=$$zcvt^%zewdAPI(app,"l")
+ s id=$$zcvt^%zewdAPI(id,"l")
+ k ^zewd("extjs",app,id)
+ m ^zewd("extjs",app,id)=array
+ QUIT 1
+ ;
+getExtJS(sessionName,app,id,sessid)
+ ;
+ n array
+ ;
+ i $g(app)="" QUIT
+ i $g(id)="" QUIT
+ m array=^zewd("extjs",app,id)
+ d deleteFromSession^%zewdAPI(sessionName,sessid)
+ d mergeArrayToSession^%zewdAPI(.array,sessionName,sessid)
+ QUIT
+ ;
 createExtFuncs()
  n text
  ;
@@ -633,6 +927,7 @@ createExtFuncs()
  s text=text_"  chart: {},"_$c(13,10)
  s text=text_"  items: {},"_$c(13,10)
  s text=text_"  grid: {},"_$c(13,10)
+ s text=text_"  textarea: {},"_$c(13,10)
  s text=text_"  setGauge: function(id,value) {"_$c(13,10)
  s text=text_"    Ext.getCmp(id).store.loadData([{value:value}]);"_$c(13,10)
  s text=text_"  },"_$c(13,10)
@@ -655,6 +950,7 @@ createExtFuncs()
  s text=text_"    var nvp='';"_$c(13,10)
  s text=text_"    var amp='';"_$c(13,10)
  s text=text_"    var value;"_$c(13,10)
+ s text=text_"    var values;"_$c(13,10)
  s text=text_"    Ext.getCmp(formPanelId).getForm().getFields().eachKey("_$c(13,10)
  s text=text_"      function(key,item) {"_$c(13,10)
  s text=text_"        if ((item.xtype === 'combobox')&&(item.multiSelect)) {"_$c(13,10)
@@ -669,10 +965,11 @@ createExtFuncs()
  s text=text_"          value = '';"_$c(13,10)
  s text=text_"          if (item.xtype === 'textareafield') {"_$c(13,10)
  s text=text_"            value = escape(item.getValue());"_$c(13,10)
- s text=text_"            value = value.replace(/\+/g, '%2B');"_$c(13,10)
+ s text=text_"            value = value.replace(/\+/g, '%2B');console.log('ta: ' + value)"_$c(13,10)
  s text=text_"          }"_$c(13,10)
  s text=text_"          else if (item.xtype === 'htmleditor') {"_$c(13,10)
- s text=text_"            value = escape(item.getValue());"_$c(13,10)
+ s text=text_"            value = escape(item.getValue());console.log(value);"_$c(13,10)
+ s text=text_"            value = value.replace(/%3Cbr%3E/g, '%0A');"_$c(13,10)
  s text=text_"          }"_$c(13,10)
  s text=text_"          else {"_$c(13,10)
  s text=text_"            if (item.getSubmitValue() !== null) value = item.getSubmitValue();"_$c(13,10)

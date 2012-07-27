@@ -1,7 +1,7 @@
 %zewdAPI	; Enterprise Web Developer run-time functions and user APIs
  ;
- ; Product: Enterprise Web Developer (Build 912)
- ; Build Date: Wed, 02 May 2012 16:47:56
+ ; Product: Enterprise Web Developer (Build 931)
+ ; Build Date: Fri, 27 Jul 2012 12:05:04
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -26,7 +26,7 @@
  ; | along with this program.  If not, see <http://www.gnu.org/licenses/>.    |
  ; ----------------------------------------------------------------------------
  ;
- QUIT
+ ;QUIT
  ;
  ;
 version() ;
@@ -140,10 +140,18 @@ normaliseTextValue(text)
  s text=$$replaceAll(text,"&#39;","'")
  QUIT $$zcvt(text,"o","HTML")
  ;
+writeLine(line,technology)
+ i technology="node" d
+ . s ^CacheTempBuffer($j,$increment(^CacheTempBuffer($j)))=line
+ e  d
+ . w line
+ QUIT
+ ;
 displayOptions(fieldName,listName,escape)
  ;d displayOptions^%zewdCompiler13($g(fieldName),$g(listName),$g(escape))
- n codeValue,%d,i,name,nnvp,nvp,pos,textValue,value
+ n codeValue,%d,i,line,name,nnvp,nvp,pos,technology,textValue,value
  ;
+ s technology=$$getSessionValue^%zewdAPI("ewd.technology",sessid)
  s fieldName=$tr(fieldName,".","_")
  s listName=$tr(listName,".","_")
  i 0
@@ -170,25 +178,34 @@ displayOptions(fieldName,listName,escape)
  . . e  d 
  . . . s codeValueEsc=$$replaceAll(codeValueEsc,"&#39;","'")
  . . . i escape s codeValueEsc=$$zcvt(codeValue,"o","HTML")
- . . w "<option value='"_codeValueEsc_"'"
+ . . s line="<option value='"_codeValueEsc_"'"
+ . . d writeLine(line,technology)
  . . i $e(fieldName,1)'="$" d
  . . . n fn
  . . . s fn=$tr(fieldName,"_",".")
- . . . i $$getSessionValue(fn,sessid)=codeValue w " selected='selected'" q
- . . . i $d(^%zewdSession("session",sessid,"ewd_selected",fieldName,codeValue)) w " selected='selected'" q
+ . . . i $$getSessionValue(fn,sessid)=codeValue d  q
+ . . . . s line=" selected='selected'"
+ . . . . d writeLine(line,technology)
+ . . . i $d(^%zewdSession("session",sessid,"ewd_selected",fieldName,codeValue)) d  q
+ . . . . s line=" selected='selected'"
+ . . . . d writeLine(line,technology)
  . . i $e(fieldName,1)="$" d
  . . . n fieldValue
  . . . s fieldValue=$e(fieldName,2,$l(fieldName))
  . . . s fieldValue=$g(@fieldValue)
- . . . i fieldValue=codeValue w " selected='selected'"
+ . . . i fieldValue=codeValue d
+ . . . . s line=" selected='selected'"
+ . . . . d writeLine(line,technology)
  . . s nnvp=$l(%d,$c(1))
  . . f i=3:1:nnvp d
  . . . s nvp=$p(%d,$c(1),i)
  . . . i nvp="" q
  . . . s name=$p(nvp,$c(3),1)
  . . . s value=$p(nvp,$c(3),2)
- . . . w " "_name_"='"_value_"'"
- . . w ">"_textValueEsc_"</option>"_$c(13,10)
+ . . . s line=" "_name_"='"_value_"'"
+ . . . d writeLine(line,technology)
+ . . s line=">"_textValueEsc_"</option>"_$c(13,10)
+ . . d writeLine(line,technology)
  QUIT
  ;
 displayTextArea(fieldName)
@@ -258,7 +275,7 @@ isCSPPage(docOID)
  ;
 getSessionValue(name,sessid)
  ;
- n %zt,return,value
+ n %zt,return,technology,value
  ;
  s name=$$stripSpaces(name)
  i $g(name)="" QUIT ""
@@ -1173,27 +1190,10 @@ mergeToList(listName,listArray,sessid)
  ;-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
  ;
 removeFromList(listName,codeValue,sessid)
- ;
- ;d removeFromList^%zewdCompiler7(listName,codeValue,sessid)
- n position
- ;
- QUIT:$g(listName)=""
- QUIT:$g(sessid)=""
- QUIT:$g(codeValue)=""
- ;
- s position=$g(^%zewdSession("session",sessid,"ewd_listIndex",listName,codeValue))
- QUIT:position=""
- k ^%zewdSession("session",sessid,"ewd_list",listName,position)
- k ^%zewdSession("session",sessid,"ewd_listIndex",listName,codeValue)
- d setWLDSymbol("ewd_list",sessid)
- d setWLDSymbol("ewd_listIndex",sessid)
+ d removeFromList^%zewdCompiler20($g(listName),$g(codeValue),$g(sessid))
  QUIT
  ;
- ;
- ;-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
- ;
 copyList(fromListName,toListName,sessid)
- ;
  d copyList^%zewdCompiler7($g(fromListName),$g(toListName),$g(sessid))
  QUIT
  ;
@@ -1465,21 +1465,6 @@ saveSymbolTable(sessid)
  s %zzv="%"
  f  s %zzv=$o(@%zzv) Q:%zzv=""  m ^%zewdError(sessid,%zzv)=@%zzv
  QUIT
- ;
-recoverSymbolTable(sessid,web)
- n (sessid,web)
- n %zzv
- s %zzv=""
- f  s %zzv=$o(^%zewdError(sessid,%zzv)) QUIT:%zzv=""  d
- . m @%zzv=^%zewdError(sessid,%zzv)
- d writeSymbolTable(web)
- QUIT
- ;
-writeSymbolTable(web)
- i $g(web) w "<pre>"
- zwrite
- i $g(web) w "</pre>"
- QUIT 
  ;
 loadErrorSymbols(sessid)
  d loadErrorSymbols^%zewdCompiler19($g(sessid))

@@ -1,7 +1,7 @@
 %zewdExt4Map ; Extjs Tag Processor Mappings
  ;
- ; Product: Enterprise Web Developer (Build 918)
- ; Build Date: Sat, 19 May 2012 13:42:28
+ ; Product: Enterprise Web Developer (Build 931)
+ ; Build Date: Fri, 27 Jul 2012 12:05:05
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -32,6 +32,7 @@ mappingObjects
  ;;{tagName:"ext4:accordionpanel",className:"Ext.tab.Panel",xtype:"panel",addAttributes:{layout:"accordion"},xtypeTagName:"ext4:item",containerTag:"ext4:items"}
  ;;{tagName:"ext4:actioncolumn",className:"Ext.grid.column.Action",xtype:"actioncolumn",xtypeTagName:"ext4:item",containerTag:"ext4:columns"}
  ;;{tagName:"ext4:autoel",parse:{method:"object",optionName:"autoEl"}}
+ ;;{tagName:"ext4:architect",parse:{method:"arrayOfOptions",optionName:"items"},pass1Method:"architect"}
  ;;{tagName:"ext4:axes",parse:{method:"arrayOfOptions",optionName:"axes"}}
  ;;{tagName:"ext4:axis",className:"Ext.chart.axis.Axis",xtype:"dummy",xtypeTagName:"ext4:item",containerTag:"ext4:axes",hasId:false,pass1Method:"fieldsAttr"}
  ;;{tagName:"ext4:axisfield",parse:{method:"arrayItem"},pass1Method:"addAxisFields"}
@@ -60,7 +61,7 @@ mappingObjects
  ;;{tagName:"ext4:combobox",className:"Ext.form.field.ComboBox",expandMethod:"expandComboBox",fieldType:"text",xtype:"combobox",xtypeTagName:"ext4:item",containerTag:"ext4:items",pass1Method:"setNameList"}
  ;;{tagName:"ext4:compositesprite",className:"Ext.draw.CompositeSprite",xtype:"dummy",xtypeTagName:"ext4:item",containerTag:"ext4:items"}
  ;;{tagName:"ext4:configoption",parse:{method:"configOption"}}
- ;;{tagName:"ext4:container",className:"Ext.container.Container",xtype:"container",xtypeTagName:"ext4:item",containerTag:"ext4:items"}
+ ;;{tagName:"ext4:container",className:"Ext.container.Container",xtype:"container",xtypeTagName:"ext4:item",containerTag:"ext4:items",expandMethod:"expandContainer",instanceMethod:"containerInstance"}
  ;;{tagName:"ext4:cycle",className:"Ext.button.Cycle"}
  ;;{tagName:"ext4:data",parse:{method:"object",optionName:"data"}}
  ;;{tagName:"ext4:dataarray",parse:{method:"arrayOfOptions",optionName:"data"}}
@@ -93,7 +94,7 @@ mappingObjects
  ;;{tagName:"ext4:gridpanel",className:"Ext.grid.Panel",xtype:"gridpanel",xtypeTagName:"ext4:item",containerTag:"ext4:items",expandMethod:"expandGridPanel",instanceMethod:"gridPanelInstance"}
  ;;{tagName:"ext4:hiddenfield",className:"Ext.form.field.Hidden",xtype:"hiddenfield",fieldType:"text",xtypeTagName:"ext4:item",containerTag:"ext4:items",pass1Method:"setNameList"}
  ;;{tagName:"ext4:highlight",parse:{method:"object",optionName:"highlight"},hasId:false}
- ;;{tagName:"ext4:htmleditorfield",className:"Ext.form.field.HtmlEditor",xtype:"htmleditor",fieldType:"text",xtypeTagName:"ext4:item",containerTag:"ext4:items",expandMethod:"addQuickTipManager",pass1Method:"setNameList"}
+ ;;{tagName:"ext4:htmleditorfield",className:"Ext.form.field.HtmlEditor",xtype:"htmleditor",fieldType:"text",xtypeTagName:"ext4:item",containerTag:"ext4:items",expandMethod:"addQuickTipManager",pass1Method:"setNameList",expandMethod:"expandHtmlEditor",instanceMethod:"htmlEditorInstance"}
  ;;{tagName:"ext4:icon",xtype:"dummy",xtypeTagName:"ext4:item",containerTag:"ext4:items"}
  ;;{tagName:"ext4:image",className:"Ext.Img",xtype:"image",xtypeTagName:"ext4:item",containerTag:"ext4:items"}
  ;;{tagName:"ext4:item",parse:{method:"item"}}
@@ -150,7 +151,7 @@ mappingObjects
  ;;{tagName:"ext4:tabpanel",className:"Ext.tab.Panel",xtype:"tabpanel",xtypeTagName:"ext4:item",containerTag:"ext4:items",pass1Method:"tabPanelActiveTab"}
  ;;{tagName:"ext4:tbar",parse:{method:"arrayOfOptions",optionName:"tbar"}}
  ;;{tagName:"ext4:templatecolumn",className:"Ext.grid.column.Template",xtype:"templatecolumn",xtypeTagName:"ext4:item",containerTag:"ext4:columns"}
- ;;{tagName:"ext4:textareafield",className:"Ext.form.field.TextArea",xtype:"textareafield",fieldType:"textarea",xtypeTagName:"ext4:item",containerTag:"ext4:items",pass1Method:"setNameList"}
+ ;;{tagName:"ext4:textareafield",className:"Ext.form.field.TextArea",xtype:"textareafield",fieldType:"textarea",xtypeTagName:"ext4:item",containerTag:"ext4:items",pass1Method:"setNameList",expandMethod:"expandTextArea",instanceMethod:"textAreaInstance"}
  ;;{tagName:"ext4:textfield",className:"Ext.form.field.Text",xtype:"textfield",fieldType:"text",xtypeTagName:"ext4:item",containerTag:"ext4:items",pass1Method:"setNameList"}
  ;;{tagName:"ext4:timefield",className:"Ext.form.field.Time",xtype:"timefield",fieldType:"text",xtypeTagName:"ext4:item",containerTag:"ext4:items",pass1Method:"setNameList"}
  ;;{tagName:"ext4:textitem",className:"Ext.toolbar.TextItem",xtype:"tbtext",xtypeTagName:"ext4:item",containerTag:"ext4:items"}

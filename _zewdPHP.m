@@ -1,7 +1,7 @@
 %zewdPHP	; Enterprise Web Developer PHP run-time functions and processing
  ;
- ; Product: Enterprise Web Developer (Build 912)
- ; Build Date: Wed, 02 May 2012 16:47:57
+ ; Product: Enterprise Web Developer (Build 931)
+ ; Build Date: Fri, 27 Jul 2012 12:05:05
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -27,7 +27,7 @@
  ; ----------------------------------------------------------------------------
  ;
  ;
- QUIT
+ ;QUIT
  ;
 startSession(page,requestArray,serverArray,sessionArray,filesArray) ;
  ;
@@ -125,6 +125,7 @@ startSession(page,requestArray,serverArray,sessionArray,filesArray) ;
  ;
  ;
  s prePagePass=0
+ ;d trace^%zewdAPI("*** inError="_inError_"; ewd_action = "_$$getSessionValue("ewd_action",sessid))
  i inError'=""!($$getSessionValue("ewd_action",sessid)="") d
  . s prePagePass=1
  . i $g(^zewd("trace")) d trace^%zewdAPI("running prepage script")
@@ -596,7 +597,7 @@ prePageScript(sessid)
  . d
  . . n (%CGIEVAR,error,%KEY,%request,requestArray,serverArray,%session,sessid,x,zewdSession)
  . . x x
- . u io
+ . i io'["nul" u io
  ;
  s $zt="errorTrap^%zewdPHP"
  s method=$$getSessionValue("ewd_prePageScript",sessid)
@@ -614,7 +615,7 @@ prePageScript(sessid)
  d
  . n (%CGIEVAR,error,%KEY,%request,requestArray,serverArray,%session,sessid,x,zewdSession)
  . x x
- u io
+ i io'["nul" u io
  s $zt="g errorTrap^%zewdPHP"
  i $g(^zewd("trace")) d trace^%zewdAPI("Prepage script completed. error="_$g(error))
  QUIT error
@@ -731,6 +732,13 @@ deleteExpiredSessions
  . s xsessid=$e(sessid,5,$l(sessid))
  . i '$d(^%cspSession(xsessid)) k ^%zewdSession("jsonAccess",sessid)
  ;
+ s sessid=""
+ f  s sessid=$o(^%zewdSession("tokensBySession",sessid)) q:sessid=""  d
+ . i $e(sessid,1,4)'="csp:" d
+ . . i '$d(^%zewdSession("session",sessid)) k ^%zewdSession("tokensBySession",sessid)
+ . e  d
+ . . i '$d(^%cspSession(xsessid)) k ^%zewdSession("tokensBySession",sessid)
+ ;
  QUIT
  ;
 createSessid()
@@ -773,7 +781,7 @@ deleteToken(token)
  n sessid
  ;
  s sessid=$p($g(^%zewdSession("tokens",token)),"~",1)
- QUIT:sessid=0
+ QUIT:sessid=""
  k ^%zewdSession("tokens",token)
  k ^%zewdSession("tokensBySession",sessid,token)
  QUIT
@@ -950,7 +958,7 @@ closeSession(requestArray) ;
  i token="" QUIT "No token sent in request"
  s sessid=$p($g(^%zewdSession("tokens",token)),"~",1) ;$$getSessid(token)
  ;d trace^%zewdAPI("closing down session "_sessid)
- i sessid=0 QUIT "/default.htm"  ;Invalid token or session timed out"
+ i sessid="" QUIT "/default.htm"  ;Invalid token or session timed out"
  s homePage=$$getSessionValue("ewd_homePage",sessid)
  i homePage="" s homePage="/default.htm"
  i $e(homePage,2)="$$" s homePage=@homePage
@@ -1169,7 +1177,7 @@ getSessionValue(name,sessid)
  . i value="" d
  . . n ewdTech
  . . s ewdTech=$g(^%zewdSession("session",sessid,"ewd_technology"))
- . . i ewdTech="wl"!(ewdTech="gtm")!(ewdTech="ewd") s value=$g(sessionArray(name))
+ . . i ewdTech="wl"!(ewdTech="gtm")!(ewdTech="ewd")!(ewdTech="node") s value=$g(sessionArray(name))
  QUIT $g(^%zewdSession("session",sessid,name))
  ;
 getSessionObject(objectName,propertyName,sessid)

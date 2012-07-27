@@ -1,7 +1,7 @@
 %zewdExtJS	; Ext-JS tag processors
  ;
- ; Product: Enterprise Web Developer (Build 910)
- ; Build Date: Wed, 25 Apr 2012 17:59:25
+ ; Product: Enterprise Web Developer (Build 931)
+ ; Build Date: Fri, 27 Jul 2012 12:05:05
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -541,7 +541,7 @@ grid(nodeOID,docOID)
  . i technology="php" d
  . . s lineno=$o(phpHeaderArray(1,""),-1)+1
  . . s phpHeaderArray(1,lineno)="   $ewd_session[""ext_GridEditFunc""]["""_$g(gridAttrs("datastore"))_"""] = '"_script_"' ;"
- . i technology="wl"!(technology="gtm")!(technology="ewd") d
+ . i technology="wl"!(technology="gtm")!(technology="ewd")!(technology="node") d
  . . s lineno=$o(phpHeaderArray(1,""),-1)+1
  . . s phpHeaderArray(1,lineno)=" s sessionArray(""ext_GridEditFunc"","""_$g(gridAttrs("datastore"))_""")="""_script_""""
  . i technology="csp" d
@@ -1222,7 +1222,7 @@ ewdForm(nodeOID,panelRef,widgetAttribs,docOID)
 	. i isAjax s parentOID=rOID
 	. s setOID=$$addElementToDOM^%zewdDOM("ewd:set",parentOID,,.attr)
 	. s attr("arrayname")="ewd_session"
-	. i technology="wl"!(technology="gtm")!(technology="ewd") s attr("arrayname")="sessionArray"
+	. i technology="wl"!(technology="gtm")!(technology="ewd")!(technology="node") s attr("arrayname")="sessionArray"
 	. i technology="csp" s attr("arrayname")="%session.Data"
 	. s attr("param1")="ewd_selected"
 	. s attr("param2")=name
