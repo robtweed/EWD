@@ -359,7 +359,8 @@ getManifest(sessid)
  m manifest=manifests(no)
  s json=$$arrayToJSON^%zewdJSON("manifest")
  f i=1:1:$l(json,",") d
- . s text(i)=$$replaceAll^%zewdAPI($p(json,",",i),"""","\""")
+ . ;s text(i)=$$replaceAll^%zewdAPI($p(json,",",i),"""","\""")
+ . s text(i)=$p(json,",",i)
  . i i'=$l(json,",") s text(i)=text(i)_","
  d setTextAreaValue^%zewdExt4Code(.text,"manifest",sessid)
  QUIT ""
