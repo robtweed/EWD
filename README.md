@@ -5,7 +5,8 @@ EWD is a Free Open Source Ajax Framework for GT.M
 Thanks to:
 
 - The Health Informatics Service, Calderdale & Huddersfield NHS Foundation Trust for sponsoring development and documentation of the ExtJS tag library
-- Oroville Hospital, CA, for sponsoring development of the ExtJS Charts tags
+- Oroville Hospital, CA, for sponsoring development of the ExtJS Charts tags & the Sencha Touch 2 tags
+- Harvard Medical School & the SMART Project (http://www.smartplatforms.org) for funding development of EWD's SMART Container functionality
 - Bug fixes and enhancements suggested by, identified by, and/or provided by:
   - Mike Clayton & Ryan Eastman, Quest Diagnostics
   - David Wicksell
@@ -14,7 +15,15 @@ Thanks to:
   - Kiyoshi Sawada
   - Nikesh Gogia
 
-Build 920: Main changes
+Build 931: Main changes
+
+- SMART Container functionality for the VistA EHR, including OAuth server functionality for Cache & GT.M
+- Baseline implementation of the Sencha Touch 2 Tag library: all basic Sencha Touch 2 components mapped to tags
+- Enhancements to and bug fixes for the ExtJS v4 Tag library
+- bug fixes for XPath functionality
+- bug fixes to HTTP client for XML-based web service handling
+
+Build 920 Included
 
 - Various CSP-specific bug-fixes
 - Bug fixes to cater for ExtJS 4.1 differences (primarily in grids and desktop)
