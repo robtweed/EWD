@@ -505,7 +505,7 @@ outputCredentials(sessid)
  m oauth=ewdOAuth("clientResponse")
  d streamArrayToJSON^%zewdJSON("oauth")
  d mergeArrayToSession^%zewdAPI(.ewdOAuth,"ewd_oauth",sessid)
- d trace^%zewdAPI("getCredentials finished")
+ i $g(^zewd("trace")) d trace^%zewdAPI("getCredentials finished")
  QUIT
  ;
 addToHeader(header,name,value,params)
@@ -550,14 +550,11 @@ outputOntology(sessid)
  ;
  n file,i,io,ok,path,stop
  ;
- d trace^%zewdAPI("in outputOntology")
  s io=$io
  s path=$$getApplicationRootPath^%zewdAPI()
  i $e(path,$l(path))'="/" s path=path_"/"
  s file=path_"SMART/ontology.xml"
- d trace^%zewdAPI("opening file "_file)
  s ok=$$openFile^%zewdAPI(file)
- d trace^%zewdAPI("ok="_ok)
  s stop=0
  f i=1:1 d  q:stop
  . u file r line
@@ -566,7 +563,6 @@ outputOntology(sessid)
  ;
  c file
  u io
- d trace^%zewdAPI("outputOntology finished")
  QUIT
  ;
 OAuthValidation(sessid)
@@ -616,9 +612,10 @@ isSignatureValid(url,params,sessid)
  s secretKey=$$urlEscape(consumerSecret)_"&"_$$urlEscape(restSecret)
  s signature=$$urlEscape($$getSignedString(string,secretKey))
  ;
- d trace^%zewdAPI("isSignatureValid: calculated="_signature_"; expected="_params("oauth_signature"))
- d trace^%zewdAPI("string="_string)
- d trace^%zewdAPI("secretKey="_secretKey)
+ i $g(^zewd("trace")) d
+ . d trace^%zewdAPI("isSignatureValid: calculated="_signature_"; expected="_params("oauth_signature"))
+ . d trace^%zewdAPI("string="_string)
+ . d trace^%zewdAPI("secretKey="_secretKey)
  s ok=signature=$g(params("oauth_signature"))
  QUIT ok
  ;
@@ -634,7 +631,7 @@ getSignature(oAuth,secretKey)
  . s amp="&"
  s manifestURL=$g(oAuth("clientRequest","manifestURL"))
  s string="GET&"_$$urlEscape(manifestURL)_"&"_$$urlEscape(string)
- d trace^%zewdAPI("string to sign: "_string_$c(13,10)_"secretKey: "_secretKey)
+ i $g(^zewd("trace")) d trace^%zewdAPI("string to sign: "_string_$c(13,10)_"secretKey: "_secretKey)
  QUIT $$getSignedString(string,$g(secretKey))
  ;
 testit()
@@ -815,7 +812,6 @@ outputRDF(sessid)
  ;
  n method,parentSessid,restRequest
  ;
- d trace^%zewdAPI("in outputRDF")
  s restRequest=$$getSessionValue^%zewdAPI("restRequest",sessid)
  i restRequest="ontology" d  QUIT
  . d outputOntology(sessid)
