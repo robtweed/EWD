@@ -1,0 +1,14 @@
+<ext4:container rootPath="/vista/ext-4" isFirstPage="false" smartContainer="true" rdfMethod="vistARDF^%zewdSmart">
+  <ext4:viewPort layout="border">
+    <ext4:panel region="north" id="northPanel" title="SMART VistA Demo" autoheight="true" border="false" margins="0 0 5 0">
+      <ext4:toolbar dock="top">
+        <ext4:textItem text="Patient: " />
+        <ext4:textItem text="Not Selected" id="patientId" />
+        <ext4:fill />
+        <ext4:button text="Select Patient" nextPage="selPatient" />
+      </ext4:toolbar>
+    </ext4:panel>
+    <ext4:panel region="west" collapsible="true" title="Manifests" width="200" autoheight="true" addPage="manifestTree" />
+    <ext4:panel region="center" id="smartPanel" />
+  </ext4:viewPort>
+</ext4:container>

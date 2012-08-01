@@ -1,0 +1,14 @@
+<ext4:fragment onBeforeRender="updateCombo^smartVistADemo">
+
+  <ext4:js at="top">
+    EWD.ext4.updateCombo = function(comboId,values) {
+      var comboStore = Ext.getCmp(comboId).store;
+      var value;
+      comboStore.loadData(values, false);
+    };
+    var comboId='<?= #comboId ?>';
+    var values = <?= #values ?>;
+    EWD.ext4.updateCombo(comboId,values);
+  </ext4:js>
+
+</ext4:fragment>

@@ -1,7 +1,7 @@
 %zewdGTMRuntime ; EWD for GT.M.  Runtime interface  
  ;
- ; Product: Enterprise Web Developer (Build 912)
- ; Build Date: Wed, 02 May 2012 16:47:56
+ ; Product: Enterprise Web Developer (Build 933)
+ ; Build Date: Wed, 01 Aug 2012 10:08:05
  ;
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -186,6 +186,19 @@ writeHTTPHeader(app,nextpage,token,pageToken,sessid,Error)
  ;
  n amp,url
  ;
+ i nextpage["ewdHttpResponse~" d  QUIT
+ . n response,status
+ . s status=$p(nextpage,"~",2)
+ . s response=$p(nextpage,"~",3)
+ . i $g(^zewd("trace"))=1 d trace^%zewdAPI("Returning HTTP Response: "_status)
+ . w "HTTP/1.1 "_status_$c(13,10)
+ . i response'="" d
+ . . w "Date: "_$$inetDate^%zewdAPI($h)_$c(13,10)
+ . . w "Content-type: text/plain"_$c(13,10),$c(13,10)
+ . . w response_$c(13,10)
+ . e  d
+ . . w $c(13,10,13,10)
+ . w !
  i nextpage="ewdLogout" d
  . s sessid=$$getSessid^%zewdAPI($g(%KEY("ewd_token")))
  . s url=""

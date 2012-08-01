@@ -1,0 +1,16 @@
+<ext4:fragment onBeforeRender="initialisePatientList^smartVistADemo">
+
+  <ext4:window title="Select Patient" id="selectPatientWindow" autoShow="true" height="300" width="300">
+    <ext4:formPanel bodyPadding="10" height="150">
+      <ext4:comboBox id="patCombo" fieldLabel="Patient Name" enableKeyEvents="true" name="patientName" value="">
+        <ext4:listeners>
+          <ext4:listener afterrender="function() {this.triggerWrap.dom.style.display = 'none';}" />
+          <ext4:listener keyup="function(txt) {var value = txt.getValue(); this.triggerWrap.dom.style.display = ''; var nvp='comboId=patCombo&text=' + value; EWD.ajax.getPage({page:'updateCombo',nvp:nvp});}" />
+          <ext4:listener blur="function() {if (this.getValue() === null) this.triggerWrap.dom.style.display = 'none';}" />
+        </ext4:listeners>
+      </ext4:comboBox>
+      <ext4:submitbutton text="Select" nextPage="setPatient" />
+    </ext4:formPanel>
+  </ext4:window>
+
+</ext4:fragment>

@@ -1,0 +1,3 @@
+<ext4:fragment onBeforeRender="getManifests^smartVistADemo">
+  <ext4:treepanel border="0" id="manifests" autoheight="true" width="205" sessionName="SMART_manifests" nextPage="runSmartApp" addTo="smartPanel" replacePreviousPage="true" expandedTree="true" />
+</ext4:fragment>

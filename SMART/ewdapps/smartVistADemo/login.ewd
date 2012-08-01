@@ -1,0 +1,13 @@
+<ext4:container rootPath="/ext-4" title="SMART Container Demo" appName="SmartContainerDemo">
+
+  <ext4:modalwindow title="VistA SMART Container Demo" height="200" width="400" layout="fit" autoShow="true">
+    <ext4:formPanel bodyPadding="10">
+      <ext4:textfield id="accessCode" inputType="password" fieldLabel="Access Code" allowBlank="false" value="" />
+      <ext4:textfield id="verifyCode" inputType="password" fieldLabel="Verify Code" allowBlank="false" value="" /> 
+      <ext4:submitbutton text="Submit" nextPage="loginRedir" />
+    </ext4:formPanel>
+  </ext4:modalwindow>
+
+</ext4:container>
+
+

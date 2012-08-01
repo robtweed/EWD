@@ -1,0 +1,5 @@
+<ewd:fragment onBeforeRender="login^smartVistADemo">
+ <script language="javascript">
+  document.location.replace('index.ewd');
+ </script>
+</ewd:fragment>

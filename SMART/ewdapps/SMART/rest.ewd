@@ -4,3 +4,4 @@
 <ewd:responseHeader name="Content-type" value="application/rdf+xml">
 <ewd:responseHeader name="Connection" value="Keep-Alive">
 <ewd:execute method="outputRDF^%zewdSmart" type="procedure" param1="#ewd_sessid" />
+

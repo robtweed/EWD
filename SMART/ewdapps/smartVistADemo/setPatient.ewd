@@ -1,0 +1,7 @@
+<ext4:fragment onBeforeRender="setPatient^smartVistADemo">
+ <ext4:js at="top">
+   Ext.getCmp('patientId').setText('<?= #vista_patient.name ?>');
+   Ext.getCmp("selectPatientWindow").destroy();
+   Ext.getCmp("smartPanel").removeAll(true);
+ </ext4:js>
+</ext4:fragment>

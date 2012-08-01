@@ -1,7 +1,7 @@
 %zewdExt4Code ; Extjs 4 Runtime Logic
  ;
- ; Product: Enterprise Web Developer (Build 931)
- ; Build Date: Fri, 27 Jul 2012 12:05:05
+ ; Product: Enterprise Web Developer (Build 933)
+ ; Build Date: Wed, 01 Aug 2012 10:08:05
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -975,7 +975,7 @@ createExtFuncs()
  s text=text_"            if (item.getSubmitValue() !== null) value = item.getSubmitValue();"_$c(13,10)
  s text=text_"          }"_$c(13,10)
  s text=text_"          if ((item.xtype !== 'radiofield')&&(item.xtype !== 'checkboxfield')) {"_$c(13,10)
- s text=text_"            nvp = nvp + amp + item.getName() + '=' + value;"_$c(13,10)
+ s text=text_"            nvp = nvp + amp + item.getName() + '=' + escape(value);"_$c(13,10)
  s text=text_"            amp='&';"_$c(13,10)
  s text=text_"          }"_$c(13,10)
  s text=text_"          else {"_$c(13,10)

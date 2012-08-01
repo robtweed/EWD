@@ -1,0 +1,22 @@
+<ext4:fragment onBeforeRender="getManifest^smartVistADemo">
+ <ext4:js at="top">
+  function loadSmartApp(divId) {
+    SMART.simple_context = { 
+      record: {
+        full_name: '<?= #vista_patient.name ?>',
+        id: '<?= #vista_patient.id ?>'
+      },
+      user: {
+        full_name: '<?= #vista_user.name ?>',
+        id: '<?= #vista_user.id ?>'
+      },
+    };
+    SMART.launchApp('<?= #SMART_manifest.id ?>',divId);  
+  }
+ </ext4:js>
+ <ext4:panel border="0" smartFrameDiv="smartFrame" height="100%" width="100%" title="<?= #SMART_manifest.name ?>">
+   <ext4:listeners>
+     <ext4:listener afterrender="loadSmartApp('smartFrame')" />
+   </ext4:listeners>
+ </ext4:panel>
+</ext4:fragment>
