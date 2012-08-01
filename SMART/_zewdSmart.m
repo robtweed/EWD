@@ -1,7 +1,7 @@
 %zewdSmart ; Smart App Support Code
  ;
- ; Product: Enterprise Web Developer (Build 931)
- ; Build Date: Fri, 27 Jul 2012 12:05:04
+ ; Product: Enterprise Web Developer (Build 933)
+ ; Build Date: Wed, 01 Aug 2012 10:08:05
  ; 
  ; +---------------------------------------------------------------------------+
  ; | Enterprise Web Developer for GT.M and m_apache                            |
@@ -533,7 +533,9 @@ checkRESTRequest(sessid)
  s status=$$OAuthValidation(sessid)
  i status'="" d  QUIT ""
  . d setSessionValue^%zewdAPI("reason403",status)
- . d setRedirect^%zewdAPI("rest403",sessid)
+ . ;d setRedirect^%zewdAPI("rest403",sessid)
+ . s status="403 Forbidden~"_status
+ . d setRedirect^%zewdAPI("ewdHttpResponse~"_status,sessid)
  ;
  s scriptName=$$getServerValue^%zewdAPI("SCRIPT_NAME",sessid)
  i scriptName["/ontology" d setSessionValue^%zewdAPI("restRequest","ontology",sessid) QUIT ""
@@ -567,7 +569,7 @@ outputOntology(sessid)
  ;
 OAuthValidation(sessid)
  ;
- n auth,i,name,np,nvp,ok,param,parentSessid,restToken,scriptName,url,value
+ n auth,consumerKey,i,name,np,nvp,ok,param,params,parentSessid,restToken,scriptName,url,value
  ;
  s auth=$$getServerValue^%zewdAPI("HTTP_AUTHORIZATION",sessid)
  i auth="" QUIT "No Authorization received"
@@ -582,6 +584,11 @@ OAuthValidation(sessid)
  i restToken="" QUIT "oauth_token not defined"
  s parentSessid=$$getSessid^%zewdAPI(restToken)
  i parentSessid="" QUIT "Invalid oauth_token or parent session has timed out"
+ ;
+ d mergeArrayFromSession^%zewdAPI(.params,"ewd_oauth",parentSessid)
+ s consumerKey=$g(params("param","oauth_consumer_key"))
+ i $g(param("oauth_consumer_key"))="" QUIT "Consumer key is missing"
+ i param("oauth_consumer_key")'=consumerKey QUIT "Consumer key ("_param("oauth_consumer_key")_") does not match the one sent with the original credentials"
  ;
  s scriptName=$$getServerValue^%zewdAPI("SCRIPT_NAME",sessid)
  s url="http://"_$$getServerValue^%zewdAPI("SERVER_NAME",sessid)_scriptName
@@ -895,4 +902,3 @@ emptyRDF
  w "</rdf:RDF>"_$c(10)
  QUIT
  ;
-
