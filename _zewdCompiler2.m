@@ -1,7 +1,7 @@
 %zewdCompiler2	; Enterprise Web Developer Compiler : fixed text
  ;
- ; Product: Enterprise Web Developer (Build 933)
- ; Build Date: Wed, 01 Aug 2012 10:08:04
+ ; Product: Enterprise Web Developer (Build 934)
+ ; Build Date: Thu, 09 Aug 2012 16:00:33
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -27,8 +27,8 @@
  ; ----------------------------------------------------------------------------
  ;
  ;
-version ;; 933
-date	;; 01 August 2012
+version ;; 934
+date	;; 09 August 2012
  ;
 ewdError ;
  ;;*jsp*<%@ page contentType="text/html" %>

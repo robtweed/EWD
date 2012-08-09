@@ -1,7 +1,7 @@
 %zewdSTch2Code ; Sencha Touch 2 Runtime Logic
  ;
- ; Product: Enterprise Web Developer (Build 931)
- ; Build Date: Fri, 27 Jul 2012 12:05:05
+ ; Product: Enterprise Web Developer (Build 934)
+ ; Build Date: Thu, 09 Aug 2012 16:00:34
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -155,6 +155,11 @@ writeStore(modelName,sessionName,groupField,sortField,sessid)
  ;  "sessionName" = EWD Session Name holding the data
  ;
  d mergeArrayFromSession^%zewdAPI(.data,$g(sessionName),sessid)
+ ;
+ s no=""
+ f  s no=$o(data(no)) q:no=""  d
+ . s data(no,"recordNo")=no
+ ;
  s no=0
  s name=""
  f  s name=$o(data(1,name)) q:name=""  d

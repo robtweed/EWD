@@ -1,7 +1,7 @@
 %zewdSTch2 ; Sencha Touch v2 Tag Processors
  ;
- ; Product: Enterprise Web Developer (Build 931)
- ; Build Date: Fri, 27 Jul 2012 12:05:05
+ ; Product: Enterprise Web Developer (Build 934)
+ ; Build Date: Thu, 09 Aug 2012 16:00:34
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -31,7 +31,7 @@
  ;
 container(nodeOID,attrValue,docOID,technology)
  ;
- n appName,attr,bodyOID,configOID,cspScriptsOID,ewdActions,headOID,htmlOID
+ n appName,attr,bodyOID,configOID,cspScriptsOID,cssVersion,ewdActions,headOID,htmlOID
  n imgArray,jsOID,jsSectionOID,jsVersion
  n mainAttrs,nameList,ocOID,outerOID,rootPath,src,tagNameMap,text,title,xOID
  ;
@@ -58,6 +58,12 @@ container(nodeOID,attrValue,docOID,technology)
  ; <body></body>
  ;</ewd:xhtml>
  ;
+ ; reset to outmost instance if it exists
+ ;
+ s xOID=nodeOID
+ f  s xOID=$$getParentNode^%zewdDOM(xOID) q:xOID=""  d
+ . i $$getTagName^%zewdDOM(xOID)="st2:container" s nodeOID=xOID
+ ;
  s configOID=$$getTagOID^%zewdDOM("ewd:config",docName)
  d setAttribute^%zewdDOM("preprocess","preProcess^%zewdSTch2Code",configOID)
  ;
@@ -82,6 +88,8 @@ container(nodeOID,attrValue,docOID,technology)
  s rootPath=$$addSlashAtEnd^%zewdST(rootPath)
  s jsVersion=$g(mainAttrs("jsversion"))
  i jsVersion="" s jsVersion="sencha-touch-all.js"
+ s cssVersion=$g(mainAttrs("cssversion"))
+ i cssVersion="" s cssVersion="sencha-touch.css"
  s appName=$g(mainAttrs("appname"))
  i appName="" s appName=$g(app)
  i appName="" s appName="ST2App"
@@ -92,7 +100,7 @@ container(nodeOID,attrValue,docOID,technology)
  ;
  s xOID=$$addElementToDOM^%zewdDOM("title",headOID,,,title)
  ;
- s src=rootPath_"resources/css/sencha-touch.css"
+ s src=rootPath_"resources/css/"_cssVersion
  d registerResource^%zewdCustomTags("css",src,"",app)
  s src=rootPath_jsVersion
  d registerResource^%zewdCustomTags("js",src,"",app)
@@ -151,12 +159,21 @@ container(nodeOID,attrValue,docOID,technology)
  . . . s text=text_"   "_comma_size_":'"_url_"'"_$c(13,10)
  . . . s comma=","
  . . s text=text_" },"_$c(13,10)
- . f name="phoneStartupScreen","tabletStartupScreen" d
- . . s lcname=$$zcvt^%zewdAPI(name,"l")
- . . i $g(imgArray(lcname))'="" d
- . . . s url=imgArray(lcname)
+ . i $d(imgArray("startupImage")) d
+ . . s text=text_" startupImage: {"_$c(13,10)
+ . . s size="",comma=""
+ . . f  s size=$o(imgArray("startupImage",size)) q:size=""  d
+ . . . s url=imgArray("startupImage",size)
  . . . i $e(url,1)'="/" s url=rootPath_url
- . . . s text=text_" "_name_":'"_url_"',"_$c(13,10)
+ . . . s text=text_"   "_comma_"'"_size_"':'"_url_"'"_$c(13,10)
+ . . . s comma=","
+ . . s text=text_" },"_$c(13,10)
+ . ;f name="phoneStartupScreen","tabletStartupScreen" d
+ . ;. s lcname=$$zcvt^%zewdAPI(name,"l")
+ . ;. i $g(imgArray(lcname))'="" d
+ . ;. . s url=imgArray(lcname)
+ . ;. . i $e(url,1)'="/" s url=rootPath_url
+ . ;. . s text=text_" "_name_":'"_url_"',"_$c(13,10)
  s text=text_" launch: function() {"_$c(13,10)
  i $g(mainAttrs("enableloader"))="true" s text=text_"   Ext.Loader.setConfig({enabled:true});"_$c(13,10)
  s text=text_"   EWD.st2.content()"_$c(13,10)
@@ -205,9 +222,9 @@ images(nodeOID,imgArray)
  . s tagName=$$getTagName^%zewdDOM(childOID)
  . i tagName="st2:homescreen" d
  . . n attr,value
- . . f attr="phonestartupscreen","tabletstartupscreen" d
- . . . s value=$$getAttribute^%zewdDOM(attr,childOID)
- . . . s imgArray(attr)=value
+ . . ;f attr="phonestartupscreen","tabletstartupscreen" d
+ . . ;. s value=$$getAttribute^%zewdDOM(attr,childOID)
+ . . ;. s imgArray(attr)=value
  . . d icons(childOID,.imgArray)
  . . d removeIntermediateNode^%zewdDOM(childOID)
  QUIT
@@ -226,6 +243,12 @@ icons(nodeOID,imgArray)
  . . s size=$$getAttribute^%zewdDOM("size",childOID)
  . . s url=$$getAttribute^%zewdDOM("url",childOID)
  . . s imgArray("icon",size)=url
+ . . d removeIntermediateNode^%zewdDOM(childOID)
+ . i tagName="st2:startupimage" d
+ . . n size,url
+ . . s size=$$getAttribute^%zewdDOM("size",childOID)
+ . . s url=$$getAttribute^%zewdDOM("url",childOID)
+ . . s imgArray("startupImage",size)=url
  . . d removeIntermediateNode^%zewdDOM(childOID)
  QUIT
  ;
@@ -876,64 +899,6 @@ addAxisFields(nodeOID)
  . s xOID=$$insertNewIntermediateElement^%zewdDOM(parentOID,"st2:axisfields",docOID)
  QUIT
  ;
-editableColumn(nodeOID)
- ;
- n childNo,childOID,editAs
- ;
- s editAs=$$getAttribute^%zewdDOM("editas",nodeOID)
- d removeAttribute^%zewdDOM("editas",nodeOID)
- i editAs'="" d addEditor(nodeOID,editAs)
- ;
- i $$getAttribute^%zewdDOM("groupfield",nodeOID)="true" d
- . n dataIndex,gpOID
- . ; move to the gridPanel tag as a groupField tag
- . s gpOID=$$getParentNode^%zewdDOM(nodeOID)
- . s dataIndex=$$getAttribute^%zewdDOM("dataindex",nodeOID)
- . d setAttribute^%zewdDOM("groupfield",dataIndex,gpOID)
- . if $$getAttribute^%zewdDOM("grouping",gpOID)="" d setAttribute^%zewdDOM("grouping","true",gpOID)
- d removeAttribute^%zewdDOM("groupfield",nodeOID)
- ;
- QUIT
- ;
-addEditor(nodeOID,type)
- ;
- n attr,OIDArray,stop,xOID
- ;
- s stop=0
- d getChildrenInOrder^%zewdDOM(nodeOID,.OIDArray)
- s childNo=""
- f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d  q:stop
- . s childOID=OIDArray(childNo)
- . i $$getTagName^%zewdDOM(childOID)="st2:editor" s stop=1
- i childNo="" d
- . s attr("xtype")=type
- . i type="combobox" d
- . . n colName,fn,id
- . . s attr("lazyRender")="true"
- . . s attr("listClass")="x-combo-list-small"
- . . s attr("selectOnTab")="true"
- . . s attr("triggerAction")="all"
- . . s attr("typeAhead")="true"
- . . s colName=$$getAttribute^%zewdDOM("dataindex",nodeOID)
- . . s id=$$getGridPanelId(nodeOID)
- . . s attr("store")=".EWD.ext4.grid['"_id_"'].combo.store['"_colName_"']"
- . . s fn=""
- . . s fn=fn_".function (value, metaData, record, rowIndex, colIndex) {"
- . . s fn=fn_"  var index = EWD.ext4.grid['"_id_"'].combo.index['"_colName_"']; EWD.record = record;"
- . . s fn=fn_"  if (typeof(index[value]) !== 'undefined') {"
- . . s fn=fn_"    return index[value];"
- . . s fn=fn_"  }"
- . . s fn=fn_"  else {"
- . . s fn=fn_"    record.data['"_colName_"'] = '';"
- . . s fn=fn_"    return '';"
- . . s fn=fn_"  }"
- . . s fn=fn_"}"
- . . d setAttribute^%zewdDOM("renderer",fn,nodeOID)
- . . d getOptionTags(nodeOID,id)
- . s xOID=$$addElementToDOM^%zewdDOM("st2:editor",nodeOID,,.attr)
- . d addCellEditor(nodeOID)
- QUIT
- ;
 getOptionTags(nodeOID,id)
  ;
  n array1,array2,childNo,childOID,comma,display,OIDArray,optionsOID,useList,value
@@ -999,17 +964,6 @@ getOptionsTag(nodeOID)
  . s childOID=OIDArray(childNo)
  . i $$getTagName^%zewdDOM(childOID)="st2:options" s stop=1
  QUIT childOID
- ;
-addCellEditor(nodeOID)
- ;
- n ceOID,parentOID
- ;
- s parentOID=$$getParentNode^%zewdDOM(nodeOID)
- i $$getTagName^%zewdDOM(parentOID)="st2:gridpanel" d
- . i $$getAttribute^%zewdDOM("clickstoedit",parentOID)="" d
- . . d setAttribute^%zewdDOM("clickstoedit",2,parentOID)
- ;
- QUIT
  ;
 getGridPanelId(nodeOID)
  ;
@@ -1545,6 +1499,7 @@ listPass1(nodeOID)
  . s code=code_"var replace='"_$g(replacePreviousPage)_"';"
  . s code=code_"if (typeof record.raw.replacePreviousPage !== 'undefined') replace = record.raw.replacePreviousPage;"
  . s code=code_"var nvp='recordNo=' + (index + 1);"
+ . s code=code_"if (typeof record.raw.recordNo !== 'undefined') nvp='recordNo=' + record.raw.recordNo;"
  . s code=code_"if (typeof record.raw.nvp !== 'undefined') nvp = nvp + '&' + record.raw.nvp;"
  . s code=code_"nvp = nvp + '&st2_addTo=' + addTo;"
  . s code=code_"nvp = nvp + '&st2_removeAll=' + replace;"
@@ -1672,8 +1627,8 @@ listInstance(attrs,nodeOID,instanceOID)
  k attrs("storename")
  k attrs("groupfield")
  k attrs("sortfield")
- i storeName="" s storeName="Store"_id
- i $g(attrs("store"))="" s attrs("store")=".EWD.st2.store['"_storeName_"']"
+ i storeName="",sessionName'="" s storeName="Store"_id
+ i $g(attrs("store"))="",storeName'="" s attrs("store")=".EWD.st2.store['"_storeName_"']"
  i sessionName'="" d
  . s xOID=$$createElement^%zewdDOM("temp",docOID)
  . s xOID=$$insertBefore^%zewdDOM(xOID,nodeOID)
@@ -1761,7 +1716,7 @@ expandPanel(nodeOID,attr,parentOID)
  . n addTo,html,id,lattr,lOID,lsOID,src,text
  . s src=attr("src")
  . s src=$p(src,".ewd",1)
- . s id="Ext4Panel"_$$uniqueId^%zewdAPI(nodeOID,filename)_"Div"
+ . s id="ST2Panel"_$$uniqueId^%zewdAPI(nodeOID,filename)_"Div"
  . i 'addPage d
  . . s html="<span id='"_id_"'></span>"
  . . s attr("html")=html
@@ -1815,9 +1770,9 @@ nextPageHandler(nodeOID)
  s text="var nvp='"_nvp_"';"
  s amp="" i nvp'="" s amp="&"
  i addTo'="" d
- . s text=text_"nvp=nvp+'"_amp_"ext4_addTo="_addTo
+ . s text=text_"nvp=nvp+'"_amp_"st2_addTo="_addTo
  . i replace="true" d
- . . s text=text_"&ext4_removeAll=true"
+ . . s text=text_"&st2_removeAll=true"
  . i actionCol s text=text_"&rowIndex=' + rowIndex + '&row=' + EWD.ext4.getGridRowNo(me,rowIndex) + '"
  . s text=text_"';"_$c(13,10)
  e  d
@@ -1869,7 +1824,7 @@ jsonItems(nodeOID,attrName)
  ;s lsOID=$$addElementToDOM^%zewdDOM("st2:listeners",nodeOID)
  ;s lOID=$$addElementToDOM^%zewdDOM("st2:listener",lsOID)
  ;d setAttribute^%zewdDOM("afterrender","EWD.ext4.items['"_id_"']()",lOID)
- d setAttribute^%zewdDOM(attrName,".EWD.ext4.items['"_id_"']['"_attrName_"']",nodeOID)
+ d setAttribute^%zewdDOM(attrName,".EWD.st2.items['"_id_"']['"_attrName_"']",nodeOID)
  s xOID=$$createElement^%zewdDOM("temp",docOID)
  s cspOID=$$getElementById^%zewdDOM("cspScripts",docOID)
  s xOID=$$appendChild^%zewdDOM(xOID,cspOID)
