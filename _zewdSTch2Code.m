@@ -1,7 +1,7 @@
 %zewdSTch2Code ; Sencha Touch 2 Runtime Logic
  ;
- ; Product: Enterprise Web Developer (Build 934)
- ; Build Date: Thu, 09 Aug 2012 16:00:34
+ ; Product: Enterprise Web Developer (Build 935)
+ ; Build Date: Tue, 14 Aug 2012 12:11:59
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -35,7 +35,7 @@ preProcess(sessid)
  ;
  ; Panel addTo pre-processing
  ;
- f name="st2_addTo","st2_removeAll" d
+ f name="st2_addTo","st2_removeAll","st2_pushTo","st2_masked" d
  . s xname="tmp_"_$p(name,"_",2)
  . d deleteFromSession^%zewdAPI(xname,sessid)
  . s var=$$getRequestValue^%zewdAPI(name,sessid)
@@ -137,8 +137,8 @@ createExtFuncs()
  ;s text=text_"        }"_$c(13,10)
  ;s text=text_"      }"_$c(13,10)
  ;s text=text_"    );"_$c(13,10)
- s text=text_"    if (addTo !== '') nvp = nvp + '&ext4_addTo=' + addTo;"_$c(13,10)
- s text=text_"    if (replace === 1) nvp = nvp + '&ext4_removeAll=true';"_$c(13,10)
+ s text=text_"    if (addTo !== '') nvp = nvp + '&st2_addTo=' + addTo;"_$c(13,10)
+ s text=text_"    if (replace === 1) nvp = nvp + '&st2_removeAll=true';"_$c(13,10)
  s text=text_"    EWD.ajax.getPage({page:nextPage,nvp:nvp})"_$c(13,10)
  s text=text_"  }"_$c(13,10)
  s text=text_"};"_$c(13,10)
@@ -296,18 +296,31 @@ convertExt4TreeStore(array)
  . m array=temp
  QUIT
  ;
-convertTreeStore(array)
+convertTreeStore(array,nvp)
  ;
- n subscript
+ n level,nvp2,subscript
  ;
  s subscript=""
+ s nvp=$g(nvp)
+ i nvp="" d
+ . s level=1
+ e  d
+ . s level=$l(nvp,"&")+1
+ i nvp'="" s nvp=nvp_"&"
  f  s subscript=$o(array(subscript)) q:subscript=""  d
+ . s nvp2=nvp_"sub"_level_"="_subscript
  . i $d(array(subscript,"child")) d
  . . n subArray
  . . m subArray=array(subscript,"child")
- . . d convertTreeStore(.subArray)
+ . . d convertTreeStore(.subArray,nvp2)
  . . k array(subscript,"child")
  . . m array(subscript,"items")=subArray
- . i '$d(array(subscript,"items")) s array(subscript,"leaf")="true"
+ . i '$d(array(subscript,"items")) d
+ . . s array(subscript,"leaf")="true"
+ . . s nvp2=nvp2_"&noOfSubs="_level
+ . . i '$d(array(subscript,"nvp")) s array(subscript,"nvp")=nvp2
+ . i $d(array(subscript,"nextpage")) d
+ . . s array(subscript,"nextPage")=array(subscript,"nextpage")
+ . . k array(subscript,"nextpage")
  ;
  QUIT

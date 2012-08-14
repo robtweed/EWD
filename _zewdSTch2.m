@@ -1,7 +1,7 @@
 %zewdSTch2 ; Sencha Touch v2 Tag Processors
  ;
- ; Product: Enterprise Web Developer (Build 934)
- ; Build Date: Thu, 09 Aug 2012 16:00:34
+ ; Product: Enterprise Web Developer (Build 935)
+ ; Build Date: Mon, 13 Aug 2012 14:12:21
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -370,16 +370,22 @@ ExtCreate(nodeOID,parentOID,isFragment)
  . d getChildNodes(dataOID,objOID)
  ;
  i isFragment d
- . n addTo,remove,text
+ . n addTo,masked,pushTo,remove,text
  . q:className["Store"
  . q:'add
  . s addTo=$$addPhpVar^%zewdCustomTags("#tmp_addTo")
+ . s pushTo=$$addPhpVar^%zewdCustomTags("#tmp_pushTo")
+ . s masked=$$addPhpVar^%zewdCustomTags("#tmp_masked")
  . s remove=$$addPhpVar^%zewdCustomTags("#tmp_removeAll")
  . ;s text="var addTo='"_addTo_"';"_$c(13,10)
  . s text="var addTo='"_addTo_"';"_$c(13,10)
+ . s text=text_"var pushTo='"_pushTo_"';"_$c(13,10)
+ . s text=text_"var masked='"_masked_"';"_$c(13,10)
  . s text=text_"var remove='"_remove_"';"_$c(13,10)
  . s text=text_"if (remove === 'true') Ext.getCmp('"_addTo_"').removeAll(true);"_$c(13,10)
- . s text=text_"if (addTo !== '') Ext.getCmp('"_addTo_"').add(Ext.getCmp('"_id_"'));"
+ . s text=text_"if (addTo !== '') Ext.getCmp('"_addTo_"').add(Ext.getCmp('"_id_"'));"_$c(13,10)
+ . s text=text_"if (pushTo !== '') Ext.getCmp('"_pushTo_"').push(Ext.getCmp('"_id_"'));"_$c(13,10)
+ . s text=text_"if (masked !== '') Ext.getCmp('"_masked_"').setMasked(false);"
  . s jsOID=$$addElementToDOM^%zewdDOM("ewd:jsline",parentOID,,,text)
  i $$removeChild^%zewdDOM(nodeOID,1)
  QUIT
@@ -668,6 +674,21 @@ listeners(nodeOID,objOID)
  . . i $$hasFnValue(childOID) d fn(childOID,lsOID)
  d removeIntermediateNode^%zewdDOM(nodeOID)
  QUIT
+ ;
+hasListener(listenerName,nodeOID,childOID)
+ ;
+ n childNo,OIDArray,status,tagName
+ ;
+ d getChildrenInOrder^%zewdDOM(nodeOID,.OIDArray)
+ s childNo=""
+ s status=0
+ f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d  q:status
+ . s childOID=OIDArray(childNo)
+ . s tagName=$$getTagName^%zewdDOM(childOID)
+ . i tagName="st2:listener" d
+ . . i $$getAttribute^%zewdDOM(listenerName,childOID)'="" s status=1
+ ;
+ QUIT status
  ;
 arrayOfOptions(type,nodeOID,objOID)
  ;
@@ -1262,62 +1283,11 @@ expandContainer(nodeOID,attr,parentOID)
 containerInstance(attrs,nodeOID,instanceOID)
  QUIT $$containerInstance^%zewdExt4(.attr,nodeOID,parentOID)
  ;
-expandButtonMenu(nodeOID,attr,parentOID)
- ;
- n addTo,attrName,cspOID,id,menuId,page,replacePreviousPage,sessionName,tagName,text,xOID
- ;
- s sessionName=$g(attr("sessionname"))
- q:sessionName=""
- k attr("sessionname")
- s page=$g(attr("page"))
- k attr("page")
- i page="" d
- . s page=$g(attr("nextpage"))
- . k attr("nextpage")
- s addTo=$g(attr("addto"))
- k attr("addto")
- s replacePreviousPage=$g(attr("replacepreviouspage"))="true"
- k attr("replacepreviouspage")
- s id=$g(attr("id"))
- i id="" s id=$$uniqueId(nodeOID)
- s menuId=id_"Menu"
- s tagName=$$getTagName^%zewdDOM(nodeOID)
- i tagName="st2:buttonmenu" d
- . s attrName="menu"
- e  d
- . s attrName="items"
- s attr(attrName)="."_menuId
- s xOID=$$createElement^%zewdDOM("cspTemp",docOID)
- s xOID=$$insertBefore^%zewdDOM(xOID,nodeOID)
- s text=" d writeButtonMenu^%zewdExt4Code("""_sessionName_""","""_menuId_""","""_page_""","""_addTo_""","_replacePreviousPage_",sessid)"
- s cspOID=$$addCSPServerScript^%zewdAPI(xOID,text)
- d removeIntermediateNode^%zewdDOM(xOID)
- ;
- QUIT
- ;
-buttonInstance(attrs,nodeOID,instanceOID)
- ;
- n addTo,argumentsOID,id,nextPage
- ;
- s nextpage=$g(attrs("nextpage"))
- s addTo=$g(attrs("addto"))
- k attrs("nextpage")
- k attrs("addto")
- ;
- s argumentsOID=$$addElementToDOM^%zewdDOM("st2:arguments",instanceOID,,.attrs)
- i nextPage'="" d
- . n attr,listenersOID,xOID
- . s listenersOID=$$addElementToDOM^%zewdDOM("st2:listeners",argumentsOID)
- . s attr("render")="EWD.ajax.getPage({page:'"_src_"',targetId:'"_id_"'})"
- . s xOID=$$addElementToDOM^%zewdDOM("st2:listener",listenersOID,,.attr)
- ;
- QUIT argumentsOID
- ;
 panelInstance(attrs,nodeOID,instanceOID)
  ;
- n addPage,addTo,argumentsOID,id,src
+ n addPage,addTo,argumentsOID,id,pushTo,src
  ;
- s addTo=""
+ s addTo="",pushTo=""
  s addPage=0
  i $g(attrs("addpage"))'="" d
  . s attrs("src")=attrs("addpage")
@@ -1328,19 +1298,27 @@ panelInstance(attrs,nodeOID,instanceOID)
  s src=$g(attrs("src"))
  s src=$p(src,".ewd",1)
  k attrs("src")
- s id="Ext4Panel"_$$uniqueId^%zewdAPI(nodeOID,filename)_"Div"
+ s id="ST2Panel"_$$uniqueId^%zewdAPI(nodeOID,filename)_"Div"
  i src'="",'addPage d
  . s attrs("html")="<span id='"_id_"'></span>"
  . i $g(attrs("addto")) d
  . . s addTo=attrs("addto")
  . . k attrs("addto")
+ . i $g(attrs("pushto")) d
+ . . s pushTo=attrs("pushto")
+ . . k attrs("pushto")
  ;
  s argumentsOID=$$addElementToDOM^%zewdDOM("st2:arguments",instanceOID,,.attrs)
  i src'="" d
  . n attr,listenersOID,text,xOID
  . s listenersOID=$$addElementToDOM^%zewdDOM("st2:listeners",argumentsOID)
+ . ;i '$$hasChildTag^%zewdDOM(nodeOID,"st2:listeners",.listenersOID) d
+ . ;. s listenersOID=$$addElementToDOM^%zewdDOM("st2:listeners",argumentsOID)
+ . s text="var nvp='';"
+ . i pushTo'="" d
+ . . s text=text_"nvp=nvp+'st2_pushTo="_pushTo_"';"_$c(13,10)
  . i addTo'="" d
- . . s text="var nvp='st2_addTo="_addTo_"';"_$c(13,10)
+ . . s text=text_"nvp=nvp+'st2_addTo="_addTo_"';"_$c(13,10)
  . . i addPage d
  . . . s text=text_"EWD.ajax.getPage({page:'"_src_"',nvp:nvp});"
  . . e  d
@@ -1349,57 +1327,6 @@ panelInstance(attrs,nodeOID,instanceOID)
  . . s text="EWD.ajax.getPage({page:'"_src_"',targetId:'"_id_"'});"
  . s attr("initialize")=text
  . s xOID=$$addElementToDOM^%zewdDOM("st2:listener",listenersOID,,.attr)
- ;
- QUIT argumentsOID
- ;
-expandTreePanel(nodeOID,attr,parentOID)
- n ok
- s ok=$$treePanelInstance(.attr,nodeOID,parentOID)
- QUIT
- ;
-treePanelInstance(attrs,nodeOID,instanceOID)
- ;
- n addTo,argumentsOID,cspOID,expandedTree,id,mainAttrs,page,replace
- n sessionName,storeId,tagName,text,xOID
- ;
- ;m mainAttrs=attrs
- i $g(attrs("rootvisible"))="" s attrs("rootvisible")="false"
- s expandedTree=$g(attrs("expandedtree"))
- i expandedTree="" s expandedTree="true"
- s expandedTree=expandedTree="true"
- s addTo=$g(attrs("addto"))
- k attrs("addto")
- s replace=$g(attr("replacepreviouspage"))="true"
- k attrs("replacepreviouspage")
- s page=$g(attrs("nextpage"))
- i page="" s page=$g(attrs("page"))
- k attrs("expandedtree"),attrs("page"),attrs("nextpage")
- s sessionName=$g(attrs("sessionname"))
- s storeId=$g(attrs("storeid"))
- s id=$g(attrs("id"))
- i storeId="",id="" d
- . s id=$$uniqueId(nodeOID)
- . s attrs("id")=id
- . ;s mainAttrs("id")=id
- i id="",storeId'="" d
- . s id=$$uniqueId(nodeOID)
- . s attrs("id")=id
- . ;s mainAttrs("id")=id
- k attrs("sessionname")
- k attrs("storeid")
- i storeId="" s storeId=id_"Store"
- s attrs("store")="."_storeId
- s xOID=$$createElement^%zewdDOM("temp",docOID)
- s xOID=$$insertBefore^%zewdDOM(xOID,nodeOID)
- s text=" d writeTreeStore^%zewdExt4Code("""_sessionName_""","""_storeId_""","""_page_""","""_addTo_""","_replace_","_expandedTree_",sessid)"
- s cspOID=$$addCSPServerScript^%zewdAPI(xOID,text)
- ;
- i $g(attrs("xtype"))'="treepanel" d
- . s argumentsOID=$$addElementToDOM^%zewdDOM("st2:arguments",instanceOID,,.attrs)
- e  d
- . s argumentsOID=nodeOID
- ;
- d removeIntermediateNode^%zewdDOM(xOID)
  ;
  QUIT argumentsOID
  ;
@@ -1477,32 +1404,59 @@ expand(nodeOID,parentOID,tagNameMap)
  ;
 listPass1(nodeOID)
  ;
- n addTo,lsOID,nextPage,replacePreviousPage,tagName
+ n addTo,attr,code,event,listenersOID,OID,maskMsg,maskObj,nextPage,params,pushTo
+ n replacePreviousPage,setMask,tagName,xOID
  ;
  s tagName=$$getTagName^%zewdDOM(nodeOID)
  s nextPage=$$getAttribute^%zewdDOM("nextpage",nodeOID)
  d removeAttribute^%zewdDOM("nextpage",nodeOID)
  s addTo=$$getAttribute^%zewdDOM("addto",nodeOID)
  d removeAttribute^%zewdDOM("addto",nodeOID)
+ s pushTo=$$getAttribute^%zewdDOM("pushto",nodeOID)
+ d removeAttribute^%zewdDOM("pushto",nodeOID)
  s replacePreviousPage=$$getAttribute^%zewdDOM("replacepreviouspage",nodeOID)
  d removeAttribute^%zewdDOM("replacepreviouspage",nodeOID)
+ s setMask=$$getAttribute^%zewdDOM("setmask",nodeOID)
+ d removeAttribute^%zewdDOM("setmask",nodeOID)
+ s maskMsg=$$getAttribute^%zewdDOM("maskmessage",nodeOID)
+ d removeAttribute^%zewdDOM("maskmessage",nodeOID)
  ;
- i '$$hasChildTag^%zewdDOM(nodeOID,"st2:listeners",.lsOID) d
- . n attr,code,event,listenersOID,params,xOID
- . s listenersOID=$$addElementToDOM^%zewdDOM("st2:listeners",nodeOID)
- . s code=""
- . ;s code=code_"EWD.list=list;EWD.record=record;var page='"_$g(nextPage)_"';"
+ s code=""
+ i nextPage'="" d
+ . i '$$hasChildTag^%zewdDOM(nodeOID,"st2:listeners",.listenersOID) d
+ . . s listenersOID=$$addElementToDOM^%zewdDOM("st2:listeners",nodeOID)
+ . i $$hasListener("itemtap",listenersOID,.xOID) d
+ . . s code=$$getAttribute^%zewdDOM("itemtap",xOID)
+ . . i $e(code,1,8)="function" d
+ . . . n nb,rcode
+ . . . s nb=$l(code,"}")
+ . . . s rcode=$re(code)
+ . . . s rcode=$p(rcode,"}",2,nb)
+ . . . s code=$re(rcode)_";"
+ . . e  d
+ . . . i $e(code,$l(code))'=";" s code=code_";"
+ . ;
+ . ;s code=""
  . s code=code_"EWD.record=record;var page='"_$g(nextPage)_"';"
  . s code=code_"if (typeof record.raw.nextPage !== 'undefined') page = record.raw.nextPage;"
  . s code=code_"var addTo='"_$g(addTo)_"';"
  . s code=code_"if (typeof record.raw.addTo !== 'undefined') addTo = record.raw.addTo;"
+ . s code=code_"var pushTo='"_$g(pushTo)_"';"
+ . s code=code_"if (typeof record.raw.pushTo !== 'undefined') pushTo = record.raw.pushTo;"
  . s code=code_"var replace='"_$g(replacePreviousPage)_"';"
  . s code=code_"if (typeof record.raw.replacePreviousPage !== 'undefined') replace = record.raw.replacePreviousPage;"
  . s code=code_"var nvp='recordNo=' + (index + 1);"
  . s code=code_"if (typeof record.raw.recordNo !== 'undefined') nvp='recordNo=' + record.raw.recordNo;"
  . s code=code_"if (typeof record.raw.nvp !== 'undefined') nvp = nvp + '&' + record.raw.nvp;"
  . s code=code_"nvp = nvp + '&st2_addTo=' + addTo;"
+ . s code=code_"nvp = nvp + '&st2_pushTo=' + pushTo;"
  . s code=code_"nvp = nvp + '&st2_removeAll=' + replace;"
+ . i setMask'="" d
+ . . s code=code_"nvp = nvp + '&st2_masked="_setMask_"';"
+ . . s maskObj="{xtype:'loadmask'"
+ . . i maskMsg'="" s maskObj=maskObj_",message:'"_maskMsg_"'"
+ . . s maskObj=maskObj_"}"
+ . . s code=code_"Ext.getCmp('"_setMask_"').setMasked("_maskObj_");"
  . s event="itemtap",params="dataView,index,target,record"
  . i tagName="st2:nestedlist" d
  . . s event="leafitemtap"
@@ -1713,7 +1667,7 @@ expandPanel(nodeOID,attr,parentOID)
  . s attr("addto")=attr("id")
  ;
  i $g(attr("src"))'="" d
- . n addTo,html,id,lattr,lOID,lsOID,src,text
+ . n addTo,html,id,lattr,lOID,lsOID,pushTo,src,text
  . s src=attr("src")
  . s src=$p(src,".ewd",1)
  . s id="ST2Panel"_$$uniqueId^%zewdAPI(nodeOID,filename)_"Div"
@@ -1725,8 +1679,13 @@ expandPanel(nodeOID,attr,parentOID)
  . . s lsOID=$$addElementToDOM^%zewdDOM("st2:listeners",nodeOID)
  . s addTo=$g(attr("addto"))
  . k attr("addto") 
+ . s pushTo=$g(attr("pushto"))
+ . k attr("pushto")
+ . s text="var nvp='';"
+ . i pushTo'="" d
+ . . s text=text_"nvp='st2_pushTo="_pushTo_"';"_$c(13,10)
  . i addTo'="" d
- . . s text="var nvp='st2_addTo="_addTo_"';"_$c(13,10)
+ . . s text=text_"nvp='st2_addTo="_addTo_"';"_$c(13,10)
  . . i addPage d
  . . . s text=text_"EWD.ajax.getPage({page:'"_src_"',nvp:nvp});"
  . . e  d
@@ -1743,7 +1702,8 @@ expandPanel(nodeOID,attr,parentOID)
  ;
 nextPageHandler(nodeOID)
  ;
- n actionCol,addTo,amp,argOID,argsOID,attr,codeOID,fnOID,handlerOID,nextPage,nvp,replace,text
+ n actionCol,addTo,amp,argOID,argsOID,attr,codeOID,fnOID,handlerOID
+ n maskMsg,maskObj,nextPage,nvp,pushTo,replace,setMask,text
  ;
  s actionCol=$$getAttribute^%zewdDOM("xtype",nodeOID)="actioncolumn"
  s nextPage=$$getAttribute^%zewdDOM("nextpage",nodeOID)
@@ -1755,8 +1715,14 @@ nextPageHandler(nodeOID)
  d removeAttribute^%zewdDOM("nvp",nodeOID)
  s addTo=$$getAttribute^%zewdDOM("addto",nodeOID)
  d removeAttribute^%zewdDOM("addto",nodeOID)
+ s pushTo=$$getAttribute^%zewdDOM("pushto",nodeOID)
+ d removeAttribute^%zewdDOM("pushto",nodeOID)
  s replace=$$getAttribute^%zewdDOM("replacepreviouspage",nodeOID)
  d removeAttribute^%zewdDOM("replacepreviouspage",nodeOID)
+ s setMask=$$getAttribute^%zewdDOM("setmask",nodeOID)
+ d removeAttribute^%zewdDOM("setmask",nodeOID)
+ s maskMsg=$$getAttribute^%zewdDOM("maskmessage",nodeOID)
+ d removeAttribute^%zewdDOM("maskmessage",nodeOID)
  s handlerOID=$$addElementToDOM^%zewdDOM("st2:handler",nodeOID)
  s fnOID=$$addElementToDOM^%zewdDOM("ewd:jsfunction",handlerOID)
  s argsOID=$$addElementToDOM^%zewdDOM("ewd:arguments",fnOID)
@@ -1769,6 +1735,12 @@ nextPageHandler(nodeOID)
  . s argOID=$$addElementToDOM^%zewdDOM("ewd:argument",argsOID,,.attr)
  s text="var nvp='"_nvp_"';"
  s amp="" i nvp'="" s amp="&"
+ i pushTo'="" d
+ . s text=text_"nvp=nvp+'"_amp_"st2_pushTo="_pushTo_"';"
+ . s amp="&"
+ i setMask'="" d
+ . s text=text_"nvp=nvp+'"_amp_"st2_masked="_setMask_"';"
+ . s amp="&"
  i addTo'="" d
  . s text=text_"nvp=nvp+'"_amp_"st2_addTo="_addTo
  . i replace="true" d
@@ -1782,6 +1754,11 @@ nextPageHandler(nodeOID)
  . ;. s text="var nvp='';"
  . s text=text_";"_$c(13,10)
  s text=text_"EWD.ajax.getPage({page:'"_nextPage_"',nvp:nvp});"
+ i setMask'="" d
+ . s maskObj="{xtype:'loadmask'"
+ . i maskMsg'="" s maskObj=maskObj_",message:'"_maskMsg_"'"
+ . s maskObj=maskObj_"}"
+ . s text=text_"Ext.getCmp('"_setMask_"').setMasked("_maskObj_");"
  s codeOID=$$addElementToDOM^%zewdDOM("ewd:code",fnOID,,,text)
  ;
  QUIT
