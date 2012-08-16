@@ -1,7 +1,7 @@
 %zewdSTch2 ; Sencha Touch v2 Tag Processors
  ;
- ; Product: Enterprise Web Developer (Build 935)
- ; Build Date: Mon, 13 Aug 2012 14:12:21
+ ; Product: Enterprise Web Developer (Build 936)
+ ; Build Date: Thu, 16 Aug 2012 15:13:31
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -1310,11 +1310,26 @@ panelInstance(attrs,nodeOID,instanceOID)
  ;
  s argumentsOID=$$addElementToDOM^%zewdDOM("st2:arguments",instanceOID,,.attrs)
  i src'="" d
- . n attr,listenersOID,text,xOID
- . s listenersOID=$$addElementToDOM^%zewdDOM("st2:listeners",argumentsOID)
- . ;i '$$hasChildTag^%zewdDOM(nodeOID,"st2:listeners",.listenersOID) d
- . ;. s listenersOID=$$addElementToDOM^%zewdDOM("st2:listeners",argumentsOID)
- . s text="var nvp='';"
+ . n attr,listenersOID,tempOID,text,xOID
+ . s text=""
+ . ;s listenersOID=$$addElementToDOM^%zewdDOM("st2:listeners",argumentsOID)
+ . s tempOID=$$getTagOID^%zewdDOM("temp",docName)
+ . i tempOID'="" d
+ . . i '$$hasChildTag^%zewdDOM(tempOID,"st2:listeners",.listenersOID) d
+ . . . s listenersOID=$$addElementToDOM^%zewdDOM("st2:listeners",tempOID)
+ . . i $$hasListener("initialize",listenersOID,.xOID) d
+ . . . s text=$$getAttribute^%zewdDOM("initialize",xOID)
+ . . . i $e(text,1,8)="function" d
+ . . . . n nb,rtext
+ . . . . s rtext=$re(text)
+ . . . . s nb=$l(text,"}")
+ . . . . s rtext=$p(rtext,"}",2,nb)
+ . . . . s text=$re(rtext)_";"
+ . . . e  d
+ . . . . s text=text_";"
+ . . e  d
+ . . . s xOID=$$addElementToDOM^%zewdDOM("st2:listener",listenersOID)
+ . s text=text_"var nvp='';"
  . i pushTo'="" d
  . . s text=text_"nvp=nvp+'st2_pushTo="_pushTo_"';"_$c(13,10)
  . i addTo'="" d
@@ -1325,8 +1340,10 @@ panelInstance(attrs,nodeOID,instanceOID)
  . . . s text=text_"EWD.ajax.getPage({page:'"_src_"',targetId:'"_id_"',nvp:nvp});"
  . e  d
  . . s text="EWD.ajax.getPage({page:'"_src_"',targetId:'"_id_"'});"
- . s attr("initialize")=text
- . s xOID=$$addElementToDOM^%zewdDOM("st2:listener",listenersOID,,.attr)
+ . i $e(text,1,8)="function" s text=text_"}"
+ . d setAttribute^%zewdDOM("initialize",text,xOID)
+ . ;s attr("initialize")=text
+ . ;s xOID=$$addElementToDOM^%zewdDOM("st2:listener",listenersOID,,.attr)
  ;
  QUIT argumentsOID
  ;
