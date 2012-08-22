@@ -1,7 +1,7 @@
 %zewdSTch2Map ; Extjs Tag Processor Mappings
  ;
- ; Product: Enterprise Web Developer (Build 931)
- ; Build Date: Fri, 27 Jul 2012 12:05:05
+ ; Product: Enterprise Web Developer (Build 937)
+ ; Build Date: Wed, 22 Aug 2012 17:11:57
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -35,7 +35,7 @@ mappingObjects
  ;;{tagName:"st2:baseparams",parse:{method:"object",optionName:"baseParams"}}
  ;;{tagName:"st2:button",className:"Ext.Button",xtype:"button",xtypeTagName:"st2:item",containerTag:"st2:items"}
  ;;{tagName:"st2:carousel",className:"Ext.carousel.Carousel",xtype:"carousel",xtypeTagName:"st2:item",containerTag:"st2:items"}
- ;;{tagName:"st2:checkboxfield",className:"Ext.field.Checkbox",xtype:"checkboxfield",xtypeTagName:"st2:item",containerTag:"st2:items",pass1Method:"setNameList"}
+ ;;{tagName:"st2:checkboxfield",className:"Ext.field.Checkbox",xtype:"checkboxfield",xtypeTagName:"st2:item",containerTag:"st2:items",pass1Method:"setNameList",expandMethod:"expandCBField",instanceMethod:"CBFieldInstance"}
  ;;{tagName:"st2:component",parse:{method:"object",optionName:"component"}}
  ;;{tagName:"st2:container",className:"Ext.Container",xtype:"container",xtypeTagName:"st2:item",containerTag:"st2:items",expandMethod:"expandContainer",instanceMethod:"containerInstance",pass1Method:"mapContainer"}
  ;;{tagName:"st2:control",parse:{method:"object",optionName:"control"},hasId:false}
@@ -76,7 +76,7 @@ mappingObjects
  ;;{tagName:"st2:pickertoolbar",parse:{method:"object",optionName:"toolbar"},hasId:false}
  ;;{tagName:"st2:plugins",parse:{method:"arrayOfOptions",optionName:"plugins"}}
  ;;{tagName:"st2:pullrefresh",className:"Ext.plugin.PullRefresh",xclass:true,xtypeTagName:"st2:item",containerTag:"st2:plugins"}
- ;;{tagName:"st2:radiofield",className:"Ext.field.Radio",xtype:"radiofield",xtypeTagName:"st2:item",containerTag:"st2:items",pass1Method:"setNameList"}
+ ;;{tagName:"st2:radiofield",className:"Ext.field.Radio",xtype:"radiofield",xtypeTagName:"st2:item",containerTag:"st2:items",pass1Method:"setNameList",expandMethod:"expandRadioField",instanceMethod:"radioFieldInstance"}
  ;;{tagName:"st2:searchfield",className:"Ext.field.Search",xtype:"searchfield",fieldType:"text",xtypeTagName:"st2:item",containerTag:"st2:items",pass1Method:"setNameList"}
  ;;{tagName:"st2:segmentedbutton",className:"Ext.SegmentedButton",xtype:"segmentedbutton",xtypeTagName:"st2:item",containerTag:"st2:items"}
  ;;{tagName:"st2:selectfield",className:"Ext.field.Select",xtype:"selectfield",fieldType:"text",xtypeTagName:"st2:item",containerTag:"st2:items",pass1Method:"setNameList",expandMethod:"expandSelectField",instanceMethod:"selectFieldInstance"}

@@ -1,7 +1,7 @@
 %zewdSTch2Code ; Sencha Touch 2 Runtime Logic
  ;
- ; Product: Enterprise Web Developer (Build 935)
- ; Build Date: Tue, 14 Aug 2012 12:11:59
+ ; Product: Enterprise Web Developer (Build 937)
+ ; Build Date: Wed, 22 Aug 2012 17:11:57
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -63,7 +63,7 @@ createExtFuncs()
  s text=text_"  getGridRowNo: function(grid,rowIndex) {"_$c(13,10)
  s text=text_"    return grid.store.getAt(rowIndex).get('zewdRowNo');"_$c(13,10)
  s text=text_"  },"_$c(13,10)
- s text=text_"  submit: function (formPanelId,nextPage,addTo,replace) {"_$c(13,10)
+ s text=text_"  submit: function (formPanelId,nextPage,addTo,pushTo,replace) {"_$c(13,10)
  s text=text_"    var nvp='';"_$c(13,10)
  s text=text_"    var amp='';"_$c(13,10)
  s text=text_"    var value;"_$c(13,10)
@@ -71,8 +71,8 @@ createExtFuncs()
  s text=text_"    var i;"_$c(13,10)
  s text=text_"    var values = Ext.getCmp(formPanelId).getValues()"_$c(13,10)
  s text=text_"    var fields = Ext.getCmp(formPanelId).getFields()"_$c(13,10)
- s text=text_"    EWD.fields = fields;"_$c(13,10)
- ;s text=text_"    alert(JSON.stringify(values));"_$c(13,10)
+ ;s text=text_"    EWD.fields = fields;"_$c(13,10)
+ ;s text=text_"    EWD.values = values;"_$c(13,10)
  s text=text_"    for (name in values) {"_$c(13,10)
  s text=text_"      var value = values[name];"_$c(13,10)
  s text=text_"      if (value instanceof Array) {"_$c(13,10)
@@ -83,22 +83,19 @@ createExtFuncs()
  s text=text_"            amp='&';"_$c(13,10)
  s text=text_"          }"_$c(13,10)
  s text=text_"        }"_$c(13,10)
- s text=text_"        else {"_$c(13,10)
- s text=text_"          if (fields[name].xtype === 'datepickerfield') {"_$c(13,10)
- ;s text=text_"            alert('day = ' + value.getDate());"_$c(13,10)
- s text=text_"            nvp = nvp + amp + name + '_day=' + value.getDate();"_$c(13,10)
- s text=text_"            amp='&';"_$c(13,10)
- s text=text_"            nvp = nvp + amp + name + '_month=' + (value.getMonth()+1);"_$c(13,10)
- s text=text_"            nvp = nvp + amp + name + '_year=' + value.getFullYear();"_$c(13,10)
- s text=text_"          }"_$c(13,10)
- s text=text_"          else {"_$c(13,10)
- s text=text_"            nvp = nvp + amp + name + '=' + escape(value);"_$c(13,10)
- s text=text_"          }"_$c(13,10)
- s text=text_"        }"_$c(13,10)
  s text=text_"      }"_$c(13,10)
  s text=text_"      else {"_$c(13,10)
- s text=text_"        if (!value) value = '';"_$c(13,10)
- s text=text_"        nvp = nvp + amp + name + '=' + escape(value);"_$c(13,10)
+ s text=text_"        if (fields[name].xtype === 'datepickerfield') {"_$c(13,10)
+ ;s text=text_"          alert('day = ' + value.getDate());"_$c(13,10)
+ s text=text_"          nvp = nvp + amp + name + '_day=' + value.getDate();"_$c(13,10)
+ s text=text_"          amp='&';"_$c(13,10)
+ s text=text_"          nvp = nvp + amp + name + '_month=' + (value.getMonth()+1);"_$c(13,10)
+ s text=text_"          nvp = nvp + amp + name + '_year=' + value.getFullYear();"_$c(13,10)
+ s text=text_"        }"_$c(13,10)
+ s text=text_"        else {"_$c(13,10)
+ s text=text_"          if (!value) value = '';"_$c(13,10)
+ s text=text_"          nvp = nvp + amp + name + '=' + escape(value);"_$c(13,10)
+ s text=text_"        }"_$c(13,10)
  s text=text_"      }"_$c(13,10)
  s text=text_"      amp='&';"_$c(13,10)
  s text=text_"    }"_$c(13,10)
@@ -138,6 +135,7 @@ createExtFuncs()
  ;s text=text_"      }"_$c(13,10)
  ;s text=text_"    );"_$c(13,10)
  s text=text_"    if (addTo !== '') nvp = nvp + '&st2_addTo=' + addTo;"_$c(13,10)
+ s text=text_"    if (pushTo !== '') nvp = nvp + '&st2_pushTo=' + pushTo;"_$c(13,10)
  s text=text_"    if (replace === 1) nvp = nvp + '&st2_removeAll=true';"_$c(13,10)
  s text=text_"    EWD.ajax.getPage({page:nextPage,nvp:nvp})"_$c(13,10)
  s text=text_"  }"_$c(13,10)
@@ -242,6 +240,59 @@ writeTextArea(id,sessid)
  d writeLine(line)
  QUIT
  ;
+writeCBFields(sessionName,id,name,sessid)
+ ;
+ n field,fields,no,selected,value
+ ;
+ d mergeArrayFromSession^%zewdAPI(.fields,sessionName,sessid)
+ d mergeFromSelected^%zewdAPI(name,.selected,sessid)
+ d writeLine("var "_id_"listener = function() {"_$c(13,10))
+ d writeLine("var cont = Ext.getCmp('"_id_"');"_$c(13,10))
+ d writeLine("var obj;"_$c(13,10))
+ s no=""
+ f  s no=$o(fields(no)) q:no=""  d
+ . k field
+ . m field=fields(no)
+ . s field("xtype")="checkboxfield"
+ . s field("id")=id_no
+ . s field("name")=name
+ . s value=$g(field("value"))
+ . i $g(selected(value))'="" s field("checked")="true"
+ . d writeLine("obj=")
+ . d streamArrayToJSON^%zewdJSON("field")
+ . d writeLine(";"_$c(13,10))
+ . d writeLine("cont.add(obj);"_$c(13,10))
+ d writeLine("obj={name:""dummy"_id_""",value:"""",xtype:""hiddenfield""};"_$c(13,10))
+ d writeLine("cont.add(obj);"_$c(13,10))
+ d writeLine("};"_$c(13,10))
+ QUIT
+ ;
+writeRadioFields(sessionName,id,name,sessid)
+ ;
+ n checkedValue,field,fields,no
+ ;
+ d mergeArrayFromSession^%zewdAPI(.fields,sessionName,sessid)
+ s checkedValue=$$getSessionValue^%zewdAPI(name,sessid)
+ d writeLine("var "_id_"listener = function() {"_$c(13,10))
+ d writeLine("var cont = Ext.getCmp('"_id_"');"_$c(13,10))
+ d writeLine("var obj;"_$c(13,10))
+ s no=""
+ f  s no=$o(fields(no)) q:no=""  d
+ . k field
+ . m field=fields(no)
+ . s field("xtype")="radiofield"
+ . s field("id")=id_no
+ . s field("name")=name
+ . i checkedValue=$g(field("value")) s field("checked")="true"
+ . d writeLine("obj=")
+ . d streamArrayToJSON^%zewdJSON("field")
+ . d writeLine(";"_$c(13,10))
+ . d writeLine("cont.add(obj);"_$c(13,10))
+ d writeLine("obj={name:""dummy"_id_""",value:"""",xtype:""hiddenfield""};"_$c(13,10))
+ d writeLine("cont.add(obj);"_$c(13,10))
+ d writeLine("};"_$c(13,10))
+ QUIT
+ ;
 writeTreeStore(modelName,sessionName,sessid)
  ;
  n data,fields,i,name,no
@@ -324,3 +375,53 @@ convertTreeStore(array,nvp)
  . . k array(subscript,"nextpage")
  ;
  QUIT
+ ;
+formError(title,message,sessid)
+ ;
+ n error,js
+ ;
+ i $g(sessid)="" d
+ . s sessid=$g(message)
+ . s message=$g(title)
+ . s title="Form Error"
+ i $g(message)="" QUIT ""
+ s error="Ext.Msg.alert('"_title_"','"_$g(message)_"');"
+ ;
+ s js="js"
+ i $$isCSP^%zewdAPI(sessid) s js="javascript"
+ QUIT js_": "_error
+ ;
+getSessionTree(sessionName,sessid)
+ ;
+ n name,names,no,sess,tree,xtree
+ ;
+ d deleteFromSession^%zewdAPI(sessionName,sessid)
+ d getSessionNames^%zewdAPI2(.names,sessid)
+ s name="",no=0
+ f  s name=$o(names(name)) q:name=""  d
+ . s no=no+1
+ . k sess
+ . d mergeArrayFromSession^%zewdAPI(.sess,name,sessid)
+ . d createTree(1,name,.sess,.xtree)
+ . m tree(1,"child",no)=xtree
+ d mergeArrayToSession^%zewdAPI(.tree,sessionName,sessid)
+ QUIT
+ ;
+createTree(no,name,array,tree)
+ n dd,sub,subArray,xno,xtree
+ k tree
+ s dd=$d(array)
+ s xno=0
+ s tree("text")=name
+ i dd=1!(dd=11) d
+ . s xno=xno+1
+ . s tree("child",xno,"text")=array
+ i dd<10 QUIT
+ s sub=""
+ f  s sub=$o(array(sub)) q:sub=""  d
+ . s xno=xno+1 
+ . m subArray=array(sub)
+ . d createTree(xno,sub,.subArray,.xtree)
+ . m tree("child",xno)=xtree
+ QUIT
+ ;

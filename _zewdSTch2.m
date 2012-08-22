@@ -1,7 +1,7 @@
 %zewdSTch2 ; Sencha Touch v2 Tag Processors
  ;
- ; Product: Enterprise Web Developer (Build 936)
- ; Build Date: Thu, 16 Aug 2012 15:13:31
+ ; Product: Enterprise Web Developer (Build 937)
+ ; Build Date: Wed, 22 Aug 2012 17:11:57
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -1076,7 +1076,7 @@ setNameList(nodeOID)
  s tagName=$$getTagName^%zewdDOM(nodeOID)
  i tagName="st2:datefield" s xOID=$$renameTag^%zewdDOM("st2:datepickerfield",nodeOID,1)
  i tagName="st2:checkboxfield"!(tagName="st2:radiofield") d
- . n groupAttr,id,name,OIDArray,pOID,stop,xOID
+ . n groupAttr,id,name,OIDArray,pOID,sessionName,stop,xOID
  . s groupAttr="cbgroup"
  . s id=$$getAttribute^%zewdDOM("id",nodeOID)
  . s name=$$getAttribute^%zewdDOM("name",nodeOID)
@@ -1152,7 +1152,7 @@ setNameList(nodeOID)
  ;
 submitButton(nodeOID)
  ;
- n addTo,attr,formId,handler,nextPage,pOID,replace,stop,text,xOID
+ n addTo,attr,formId,handler,nextPage,pOID,pushTo,replace,stop,text,xOID
  ;
  s xOID=$$renameTag^%zewdDOM("st2:button",nodeOID,1)
  s pOID=nodeOID
@@ -1167,9 +1167,10 @@ submitButton(nodeOID)
  . d setAttribute^%zewdDOM("id",formId,pOID)
  s nextPage=$$getAttribute^%zewdDOM("nextpage",nodeOID)
  s addTo=$$getAttribute^%zewdDOM("addto",nodeOID)
+ s pushTo=$$getAttribute^%zewdDOM("pushto",nodeOID)
  s replace=$$getAttribute^%zewdDOM("replacepreviouspage",nodeOID)="true"
- f attr="nextpage","addto","replacepreviouspage" d removeAttribute^%zewdDOM(attr,nodeOID)
- s handler=".function() {EWD.st2.submit('"_formId_"','"_nextPage_"','"_addTo_"',"_replace_")}"
+ f attr="nextpage","addto","pushto","replacepreviouspage" d removeAttribute^%zewdDOM(attr,nodeOID)
+ s handler=".function() {EWD.st2.submit('"_formId_"','"_nextPage_"','"_addTo_"','"_pushTo_"',"_replace_")}"
  d setAttribute^%zewdDOM("handler",handler,nodeOID)
  ;
  QUIT
@@ -1481,6 +1482,72 @@ listPass1(nodeOID)
  . s attr(event)="function("_params_") {"_code_"EWD.ajax.getPage({page:page,nvp:nvp})}"
  . s xOID=$$addElementToDOM^%zewdDOM("st2:listener",listenersOID,,.attr)
  QUIT
+ ;
+expandCBField(nodeOID,attr,parentOID)
+ n ok
+ s ok=$$radioCBInstance(.attr,nodeOID,parentOID)
+ QUIT
+ ;
+radioCBInstance(attrs,nodeOID,instanceOID)
+ ;
+ n argumentsOID,cspOID,id,itemsId,mainAttrs,name,sessionName,tagName,text,xOID,xtype
+ ;
+ m mainAttrs=attrs
+ s sessionName=$g(attrs("sessionname"))
+ s name=$g(attrs("name"))
+ s id=$g(attrs("id"))
+ i sessionName'="" d
+ . n cspOID,text,xtype
+ . k attrs
+ . s attrs("id")=id
+ . s attrs("listeners")=".{initialize: function() {"_id_"listener()}}"
+ . s attrs("xtype")="container"
+ . s xOID=$$createElement^%zewdDOM("temp",docOID)
+ . s xOID=$$insertBefore^%zewdDOM(xOID,nodeOID)
+ . s text=" d writeCBFields^%zewdSTch2Code("""_sessionName_""","""_id_""","""_name_""",sessid)"
+ . s cspOID=$$addCSPServerScript^%zewdAPI(xOID,text)
+ ;
+ i $g(attrs("xtype"))'="checkboxfield",$g(attrs("xtype"))'="container" d
+ . s argumentsOID=$$addElementToDOM^%zewdDOM("st2:arguments",instanceOID,,.attrs)
+ e  d
+ . s argumentsOID=nodeOID
+ ;
+ i $g(xOID)'="" d removeIntermediateNode^%zewdDOM(xOID)
+ ;
+ QUIT argumentsOID
+ ;
+expandRadioField(nodeOID,attr,parentOID)
+ n ok
+ s ok=$$radioFieldInstance(.attr,nodeOID,parentOID)
+ QUIT
+ ;
+radioFieldInstance(attrs,nodeOID,instanceOID)
+ ;
+ n argumentsOID,cspOID,id,itemsId,mainAttrs,name,sessionName,tagName,text,xOID,xtype
+ ;
+ m mainAttrs=attrs
+ s sessionName=$g(attrs("sessionname"))
+ s name=$g(attrs("name"))
+ s id=$g(attrs("id"))
+ i sessionName'="" d
+ . n cspOID,text,xtype
+ . k attrs
+ . s attrs("id")=id
+ . s attrs("listeners")=".{initialize: function() {"_id_"listener()}}"
+ . s attrs("xtype")="container"
+ . s xOID=$$createElement^%zewdDOM("temp",docOID)
+ . s xOID=$$insertBefore^%zewdDOM(xOID,nodeOID)
+ . s text=" d writeRadioFields^%zewdSTch2Code("""_sessionName_""","""_id_""","""_name_""",sessid)"
+ . s cspOID=$$addCSPServerScript^%zewdAPI(xOID,text)
+ ;
+ i $g(attrs("xtype"))'="radiofield",$g(attrs("xtype"))'="container" d
+ . s argumentsOID=$$addElementToDOM^%zewdDOM("st2:arguments",instanceOID,,.attrs)
+ e  d
+ . s argumentsOID=nodeOID
+ ;
+ i $g(xOID)'="" d removeIntermediateNode^%zewdDOM(xOID)
+ ;
+ QUIT argumentsOID
  ;
 expandSelectField(nodeOID,attr,parentOID)
  n ok
