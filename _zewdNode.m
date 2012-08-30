@@ -1,7 +1,7 @@
 %zewdNode	; Enterprise Web Developer global access APIs for Node.js
  ;
- ; Product: Enterprise Web Developer (Build 931)
- ; Build Date: Fri, 27 Jul 2012 12:05:05
+ ; Product: Enterprise Web Developer (Build 937)
+ ; Build Date: Thu, 30 Aug 2012 14:55:37
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -32,108 +32,6 @@ testx(x,y)
  d trace^%zewdAPI("test^%zewdNode invoked with arguments "_x_" & "_y)
  QUIT x+y
  ;
-cache(pid,namespace) ;,headers,content)
- n %CGIEVAR,ext,hname,host,%KEY,name,ok,port,response
- ;
- s namespace=$g(namespace)
- i namespace'="",namespace'=$zu(5) s ok=$zu(5,namespace)
- i $g(^zewd("trace"))=1 d
- . d trace^%zewdAPI($$inetDate^%zewdAPI($h)_": cache^%zewdNode called with pid = "_pid_"; namespace="_namespace)
- . k ^robTemp
- . m ^robTemp=^CacheTempRequest(pid)
- m %KEY=^CacheTempRequest(pid,"query")
- m %KEY=^CacheTempRequest(pid,"contents")
- s name=""
- f  s name=$o(%KEY(name)) q:name=""  d
- . i $d(%KEY(name,0)) d
- . . i '$d(%KEY(name,1)) d
- . . . n value
- . . . s value=%KEY(name,0)
- . . . k %KEY(name,0)
- . . . s %KEY(name)=value
- . . e  d
- . . . n index
- . . . s index=$o(%KEY(name,""),-1)+1
- . . . s %KEY(name,index)=%KEY(name,0)
- . . . k %KEY(name,0)
- s name=""
- f  s name=$o(^CacheTempRequest(pid,"headers",name)) q:name=""  d
- . q:name="headers"
- . s hname=$zconvert(name,"U")
- . s hname=$tr(hname,"-","_")
- . s %CGIEVAR(hname)=^CacheTempRequest(pid,"headers",name)
- s name=""
- f  s name=$o(^CacheTempRequest(pid,"headers","headers",name)) q:name=""  d
- . s hname=$zconvert(name,"U")
- . s hname="HTTP_"_$tr(hname,"-","_")
- . s %CGIEVAR(hname)=^CacheTempRequest(pid,"headers","headers",name)
- s %CGIEVAR("SERVER_SOFTWARE")="Node.js"
- s host=$g(%CGIEVAR("HTTP_HOST"))
- s port=$p(host,":",2)
- i port="" s port=$g(^zewd("defaultWebPort"))
- i port="" s port=80
- s host=$p(host,":",1)
- k %CGIEVAR("HTTP_HOST")
- s %CGIEVAR("SERVER_PORT")=port
- s %CGIEVAR("REMOTE_HOST")=$g(%CGIEVAR("REMOTE_ADDR"))
- s %CGIEVAR("SERVER_NAME")=host
- S %CGIEVAR("REQUEST_METHOD")=^CacheTempRequest(pid,"method")
- ;
- s %KEY("app")=$p(%CGIEVAR("SCRIPT_NAME"),"/",3)
- s %KEY("page")=$p(%CGIEVAR("SCRIPT_NAME"),"/",4)
- s ext=".ewd"
- i %KEY("page")[".mgwsi" s ext=".mgwsi"
- s %KEY("page")=$p(%KEY("page"),ext,1)
- i $g(^zewd("trace"))=1 d
- . k ^robNode
- . m ^robNode("%KEY")=%KEY
- . m ^robNode("%CGIEVAR")=%CGIEVAR
- k ^CacheTempBuffer($j)
- ; new "node" technology writes output directly into the buffer global
- i $g(^%zewdIndex(%KEY("app"),"technology"))'="node" d
- . d buffer("cacheNode")
- e  d
- . d runPage^%zewdWLD
- . i $g(^zewd("trace"))=1 m ^robNode("output")=^CacheTempBuffer($j)
- i $g(^zewd("trace"))=1 d trace^%zewdAPI("cache^%zewdNode finished")
- QUIT "ok"
- ;
-buffer(procedure)
- n buff,file,filemode,i,io,n,response,x
- ;d trace^%zewdAPI("1: "_$zts)
- s file="cacheNodeBuffer_"_$j_".txt"
- o file:"nws"
- u file
- ;d trace^%zewdAPI("2: "_$zts)
- s procedure=$g(procedure)
- i procedure="cacheNode" d
- . d runPage^%zewdWLD
- e  i procedure="zwrite" d
- . zwrite
- e  d
- . i procedure'="" x "d "_procedure
- ;d trace^%zewdAPI("3: "_$zts)
- c file
- o file:"r"
- s $zt="bufferEof"
- u file
- s buff=""
- ;d trace^%zewdAPI("4: "_$zts)
- f i=1:1 r *x d
- . s buff=buff_$c(x)
- . i $l(buff)>4000 d
- . . s n=$increment(^CacheTempBuffer($j))
- . . s ^CacheTempBuffer($j,n)=buff
- . . s buff=""
-bufferEof c file
- ;d trace^%zewdAPI("5: "_$zts)
- i $$deleteFile^%zewdAPI(file)
- i buff'="" d
- . s n=$increment(^CacheTempBuffer($j))
- . s ^CacheTempBuffer($j,n)=buff
- ;d trace^%zewdAPI("6: "_$zts)
- i $g(^zewd("trace"))=1 m ^robNode("output")=^CacheTempBuffer($j)
- QUIT
  ;
 output(j)
  n left,len,length,line,maxLength,n,p1,response,stop
@@ -1029,58 +927,5 @@ serverMessageTest(delay)
  . . s ok=$$createServerMessage^%zewdNode("alert",message,sessid,trigger)
  . i 'trigger d triggerServerMessage^%zewdNode
  . w "======",!
- QUIT
- ;
-test2(request)
- s file="buffer.txt"
- o file:"nws"
- u file w "hkjhjkhjkh"_$c(13,10)
- c file
- o file:"r"
- u file r x
- c file
- QUIT "echo: "_x_$c(13,10)
- ;
-test(request)
- n buff,file,filemode,i,io,n,response,x
- d trace^%zewdAPI("1: "_$zts)
- ;s io=$io
- s file="buffer"_$j_".txt"
- o file:"nws"
- u file
- d trace^%zewdAPI("2: "_$zts)
- d sender(request)
- d trace^%zewdAPI("3: "_$zts)
- c file
- o file:"r"
- s $zt="eof"
- k ^CacheTempBuffer($j)
- u file
- s buff="",n=0
- d trace^%zewdAPI("4: "_$zts)
- f i=1:1 r *x d
- . s buff=buff_$c(x)
- . i $l(buff)>4000 d
- . . s n=n+1
- . . s ^CacheTempBuffer($j,n)=buff
- . . s buff=""
-eof c file
- ;u io
- d trace^%zewdAPI("5: "_$zts)
- i $$deleteFile^%zewdAPI(file)
- i buff'="" d
- . s n=n+1
- . s ^CacheTempBuffer($j,n)=buff
- d trace^%zewdAPI("6: "_$zts)
- QUIT 1
- ;
-sender(request)
- n i,string
- w "This is Cache process "_$j_" responding at "_$$inetDate^%zewdAPI($h)_$c(13,10)
- w "You sent me:"_$c(13,10)
- w request_$c(13,10)
- ;s string=$$makeString^%zewdAPI("x",30000)
- ;f i=1:1:10 w string
- w $c(13,10)_"End of response from Cache"_$c(13,10)
  QUIT
  ;
