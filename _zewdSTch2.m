@@ -1,7 +1,7 @@
 %zewdSTch2 ; Sencha Touch v2 Tag Processors
  ;
- ; Product: Enterprise Web Developer (Build 937)
- ; Build Date: Wed, 22 Aug 2012 17:11:57
+ ; Product: Enterprise Web Developer (Build 938)
+ ; Build Date: Thu, 30 Aug 2012 19:19:48
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -1068,6 +1068,28 @@ setDatePicker(nodeOID)
  . s lsOID=$$addElementToDOM^%zewdDOM("st2:listeners",nodeOID)
  s attr("painted")="function(me) {if ("_year_" !== '') this.setValueAnimated({day:"_day_",month:"_month_",year:"_year_"})}"
  s lOID=$$addElementToDOM^%zewdDOM("st2:listener",lsOID,,.attr)
+ QUIT
+ ;
+actionSheetInit(nodeOID)
+ ;
+ n hasListener,listenersOID
+ ;
+ s hasListener=0
+ i $$hasChildTag^%zewdDOM(nodeOID,"st2:listeners",.listenersOID) d
+ . n childNo,childOID,OIDArray
+ . d getChildrenInOrder^%zewdDOM(listenersOID,.OIDArray)
+ . s childNo=""
+ . f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d  q:hasListener
+ . . s childOID=OIDArray(childNo)
+ . . i $$getTagName^%zewdDOM(childOID)="st2:listener" d
+ . . . i $$getAttribute^%zewdDOM("initialize",childOID) s hasListener=1
+ e  d
+ . s listenersOID=$$addElementToDOM^%zewdDOM("st2:listeners",nodeOID)
+ i 'hasListener d
+ . n attr,xOID
+ . s attr("initialize")="function(sheet) {Ext.Viewport.add(sheet);}"
+ . s xOID=$$addElementToDOM^%zewdDOM("st2:listener",listenersOID,,.attr)
+ d setAttribute^%zewdDOM("hidden","true",nodeOID)
  QUIT
  ;
 setNameList(nodeOID)

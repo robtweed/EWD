@@ -1,7 +1,7 @@
 %zewdSTch2Map ; Extjs Tag Processor Mappings
  ;
- ; Product: Enterprise Web Developer (Build 937)
- ; Build Date: Wed, 22 Aug 2012 17:11:57
+ ; Product: Enterprise Web Developer (Build 938)
+ ; Build Date: Thu, 30 Aug 2012 19:19:48
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -29,7 +29,7 @@
  QUIT
  ;
 mappingObjects
- ;;{tagName:"st2:actionsheet",className:"Ext.ActionSheet",xtype:"actionsheet",xtypeTagName:"st2:item",containerTag:"st2:items"}
+ ;;{tagName:"st2:actionsheet",className:"Ext.ActionSheet",xtype:"actionsheet",xtypeTagName:"st2:item",containerTag:"st2:items",pass1Method:"actionSheetInit"}
  ;;{tagName:"st2:audio",className:"Ext.Audio",xtype:"audio",xtypeTagName:"st2:item",containerTag:"st2:items"}
  ;;{tagName:"st2:backbutton",parse:{method:"object",optionName:"backButton"}}
  ;;{tagName:"st2:baseparams",parse:{method:"object",optionName:"baseParams"}}
