@@ -1,7 +1,7 @@
 %zewdExt4 ; Extjs Tag Processors
  ;
- ; Product: Enterprise Web Developer (Build 931)
- ; Build Date: Fri, 27 Jul 2012 12:05:05
+ ; Product: Enterprise Web Developer (Build 939)
+ ; Build Date: Thu, 27 Sep 2012 12:04:50
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -1565,6 +1565,7 @@ gridPanelInstance(attrs,nodeOID,instanceOID)
  . . s text=text_"  if (ov.toString().indexOf('/') === -1) ov = Ext.Date.format(ov, 'm/d/Y');"_$c(13,10)
  . . s text=text_"}"_$c(13,10)
  . . s text=text_"if (value !== ov) {"_$c(13,10)
+ . . s text=text_" value = encodeURIComponent(value);"_$c(13,10)
  . . s text=text_" var nvp = 'row=' + e.record.data.zewdRowNo + '&colName=' + e.field + '&value=' + value + '&originalValue=' + ov;"_$c(13,10)
  . . s text=text_" EWD.ajax.getPage({page:'"_validationPage_"',nvp:nvp});"_$c(13,10)
  . . s text=text_"}"_$c(13,10)

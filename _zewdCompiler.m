@@ -1,7 +1,7 @@
 %zewdCompiler	; Enterprise Web Developer Compiler
  ;
- ; Product: Enterprise Web Developer (Build 931)
- ; Build Date: Fri, 27 Jul 2012 12:05:04
+ ; Product: Enterprise Web Developer (Build 939)
+ ; Build Date: Thu, 27 Sep 2012 12:04:50
  ; 
  ; 
  ; ----------------------------------------------------------------------------
@@ -640,31 +640,41 @@ bypassMode(docName)
 	. s nodeOID=$$getDocumentElement^%zewdDOM(docName)
 	. s tagName=$$getTagName^%zewdDOM(nodeOID)
 	. i tagName[":fragment"!(tagName[":container") d
-	. . n configOID,docOID,pps
+	. . n attr,attrs,configOID,docOID,pps
 	. . s docOID=$p(nodeOID,"-",1)_"-1"
 	. . s configOID=$$createElement^%zewdDOM("ewd:config",docOID)
+	. . d getAttributeValues^%zewdDOM(nodeOID,.attrs)
 	. . i tagName[":fragment" d
 	. . . d setAttribute^%zewdDOM("pagetype","ajax",configOID)
-	. . . i $$getAttribute^%zewdDOM("isfirstpage",nodeOID)'="true" d
+	. . . i $g(attrs("isfirstpage"))'="true" d
 	. . . . d setAttribute^%zewdDOM("isfirstpage","false",configOID)
 	. . . e  d
 	. . . . d setAttribute^%zewdDOM("isfirstpage","true",configOID)	
 	. . i tagName[":container" d
 	. . . n disable
-	. . . i $$getAttribute^%zewdDOM("isfirstpage",nodeOID)'="false" d
+	. . . i $g(attrs("isfirstpage"))'="false" d
 	. . . . d setAttribute^%zewdDOM("isfirstpage","true",configOID)
 	. . . . d setAttribute^%zewdDOM("cachepage","false",configOID)
 	. . . . d removeAttribute^%zewdDOM("isfirstpage",nodeOID)
+	. . . . k attrs("isfirstpage")
 	. . . e  d
 	. . . . d setAttribute^%zewdDOM("isfirstpage","false",configOID)
-	. . . s disable=$$getAttribute^%zewdDOM("disablegetpage",nodeOID)
+	. . . s disable=$g(attrs("disablegetpage"))
 	. . . i disable'="" d setAttribute^%zewdDOM("disablegetpage",disable,configOID)
 	. . d removeAttribute^%zewdDOM("isfirstpage",nodeOID)
-	. . s pps=$$getAttribute^%zewdDOM("onbeforerender",nodeOID)
-	. . i pps="" s pps=$$getAttribute^%zewdDOM("prepagescript",nodeOID)
+	. . k attrs("isfirstpage")
+	. . s pps=$g(attrs("onbeforerender"))
+	. . i pps="" s pps=$g(attrs("prepagescript"))
 	. . i pps'="" d
 	. . . d setAttribute^%zewdDOM("prepagescript",pps,configOID)
 	. . . d removeAttribute^%zewdDOM("onbeforerender",nodeOID)
+	. . . d removeAttribute^%zewdDOM("prepagescript",nodeOID)
+	. . . k attrs("onbeforerender"),attrs("prepagescript")
+	. . ; copy all other attributes to ewd:config tag
+	. . s attr=""
+	. . f  s attr=$o(attrs(attr)) q:attr=""  d
+	. . . i $$getAttribute^%zewdDOM(attr,configOID)="" d
+	. . . . d setAttribute^%zewdDOM(attr,attrs(attr),configOID)
 	. . s nodeOID=$$insertBefore^%zewdDOM(configOID,nodeOID)
 	. e  d
 	. . s nodeOID=""

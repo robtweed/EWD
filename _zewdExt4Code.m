@@ -1,7 +1,7 @@
 %zewdExt4Code ; Extjs 4 Runtime Logic
  ;
- ; Product: Enterprise Web Developer (Build 933)
- ; Build Date: Wed, 01 Aug 2012 10:08:05
+ ; Product: Enterprise Web Developer (Build 939)
+ ; Build Date: Thu, 27 Sep 2012 12:04:50
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -964,11 +964,14 @@ createExtFuncs()
  s text=text_"        else if ((item.xtype !== 'radiogroup')&&(item.xtype !== 'checkboxgroup')) {"_$c(13,10)
  s text=text_"          value = '';"_$c(13,10)
  s text=text_"          if (item.xtype === 'textareafield') {"_$c(13,10)
- s text=text_"            value = escape(item.getValue());"_$c(13,10)
- s text=text_"            value = value.replace(/\+/g, '%2B');console.log('ta: ' + value)"_$c(13,10)
+ ;s text=text_"            value = escape(item.getValue());"_$c(13,10)
+ s text=text_"            value = item.getValue();"_$c(13,10)
+ s text=text_"            value = value.replace(/\+/g, '%2B');"_$c(13,10)
+ ;s text=text_"            console.log('ta: ' + value)"_$c(13,10)
  s text=text_"          }"_$c(13,10)
  s text=text_"          else if (item.xtype === 'htmleditor') {"_$c(13,10)
- s text=text_"            value = escape(item.getValue());console.log(value);"_$c(13,10)
+ ;s text=text_"            value = escape(item.getValue());console.log(value);"_$c(13,10)
+ s text=text_"            value = item.getValue();"_$c(13,10)
  s text=text_"            value = value.replace(/%3Cbr%3E/g, '%0A');"_$c(13,10)
  s text=text_"          }"_$c(13,10)
  s text=text_"          else {"_$c(13,10)
@@ -988,6 +991,7 @@ createExtFuncs()
  s text=text_"    );"_$c(13,10)
  s text=text_"    if (addTo !== '') nvp = nvp + '&ext4_addTo=' + addTo;"_$c(13,10)
  s text=text_"    if (replace === 1) nvp = nvp + '&ext4_removeAll=true';"_$c(13,10)
+ s text=text_"    nvp = nvp + '&ewd_framework=extjs4';"_$c(13,10)
  s text=text_"    EWD.ajax.getPage({page:nextPage,nvp:nvp})"_$c(13,10)
  s text=text_"  }"_$c(13,10)
  s text=text_"};"_$c(13,10)

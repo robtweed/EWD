@@ -1,7 +1,7 @@
 %zewdPHP	; Enterprise Web Developer PHP run-time functions and processing
  ;
- ; Product: Enterprise Web Developer (Build 931)
- ; Build Date: Fri, 27 Jul 2012 12:05:05
+ ; Product: Enterprise Web Developer (Build 939)
+ ; Build Date: Thu, 27 Sep 2012 12:04:51
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -432,6 +432,8 @@ updateSessionFromRequest(requestArray,sessid)
  . . . s nlines=$l(text,$c(13))
  . . . f i=1:1:nlines d
  . . . . s line=$p(text,$c(13),i)
+ . . . . i $g(requestArray("ewd_framework"))="extjs4" d
+ . . . . . s line=$$replaceAll(line,"%2B","+")
  . . . . s lineNo=lineNo+1
  . . . . s textarray(lineNo)=line
  . . ;f i=nlines:-1:1 q:textarray(i)'=""  k textarray(i) s nlines=nlines-1
