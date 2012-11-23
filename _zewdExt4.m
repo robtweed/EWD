@@ -1,7 +1,7 @@
 %zewdExt4 ; Extjs Tag Processors
  ;
- ; Product: Enterprise Web Developer (Build 939)
- ; Build Date: Thu, 27 Sep 2012 12:04:50
+ ; Product: Enterprise Web Developer (Build 944)
+ ; Build Date: Fri, 23 Nov 2012 17:15:06
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -1115,9 +1115,14 @@ treePanelListener(nodeOID)
  s text=text_"  nvp = nvp + 'ext4_addTo=' + record.raw.addTo;"_$c(13,10)
  s text=text_" }"_$c(13,10)
  s text=text_" if (typeof record.raw.replace !== 'undefined') {"_$c(13,10)
- s text=text_"  if (nvp !== '') nvp = nvp + '&';"_$c(13,10)
- s text=text_"  nvp = nvp + 'ext4_removeAll=true';"_$c(13,10)
- s text=text_" }"_$c(13,10)
+ ;s text=text_"  if (nvp !== '') nvp = nvp + '&';"_$c(13,10)
+ ;s text=text_"  nvp = nvp + 'ext4_removeAll=true';"_$c(13,10)
+ ;s text=text_" }"_$c(13,10)
+ s text=text_"   if (record.raw.replace==1) {"_$c(13,10) ;cpc
+ s text=text_"     if (nvp !== '') nvp = nvp + '&';"_$c(13,10)
+ s text=text_"     nvp = nvp + 'ext4_removeAll=true';"_$c(13,10)
+ s text=text_"   }"_$c(13,10) ;cpc
+ s text=text_" }"_$c(13,10) ;cpc
  s text=text_" EWD.ajax.getPage({page:record.raw.page,nvp:nvp});"_$c(13,10)
  s text=text_"}"_$c(13,10)
  s codeOID=$$addElementToDOM^%zewdDOM("ewd:code",fnOID,,,text)

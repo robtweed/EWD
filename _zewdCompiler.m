@@ -1,7 +1,7 @@
 %zewdCompiler	; Enterprise Web Developer Compiler
  ;
- ; Product: Enterprise Web Developer (Build 939)
- ; Build Date: Thu, 27 Sep 2012 12:04:50
+ ; Product: Enterprise Web Developer (Build 944)
+ ; Build Date: Fri, 23 Nov 2012 17:15:06
  ; 
  ; 
  ; ----------------------------------------------------------------------------
@@ -1447,6 +1447,7 @@ updateTagDefinitions
 	;
 	d install^%zewdDOMDocumentation
 	d install^%zewdYUIConf
+	d install^%zewdMDWS
 	; 
 	QUIT
 	;

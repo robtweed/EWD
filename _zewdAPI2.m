@@ -1,7 +1,7 @@
 %zewdAPI2 ; Enterprise Web Developer run-time functions and user APIs
  ;
- ; Product: Enterprise Web Developer (Build 931)
- ; Build Date: Fri, 27 Jul 2012 12:05:04
+ ; Product: Enterprise Web Developer (Build 944)
+ ; Build Date: Fri, 23 Nov 2012 17:15:06
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -28,6 +28,10 @@
  ;
  ;QUIT
  ;
+ ;
+ ; encode a date in mm/dd/yyyy format to $h
+encodeDate(textDate)
+ QUIT $$encodeDate^%zewdGTM(textDate)
  ;
 getTmpSessionValue(name,sessid)
  ;
@@ -175,6 +179,9 @@ test()
  s ver="<script>alert('"_ver_"')</script>"
  QUIT ver
  ;
+getNextRequestName(name,sessid)
+ QUIT $o(requestArray(name))
+ ;
 getNextSessionName(name,sessid)
  ;
  QUIT $o(^%zewdSession("session",sessid,name))
@@ -208,4 +215,24 @@ writeSymbolTable(web)
  zwrite
  i $g(web) w "</pre>"
  QUIT 
+ ;
+strx(string)
+ n i,c,a,ok
+ f i=1:1:$l(string) s c=$e(string,i),a=$a(c) w i_": "_c_" : "_a,! r ok
+ QUIT
+ ;
+ajaxErrorRedirect(sessid)
+ ;
+ n errorPage
+ ;
+ s errorPage=$$getSessionValue^%zewdAPI("ewd.errorPage",sessid)
+ d setRedirect^%zewdAPI(errorPage,sessid)
+ ;
+ QUIT ""
+ ;
+getIP() ; Get own IP address
+ ;
+ n ip,ipInfo
+ ;
+ QUIT $g(ip)
  ;

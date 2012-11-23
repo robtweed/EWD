@@ -1,7 +1,7 @@
 %zewdCompiler20	; Enterprise Web Developer Compiler : Combo+ tag processor
  ;
- ; Product: Enterprise Web Developer (Build 931)
- ; Build Date: Fri, 27 Jul 2012 12:05:04
+ ; Product: Enterprise Web Developer (Build 944)
+ ; Build Date: Fri, 23 Nov 2012 17:15:06
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -551,7 +551,7 @@ jsMethod(nodeOID,attrValues,docOID,technology)
 	;
 	; Invoke a Javascript function statement
 	;
-	n comma,jsText,name,ok,paramsOID,return,textOID,type,var
+	n comma,jsText,maxLen,name,ok,paramsOID,return,textOID,type,var
 	;
 	s name=$$getAttribute^%zewdDOM("name",nodeOID)
 	s return=$$getAttribute^%zewdDOM("return",nodeOID)
@@ -587,8 +587,19 @@ jsMethod(nodeOID,attrValues,docOID,technology)
 	. . . . s jsText=jsText_comma_""""_var_""""
 	. . . s comma=","
 	s jsText=jsText_");"
-	s textOID=$$createTextNode^%zewdDOM(jsText,docOID)
-	s textOID=$$insertBefore^%zewdDOM(textOID,nodeOID)
+	i $l(jsText)>4000 d
+	. n p1,revText,xOID
+	. s xOID=nodeOID
+	. s revText=$re(jsText)
+	. f  d  q:revText=""
+	. . s p1=$e(revText,1,4000)
+	. . s revText=$e(revText,4000+1,$l(revText))
+	. . s textOID=$$createTextNode^%zewdDOM($re(p1),docOID)
+	. . s textOID=$$insertBefore^%zewdDOM(textOID,xOID)
+	. . s xOID=textOID
+	e  d
+	. s textOID=$$createTextNode^%zewdDOM(jsText,docOID)
+	. s textOID=$$insertBefore^%zewdDOM(textOID,nodeOID)
 	s ok=$$removeChild^%zewdDOM(nodeOID)
 	QUIT
 	;

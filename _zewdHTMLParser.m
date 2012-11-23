@@ -1,7 +1,7 @@
 %zewdHTMLParser	; Enterprise Web Developer HTML to XHTML Converter
  ;
- ; Product: Enterprise Web Developer (Build 931)
- ; Build Date: Fri, 27 Jul 2012 12:05:05
+ ; Product: Enterprise Web Developer (Build 944)
+ ; Build Date: Fri, 23 Nov 2012 17:15:07
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -125,15 +125,19 @@ testHTTP ;
  ;
  QUIT
  ;
-parseURL(server,getPath,docName,port,isHTML,responseTime,browserType,post,maxLineLength)
+parseURL(server,getPath,docName,port,isHTML,responseTime,browserType,post,maxLineLength,headers)
  ;
  n bsig,endTime,error,file,filename,http,ok,startTime
  ;
  s error=""
- n cspVars,%error,html,phpVars,url
+ n cspVars,%error,html,phpVars,reqHeaders,respHeaders,url
  i $e(getPath,1)'="/" s getPath="/"_getPath
  s url="http://"_server_getPath
- s ok=$$httpGET^%zewdGTM(url,.html,10)
+ i $g(headers("Cookie"))'="" s reqHeaders(1)="Cookie: "_headers("Cookie")
+ k headers
+ i $g(responseTime)="" s responseTime=10
+ s ok=$$httpGET^%zewdGTM(url,.html,.reqHeaders,responseTime,,,.headers)
+ ;httpGET(url,html,headerArray,timeout,test,rawResponse,respHeaders,sslHost,sslPort)
  k ^CacheTempEWD($j)
  m ^CacheTempEWD($j)=html
  d tokeniseCSPVariables(.cspVars)

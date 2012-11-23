@@ -1,7 +1,7 @@
 %zewdAPI	; Enterprise Web Developer run-time functions and user APIs
  ;
- ; Product: Enterprise Web Developer (Build 931)
- ; Build Date: Fri, 27 Jul 2012 12:05:04
+ ; Product: Enterprise Web Developer (Build 944)
+ ; Build Date: Fri, 23 Nov 2012 17:15:06
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -915,9 +915,9 @@ parseHTMLStream(streamName,docName)
  ;
  ;-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
  ;
-parseURL(server,getPath,docName,port,isHTML,responseTime,browserType,post,maxLineLength)
+parseURL(server,getPath,docName,port,isHTML,responseTime,browserType,post,maxLineLength,headers)
  ;
- QUIT $$parseURL^%zewdHTMLParser($g(server),$g(getPath),$g(docName),$g(port),$g(isHTML),.responseTime,$g(browserType),$g(post),$g(maxLineLength))
+ QUIT $$parseURL^%zewdHTMLParser($g(server),$g(getPath),$g(docName),$g(port),$g(isHTML),.responseTime,$g(browserType),$g(post),$g(maxLineLength),.headers)
  ;
  ;-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
  ;
@@ -1824,27 +1824,17 @@ zcvt(string,param,param2)
  QUIT string
  ;
 getIP() ; Get own IP address
- ;
- n ip,ipInfo
- ;
- QUIT $g(ip)
+ QUIT $$getIP^%zewdAPI2()
  ;
 ajaxErrorRedirect(sessid)
- ;
- n errorPage
- ;
- s errorPage=$$getSessionValue^%zewdAPI("ewd.errorPage",sessid)
- d setRedirect^%zewdAPI(errorPage,sessid)
- ;
- QUIT ""
+ QUIT $$ajaxErrorRedirect^%zewdAPI2($g(sessid))
  ;
 classExport(className,methods,filepath)
  ;
  QUIT $$classExport^%zewdCompiler16($g(className),.methods,$g(filepath))
  ;
 strx(string)
- n i,c,a,ok
- f i=1:1:$l(string) s c=$e(string,i),a=$a(c) w i_": "_c_" : "_a,! r ok
+ d strx^%zewdAPI2($g(string))
  QUIT
  ;
 disableEwdMgr

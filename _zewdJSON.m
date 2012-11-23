@@ -1,7 +1,7 @@
 %zewdJSON	; Enterprise Web Developer JSON functions
  ;
- ; Product: Enterprise Web Developer (Build 931)
- ; Build Date: Fri, 27 Jul 2012 12:05:05
+ ; Product: Enterprise Web Developer (Build 944)
+ ; Build Date: Fri, 23 Nov 2012 17:15:07
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -489,11 +489,12 @@ outputAsJSON(nodeOID)
  i nodeType=1 d  Q json
  . n comma,tagName
  . s tagName=$$getTagName^%zewdDOM(nodeOID)
+ . i tagName[":" s tagName="'"_tagName_"'"
  . i $$hasAttributes^%zewdDOM(nodeOID)="false",'$$hasChildElements(nodeOID) d
  . . n lineNo,text,textArray
  . . s text=$$getElementText^%zewdDOM(nodeOID,.textArray)
  . . i text="",'$d(textArray) d  q
- . . .  d outputChars(tagName_":null")
+ . . .  d outputChars(tagName_":""""")
  . . d outputChars(tagName_":""")
  . . i text'="***Array***" d  q
  . . . d outputChars(text_"""")
@@ -617,13 +618,15 @@ outputChildren(parentOID)
  ;
 outputAttr(nodeOID)
  ;
- n comma,d,ok,attrArray,attrOID
+ n comma,d,ok,attrArray,attrName,attrOID
  ;
  s ok=$$getAttributes^%zewdDOM(nodeOID,.attrArray)
  s attrOID="",comma=""
  f  s attrOID=$o(attrArray(attrOID)) q:attrOID=""  d
  . s d=attrArray(attrOID)
- . d outputChars(comma_$p(d,$c(1),1)_":"""_$p(d,$c(1),2)_"""")
+ . s attrName=$p(d,$c(1),1)
+ . i attrName[":" s attrName=""""_attrName_""""
+ . d outputChars(comma_attrName_":"""_$p(d,$c(1),2)_"""")
  . s comma=","
  QUIT
  ;

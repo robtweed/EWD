@@ -1,7 +1,7 @@
 %zewdExt4a ; Extjs Tag Processors (continued)
  ;
- ; Product: Enterprise Web Developer (Build 931)
- ; Build Date: Fri, 27 Jul 2012 12:05:05
+ ; Product: Enterprise Web Developer (Build 944)
+ ; Build Date: Fri, 23 Nov 2012 17:15:06
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -83,6 +83,12 @@ childTags(nodeOID,jsSectionOID)
  . . s childOID=$$appendChild^%zewdDOM(childOID,ecdOID)
  . ;d topLevelTag(tagName,childOID,jsSectionOID,.tagNameMap) q
  . i tagName="ext4:json" d json^%zewdExt4(childOID)
+ . i tagName="ext4:html" d
+ . . n bodyOID
+ . . s childOID=$$removeChild^%zewdDOM(childOID)
+ . . s bodyOID=$$getTagOID^%zewdDOM("body",docName)
+ . . s childOID=$$appendChild^%zewdDOM(childOID,bodyOID)
+ . . d removeIntermediateNode^%zewdDOM(childOID)
  QUIT
  ;
 ExtDefine(nodeOID)
