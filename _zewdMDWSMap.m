@@ -1,7 +1,7 @@
 %zewdMDWSMap ; openMDWS Method Registration details
  ;
- ; Product: Enterprise Web Developer (Build 944)
- ; Build Date: Fri, 23 Nov 2012 17:15:07
+ ; Product: Enterprise Web Developer (Build 945)
+ ; Build Date: Sat, 24 Nov 2012 10:49:50
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -29,6 +29,8 @@
  ; do install^%zewdMDWS to register methods
  ;
 mappings ;
+ ;;{facade:"EmrSvc",operation:"connect",coreMethod:"connect^%zewdVistARPC",MDWSWrapper:"connect^%zewdMDWS"}
+ ;;{facade:"EmrSvc",operation:"login",coreMethod:"login^%zewdVistARPC",MDWSWrapper:"login^%zewdMDWSSvc1"}
  ;;{facade:"EmrSvc",operation:"match",coreMethod:"match^schedulerRPC",MDWSWrapper:"match^schedulerSvc"}
  ;;{facade:"SchedulingSvc",operation:"connect",coreMethod:"connect^%zewdVistARPC",MDWSWrapper:"connect^%zewdMDWS"}
  ;;{facade:"SchedulingSvc",operation:"login",coreMethod:"login^%zewdVistARPC",MDWSWrapper:"login^%zewdMDWSSvc1"}
