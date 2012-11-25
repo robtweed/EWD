@@ -1,7 +1,7 @@
 %zewdMDWSClient ; MDWS Client Interface
  ;
- ; Product: Enterprise Web Developer (Build 945)
- ; Build Date: Sat, 24 Nov 2012 10:49:50
+ ; Product: Enterprise Web Developer (Build 946)
+ ; Build Date: Sun, 25 Nov 2012 16:27:26
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -226,6 +226,7 @@ request(serviceName,nvps,results,sessid)
  s path=$$getPath(serviceName,.nvps,sessid)
  k nvps,results
  i $g(cookie)'="" s headers("Cookie")=cookie
+ ;s ok=$$parseURL^%zewdHTMLParser(host,path,docName,port,0,,,,,.headers)
  s sslPort=$$getSessionValue^%zewdAPI("vista.sslProxyPort",sessid)
  s sslHost=$$getSessionValue^%zewdAPI("vista.sslProxyHost",sessid)
  d
