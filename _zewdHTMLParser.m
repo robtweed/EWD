@@ -1,7 +1,7 @@
 %zewdHTMLParser	; Enterprise Web Developer HTML to XHTML Converter
  ;
- ; Product: Enterprise Web Developer (Build 944)
- ; Build Date: Fri, 23 Nov 2012 17:15:07
+ ; Product: Enterprise Web Developer (Build 945)
+ ; Build Date: Sat, 24 Nov 2012 10:49:49
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -125,18 +125,21 @@ testHTTP ;
  ;
  QUIT
  ;
-parseURL(server,getPath,docName,port,isHTML,responseTime,browserType,post,maxLineLength,headers)
+parseURL(server,getPath,docName,port,isHTML,responseTime,browserType,post,maxLineLength,headers,sslHost,sslPort)
  ;
  n bsig,endTime,error,file,filename,http,ok,startTime
  ;
  s error=""
  n cspVars,%error,html,phpVars,reqHeaders,respHeaders,url
  i $e(getPath,1)'="/" s getPath="/"_getPath
- s url="http://"_server_getPath
+ i port'="" s getPath=":"_port_getPath
+ s http="http://"
+ i $g(sslPort)'="" s http="https://"
+ s url=http_server_getPath
  i $g(headers("Cookie"))'="" s reqHeaders(1)="Cookie: "_headers("Cookie")
  k headers
  i $g(responseTime)="" s responseTime=10
- s ok=$$httpGET^%zewdGTM(url,.html,.reqHeaders,responseTime,,,.headers)
+ s ok=$$httpGET^%zewdGTM(url,.html,.reqHeaders,responseTime,,,.headers,$g(sslHost),$g(sslPort))
  ;httpGET(url,html,headerArray,timeout,test,rawResponse,respHeaders,sslHost,sslPort)
  k ^CacheTempEWD($j)
  m ^CacheTempEWD($j)=html

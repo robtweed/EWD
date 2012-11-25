@@ -1,7 +1,7 @@
 %zewdMDWSClient ; MDWS Client Interface
  ;
- ; Product: Enterprise Web Developer (Build 944)
- ; Build Date: Fri, 23 Nov 2012 17:15:07
+ ; Product: Enterprise Web Developer (Build 945)
+ ; Build Date: Sat, 24 Nov 2012 10:49:50
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -190,7 +190,7 @@ getClinicAppts(results,data)
  ;
 request(serviceName,nvps,results,sessid)
  ;
- n cookie,docName,headers,host,name,no,ok,path,port,value
+ n cookie,docName,headers,host,name,no,ok,path,port,sslHost,sslPort,value
  ;
  ;d setSessionValue^%zewdAPI("vista.systemId","smart2",sessid)
  ;d setSessionValue^%zewdAPI("mdws.host","smart2.vistaewd.net",sessid)
@@ -204,6 +204,7 @@ request(serviceName,nvps,results,sessid)
  i $$getSessionValue^%zewdAPI("vista.host",sessid)=host d  QUIT ""
  . ; local invocation, so bypass HTTP request
  . n facade,func,name,x
+ . k results
  . d deleteFromSession^%zewdAPI("mdws_params",sessid)
  . d mergeArrayToSession^%zewdAPI(.nvps,"mdws_params",sessid)
  . i serviceName="connect" s nvps("sessid")=sessid
@@ -218,17 +219,23 @@ request(serviceName,nvps,results,sessid)
  . i serviceName="connect" d
  . . d setSessionValue^%zewdAPI("mdws.cookie",$g(results("cookie")),sessid)
  . . k results("cookie")
+ . k nvps
  ;
  s port=$$getSessionValue^%zewdAPI("mdws.port",sessid)
  s cookie=$$getSessionValue^%zewdAPI("mdws.cookie",sessid)
  s path=$$getPath(serviceName,.nvps,sessid)
  k nvps,results
  i $g(cookie)'="" s headers("Cookie")=cookie
- s ok=$$parseURL^%zewdHTMLParser(host,path,docName,port,0,,,,,.headers)
+ s sslPort=$$getSessionValue^%zewdAPI("vista.sslProxyPort",sessid)
+ s sslHost=$$getSessionValue^%zewdAPI("vista.sslProxyHost",sessid)
+ d
+ . i sslPort'="",sslHost="" s sslHost="127.0.0.1" q
+ . i sslHost'="",sslPort="" s sslPort=89
+ s ok=$$parseURL^%zewdHTMLParser(host,path,docName,port,0,,,,,.headers,sslHost,sslPort)
  d XML2Array(docName,.results)
  i $$removeDocument^%zewdDOM(docName)
  i serviceName="connect" d
- . n stop
+ . n header,stop
  . s no="",stop=0
  . f  s no=$o(headers(no)) q:no=""  d  q:stop
  . . s header=headers(no)
