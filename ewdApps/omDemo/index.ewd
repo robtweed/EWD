@@ -1,0 +1,24 @@
+<ext4:container rootPath="/vista/ext-4" isFirstPage="true" onBeforeRender="initialise^openMDWSDemo">
+
+  <ext4:viewPort layout="border">
+    <ext4:panel region="north" id="northPanel" title="OpenMDWS Demo: <?= #vista.systemId ?>" autoheight="true" border="false" margins="0 0 5 0">
+      <ext4:toolbar dock="top">
+        <ext4:button text="Get Clinics" id="getClinicsBtn" hidden="true" nextPage="getClinics" addTo="westPanel" />
+      </ext4:toolbar>
+    </ext4:panel>
+    <ext4:panel region="west" id="westPanel" collapsible="true" title="" width="200" autoheight="true" />
+    <ext4:panel region="center" height="100%" id="centerPanel" />
+  </ext4:viewPort>
+
+  <ext4:modalwindow title="EWD/MDWS Scheduler Demo" id="loginPanel" height="200" width="400" layout="fit" autoShow="true">
+    <ext4:formPanel bodyPadding="10">
+      <ext4:fieldset title="Login to VA System <?= #vista.systemId ?>">
+        <ext4:textfield id="accessCode" inputType="password" fieldLabel="Access Code" allowBlank="false" value="" />
+        <ext4:textfield id="verifyCode" inputType="password" fieldLabel="Verify Code" allowBlank="false" value="" />
+      </ext4:fieldset>
+     <ext4:button text="Quick Login" handler="function() {Ext.getCmp('accessCode').setValue('worldvista6');Ext.getCmp('verifyCode').setValue('$#happy7');}" />
+     <ext4:submitbutton text="Submit" nextPage="login" />
+    </ext4:formPanel>
+  </ext4:modalwindow>
+
+</ext4:container>

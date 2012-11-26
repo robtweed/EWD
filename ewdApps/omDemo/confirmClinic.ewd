@@ -1,0 +1,3 @@
+<ext4:fragment onBeforeRender="getSelectedClinic^openMDWSDemo">
+  <ext4:panel border="0" id="clinic" html="Clinic selected: <?= #clinicName ?>" />
+</ext4:fragment>

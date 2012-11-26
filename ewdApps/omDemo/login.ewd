@@ -1,0 +1,9 @@
+<ext4:fragment onBeforeRender="login^openMDWSDemo">
+
+  <ext4:js at="top">
+    Ext.getCmp("loginPanel").destroy();
+    Ext.getCmp("getClinicsBtn").show();
+    Ext.getCmp("northPanel").setTitle("Welcome <?= #vista.name ?>");
+  </ext4:js>
+
+</ext4:fragment>
