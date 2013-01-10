@@ -1,7 +1,7 @@
 %zewdExt4a ; Extjs Tag Processors (continued)
  ;
- ; Product: Enterprise Web Developer (Build 944)
- ; Build Date: Fri, 23 Nov 2012 17:15:06
+ ; Product: Enterprise Web Developer (Build 952)
+ ; Build Date: Thu, 10 Jan 2013 08:44:42
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -349,4 +349,34 @@ htmlEditorInstance(attrs,nodeOID,instanceOID)
  d removeIntermediateNode^%zewdDOM(xOID)
  ;
  QUIT argumentsOID
+ ;
+expandCalendar(nodeOID)
+ ;
+ n applc,attr,mainAttrs,src,targetId,text,xOID
+ ;
+ s applc=$$zcvt^%zewdAPI(app,"l")
+ s src="examples/calendar/resources/css/calendar.css"
+ d registerResource^%zewdCustomTags("css",src,"",app,,1)
+ s src="examples/calendar/resources/css/examples.css"
+ d registerResource^%zewdCustomTags("css",src,"",app,,1)
+ s ^zewd("loader",applc,"configs","enabled")="true"
+ s ^zewd("loader",applc,"configs","paths","Ext.calendar")="examples/calendar/src"
+ s ^zewd("loader",applc,"requires",1)="Ext.calendar.AppFrag"
+ ;
+ s xOID=$$getTagByNameAndAttr^%zewdDOM("ext4:js","at","top",1,docName)
+ d getAttributes^%zewdExt4(nodeOID,.mainAttrs)
+ s targetId=$g(mainAttrs("targetid"))
+ i targetId="" s targetId="undefinedTargetId"
+ ;
+ ;s text="EWD.calendar.load("""_targetId_""");"
+ s text="EWD.calendar.targetId = '"_targetId_"';"_$c(13,10)_"EWD.calendar.load();"
+ i xOID="" d
+ . s attr("at")="top"
+ . s xOID=$$addElementToDOM^%zewdDOM("ext4:js",nodeOID,,.attr,text)
+ e  d
+ . n textOID
+ . s textOID=$$createTextNode^%zewdDOM(text,docOID)
+ . s textOID=$$appendChild^%zewdDOM(textOID,xOID)
+ d removeIntermediateNode^%zewdDOM(nodeOID)
+ QUIT
  ;

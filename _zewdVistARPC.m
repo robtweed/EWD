@@ -1,7 +1,7 @@
 %zewdVistARPC	; EWD Open Source / Stateless VistA RPC core functions
  ;
- ; Product: Enterprise Web Developer (Build 944)
- ; Build Date: Fri, 23 Nov 2012 17:15:07
+ ; Product: Enterprise Web Developer (Build 952)
+ ; Build Date: Thu, 10 Jan 2013 08:44:43
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -182,6 +182,7 @@ getPatientsByClinic(inputs,results)
  . . s patientName=$p(^DPT(patientDfn,0),U)
  . . s no=no+1
  . . s results("schedule",no,"patientName")=patientName
+ . . s results("schedule",no,"patientId")=patientDfn ;cpc 3/12/2012
  . . s results("schedule",no,"apptStatus")=apptStatus
  . . s results("schedule",no,"apptTime")=apptTime
  . . s results("schedule",no,"apptLength")=apptLength ;cpc

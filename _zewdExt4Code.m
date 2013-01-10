@@ -1,7 +1,7 @@
 %zewdExt4Code ; Extjs 4 Runtime Logic
  ;
- ; Product: Enterprise Web Developer (Build 939)
- ; Build Date: Thu, 27 Sep 2012 12:04:50
+ ; Product: Enterprise Web Developer (Build 952)
+ ; Build Date: Thu, 10 Jan 2013 08:44:42
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -351,6 +351,41 @@ writeLine(line)
  . s ^CacheTempBuffer($j,$increment(^CacheTempBuffer($j)))=line
  e  d
  . w line
+ QUIT
+ ;
+defineLoader(sessid)
+ ;
+ n app,array,name,rootPath,text
+ ;
+ s app=$$getSessionValue^%zewdAPI("ewd.appName",sessid)
+ s app=$$zcvt^%zewdAPI(app,"l")
+ i app="" QUIT
+ s rootPath=$g(^zewd("rootPath",app))
+ i $e(rootPath,$l(rootPath))'="/" s rootPath=rootPath_"/"
+ i $d(^zewd("loader",app,"configs")) d
+ . m array=^zewd("loader",app,"configs")
+ . i $g(^zewd("config","cacheRequires"))=1 d
+ . . s array("disableCaching")="false"
+ . e  d
+ . . k array("disableCaching")
+ . s name=""
+ . f  s name=$o(array("paths",name)) q:name=""  d
+ . . s array("paths",name)=rootPath_array("paths",name)
+ . d writeLine("EWD.loader = ")
+ . d streamArrayToJSON^%zewdJSON("array")
+ . d writeLine(";"_$c(13,10))
+ . i $d(^zewd("loader",app,"requires")) d
+ . . k array
+ . . m array=^zewd("loader",app,"requires")
+ . . d writeLine("EWD.requires = ")
+ . . d streamArrayToJSON^%zewdJSON("array")
+ . . d writeLine(";"_$c(13,10))
+ . e  d
+ . . d writeLine("EWD.requires = '';"_$c(13,10))
+ e  d 
+ . d writeLine("EWD.loader = {enabled: false};"_$c(13,10))
+ . d writeLine("EWD.requires = '';"_$c(13,10))
+ ;
  QUIT
  ;
 writeGroupFields(sessionName,id,name,xtype,sessid)
@@ -873,6 +908,50 @@ setFieldErrorAlert(title,message,sessid)
  s message=$$zcvt^%zewdPHP($g(message),"o","JS")
  d setSessionValue^%zewdAPI("ewd.form.alertTitle",title,sessid)
  d setSessionValue^%zewdAPI("ewd.form.alertMessage",message,sessid)
+ QUIT
+ ;
+writeCalendarData(appts)
+ ;
+ n data
+ ;
+ m data("evts")=appts
+ d writeLine("EWD.calendar.apptData = ")
+ d streamArrayToJSON^%zewdJSON("data")
+ d writeLine(";"_$c(13,10))
+ QUIT
+ ;
+createJSONObject(varName,array,addVar)
+ ;
+ n line
+ ;
+ s addVar=$g(addVar) i addVar="" s addVar=1
+ ;
+ s line="data = "
+ i addVar s line="var "_line
+ d writeLine(line)
+ d streamArrayToJSON^%zewdJSON($name(array))
+ d writeLine(";"_$c(13,10))
+ QUIT
+ ;
+addCalendarEvent(varName,mrefresh)
+ ;
+ n refresh
+ ;
+ s varName=$g(varName) i varName="" s varName="data"
+ s refresh="false"
+ i $g(mrefresh) s refresh="true"
+ ;
+ d writeLine("EWD.calendar.addEvent("_varName_","_refresh_");"_$c(13,10))
+ QUIT
+ ;
+calendarRefresh
+ ;
+ d writeLine("EWD.calendar.refresh();"_$c(13,10))
+ QUIT
+ ;
+calendarClear
+ ;
+ d writeLine("EWD.calendar.clear();"_$c(13,10))
  QUIT
  ;
 ExtJSToArray(filepath,array,maxlength)

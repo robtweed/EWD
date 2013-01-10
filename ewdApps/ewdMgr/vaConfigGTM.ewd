@@ -1,0 +1,106 @@
+<ewd:config isFirstPage="false" pageType="ajax">
+
+<ewd:comment>
+  ----------------------------------------------------------------------------
+  | Enterprise Web Developer for GT.M and m_apache                           |
+  | Copyright (c) 2004-9 M/Gateway Developments Ltd,                         |
+  | Reigate, Surrey UK.                                                      |
+  | All rights reserved.                                                     |
+  |                                                                          |
+  | http://www.mgateway.com                                                  |
+  | Email: rtweed@mgateway.com                                               |
+  |                                                                          |
+  | This program is free software: you can redistribute it and/or modify     |
+  | it under the terms of the GNU Affero General Public License as           |
+  | published by the Free Software Foundation, either version 3 of the       |
+  | License, or (at your option) any later version.                          |
+  |                                                                          |
+  | This program is distributed in the hope that it will be useful,          |
+  | but WITHOUT ANY WARRANTY; without even the implied warranty of           |
+  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            |
+  | GNU Affero General Public License for more details.                      |
+  |                                                                          |
+  | You should have received a copy of the GNU Affero General Public License |
+  | along with this program.  If not, see http://www.gnu.org/licenses/.      |
+  ----------------------------------------------------------------------------
+</ewd:comment>
+
+<span>
+
+<h3>Managing the GT.M MUMPS Environment</h3>
+</a>
+A fully working GT.M system has been included in this Virtual Appliance. It is set up as follows<br><br>
+
+
+<table border=1>
+ <tr>
+  <td>GT.M installation directory</td>
+  <td>/usr/local/gtm</td>
+ </tr>
+ <tr>
+  <td>EWD installation directory</td>
+  <td>/usr/local/gtm/ewd</td>
+ </tr>
+</table>
+<br>
+
+The GT.M profile is automatically set up for you.  This has been achieved by adding the following line to the <i>/etc/profile</i> file:<br><br>
+
+<i>source /usr/local/gtm/gtmprofile</i><br><br>
+
+
+To get into the GT.M MUMPS environment, do the following:<br><br>
+
+<i>
+cd /usr/local/gtm/ewd<br>
+mumps -direct<br>
+GTM>
+</i>
+<br><br>
+
+To logout and return to the Linux shell prompt:<br><br>
+
+<i>
+GTM>H<br>
+ewd@ubuntuJEOS:/usr/local/gtm/ewd$<br>
+</i>
+<br>
+
+
+The easiest location for your EWD applications' prepage/action script routines is the <i>/usr/local/gtm/ewd</i> directory.  In GT.M, your routines are simply text files with a file extension of <i>.m</i>, eg <i>myRoutine.m</i>.  <br><br>
+
+
+You can upload routine files to the EWD Virtual Appliance via SCP (eg using WinSCP) to the <i>/usr/local/gtm/ewd</i> directory.  
+ In fact, WinSCP can also be used to create and edit your scripts, provided you are happy to develop them using a simple text editor. 
+ If you want something more sophisticated, use the Serenji client (see the tab above for more information).<br><br>
+
+Compile and link your routines as follows, first making sure you're in the <i>/usr/local/gtm/ewd</i> directory:<br><br>
+
+<i>
+cd /usr/local/gtm/ewd<br>
+mumps myRoutine.m<br>
+</i>
+<br>
+If your routine compiled without any errors, you'll now find a corresponding file with a file extension of <i>.o</i>, eg <i>myRoutine.o</i>.  This is the executable object code routine.<br><br>
+
+<h4>Important Note: </h4> If you edit a routine and recompile it, any running MGWSI processes that executed the previous version will still have the previous version in memory.  When you try to re-run your compiled modified EWD application, the previous version will still appear to run.  You must therefore close all the MGWSI gateway processes.  
+To do this, select the MGWSI Gateway tab and do the following: <br><br>
+
+<ul>
+ <li>In the second column, labelled <i>Connections to Cach&eacute;</i>, select <i>Close Connections</i></li>
+ <li>Select <i>*</i> in the drop-down box of server names</li>
+ <li>Click the <i>Close Connections</i> button</li>
+</ul>
+
+You can now continue using your EWD application as normal: the MGWSI gateway will automatically re-open the connections it requires.<br><br>
+
+For further information about GT.M, go to <a href="http://sourceforge.net/projects/fis-gtm">http://sourceforge.net/projects/fis-gtm</a> and download the documentation.<br><br>
+
+<hr>
+Note: If you build your own Ubuntu JEOS or LAMP Server-based system, you must open up the privileges to the <i>/var</i> path in order to get GT.M working, ie do the following:<br><br>
+<i>
+cd /<br>
+sudo chmod 777 var
+</i>
+
+</span>

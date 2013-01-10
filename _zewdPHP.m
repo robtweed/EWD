@@ -1,7 +1,7 @@
 %zewdPHP	; Enterprise Web Developer PHP run-time functions and processing
  ;
- ; Product: Enterprise Web Developer (Build 939)
- ; Build Date: Thu, 27 Sep 2012 12:04:51
+ ; Product: Enterprise Web Developer (Build 952)
+ ; Build Date: Thu, 10 Jan 2013 08:44:43
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -605,6 +605,24 @@ prePageScript(sessid)
  s method=$$getSessionValue("ewd_prePageScript",sessid)
  i $g(^zewd("trace"))=1 d trace^%zewdAPI("PrePageScript method="_method)
  i method="" QUIT ""
+ ;
+ i $e(method,1,3)="js:" d  QUIT error
+ . ; Javascript/Node.js pre-page script
+ . n module
+ . s method=$e(method,4,$l(method))
+ . s module=$p(method,".",1)
+ . s method=$p(method,".",2)
+ . i $$getSessionValue^%zewdAPI("ewd_wstoken",sessid)="" d
+ . . d setSessionValue("ewd.wstoken",$$getSessionValue("ewd_token",sessid),sessid)
+ . k ^%zewdSession("request",sessid)
+ . m ^%zewdSession("request",sessid)=requestArray
+ . k ^%zewdSession("server",sessid)
+ . m ^%zewdSession("server",sessid)=serverArray
+ . i $g(^zewd("trace")) d trace^%zewdAPI("invoking onBeforeRender: module="_module_"; method="_method_"; sessid="_sessid)
+ . s error=$$onBeforeRender^%zewdNode(module,method,sessid)
+ . k ^%zewdSession("request",sessid)
+ . k ^%zewdSession("server",sessid)
+ ;
  i $e(method,1)="$" QUIT method  ; pre-page script is a PHP function, not a Cache one!
  i $e(method,1,3)="py:" QUIT $$runPythonScript^%zewdPython(method,sessid)
  s x="s error=$$"_method_"(sessid)"

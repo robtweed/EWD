@@ -1,0 +1,67 @@
+<ewd:config isFirstPage="false" prePageScript="userPrepage^%zewdMgrAjax" pageType="ajax">
+
+<ewd:comment>
+  ----------------------------------------------------------------------------
+  | Enterprise Web Developer for GT.M and m_apache                           |
+  | Copyright (c) 2004-9 M/Gateway Developments Ltd,                         |
+  | Reigate, Surrey UK.                                                      |
+  | All rights reserved.                                                     |
+  |                                                                          |
+  | http://www.mgateway.com                                                  |
+  | Email: rtweed@mgateway.com                                               |
+  |                                                                          |
+  | This program is free software: you can redistribute it and/or modify     |
+  | it under the terms of the GNU Affero General Public License as           |
+  | published by the Free Software Foundation, either version 3 of the       |
+  | License, or (at your option) any later version.                          |
+  |                                                                          |
+  | This program is distributed in the hope that it will be useful,          |
+  | but WITHOUT ANY WARRANTY; without even the implied warranty of           |
+  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            |
+  | GNU Affero General Public License for more details.                      |
+  |                                                                          |
+  | You should have received a copy of the GNU Affero General Public License |
+  | along with this program.  If not, see http://www.gnu.org/licenses/.      |
+  ----------------------------------------------------------------------------
+</ewd:comment>
+
+<span>
+<h4>&nbsp;&nbsp;&nbsp;Add/Edit a User's Details</h4>
+
+    <div class="applicationPanel">
+     <form method="post" action="ewd">
+      <table border="0" width="100%" class="propsText">
+        <tr>
+            <td>Username : </td>
+            <td><input type="text" name="user" value="*" readonly></td>
+        </tr>
+        <tr>
+            <td>New password : </td>
+            <td>
+               <input type="password" name="newPass1" value="">
+            </td>
+        </tr>
+        <tr>
+            <td>Re-enter new password : </td>
+            <td>
+               <input type="password" name="newPass2" value="">
+            </td>
+        </tr>
+        <tr>
+            <td>User type : </td>
+            <td><select name="userType"></select></td>
+        </tr>
+        <tr>
+            <td>Status : </td>
+            <td><select name="userStatus"></select></td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td><input type="submit" class="actionButton" name="userUpdate" value="Update" nextpage="reloadSecurity" ajax="true" targetId="userNull" action="userUpdate^%zewdMgrAjax"></td>
+        </tr>
+
+    </table>
+   </form>
+  </div>
+  <div id="userNull" />
+</span>

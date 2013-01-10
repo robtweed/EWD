@@ -1,7 +1,7 @@
 %zewdNode	; Enterprise Web Developer global access APIs for Node.js
  ;
- ; Product: Enterprise Web Developer (Build 937)
- ; Build Date: Thu, 30 Aug 2012 14:55:37
+ ; Product: Enterprise Web Developer (Build 952)
+ ; Build Date: Thu, 10 Jan 2013 08:44:43
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -31,6 +31,70 @@
 testx(x,y)
  d trace^%zewdAPI("test^%zewdNode invoked with arguments "_x_" & "_y)
  QUIT x+y
+ ;
+cache(pid,namespace,file)
+ ;
+ n %CGIEVAR,ext,hname,host,io,%KEY,name,ok,port,response
+ ;
+ i $g(^%zewd("relink"))=1,'$d(^%zewd("relink","process",$j)) i $$relink^%zewdGTMRuntime()
+ ;
+ s pid=$g(pid)
+ s file=$g(file) i file="" s file="dummy.txt"
+ i $g(^zewd("trace"))=1 d
+ . d trace^%zewdAPI($$inetDate^%zewdAPI($h)_": cache^%zewdNode called with pid = "_$g(pid)_"; namespace="_$g(namespace)_"; file="_file)
+ m %KEY=^CacheTempRequest(pid,"query")
+ m %KEY=^CacheTempRequest(pid,"contents")
+ s name=""
+ f  s name=$o(%KEY(name)) q:name=""  d
+ . i $d(%KEY(name,0)) d
+ . . i '$d(%KEY(name,1)) d
+ . . . n value
+ . . . s value=%KEY(name,0)
+ . . . k %KEY(name,0)
+ . . . s %KEY(name)=value
+ . . e  d
+ . . . n index
+ . . . s index=$o(%KEY(name,""),-1)+1
+ . . . s %KEY(name,index)=%KEY(name,0)
+ . . . k %KEY(name,0)
+ s name=""
+ f  s name=$o(^CacheTempRequest(pid,"headers",name)) q:name=""  d
+ . q:name="headers"
+ . s hname=$zconvert(name,"U")
+ . s hname=$tr(hname,"-","_")
+ . s %CGIEVAR(hname)=^CacheTempRequest(pid,"headers",name)
+ s name=""
+ f  s name=$o(^CacheTempRequest(pid,"headers","headers",name)) q:name=""  d
+ . s hname=$zconvert(name,"U")
+ . s hname="HTTP_"_$tr(hname,"-","_")
+ . s %CGIEVAR(hname)=^CacheTempRequest(pid,"headers","headers",name)
+ s %CGIEVAR("SERVER_SOFTWARE")="Node.js"
+ s host=$g(%CGIEVAR("HTTP_HOST"))
+ s port=$p(host,":",2)
+ i port="" s port=$g(^zewd("defaultWebPort"))
+ i port="" s port=80
+ s host=$p(host,":",1)
+ k %CGIEVAR("HTTP_HOST")
+ s %CGIEVAR("SERVER_PORT")=port
+ s %CGIEVAR("REMOTE_HOST")=$g(%CGIEVAR("REMOTE_ADDR"))
+ s %CGIEVAR("SERVER_NAME")=host
+ S %CGIEVAR("REQUEST_METHOD")=^CacheTempRequest(pid,"method")
+ ;
+ s %KEY("app")=$p(%CGIEVAR("SCRIPT_NAME"),"/",3)
+ s %KEY("page")=$p(%CGIEVAR("SCRIPT_NAME"),"/",4)
+ s ext=".ewd"
+ i %KEY("page")[".mgwsi" s ext=".mgwsi"
+ s %KEY("page")=$p(%KEY("page"),ext,1)
+ k ^CacheTempBuffer($j)
+ s io=$io
+ o file:(noreadonly:variable:newversion) 
+ u file
+ ;*****************************************************************
+ d nodeEntry^%zewdGTMRuntime
+ c file
+ u io
+ i $g(^zewd("trace"))=1 d trace^%zewdAPI("cache^%zewdNode finished")
+ QUIT "ok"
  ;
  ;
 output(j)
@@ -700,10 +764,6 @@ nodeSocket(socketMessage) ;
  s messageType=$p(socketMessage,$c(1),3)
  s token=$p(socketMessage,$c(1),4)
  s message=$p(socketMessage,$c(1),5)
- ;r messageType,token,message
- ;s token=$$removeCR(token)
- ;s message=$$removeCR(message)
- ;s messageType=$$removeCR(messageType)
  i $g(^zewd("trace"))=1 d trace^%zewdAPI("messageType: "_messageType_": token="_token_"; message="_message)
  s sessid=$$getSessid^%zewdPHP(token)
  i $$isTokenExpired^%zewdPHP(token) s sessid=""
@@ -720,9 +780,6 @@ nodeSocket(socketMessage) ;
  . . s page=message
  . . s targetId=$p(socketMessage,$c(1),6)
  . . s nvp=$p(socketMessage,$c(1),7)
- . . ;r targetId,nvp
- . . ;s targetId=$$removeCR(targetId)
- . . ;s nvp=$$removeCR(nvp)
  . . i nvp'="" d
  . . . n i,name,np,value
  . . . s np=$l(nvp,"&")
@@ -796,54 +853,37 @@ removeCR(string)
 server ;
  i $g(^zewd("trace"))=1 d trace^%zewdAPI("Node Sockets broadbast process starting on "_$j)
  ;
- ; GT.M interrupt mechanism
+ ; GT.M FIFO mechanism
  ;
- n eor,token
+ ;d gtmEventListener("/home/vista/www/ewdWebSockets.pipe")
+ QUIT
  ;
- h 1
- l +^zewd("nodeProcess")
- l -^zewd("nodeProcess")
- s eor=$c(17,18,19,20)
- s $zint="d serverSend"
-serverLoop
- s ^zewd("nodeProcesses",$j)=2 ; available
- h 5
- l +^zewd("nodeRunning"):0 i  d  halt
- . k ^zewd("nodeProcesses")
- . k ^zewd("stopProcess",$j)
- . l -^zewd("nodeRunning")
- i $g(^zewd("stopProcess",$j))=1 d  halt
- . k ^zewd("nodeProcesses",$j)
- . k ^zewd("stopProcess",$j)
- g serverLoop
+handleEvent(message)
  ;
-serverSend ;
  n eor,no,token
+ ;
  s eor=$c(17,18,19,20)
- ;d trace^%zewdAPI("serverSend invoked for "_$j)
- s ^zewd("nodeProcesses",$j)=0 ; busy
  w "-99"_$c(20,19,18,17)
  s no=""
- f  s no=$o(^zewd("message",no)) q:no=""  d
- . s sessid=$g(^zewd("message",no,"sessid"))
+ f  s no=$o(^zewd("webSocketMessage",no)) q:no=""  d
+ . s sessid=$g(^zewd("webSocketMessage",no,"sessid"))
  . i sessid'="",$d(^%zewdSession("session",sessid)) d
- . . s token=$g(^zewd("message",no,"token"))
+ . . s token=$g(^zewd("webSocketMessage",no,"token"))
  . . i token'="" d
  . . . n json,type,token,message
- . . . s message=$g(^zewd("message",no,"message"))
+ . . . s message=$g(^zewd("webSocketMessage",no,"message"))
  . . . ;w "serverSend:"_token_":"_message_eor
- . . . s type=$g(^zewd("message",no,"type"))
- . . . s token=$g(^zewd("message",no,"token"))
+ . . . s type=$g(^zewd("webSocketMessage",no,"type"))
+ . . . s token=$g(^zewd("webSocketMessage",no,"token"))
  . . . ;s message=$p(message,$c(1),4)
  . . . s json="{""type"":""serverSend"",""subType"":"""_type_""",""token"":"""_token_""",""message"":"""_message_"""}"
  . . . ;w "serverSend:"_type_":"_token_":"_message_eor
  . . . w json_$c(17,17,17,17)
- . k ^zewd("message",no)
+ . k ^zewd("webSocketMessage",no)
  w eor
- s ^zewd("nodeProcesses",$j)=2 ; available
  QUIT
  ;
-createServerMessage(type,message,sessid,trigger)
+createServerMessage(type,message,sessid)
  ;
  n no,resourceName,token,value
  ;
@@ -852,13 +892,12 @@ createServerMessage(type,message,sessid,trigger)
  i token="" QUIT 0
  i $$isTokenExpired^%zewdPHP(token) QUIT 0
  d updateSession(sessid)
- s no=$increment(^zewd("message"))
- s ^zewd("message",no,"token")=token
- s ^zewd("message",no,"type")=$g(type)
- s ^zewd("message",no,"message")=$g(message)
- s ^zewd("message",no,"sessid")=sessid
- s trigger=$g(trigger) i trigger="" s trigger=1
- i trigger=1 d triggerServerMessage
+ s no=$increment(^zewd("webSocketMessage"))
+ s ^zewd("webSocketMessage",no,"token")=token
+ s ^zewd("webSocketMessage",no,"type")=$g(type)
+ s ^zewd("webSocketMessage",no,"message")=$g(message)
+ s ^zewd("webSocketMessage",no,"sessid")=sessid
+ d signalEvent("/home/vista/www/ewdWebSockets.pipe",no)
  QUIT 1
  ;
 triggerServerMessage ;
@@ -881,6 +920,7 @@ stopEventListener
  ;
 hexDecode(hex)
  QUIT $f("0123456789ABCDEF",hex)-2
+ ;
 hexToDecimal(hex)
  ;
  n i,num
@@ -914,9 +954,8 @@ updateSession(sessid)
  ;
 serverMessageTest(delay)
  ;
- n message,ok,sessid,trigger
+ n message,ok,sessid
  ;
- s trigger=$zv'["GT.M"
  s delay=$g(delay) i delay="" s delay=10
  f  d
  . h $g(delay)
@@ -924,8 +963,307 @@ serverMessageTest(delay)
  . f  s sessid=$o(^%zewdSession("session",sessid)) q:sessid=""  d
  . . w "sessid="_sessid,!
  . . s message="Server message test for sessid "_sessid_" from "_$j_" at "_$$inetDate^%zewdAPI($h)
- . . s ok=$$createServerMessage^%zewdNode("alert",message,sessid,trigger)
- . i 'trigger d triggerServerMessage^%zewdNode
+ . . s ok=$$createServerMessage^%zewdNode("alert",message,sessid)
  . w "======",!
  QUIT
  ;
+ ;
+eventListener(pipeName)
+ ;
+ n io,message,stop,x
+ ;
+ s io=$io
+ s stop=0
+ s message=""
+ o pipeName:fifo
+ f  d  q:stop
+ . ; if lock can be opened, then other back-end processes must
+ . ; have shut down, so shut this down too
+ . l +^zewd("nodeRunning"):0 i  s stop=1 q
+ . u pipeName
+ . r message:10 i  d
+ . . i message="stop" s stop=1 q
+ . . u io d handleEvent(message)
+ QUIT
+ ;
+signalEvent(pipeName,message)
+ ;
+ l +^zewd("fifo"):10 e  QUIT
+ n io
+ s io=$io
+ o pipeName:fifo
+ u pipeName
+ w message,!
+ c pipeName
+ u io
+ l -^zewd("fifo")
+ ;
+ QUIT
+ ;
+stopListener(pipeName)
+ d signalEvent(pipeName,"stop")
+ QUIT
+ ;
+reloadModule(module)
+ n sessid
+ s sessid=$o(^%zewdSession("session",""),-1)
+ i $$onBeforeRender(module,"zzdummy",sessid,1)
+ QUIT
+ ;
+testOBR
+ s module="nodeDemo"
+ s method="initialise"
+ s sessid=$o(^%zewdSession("session",""),-1)
+ w $$onBeforeRender(module,method,sessid)
+ QUIT
+ ;
+ ;
+onBeforeRender(module,method,sessid,reload)
+ ;
+ n type,message
+ s type="onBeforeRender"
+ s message("module")=$g(module)
+ s message("method")=$g(method)
+ s message("reload")=+$g(reload)
+ QUIT $$sendWebSocketMsg(type,.message,sessid)
+ ;
+sendWebSocketMsg(type,message,sessid)
+ ;
+ n headers,host,html,http,json,no,ok,path,payload,pno,port
+ n responseTime,return,ssl,sslHost,sslPort,token,url,wsPath
+ ;
+ i $g(sessid)="" QUIT 0
+ s token=$$getSessionValue^%zewdAPI("ewd_wstoken",sessid)
+ i token="" QUIT 0
+ i $$isTokenExpired^%zewdPHP(token) QUIT 0
+ d updateSession(sessid)
+ ;
+ s json=""
+ s return=""
+ d
+ . i type="json" d  q
+ . . n array
+ . . s return=$g(message("return")) i return="" s return="var dummy"
+ . . m array=message("json")
+ . . k message
+ . . s message=$$arrayToJSON^%zewdJSON("array")
+ . . s message=$$jsEscape^%zewdPHP(message)
+ . i type'="onBeforeRender",type'="fragment"  d
+ . . i $d(message)=10 d
+ . . . s json=$$arrayToJSON^%zewdJSON("message")
+ . . . s json=$$jsEscape^%zewdPHP(json)
+ . . . s message=""
+ . . e  d
+ . . . s message=$$jsEscape^%zewdPHP(message)
+ s host=$g(^zewd("webSocketParams","host"))
+ s port=$g(^zewd("webSocketParams","port"))
+ s ssl=$g(^zewd("webSocketParams","ssl"))
+ s wsPath=$g(^zewd("webSocketParams","webSocketsPath"))
+ i type="onBeforeRender" d
+ . s wsPath="/onBeforeRender/"
+ i $e(wsPath,$l(wsPath))'="/" s wsPath=wsPath_"/"
+ s path=wsPath_"request.html"
+ i type="onBeforeRender" d
+ . s payload(1)="module="_$g(message("module"))
+ . s payload(2)="&method="_$g(message("method"))
+ . s payload(3)="&token="_token
+ . s payload(4)="&reload="_$g(message("reload"))
+ . s message=""
+ e  d
+ . i type="fragment" d
+ . . s payload(1)="type=ewdGetFragment&token="_token
+ . e  d
+ . . s payload(1)="type="_type_"&token="_token
+ . s pno=2
+ . i type'="fragment",message'="" d
+ . . s payload(pno)="&message="_message
+ . . s pno=pno+1
+ . i json'="" d
+ . . s payload(pno)="&json="_json
+ . . s pno=pno+1
+ . i type="json" d
+ . . s payload(pno)="&return="_return
+ . . s pno=pno+1
+ . i type="fragment" d
+ . . n no
+ . . s payload(pno)="&targetId="_$$jsEscape^%zewdPHP($g(message("targetId")))
+ . . s pno=pno+1
+ . . s no=""
+ . . s payload(pno)="&message="
+ . . s pno=pno+1
+ . . f  s no=$o(message("content",no)) q:no=""  d
+ . . . s payload(pno)=$$jsEscape^%zewdPHP(message("content",no))
+ . . . s pno=pno+1
+ i port'="" s path=":"_port_path
+ s http="http://"
+ s sslHost=""
+ s sslPort=""
+ i ssl d
+ . s http="https://"
+ . s sslHost=$g(^zewd("webSocketParams","proxyHost"))
+ . s sslPort=$g(^zewd("webSocketParams","proxyPort"))
+ s url=http_host_path
+ k headers
+ s responseTime=10
+ s ok=$$httpPOST^%zewdGTM(url,.payload,"",.html,,responseTime,,,,$g(sslHost),$g(sslPort))
+ i type="onBeforeRender" QUIT $g(html(1))
+ QUIT 1
+ ;
+fragmentBySocket(page,targetId,nvp,token,file)
+ ;
+ n app,io,%KEY,n,rouName,sessid,stop,x
+ ;
+ i $g(^zewd("trace"))=1 d trace^%zewdAPI("fragmentBySocket: page="_page_"; targetId="_targetId_"; nvp="_nvp_"; token="_token_"; file="_file)
+ s sessid=$$getSessid^%zewdPHP(token)
+ i $$isTokenExpired^%zewdPHP(token) s sessid=""
+ i sessid="" QUIT "Invalid token or session expired"
+ ;
+ i nvp'="" d
+ . n i,name,np,value
+ . s np=$l(nvp,"&")
+ . f i=1:1:np d
+ . . s name=$p(nvp,"&",i)
+ . . s %KEY($p(name,"=",1))=$p(name,"=",2)
+ s app=$$getSessionValue^%zewdAPI("ewd_appName",sessid)
+ s rouName=""
+ i app'="",page'="" s rouName=$g(^zewd("routineMap",app,page))
+ i rouName="" d
+ . s rouName="ewdWL"_$$zcvt^%zewdAPI(app,"l")_$$zcvt^%zewdAPI(page,"l")
+ . s rouName=$$replaceAll^%zewdAPI(rouName,"_","95")
+ . s rouName=$$replaceAll^%zewdAPI(rouName,"-","45")
+ . s rouName=$$replaceAll^%zewdAPI(rouName," ","")
+ s %KEY("ewd_token")=token
+ s n="",stop=0
+ f  s n=$o(^%zewdSession("nextPageTokens",sessid,n)) q:n=""  d  q:stop
+ . i $d(^%zewdSession("nextPageTokens",sessid,n,$$zcvt^%zewdAPI(page,"l"))) s stop=1
+ s %KEY("n")=n
+ s x="d run^"_rouName
+ s io=$io
+ o file:(noreadonly:variable:newversion)
+ u file
+ x x
+ w !
+ c file
+ u io
+ ;
+ QUIT ""
+ ;
+processSocketMsg(type,message,token)
+ ;
+ n rou,sessid
+ ;
+ i $g(^zewd("trace"))=1 d trace^%zewdAPI("type: "_type_": token="_token_"; message="_message)
+ s sessid=$$getSessid^%zewdPHP(token)
+ i $$isTokenExpired^%zewdPHP(token) s sessid=""
+ i sessid="" QUIT "Invalid token or session expired"
+ ;
+ i type="testing" d  QUIT ""
+ . d updateSession(sessid)
+ . i $$sendWebSocketMsg("alert","Message from "_$zv,sessid)
+ ;
+ s rou=$g(^zewd("websocketHandler",type))
+ i rou'="" d  QUIT ""
+ . n x
+ . d updateSession(sessid)
+ . s x="d "_rou_"("""_message_""","_sessid_")"
+ . i $g(^zewd("trace"))=1 d trace^%zewdAPI("processSocketMsg^%zewdNode: x="_x)
+ . x x
+ ;
+ QUIT "Unknown message"
+ ;
+websocketHandlerDemo(message,sessid)
+ n mumps
+ s mumps="GT.M"
+ i $zv["Cache" s mumps="Cache"
+ ;testit handler delivered dynamically by a fragment
+ i $$sendWebSocketMsg^%zewdNode("testit",mumps_" received your message ("_message_") and returned this message via WebSockets",sessid)
+ QUIT
+ ;
+jsonTest(sessid)
+ ;
+ n type,message
+ s type="jsontest"
+ ;s message="This isn't json"
+ s message("x")=123
+ s message("y")="This is y"
+ s message("z","name")="Rob"
+ s message("z","age")="too old!"
+ i $$sendWebSocketMsg(type,.message,sessid)
+ QUIT
+ ;
+jsonTest2(sessid)
+ ;
+ n type,message
+ s type="json"
+ s message("return")="EWD.test"
+ s message("json","x")=123
+ s message("json","y")="This is y"
+ s message("json","z","name")="Rob"
+ s message("json","z","age")="too old!"
+ i $$sendWebSocketMsg(type,.message,sessid)
+ QUIT
+ ;
+markupTest(sessid)
+ ;
+ n type,message
+ s type="fragment"
+ s message("content",1)="<h1>How about this?</h1>"
+ s message("content",2)="<i>Pretty cool huh?</i>"
+ f i=3:1:5 s message("content",i)="<span>This is line "_i_"</span>"
+ s message("targetId")="message"
+ i $$sendWebSocketMsg(type,.message,sessid)
+ QUIT
+ ;
+sendManagementMsg(parameters)
+ ;
+ n headers,host,html,http,mgtPath,name,no,ok,path,payload,pno,port
+ n responseTime,return,ssl,sslHost,sslPort,token,url
+ ;
+ s host=$g(^zewd("webSocketParams","host"))
+ s port=$g(^zewd("webSocketParams","port"))
+ s ssl=$g(^zewd("webSocketParams","ssl"))
+ s mgtPath=$g(^zewd("ewdGatewayManager","path"))
+ i $e(mgtPath,$l(mgtPath))'="/" s mgtPath=mgtPath_"/"
+ s path=mgtPath_"request.html"
+ s payload(1)="password="_$g(^zewd("ewdGatewayManager","password"))
+ s name="",no=2
+ f  s name=$o(parameters(name)) q:name=""  d
+ . s payload(no)="&"_name_"="_parameters(name)
+ . s no=no+1
+ i port'="" s path=":"_port_path
+ s http="http://"
+ s sslHost=""
+ s sslPort=""
+ i ssl d
+ . s http="https://"
+ . s sslHost=$g(^zewd("webSocketParams","proxyHost"))
+ . s sslPort=$g(^zewd("webSocketParams","proxyPort"))
+ s url=http_host_path
+ k headers
+ s responseTime=10
+ s ok=$$httpPOST^%zewdGTM(url,.payload,"",.html,,responseTime,,,,$g(sslHost),$g(sslPort))
+ QUIT
+ ;
+logTo(device)
+ n params
+ s params("logTo")=device
+ d sendManagementMsg(.params)
+ QUIT
+ ;
+setLogInterval(time)
+ n params
+ s params("monitorInterval")=time
+ d sendManagementMsg(.params)
+ QUIT
+ ;
+clearLog
+ n params
+ s params("clearLog")="true"
+ d sendManagementMsg(.params)
+ QUIT
+ ;
+listProcesses
+ n params
+ s params("listChildProcesses")="true"
+ d sendManagementMsg(.params)
+ QUIT

@@ -1,7 +1,7 @@
 %zewdHTMLParser	; Enterprise Web Developer HTML to XHTML Converter
  ;
- ; Product: Enterprise Web Developer (Build 946)
- ; Build Date: Sun, 25 Nov 2012 16:27:26
+ ; Product: Enterprise Web Developer (Build 952)
+ ; Build Date: Thu, 10 Jan 2013 08:44:43
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -132,7 +132,7 @@ parseURL(server,getPath,docName,port,isHTML,responseTime,browserType,post,maxLin
  ;
  s error=""
  n cspVars,%error,html,phpVars,reqHeaders,respHeaders,url
- i $e(getPath,1)'="/" s getPath="/"_getPath
+ i $e(getPath,1)'="/" s getPath="/"_getPath 
  ;s url="http://"_server_getPath
  ;i $g(headers("Cookie"))'="" s reqHeaders(1)="Cookie: "_headers("Cookie")
  ;k headers

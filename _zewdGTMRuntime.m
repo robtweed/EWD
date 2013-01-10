@@ -1,7 +1,7 @@
 %zewdGTMRuntime ; EWD for GT.M.  Runtime interface  
  ;
- ; Product: Enterprise Web Developer (Build 933)
- ; Build Date: Wed, 01 Aug 2012 10:08:05
+ ; Product: Enterprise Web Developer (Build 952)
+ ; Build Date: Thu, 10 Jan 2013 08:44:43
  ;
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -699,7 +699,10 @@ writeLine(line,section,noCRLF)
  s lineNo=$o(^CacheTempWLD($j,section,""),-1)+1
  s text=""
  i line["#(" d  QUIT
- . s text=text_" w "
+ . i technology="node" d
+ . . s text=text_" s ^CacheTempBuffer($j,$increment(^CacheTempBuffer($j)))="
+ . e  d
+ . . s text=text_" w "
  . f  q:line'["#("  d
  . . s p1=$p(line,"#(",1)
  . . i p1'="" s text=text_""""_$$dblQuote(p1)_"""_" 
@@ -908,6 +911,8 @@ relink(sessid)
  . i rou="%ZMGWSI" q
  . i rou="%ZMGWSIS" q
  . i rou="GTM$DMOD" q
+ . i rou="GTM$CI" q
+ . i rou="node" q
  . s xrou=rou
  . i $e(xrou,1)="%" s xrou="_"_$e(xrou,2,$l(xrou))
  . zl xrou
@@ -1132,7 +1137,7 @@ errorPage ;;
  ;;     </div>
  ;;
  ;;     <div class=footerBlock>
- ;;              <p id="footerText">&nbsp;&copy; 2004-2012 M/Gateway Developments Ltd All Rights Reserved</p>
+ ;;              <p id="footerText">&nbsp;&copy; 2004-13 M/Gateway Developments Ltd All Rights Reserved</p>
  ;;     </div>
  ;;</body>
  ;;</html>

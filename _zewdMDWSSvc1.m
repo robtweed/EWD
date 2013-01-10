@@ -1,7 +1,7 @@
 %zewdMDWSSvc1	; OpenMDWS service method wrappers
  ;
- ; Product: Enterprise Web Developer (Build 944)
- ; Build Date: Fri, 23 Nov 2012 17:15:07
+ ; Product: Enterprise Web Developer (Build 952)
+ ; Build Date: Thu, 10 Jan 2013 08:44:43
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -91,6 +91,7 @@ getPatientsByClinic(sessid,localCall)
  f  s no=$o(results("schedule",no)) q:no=""  d
  . s array(outerTag,"patients","PatientTO",no,"name")=$g(results("schedule",no,"patientName"))
  . s array(outerTag,"patients","PatientTO",no,"patientName")=$g(results("schedule",no,"patientName"))
+ . s array(outerTag,"patients","PatientTO",no,"patientId")=$g(results("schedule",no,"patientId")) ;cpc 3/12/2012
  . s array(outerTag,"patients","PatientTO",no,"location","id")=$g(results("clinicId"))
  . ;
  . s aptDate=$$convertVistAAtDate^%zewdMDWSClient($g(results("schedule",no,"apptTime"))) ;cpc

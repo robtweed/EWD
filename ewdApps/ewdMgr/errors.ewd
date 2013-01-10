@@ -1,0 +1,102 @@
+<ewd:config pageType="ajax" applyTemplate="false" prePageScript="getErrorList^%zewdMgrAjax">
+
+<ewd:comment>
+  ----------------------------------------------------------------------------
+  | Enterprise Web Developer for GT.M and m_apache                           |
+  | Copyright (c) 2004-9 M/Gateway Developments Ltd,                         |
+  | Reigate, Surrey UK.                                                      |
+  | All rights reserved.                                                     |
+  |                                                                          |
+  | http://www.mgateway.com                                                  |
+  | Email: rtweed@mgateway.com                                               |
+  |                                                                          |
+  | This program is free software: you can redistribute it and/or modify     |
+  | it under the terms of the GNU Affero General Public License as           |
+  | published by the Free Software Foundation, either version 3 of the       |
+  | License, or (at your option) any later version.                          |
+  |                                                                          |
+  | This program is distributed in the hope that it will be useful,          |
+  | but WITHOUT ANY WARRANTY; without even the implied warranty of           |
+  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            |
+  | GNU Affero General Public License for more details.                      |
+  |                                                                          |
+  | You should have received a copy of the GNU Affero General Public License |
+  | along with this program.  If not, see http://www.gnu.org/licenses/.      |
+  ----------------------------------------------------------------------------
+</ewd:comment>
+
+<ewd:ajaxOnLoad>
+  EWD.page.setTitle('enterprise web developer') ;
+</ewd:ajaxOnLoad>
+
+<script language="javascript">
+  MGW.page.listSession = function(sessionNo) {
+    document.getElementById("listingColumn").style.visibility = "visible" ;
+    var nvp="sessionNo=" + sessionNo ;
+    ewd.ajaxRequest("listError","sessionListingPanel",nvp) ;
+  };
+  MGW.page.deleteError = function(sessionNo) {
+    var ok=confirm("Are you sure you want to delete session " + sessionNo + "?") ;
+    if (ok) {
+      ewd:deleteError^%zewdMgrAjax(sessionNo) ;
+      MGW.page.clearPanel("sessionListingPanel") ;
+      ewd.ajaxRequest("errors","mainmenu") ;      
+    }
+  };
+</script>
+
+<div class="propsText">
+  <ewd:ifBrowser type="firefox">
+    <ewd:set return="$top" value=" top:-20px">
+  <ewd:else>
+    <ewd:set return="$top" value="">
+   </ewd:ifBrowser>
+  <table border=0 width="99%" style="table-layout:fixed; position:relative;<?= $top ?>">
+    <tr>
+      <td width="22%">
+       <div class="selectorPanel" style="width:99%;height:99%">
+        <h5 align="center"><ewd:help sourceId="sess_doc" width="400px"/>Errors by Session ID</h5>
+          <div class="applicationPanel" style="left:-5px; height:320px; overflow:scroll">
+              <table border="0" width="100%" class="propsText">
+               <ewd:ifSessionNameExists sessionName="sessionList">
+                <ewd:forEach sessionName="sessionList" index="$no">
+                  <tr>
+                    <td align="left" class="configRow">
+                      <ewd:if firstValue="$no" secondValue="#ewd_sessid" operation="=">
+                         <b><?= $no ?></b>
+                      <ewd:else>
+                        <?= $no ?>
+                      </ewd:if>
+                    </td>
+                    <td class="configRow" width="20%">
+                      <input class="actionButton" type="button" id="list<?= $no ?>" value="Display" onClick="MGW.page.listSession('<?= $no ?>')">
+                    </td>
+                    <ewd:if firstValue="$no" secondValue="#ewd_sessid" operation="!=">
+                      <td class="configRow"><input class="smallButton" type="button" id="del<?= $no ?>" value="Delete" onclick="MGW.page.deleteError('<?= $no ?>')"></td>
+                    <ewd:else>
+                      &nbsp;
+                    </ewd:if>
+                  </tr>
+                </ewd:forEach>
+               </ewd:ifSessionNameExists>
+              </table>
+          </div>
+       </div>
+      </td>
+
+      <td id="listingColumn" style="visibility:hidden;">
+       <div class="selectorPanel" style="width:99%; height:99%" id="sessionListingPanel">
+          &nbsp;
+        </div>
+      </td>
+    </tr>
+  </table>
+<div id="sess_doc" class="alertPanelOff">
+<p>
+    Sessions that have generated errors are listed below.  By clicking on a Session, you can view the details relating to the error.
+   You can also selectively delete error reports if you wish.
+</p>
+</div>
+
+
+

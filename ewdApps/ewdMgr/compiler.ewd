@@ -1,0 +1,110 @@
+<ewd:config pageType="ajax" applyTemplate="false" prePageScript="compileSelectPrepage^%zewdMgrAjax">
+
+<ewd:comment>
+  ----------------------------------------------------------------------------
+  | Enterprise Web Developer for GT.M and m_apache                           |
+  | Copyright (c) 2004-9 M/Gateway Developments Ltd,                         |
+  | Reigate, Surrey UK.                                                      |
+  | All rights reserved.                                                     |
+  |                                                                          |
+  | http://www.mgateway.com                                                  |
+  | Email: rtweed@mgateway.com                                               |
+  |                                                                          |
+  | This program is free software: you can redistribute it and/or modify     |
+  | it under the terms of the GNU Affero General Public License as           |
+  | published by the Free Software Foundation, either version 3 of the       |
+  | License, or (at your option) any later version.                          |
+  |                                                                          |
+  | This program is distributed in the hope that it will be useful,          |
+  | but WITHOUT ANY WARRANTY; without even the implied warranty of           |
+  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            |
+  | GNU Affero General Public License for more details.                      |
+  |                                                                          |
+  | You should have received a copy of the GNU Affero General Public License |
+  | along with this program.  If not, see http://www.gnu.org/licenses/.      |
+  ----------------------------------------------------------------------------
+</ewd:comment>
+
+<script language="javascript">
+  EWD.page.setTitle('enterprise web developer') ;
+  MGW.page.selApp = function() {
+     var appField = document.getElementById("appName") ;
+     for (var i = 0; i < appField.length; i++) {
+        if (appField.options[i].selected == true) {
+           var fieldValue = appField.options[i].value ;
+           ewd:setApplication^%zewdMgrAjax(fieldValue) ;
+        }
+     }
+  };
+</script>
+
+<span>
+<ewd:if firstValue="#noOfApps" operation=">" secondValue="0">
+
+  <div class="propsText">
+    <form method="post" action="ewd">
+      <table border=0 width="99%" class="propsText">
+        <tr>
+          <td class="selectorPanel" style="width:66%;" align="left">
+            <h4 align="center">EWD Applications<ewd:help sourceId="apps_list" /></h4>
+            <div class="applicationPanel">
+              <select name="appName" onchange="MGW.page.clearPanel('section2') ; MGW.page.selApp()"></select>
+              <input type="submit" class="actionButton" name="compileAll" value="Compile Application" ajax="true" targetId="section2" action="compileAll^%zewdMgrAjax" nextpage="compilerResults">
+              <input type="submit" class="actionButton" name="displayPages" value="List/Compile pages" ajax="true" targetId="section2" nextpage="compilePage">
+              <input type="submit" class="actionButton" name="xref" value="Cross Refs" ajax="true" targetId="section2" nextpage="xref">
+              <div id="section2" class="propsText" />
+            </div>
+          </td>
+          <td class="selectorPanel" style="width:34%;">
+            <h4 align="center"><ewd:help sourceId="comp_props" width="150px" />Compilation Properties</h4>
+            <div class="applicationPanel" style="height:auto">
+              <table border=0 class="propsTable">
+                <tr class="configRow">
+                  <td>Web technology:</td>
+                  <td>
+                    <select name="frontEndTechnology"></select>
+                  </td>
+                </tr>
+                <tr class="configRow">
+                  <td>Scripting technology:</td>
+                  <td align="right">
+                    <select name="backEndTechnology"></select>
+                  </td>
+                </tr>
+                <tr class="configRow">
+                  <td>Persistence Database:</td>
+                  <td align="right">
+                    <select name="persistenceDB"></select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Compiled page markup layout:</td>
+                  <td align="right">
+                    <select name="format"></select>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </form>
+  </div>
+
+<ewd:else>
+  <br>
+  <h4 align="center">No EWD applications were found in your Application Root Directory</h4>
+  <br>
+</ewd:if>
+
+<div id="comp_props" class="alertPanelOff">
+    This panel shows the current settings that will be used if you compile an application or any page within 
+    an application.  You can change the settings temporarily here, but if you want to change the default settings 
+    permanently, click the <i>Configuration</i> tab.
+</div>
+
+<div id="apps_list" class="alertPanelOff">
+    The list of EWD applications equates to the sub-directories in your EWD Application Root Path.
+</div>
+</span>
+

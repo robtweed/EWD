@@ -1,7 +1,7 @@
 %zewdCompiler9	; Enterprise Web Developer Compiler : ajax fixed text
  ;
- ; Product: Enterprise Web Developer (Build 910)
- ; Build Date: Wed, 25 Apr 2012 17:59:25
+ ; Product: Enterprise Web Developer (Build 952)
+ ; Build Date: Thu, 10 Jan 2013 08:44:42
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -571,6 +571,7 @@ ajaxLoader ;
     ;;   }
 	;;};
 	;;EWD.sockets = {
+	;;  handlerFunction: {},
 	;;  sendMessage: function(params) {
 	;;    if (typeof params.message === 'undefined') params.message = '';
 	;;    params.token = EWD.sockets.token;
@@ -592,6 +593,14 @@ ajaxLoader ;
 	;;    });
 	;;    this.socket.on('message', function(obj){
 	;;      if (typeof console !== 'undefined') console.log("onMessage: " + JSON.stringify(obj));
+	;;      if (typeof EWD.sockets.handlerFunction[obj.type] !== 'undefined') {
+	;;        EWD.sockets.handlerFunction[obj.type](obj);
+	;;        return;
+	;;      }
+	;;      if (obj.type === 'ewdGetFragment') {
+	;;        EWD.ajax.injectFragment(obj.message,obj.targetId);
+	;;        return;
+	;;      }
 	;;      if (typeof obj === 'string') {
 	;;        var pieces = obj.split(':');
 	;;        var type = pieces.shift();
@@ -604,8 +613,16 @@ ajaxLoader ;
 	;;        return;
 	;;      }
 	;;      if (obj.type === 'json') {
-	;;        obj.json = JSON.parse(obj.message);
-	;;        delete obj.message;
+	;;        if (typeof obj.return !== 'undefined') {
+	;;          var str = obj.return + "=" + obj.message;
+	;;          console.log("str = " + str);
+	;;          eval(str);
+	;;          delete obj.message;
+	;;        }
+	;;        else {
+	;;          obj.json = JSON.parse(obj.message);
+	;;          delete obj.message;
+	;;        }
 	;;      }
 	;;      messageFunction(obj);
 	;;    });

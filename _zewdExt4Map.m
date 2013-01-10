@@ -1,7 +1,7 @@
 %zewdExt4Map ; Extjs Tag Processor Mappings
  ;
- ; Product: Enterprise Web Developer (Build 931)
- ; Build Date: Fri, 27 Jul 2012 12:05:05
+ ; Product: Enterprise Web Developer (Build 952)
+ ; Build Date: Thu, 10 Jan 2013 08:44:42
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -47,6 +47,7 @@ mappingObjects
  ;;{tagName:"ext4:buttongroup",className:"Ext.container.ButtonGroup",xtype:"buttongroup",xtypeTagName:"ext4:item",containerTag:"ext4:tbar"}
  ;;{tagName:"ext4:buttonmenu",expandMethod:"expandButtonMenu",parse:{method:"arrayOfOptions",optionName:"menu"}}
  ;;{tagName:"ext4:buttons",parse:{method:"arrayOfOptions",optionName:"buttons"}}
+ ;;{tagName:"ext4:calendar",className:"Ext.panel.Panel",xtype:"panel",xtypeTagName:"ext4:item",containerTag:"ext4:items",expandMethod:"expandPanel",instanceMethod:"panelInstance",pass1Method:"expandCalendar"}
  ;;{tagName:"ext4:cellediting",className:"Ext.grid.plugin.CellEditing",ptype:"cellediting",xtypeTagName:"ext4:item",containerTag:"ext4:plugins"}
  ;;{tagName:"ext4:chart",className:"Ext.chart.Chart",xtype:"chart",xtypeTagName:"ext4:item",containerTag:"ext4:items",expandMethod:"expandChart",instanceMethod:"chartInstance",pass1Method:"expandGauge"}
  ;;{tagName:"ext4:charttips",parse:{method:"object",optionName:"tips"}}

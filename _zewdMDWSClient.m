@@ -1,7 +1,7 @@
 %zewdMDWSClient ; MDWS Client Interface
  ;
- ; Product: Enterprise Web Developer (Build 946)
- ; Build Date: Sun, 25 Nov 2012 16:27:26
+ ; Product: Enterprise Web Developer (Build 952)
+ ; Build Date: Thu, 10 Jan 2013 08:44:43
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -50,7 +50,18 @@ getPath(method,nvps,sessid)
  . . . s path=path_delim_name_"="_$$urlEscape^%zewdSmart(nvps(name))
  ;
  ;
- QUIT ""
+ ;QUIT ""
+ i path="" s path="/mdws2/"
+ s path=path_facade_".asmx/"_method
+ i $d(nvps) d
+ . ; nvps(name)=value
+ . n delim,name
+ . s delim="?"
+ . s name=""
+ . f  s name=$o(nvps(name)) q:name=""  d
+ . . s path=path_delim_name_"="_nvps(name)
+ . . s delim="&"
+ QUIT path
  ;
 getValue(string)
  QUIT $p(string,$c(1),1)
@@ -107,7 +118,8 @@ convertVistAAtDate(di) ; convert Jan 23, 2012@0800 to 20120123.080000
  s m=$p(date," ",1)
  s m=months(m)
  s date=$p(date," ",2,10)
- s d=+date
+ ;s d=+date
+ s d=$p(date,",",1) ;cpc 29/11/2012
  s y=$p(date,", ",2)
  s do=y_m_d_"."_$tr(time,":","")_"00"
  QUIT do
@@ -159,13 +171,14 @@ getClinicData(results,data)
  ;
 getClinicAppts(results,data)
  ;
- n CITime,COTime,count,d,date,h,i,id,m,mn,name,s,y,length,status,ztime
+ n CITime,COTime,count,d,date,h,i,id,m,mn,name,pid,s,y,length,status,ztime ;cpc 3/12/2012
  ;
  k data
  s count=$$getValue($g(results("PatientArray","count")))
  s count=$$getTextValue("/PatientArray/count",.results)
  f i=1:1:count d
  . s name=$$getTextValue("/PatientArray/patients/PatientTO/"_i_"/name",.results)
+ . s pid=$$getTextValue("/PatientArray/patients/PatientTO/"_i_"/patientId",.results) ;cpc 3/12/2012
  . s date=$$getTextValue("/PatientArray/patients/PatientTO/"_i_"/location/appointmentTimestamp",.results)
  . ;"20121009.080000"
  . s length=$$getTextValue("/PatientArray/patients/PatientTO/"_i_"/location/appointmentLength",.results)
@@ -174,6 +187,7 @@ getClinicAppts(results,data)
  . s COtime=$$getTextValue("/PatientArray/patients/PatientTO/"_i_"/location/checkOutTimestamp",.results) ;cpc
  . ;10/08/2012 11:00:00
  . ;"Nov 20, 2012@07:29"
+ . s data(i,"patientId")=pid ;cpc 3/12/2012
  . s data(i,"name")=name
  . s data(i,"date")=$$convertVistADate(date,2)
  . s data(i,"time")=$$convertVistADate(date,1)
@@ -219,7 +233,7 @@ request(serviceName,nvps,results,sessid)
  . i serviceName="connect" d
  . . d setSessionValue^%zewdAPI("mdws.cookie",$g(results("cookie")),sessid)
  . . k results("cookie")
- . k nvps
+ . ;k nvps
  ;
  s port=$$getSessionValue^%zewdAPI("mdws.port",sessid)
  s cookie=$$getSessionValue^%zewdAPI("mdws.cookie",sessid)

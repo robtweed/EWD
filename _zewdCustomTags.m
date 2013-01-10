@@ -1,7 +1,7 @@
 %zewdCustomTags	; Enterprise Web Developer Custom Tag Library Functions
  ;
- ; Product: Enterprise Web Developer (Build 931)
- ; Build Date: Fri, 27 Jul 2012 12:05:04
+ ; Product: Enterprise Web Developer (Build 952)
+ ; Build Date: Thu, 10 Jan 2013 08:44:42
  ;
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -233,7 +233,7 @@ addPhpVar(sessionValue,type)
  ;
 loadFiles(appName,type,sessid)
  ;
- n defer,deferAttr,file,line,path,src,technology,value
+ n defer,deferAttr,file,line,path,src,technology,useRootPath,value
  ;
  ; type = css|js
  ;
@@ -254,10 +254,16 @@ loadFiles(appName,type,sessid)
  . i $e(file,1,3)'="ewd" q
  . s value=^zewd("loader",appName,type,file)
  . s defer=$p(value,$c(1),2)
+ . s useRootPath=$p(value,$c(1),3)
  . s deferAttr=""
  . i defer s deferAttr=" defer='defer'"
  . s src=file
- . i $e(file,1)'="/",$e(file,1,7)'="http://",$e(file,1,8)'="https://" s src=path_file
+ . i $e(file,1)'="/",$e(file,1,7)'="http://",$e(file,1,8)'="https://" d
+ . . ;d trace^%zewdAPI("*** file = "_file_"; path="_path_"; useRootPath="_useRootPath_"; rootPath="_^zewd("rootPath",appName))
+ . . i useRootPath d
+ . . . s src=$g(^zewd("rootPath",appName))_src
+ . . e  d
+ . . . s src=path_file
  . ;i $e(file,1)'="/" s src=path_file 
  . s line=""
  . i type="js" s line="<script src='"_src_"' type='text/javascript'"_deferAttr_"></script>"_$c(13,10)
@@ -272,10 +278,15 @@ loadFiles(appName,type,sessid)
  . i $e(file,1,3)="ewd" q
  . s value=^zewd("loader",appName,type,file)
  . s defer=$p(value,$c(1),2)
+ . s useRootPath=$p(value,$c(1),3)
  . s deferAttr=""
  . i defer s deferAttr=" defer='defer'"
  . s src=file
- . i $e(file,1)'="/",$e(file,1,7)'="http://",$e(file,1,8)'="https://" s src=path_file
+ . i $e(file,1)'="/",$e(file,1,7)'="http://",$e(file,1,8)'="https://" d
+ . . i useRootPath d
+ . . . s src=$g(^zewd("rootPath",appName))_src
+ . . e  d
+ . . . s src=path_file
  . ;i $e(file,1)'="/" s src=path_file
  . s line="" 
  . i type="js" s line="<script src='"_src_"' type='text/javascript'"_deferAttr_"></script>"_$c(13,10)
@@ -287,12 +298,13 @@ loadFiles(appName,type,sessid)
  ;
  QUIT
  ;
-registerResource(type,fileName,source,app,defer)
+registerResource(type,fileName,source,app,defer,useRootPath)
  ;
+ s app=$$zcvt^%zewdAPI(app,"l")
  i $e(fileName,1,7)'="http://",$e(fileName,1,8)'="https://" d
  . i fileName'[("."_type) s fileName=fileName_"."_type
  s defer=$g(defer)
- s ^zewd("loader",$$zcvt^%zewdAPI(app,"l"),type,fileName)=source_$c(1)_defer
+ s ^zewd("loader",app,type,fileName)=source_$c(1)_defer_$c(1)_$g(useRootPath)
  ;
  QUIT
  ;

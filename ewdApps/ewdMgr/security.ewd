@@ -1,0 +1,121 @@
+<ewd:config isFirstPage="false" pageType="ajax" prePageScript="securityPrepage^%zewdMgrAjax">
+
+<ewd:comment>
+  ----------------------------------------------------------------------------
+  | Enterprise Web Developer for GT.M and m_apache                           |
+  | Copyright (c) 2004-9 M/Gateway Developments Ltd,                         |
+  | Reigate, Surrey UK.                                                      |
+  | All rights reserved.                                                     |
+  |                                                                          |
+  | http://www.mgateway.com                                                  |
+  | Email: rtweed@mgateway.com                                               |
+  |                                                                          |
+  | This program is free software: you can redistribute it and/or modify     |
+  | it under the terms of the GNU Affero General Public License as           |
+  | published by the Free Software Foundation, either version 3 of the       |
+  | License, or (at your option) any later version.                          |
+  |                                                                          |
+  | This program is distributed in the hope that it will be useful,          |
+  | but WITHOUT ANY WARRANTY; without even the implied warranty of           |
+  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            |
+  | GNU Affero General Public License for more details.                      |
+  |                                                                          |
+  | You should have received a copy of the GNU Affero General Public License |
+  | along with this program.  If not, see http://www.gnu.org/licenses/.      |
+  ----------------------------------------------------------------------------
+</ewd:comment>
+
+<span>
+  <div class="propsText">
+
+      <table border="0" width="99%" class="propsText" style="table-layout:fixed">
+        <tr>
+          <td class="selectorPanel" align="left">
+           <div>
+            <h4>&nbsp;&nbsp;&nbsp;Manage Access to this Application<ewd:help sourceId="about_security" /></h4>
+            <div class="applicationPanel">
+             <form method="post" action="ewd">
+              <table border="0" width="100%" class="propsText">
+                <ewd:if firstValue="#noOfIPs" operation=">" secondValue="0">
+                  <tr>
+                    <td>Authorised IP addresses or ranges: </td>
+                    <td>
+                      <select name="subnet"></select>
+                      <input type=submit name="deleteSN" value="Delete" class="actionButton" confirm="true" confirmText="Click OK to delete address" ajax="true" targetId="securityNullid" action="deleteIPAddress^%zewdMgrAjax" nextpage="reloadSecurity">
+                    </td>
+                  </tr>
+                </ewd:if>
+                <tr>
+                  <td><ewd:help sourceId="about_ip" />Add an IP address or range: </td>
+                  <td>
+                    <input type="text" name="newSubnet" value="">
+                    <input type=submit name="addSN" value="Add" class="actionButton" ajax="true" targetId="securityNullid" action="addIPAddress^%zewdMgrAjax" nextpage="reloadSecurity">
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan=2>&nbsp;</td>
+                </tr>
+                <ewd:if firstValue="#noOfUsers" operation=">" secondValue="0">
+                  <tr>
+                    <td>Authorised usernames: </td>
+                    <td>
+                      <select name="user"></select>
+                      <input type=submit name="editUser" class="actionButton" value="Edit" ajax="true" nextpage="user" targetId="securityEditPanel">
+                      <input type=submit name="deleteUser" class="actionButton" value="Delete" ajax="true" confirm="true" confirmText="Click OK to delete user" action="deleteUser^%zewdMgrAjax" nextpage="reloadSecurity" targetId="securityNullid">
+                    </td>
+                  </tr>
+                </ewd:if>
+                <tr>
+                  <td><ewd:help sourceId="about_user" />Add a user: </td>
+                  <td>
+                    <input type="text" name="newUser" class="actionButton" value="">
+                    <input type=submit name="addUser" class="actionButton" value="Add" nextpage="user" ajax="true" targetId="securityEditPanel" action="addUser^%zewdMgrAjax">
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan=2>&nbsp;</td>
+                </tr>
+                <tr>
+                  <td><ewd:help sourceId="about_disable" />Disable ewdMgr: </td>
+                  <td>
+                      <input type=submit name="disable" class="actionButton" value="Disable" ajax="true" confirm="true" confirmText="Are you sure you want to disable ewdMgr?" action="disableEwdMgr^%zewdMgrAjax" nextpage="logout" targetId="securityNullid">
+                  </td>
+                </tr>
+              </table>
+             </form>
+            </div>
+           </div>
+          </td>
+          <td class="selectorPanel" id="securityEditPanel" align="left">
+          </td>
+        </tr>
+      </table>
+
+  </div>
+<div id="securityNullid" />
+<div id="about_disable" class="alertPanelOff">
+If you click this, then this application (the ewdMgr application) will be flagged as disabled will not be able to be 
+run unless you re-enable it using the command-line API: d enableEwdMgr^%zewdAPI.
+
+<p>It is recommended that ewdMgr is disabled or totally removed from production systems</p>
+</div>
+<div id="about_security" class="alertPanelOff">
+This allows you to restrict access to the Enterprise Web Developer web interface (ewdMgr application) to only specified
+IP address ranges and/or IP addresses.  By default, the ewdMgr application is 
+only accessible via the EWD server's localhost.
+
+<p>To ensure the security of the ewdMgr application, you may specify users who are authorised to use it.  Add and/or amend their details 
+from the form below.  Users who are specified as administrators can modify the Enterprise Web Developer Configuration parameters and add/amend users.
+</div>
+<div id="about_ip" class="alertPanelOff">
+Specify a full IP address or a partial IP address: for example, to allow access across the range 192.168.123.0 to 192.168.123.255, 
+enter 192.168.123
+</div>
+<div id="about_user" class="alertPanelOff">
+To add a new user, enter a new username here and click Add.  You'll then be asked to enter the new user's 
+profile details.
+
+<p>If you add one or more users, next time you start this application, you'll be asked to log in with one of 
+   the valid usernames.</p>
+</div>
+</span>

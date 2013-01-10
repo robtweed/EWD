@@ -1,0 +1,64 @@
+<ewd:config isFirstPage="true" prepagescript="indexPrepage^%zewdMgrAjax">
+
+<ewd:comment>
+  ----------------------------------------------------------------------------
+  | Enterprise Web Developer for GT.M and m_apache                           |
+  | Copyright (c) 2004-9 M/Gateway Developments Ltd,                         |
+  | Reigate, Surrey UK.                                                      |
+  | All rights reserved.                                                     |
+  |                                                                          |
+  | http://www.mgateway.com                                                  |
+  | Email: rtweed@mgateway.com                                               |
+  |                                                                          |
+  | This program is free software: you can redistribute it and/or modify     |
+  | it under the terms of the GNU Affero General Public License as           |
+  | published by the Free Software Foundation, either version 3 of the       |
+  | License, or (at your option) any later version.                          |
+  |                                                                          |
+  | This program is distributed in the hope that it will be useful,          |
+  | but WITHOUT ANY WARRANTY; without even the implied warranty of           |
+  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            |
+  | GNU Affero General Public License for more details.                      |
+  |                                                                          |
+  | You should have received a copy of the GNU Affero General Public License |
+  | along with this program.  If not, see http://www.gnu.org/licenses/.      |
+  ----------------------------------------------------------------------------
+</ewd:comment>
+
+<html>
+  <head>
+    <ewd:refresh url="index.ewd" time="3500" />
+    <ewd:set return="$path" value="/resources/">
+    <link href="<?= $path ?>mgw3.css" media="screen" rel="stylesheet" type="text/css" />
+    <script src="<?= $path ?>mgw.js"></script>
+    <title>M/Gateway Developments Ltd</title>
+    <script language="javascript">
+      EWD.page.setTitle = function(text) {
+        /*document.getElementById("pageTitle").innerHTML = text ; */
+        document.title = 'M/Gateway Developments Ltd: ' + text ;
+      } ;
+      EWD.page.loadInitialPage = function() {
+        ewd.ajaxRequest("initialPage","bodyContent") ;
+      } ;
+    </script>
+  </head>
+  <body onload="EWD.page.loadInitialPage()">
+    <table border="0" style="table-layout: fixed;" width="100%">
+      <tr>
+        <td><img src="<?= $path ?>mgw_web_banner.jpg" /></td>
+      </tr>
+    </table>
+    <br /><br /><br />
+    <div id="bodyContent">
+    </div>
+    <div class="footerBlock">
+      <p class="footerText">
+        &copy; 2004-2008 M/Gateway Developments Ltd All Rights Reserved. &nbsp;&nbsp;&nbsp;&nbsp; <a style="color:#ffffff;" href="http://www.mgateway.com">http://www.mgateway.com</a>
+      </p>
+    </div>
+    <div id="nullId" style="display:none;" />
+    <ewd:helpPanel />
+    <div style="position:absolute;top:18px;left:750px;font-size:18pt;font-family:arial;text-align:center">
+      Enterprise Web Developer<br />Management Portal
+  </body>
+</html>

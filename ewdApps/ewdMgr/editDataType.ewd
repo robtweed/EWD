@@ -1,0 +1,105 @@
+<ewd:config pageType="ajax" applyTemplate="false" prePageScript="getDataTypeDetails^%zewdMgrAjax">
+
+<ewd:comment>
+  ----------------------------------------------------------------------------
+  | Enterprise Web Developer for GT.M and m_apache                           |
+  | Copyright (c) 2004-9 M/Gateway Developments Ltd,                         |
+  | Reigate, Surrey UK.                                                      |
+  | All rights reserved.                                                     |
+  |                                                                          |
+  | http://www.mgateway.com                                                  |
+  | Email: rtweed@mgateway.com                                               |
+  |                                                                          |
+  | This program is free software: you can redistribute it and/or modify     |
+  | it under the terms of the GNU Affero General Public License as           |
+  | published by the Free Software Foundation, either version 3 of the       |
+  | License, or (at your option) any later version.                          |
+  |                                                                          |
+  | This program is distributed in the hope that it will be useful,          |
+  | but WITHOUT ANY WARRANTY; without even the implied warranty of           |
+  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            |
+  | GNU Affero General Public License for more details.                      |
+  |                                                                          |
+  | You should have received a copy of the GNU Affero General Public License |
+  | along with this program.  If not, see http://www.gnu.org/licenses/.      |
+  ----------------------------------------------------------------------------
+</ewd:comment>
+
+<span>
+  <h5 align="center">Data Type: <?= #tagName ?></h5>
+  <div class="applicationPanel" style="height:320px; width:97%">
+    <form method="post" action="ewd">
+      <table border="0" width="100%" class="propsTable" style="table-layout:fixed">
+        <tr>
+          <td width="20%" class="configRow"><ewd:help sourceId="dt_input" width="420px"/>Input Method:</td>
+          <td class="configRow"><input type=text name=inputMethod value="*" size=40></td>
+        </tr>
+          <tr>
+          <td width="20%" class="configRow"><ewd:help sourceId="dt_output" width="420px" />Output Method:</td>
+          <td class="configRow"><input type=text name=outputMethod value="*" size=40></td>
+        </tr>
+        <tr>
+          <td width="20%" class="configRow">Notes:</td>
+          <td class="configRow">
+            <textarea name="dataTypeNotes" rows="8" cols="40">*</textarea>
+          </td>
+        </tr>
+        <tr>
+          <td colspan=2>
+            <input type="submit" name="dtSubmit" class="actionButton" value="Save" action="saveDataType^%zewdMgrAjax" ajax="true" targetId="nullId" nextpage="configSettingsSaved">
+            <input type="button" name="cancel" class="actionButton" value="Cancel" onClick="document.getElementById('listingPanel').innerHTML = ''">
+          </td>
+        </tr>
+      </table>
+    </form>
+  </div>
+  <div id="alertPanel" class="alertPanelOff">
+    Data Type details saved
+  </div>
+  <div id="dt_input" class="alertPanelOff">
+   Specify the input/decode function name here, without any input parameters, eg:
+
+   <p><i>$$decodeFunction^myRoutine</i></p>
+
+   <p>The input/decode function is used to convert the raw value (ie as extracted from your database) 
+   to its display format, for presentation within the browser page. Its structure should be of the form:</p>
+
+   <p><i>decodedValue=$$decodeFunction^myRoutine(rawValue,sessid))</i></p>
+
+   <p>For example:</p>
+
+   <p>
+decodeDate(rawDate,sessid)<br>
+QUIT $zd(rawDate,2)
+   </p>
+
+  </div>
+  <div id="dt_output" class="alertPanelOff">
+   Specify the output/encode function name here, without any input parameters, eg:
+
+   <p><i>$$encodeFunction^myRoutine</i></p>
+
+   <p>The output/encode function is used to validate and then convert the display value (ie as sent from the browser) 
+   to its raw format, for storage in your database.  Its structure should be of the form:</p>
+
+   <p><i>encodedValue=$$encodeFunction^myRoutine(displayValue,.errorMessage,sessid)</i></p>
+
+   <p>Any validation error is returned by reference, eg:</p>
+   <p>
+encodeDate(textDate,error,sessid)<br>
+n dh<br>
+s error=""<br>
+s $zt="encodeDateError"<br>
+s dh=$zdh(textDate,2)<br>
+i $g(dh)="" s error=”Invalid Date” QUIT textDate<br>
+QUIT $g(dh)<br>
+;<br>
+encodeDateError ;<br>
+s error="Invalid Date"<br>
+s $zt=""<br>
+QUIT textDate
+   </p>
+
+   </ul>
+  </div>
+</span>

@@ -1,0 +1,96 @@
+<ewd:config isFirstPage="false" pageType="ajax" prepagescript="gtmAbout^%zewdMgr2">
+
+<ewd:comment>
+  ----------------------------------------------------------------------------
+  | Enterprise Web Developer for GT.M and m_apache                           |
+  | Copyright (c) 2004-9 M/Gateway Developments Ltd,                         |
+  | Reigate, Surrey UK.                                                      |
+  | All rights reserved.                                                     |
+  |                                                                          |
+  | http://www.mgateway.com                                                  |
+  | Email: rtweed@mgateway.com                                               |
+  |                                                                          |
+  | This program is free software: you can redistribute it and/or modify     |
+  | it under the terms of the GNU Affero General Public License as           |
+  | published by the Free Software Foundation, either version 3 of the       |
+  | License, or (at your option) any later version.                          |
+  |                                                                          |
+  | This program is distributed in the hope that it will be useful,          |
+  | but WITHOUT ANY WARRANTY; without even the implied warranty of           |
+  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            |
+  | GNU Affero General Public License for more details.                      |
+  |                                                                          |
+  | You should have received a copy of the GNU Affero General Public License |
+  | along with this program.  If not, see http://www.gnu.org/licenses/.      |
+  ----------------------------------------------------------------------------
+</ewd:comment>
+
+<div>
+<center>
+<br/>
+<table border="1" width="80%">
+<tr>
+<td>EWD Virtual Appliance Version:</td>
+<td><?= #ewdva_version ?> ; <?= #ewdva_date ?></td>
+</tr>
+<tr>
+<td>Operating Environment:</td>
+<td>Ubuntu 7.10 JEOS Linux<br>running as a VMWare Virtual Machine</td>
+</tr>
+<tr>
+<td>Powered by:</td>
+<td><?= #gtm_version ?><br>
+<?= #ewdVersion ?> (FOSS Version)<br>
+</td>
+</tr>
+<tr>
+<td><i>m_apache</i> Gateway version:</td>
+<td><?= #mgwsi_version ?></td>
+</tr>
+<tr>
+<td>Current date and time:</td>
+<td><?= #gtm_dateTime ?></td>
+</tr>
+<tr>
+<td>IP Address:</td>
+<td><?= #ewd_ip ?></td>
+</tr>
+<tr>
+<td>EWD Session ID of this application:</td>
+<td><?= #ewd_sessid ?></td>
+</tr>
+<tr>
+<td>Copyright:</td>
+<td>&copy; 2006-9, M/Gateway Developments Ltd. (All Rights Reserved)</td>
+</tr>
+<tr>
+<td>Licensing:</td>
+<td>Enterprise Web Developer, <i>m_apache</i> and the <i>ewdMgr</i> application are licensed under the 
+ GNU Affero General Public License, as published by the Free Software Foundation, 
+ either version 3 of the License, or (at your option) any later version.  See &lt;http://www.gnu.org/licenses/&gt;<br><br>
+For licensing of other components included in this Virtual Appliance, please refer to the relevant documentation.
+</td>
+</tr>
+<tr>
+<td>Warranty:</td>
+<td>This Virtual Appliance (and all components contained in it) is distributed in the hope that it will be useful, 
+ but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ GNU Affero General Public License for more details.</td>
+</tr>
+<tr>
+<td>Support:</td>
+<td>None provided except by negotiated contract<br>
+Contact Rob Tweed at rtweed@mgateway.com for details<br><br>
+<a href="http://groups.google.co.uk/group/enterprise-web-developer-community">Online Community:</a> http://groups.google.co.uk/group/enterprise-web-developer-community
+</td>
+</tr>
+<tr>
+<td>Special thanks to:</td>
+<td>George James Software for providing the Serenji server code<br>
+Jon Diamond and CAMTA for the Standard MUMPS Pocket Guide
+</td>
+</tr>
+</table>
+</center>
+</div>
+

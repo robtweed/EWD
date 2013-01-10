@@ -1,7 +1,7 @@
 %zewdExt4 ; Extjs Tag Processors
  ;
- ; Product: Enterprise Web Developer (Build 944)
- ; Build Date: Fri, 23 Nov 2012 17:15:06
+ ; Product: Enterprise Web Developer (Build 952)
+ ; Build Date: Thu, 10 Jan 2013 08:44:42
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -83,6 +83,7 @@ container(nodeOID,attrValue,docOID,technology)
  s rootPath=$g(mainAttrs("rootpath"))
  i rootPath="" s rootPath="/ext-4/"
  s rootPath=$$addSlashAtEnd^%zewdST(rootPath)
+ s ^zewd("rootPath",$$zcvt^%zewdAPI(app,"L"))=rootPath
  s jsVersion=$g(mainAttrs("jsversion"))
  i jsVersion="" s jsVersion="ext-all.js"
  s cssVersion=$g(mainAttrs("cssversion"))
@@ -142,12 +143,23 @@ container(nodeOID,attrValue,docOID,technology)
  s attr("id")="Ext4ClassDefinitions"
  s xOID=$$addElementToDOM^%zewdDOM("ewd:jssection",jsOID,,.attr)
  ;
- ;s text="EWD.ext4 = {};"_$c(13,10)
+ i $g(mainAttrs("enableloader"))="true" d
+ . s ^zewd("loader",$$zcvt^%zewdAPI(appName,"L"),"configs","enabled")="true"
+ . s ^zewd("loader",$$zcvt^%zewdAPI(appName,"L"),"configs","disableCaching")="false"
+ s text=" d defineLoader^%zewdExt4Code(sessid)"
+ i $$addCSPServerScript^%zewdAPI(jsOID,text)
+ ;
  s text="Ext.application({"_$c(13,10)
  s text=text_" name:'"_appName_"',"_$c(13,10)
  s text=text_" launch: function() {"_$c(13,10)
- i $g(mainAttrs("enableloader"))="true" s text=text_"   Ext.Loader.setConfig({enabled:true});"_$c(13,10)
- s text=text_"   EWD.ext4.content()"_$c(13,10)
+ ;i $g(mainAttrs("enableloader"))="true" s text=text_"   Ext.Loader.setConfig({enabled:true});"_$c(13,10)
+ s text=text_"   if (EWD.loader.enabled) Ext.Loader.setConfig(EWD.loader);"_$c(13,10)
+ s text=text_"   if (EWD.requires !== '') {"_$c(13,10)
+ s text=text_"     Ext.require(EWD.requires, function() {EWD.ext4.content()});"_$c(13,10)
+ s text=text_"   }"_$c(13,10)
+ s text=text_"   else {"_$c(13,10)
+ s text=text_"     EWD.ext4.content()"_$c(13,10)
+ s text=text_"   }"_$c(13,10)
  s text=text_" }"_$c(13,10)
  s text=text_"});"_$c(13,10)
  s xOID=$$addElementToDOM^%zewdDOM("ewd:jsline",jsOID,,,text)
@@ -253,9 +265,9 @@ createFragmentJS()
  d setAttribute^%zewdDOM("id","FragmentJavascript",jsOID)
  s attr("id")="Ext4ClassDefinitions"
  s xOID=$$addElementToDOM^%zewdDOM("ewd:jssection",jsOID,,.attr)
- s attr("id")="cspScripts"
- s xOID=$$addElementToDOM^%zewdDOM("ewd:jssection",jsOID,,.attr)
  s attr("id")="Ext4PreCode"
+ s xOID=$$addElementToDOM^%zewdDOM("ewd:jssection",jsOID,,.attr)
+ s attr("id")="cspScripts"
  s xOID=$$addElementToDOM^%zewdDOM("ewd:jssection",jsOID,,.attr)
  s attr("id")="Ext4Code"
  s xOID=$$addElementToDOM^%zewdDOM("ewd:jssection",jsOID,,.attr)
@@ -728,6 +740,10 @@ swapFormFields(nodeOID)
  . d removeAttribute^%zewdDOM("type",xOID)
  . d setNameList(xOID)
  ;
+ QUIT
+ ;
+expandCalendar(nodeOID)
+ d expandCalendar^%zewdExt4a($g(nodeOID))
  QUIT
  ;
 expandSubmitButton(nodeOID)

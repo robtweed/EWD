@@ -1,7 +1,7 @@
 %zewdCompiler	; Enterprise Web Developer Compiler
  ;
- ; Product: Enterprise Web Developer (Build 944)
- ; Build Date: Fri, 23 Nov 2012 17:15:06
+ ; Product: Enterprise Web Developer (Build 952)
+ ; Build Date: Thu, 10 Jan 2013 08:44:42
  ; 
  ; 
  ; ----------------------------------------------------------------------------
@@ -654,7 +654,11 @@ bypassMode(docName)
 	. . . n disable
 	. . . i $g(attrs("isfirstpage"))'="false" d
 	. . . . d setAttribute^%zewdDOM("isfirstpage","true",configOID)
-	. . . . d setAttribute^%zewdDOM("cachepage","false",configOID)
+	. . . . i $g(attrs("cachepage"))="" d
+	. . . . . d setAttribute^%zewdDOM("cachepage","false",configOID)
+	. . . . e  d 
+	. . . . . d setAttribute^%zewdDOM("cachepage",attrs("cachepage"),configOID)
+    . . . . . d removeAttribute^%zewdDOM("cachepage",nodeOID)
 	. . . . d removeAttribute^%zewdDOM("isfirstpage",nodeOID)
 	. . . . k attrs("isfirstpage")
 	. . . e  d

@@ -1,0 +1,5 @@
+<ewd:config isFirstPage="true" prePageScript="getRequest^%zewdMDWS"/>
+
+<ewd:responseHeader name="Content-type" value="#contentType" />
+<ewd:responseHeader name="SET-COOKIE" value="#mdws_cookie" />
+<ewd:execute method="outputContent^%zewdMDWS" type="procedure" param1="#ewd_sessid" />

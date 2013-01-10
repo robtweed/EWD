@@ -1,0 +1,127 @@
+<ewd:config pageType="ajax" applyTemplate="false" prePageScript="configPrepage^%zewdMgrAjax">
+
+<ewd:comment>
+  ----------------------------------------------------------------------------
+  | Enterprise Web Developer for GT.M and m_apache                           |
+  | Copyright (c) 2004-9 M/Gateway Developments Ltd,                         |
+  | Reigate, Surrey UK.                                                      |
+  | All rights reserved.                                                     |
+  |                                                                          |
+  | http://www.mgateway.com                                                  |
+  | Email: rtweed@mgateway.com                                               |
+  |                                                                          |
+  | This program is free software: you can redistribute it and/or modify     |
+  | it under the terms of the GNU Affero General Public License as           |
+  | published by the Free Software Foundation, either version 3 of the       |
+  | License, or (at your option) any later version.                          |
+  |                                                                          |
+  | This program is distributed in the hope that it will be useful,          |
+  | but WITHOUT ANY WARRANTY; without even the implied warranty of           |
+  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            |
+  | GNU Affero General Public License for more details.                      |
+  |                                                                          |
+  | You should have received a copy of the GNU Affero General Public License |
+  | along with this program.  If not, see http://www.gnu.org/licenses/.      |
+  ----------------------------------------------------------------------------
+</ewd:comment>
+
+<script language="javascript">
+  EWD.page.setTitle('enterprise web developer') ;
+</script>
+
+<span class="mediumText">
+  <table border=0 width="96%">
+    <tr>
+      <td class="selectorPanel">
+        <h4 align="center">Compiler Settings<ewd:help sourceId="compiler_settings" /></h4>
+        <div class="applicationPanel">
+          <form method="post" action="ewd">
+              <br>
+              <table class="configTable">
+                <tr class="configRow">
+                  <td><ewd:help sourceId="app_src_path" />Application source path:</td>
+                  <td><input type="text" name="appRootPath" value="*"></td>
+                </tr>
+                <tr class="configRow">
+                  <td><ewd:help sourceId="web_tech" />Web technology:</td>
+                  <td><select name="frontEndTechnology"></select></td>
+                </tr>
+                <tr class="configRow">
+                  <td><ewd:help sourceId="script_tech" />Scripting technology:</td>
+                  <td><select name="backEndTechnology"></select></td>
+                </tr>
+                <tr class="configRow">
+                  <td><ewd:help sourceId="persist_db" />Persistence Database:</td>
+                  <td><select name="persistenceDB"></select></td>
+                </tr>
+                <tr>
+                  <td><ewd:help sourceId="page_markup" width="300px" />Compiled page markup layout:</td>
+                  <td><select name="format"></select></td>
+                </tr>
+              </table>
+              <div>
+                <br>
+                <input type="submit" name="configUpdate" class="actionButton" value="Update" ajax="true" targetId="nullId" nextpage="configSettingsSaved" action="saveMainConfig^%zewdMgrAjax">
+              </div>
+          </form>
+        </div>
+      </td>
+      <td class="selectorPanel">
+        <h4 align="center">Web Technologies<ewd:help sourceId="web_tech_head" /></h4>
+        <ewd:subTabMenu id="webTechnologiesMenu">
+           <ewd:subTabMenuOption text="GT.M / m_apache" nextpage="mapacheConfig" preSelected="true" />
+        </ewd:subTabMenu>
+      </td>
+    </tr>
+  </table>
+
+  <div id="alertPanel" class="alertPanelOff">
+    Configuration settings saved
+  </div>
+
+  <div id="compiler_settings" class="alertPanelOff">
+    This section tells EWD where to find the source page directories, and defines 
+    the default compiler settings.  It is recommended that you do not change these settings 
+    unless you are an advanced user and fully familiar with EWD, GT.M and MGWSI/<i>m_apache</i>.
+  </div>
+  <div id="app_src_path" class="alertPanelOff">
+    The file path/ directory under which all your source EWD application directories reside. 
+    This parameter is essential for EWD to be able to locate where your EWD source files are held.
+  </div>
+  <div id="web_tech" class="alertPanelOff">
+    The run-time web technology to which EWD will compile your pages by default.
+  </div>
+  <div id="script_tech" class="alertPanelOff">
+    The pre-page and action scripts in your EWD pages can be written in a variety of languages.  This 
+    parameter defines the default that EWD's compiler will expect to find in your source pages.
+  </div>
+  <div id="persist_db" class="alertPanelOff">
+    EWD can use a variety of databases for its session persistence.  This parameter allows you to define 
+    the default database technology that will be used for session persistence.
+  </div>
+  <div id="page_markup" class="alertPanelOff">
+    <p>During development and testing, it is best to set this default parameter to "indented".  The markup in the 
+    compiled versions of your pages will be laid out in a clearly readable format, indented where possible to reflect the XML 
+    tag hierarchy within the page.</p>
+    <p>Applications that are ready for production deployment should be compiled in collapsed mode which removes 
+    white space wherever possible, both within your markup and Javascript code.  This makes the application use 
+    network bandwidth more efficiently, helps to obfuscate your page logic, and also may help to rectify some fine detail 
+    related to styling.</p>
+  </div>
+  <div id="web_tech_head" class="alertPanelOff">
+    This section allows you to configure EWD for each run-time web technology that you wish to use.  These settings 
+    determine where EWD saves the compiled versions of your pages, and how it structures certain file references. 
+    You only need to configure those technologies that you'll actually use.  It is recommended that you do not change these settings 
+    unless you are an advanced user and fully familiar with EWD, GT.M and MGWSI/<i>m_apache</i>.
+  </div>
+  <div id="pers_dbs" class="alertPanelOff">
+    EWD can use a variety of databases for its session persistence.  This section allows you to define the relevant connection 
+    between your run-time web technology and the database.  In the case of Cach&eacute; or GT.M in conjunction with PHP, 
+    this involves defining the <i>server name</i> connection used by the <i>MGWSI</i> gateway.  In the case of mySQL, you need to 
+    specify the IP address of the mySQL server and the mySQL username and password.  If you are using GT.M/MGWSI (ie using
+    <i>m_apache</i>), this section is not relevant, since session persistence automatically occurs within the GT.M
+    database.  It is recommended that you do not change these settings 
+    unless you are an advanced user and fully familiar with EWD, GT.M and MGWSI/<i>m_apache</i>.
+  </div>
+</span>
+

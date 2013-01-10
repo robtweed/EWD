@@ -1,0 +1,95 @@
+<ewd:config isFirstPage="false" pageType="ajax">
+
+<ewd:comment>
+  ----------------------------------------------------------------------------
+  | Enterprise Web Developer for GT.M and m_apache                           |
+  | Copyright (c) 2004-9 M/Gateway Developments Ltd,                         |
+  | Reigate, Surrey UK.                                                      |
+  | All rights reserved.                                                     |
+  |                                                                          |
+  | http://www.mgateway.com                                                  |
+  | Email: rtweed@mgateway.com                                               |
+  |                                                                          |
+  | This program is free software: you can redistribute it and/or modify     |
+  | it under the terms of the GNU Affero General Public License as           |
+  | published by the Free Software Foundation, either version 3 of the       |
+  | License, or (at your option) any later version.                          |
+  |                                                                          |
+  | This program is distributed in the hope that it will be useful,          |
+  | but WITHOUT ANY WARRANTY; without even the implied warranty of           |
+  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            |
+  | GNU Affero General Public License for more details.                      |
+  |                                                                          |
+  | You should have received a copy of the GNU Affero General Public License |
+  | along with this program.  If not, see http://www.gnu.org/licenses/.      |
+  ----------------------------------------------------------------------------
+</ewd:comment>
+
+<span>
+
+<h3>Using and Managing EWD</h3>
+
+The Enterprise Web Developer environment has already been configured for you as follows:<br><br>
+
+<table border=1>
+ <tr>
+  <td>Application Root Directory</td>
+  <td>/usr/ewdapps</td>
+ </tr>
+ <tr>
+  <td>EWD Compilation Technology</td>
+  <td>gtm <br />(ie compiles to native GT.M routines that use the MGWSI m_apache gateway)</td>
+ </tr>
+ <tr>
+  <td>Apache alias to compiled EWD applications</td>
+  <td>/ewd/</td>
+ </tr>
+</table>
+<br><br>
+
+
+You'll find one EWD application already installed on your Virtual Appliance:<br><br>
+
+<ul>
+<li>ewdMgr: The EWD Management Portal</li>
+</ul>
+<br>
+The source pages for this application have been provided.  Please use these as good examples of how to write EWD applications.
+<br><br>
+
+You can upload new applications and their pages using an SCP client (eg WinSCP) to the <i>/usr/ewdapps</i> directory.<br><br>
+
+To compile an application, you can either use the <i>ewdMgr</i> application by clicking the EWD tab at the top of the page, or from the command prompt within GT.M.  For example, to compile the entire ewdMgr application, you would do the following:<br><br>
+
+<i>
+cd /usr/local/gtm/ewd<br>
+$gtm<br>
+GTM>d compileAll^%zewdAPI("myApplicationName",,"gtm")<br>
+</i>
+<br>
+
+To compile just a single page within an application (eg the <i>myPage</i> page within the <i>myApplicationName</i> application), do the following within GT.M:<br><br>
+
+<i>
+GTM>d compilePage^%zewdAPI("myApplicationName","myPage",,"gtm")<br>
+</i>
+<br>
+
+Compiled applications run as web applications within a browser.  The URL structure is:<br><br>
+
+<i>http://xx.xx.xx.xx/ewd/appName/pageName.mgwsi<br><br></i>
+
+where:<br> 
+xx.xx.xx.xx is the IP address (or domain name) of your EWD virtual server<br>
+appName is the EWD application name<br>
+pageName is the name of the EWD page (which must be configured in the &lt;ewd:config&gt; tag as a first page)<br>
+
+For example:<br><br>
+
+<i>http://192.168.1.21/ewd/ewdMgr/index.mgwsi<br><br></i>
+
+<p>For more information about EWD and the Virtual Appliance, click the Documentation tab in the top menu and study the Tutorial.</p>
+
+</div>
+
+</span>

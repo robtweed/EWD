@@ -1,0 +1,61 @@
+<ewd:config pageType="ajax" applyTemplate="false" prepagescript="about^%zewdMgrAjax">
+
+<ewd:comment>
+  ----------------------------------------------------------------------------
+  | Enterprise Web Developer for GT.M and m_apache                           |
+  | Copyright (c) 2004-11 M/Gateway Developments Ltd,                        |
+  | Reigate, Surrey UK.                                                      |
+  | All rights reserved.                                                     |
+  |                                                                          |
+  | http://www.mgateway.com                                                  |
+  | Email: rtweed@mgateway.com                                               |
+  |                                                                          |
+  | This program is free software: you can redistribute it and/or modify     |
+  | it under the terms of the GNU Affero General Public License as           |
+  | published by the Free Software Foundation, either version 3 of the       |
+  | License, or (at your option) any later version.                          |
+  |                                                                          |
+  | This program is distributed in the hope that it will be useful,          |
+  | but WITHOUT ANY WARRANTY; without even the implied warranty of           |
+  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            |
+  | GNU Affero General Public License for more details.                      |
+  |                                                                          |
+  | You should have received a copy of the GNU Affero General Public License |
+  | along with this program.  If not, see http://www.gnu.org/licenses/.      |
+  ----------------------------------------------------------------------------
+</ewd:comment>
+
+<div class="propsText">
+
+<br>
+ <center>
+
+This is version 3.0 of the ewdMgr application (26 January 2009)<br><br>
+
+
+You are running the Free Open Source version of <?= #ewdVersion ?>: <?= #ewd_date ?>
+
+
+<p>&copy; 2004-2011, M/Gateway Developments Ltd. (All Rights Reserved)</p>
+
+For support, see &nbsp; <a href="http://www.mgateway.com">http://www.mgateway.com</a><br/><br/>
+
+<div style="width:50%;text-align:left">
+<p>
+ This program is free software: you can redistribute it and/or modify it under the terms of the GNU 
+ Affero General Public License as published by the Free Software Foundation, either version 3 of the
+ License, or (at your option) any later version.
+</p>
+<p>
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Affero General Public License for more details.
+</p>
+<p>
+ You should have received a copy of the GNU Affero General Public License
+ along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+</p>
+</div>
+ </center>
+</div>

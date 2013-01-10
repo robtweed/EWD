@@ -1,0 +1,38 @@
+<ewd:config pageType="ajax" applyTemplate="false" prePageScript="compilePage^%zewdMgrAjax">
+
+<ewd:comment>
+  ----------------------------------------------------------------------------
+  | Enterprise Web Developer for GT.M and m_apache                           |
+  | Copyright (c) 2004-9 M/Gateway Developments Ltd,                         |
+  | Reigate, Surrey UK.                                                      |
+  | All rights reserved.                                                     |
+  |                                                                          |
+  | http://www.mgateway.com                                                  |
+  | Email: rtweed@mgateway.com                                               |
+  |                                                                          |
+  | This program is free software: you can redistribute it and/or modify     |
+  | it under the terms of the GNU Affero General Public License as           |
+  | published by the Free Software Foundation, either version 3 of the       |
+  | License, or (at your option) any later version.                          |
+  |                                                                          |
+  | This program is distributed in the hope that it will be useful,          |
+  | but WITHOUT ANY WARRANTY; without even the implied warranty of           |
+  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            |
+  | GNU Affero General Public License for more details.                      |
+  |                                                                          |
+  | You should have received a copy of the GNU Affero General Public License |
+  | along with this program.  If not, see http://www.gnu.org/licenses/.      |
+  ----------------------------------------------------------------------------
+</ewd:comment>
+
+<table border=0 width="100%" class="propsText">
+  <tr>
+    <td align=left width="35%" class="listingCol"><?= #fileName ?></td>
+    <td align=right width="12%" class="listingCol"><?= #fileSize ?></td>
+    <td align=center class="tinyText" width="25%" class="listingCol"><?= #fileModified ?></td>
+    <td class="listingCol">
+      <input type=button class="actionButton" name=recomp value="Compile" onclick="MGW.page.compilePage('<?= #fileName ?>')">
+      <input type=button class="actionButton" name=list value="List" onclick="MGW.page.listPage('<?= #fileName ?>')">
+    </td>
+  </tr>
+</table>
