@@ -1,7 +1,7 @@
 %zewdGTM	;Enterprise Web Developer GT.M/ Virtual Appliance Functions
  ;
- ; Product: Enterprise Web Developer (Build 910)
- ; Build Date: Wed, 25 Apr 2012 17:59:25
+ ; Product: Enterprise Web Developer (Build 960)
+ ; Build Date: Mon, 11 Mar 2013 14:56:32
 	;
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -425,6 +425,9 @@ httpPOST(url,payload,mimeType,html,headerArray,timeout,test,rawResponse,respHead
 	. s url=$e(url,8,$l(url))
 	. s sslHost=$p(url,"/",1)
 	. s sslPort=80
+	. i sslHost[":" d
+	. . s sslPort=$p(sslHost,":",2)
+	. . s sslHost=$p(sslHost,":",1)
 	e  i $e(urllc,1,8)="https://" d
 	. s url=$e(url,9,$l(url))
 	. s ssl=1

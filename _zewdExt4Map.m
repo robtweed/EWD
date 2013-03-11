@@ -1,7 +1,7 @@
 %zewdExt4Map ; Extjs Tag Processor Mappings
  ;
- ; Product: Enterprise Web Developer (Build 952)
- ; Build Date: Thu, 10 Jan 2013 08:44:42
+ ; Product: Enterprise Web Developer (Build 960)
+ ; Build Date: Mon, 11 Mar 2013 14:56:32
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -48,6 +48,7 @@ mappingObjects
  ;;{tagName:"ext4:buttonmenu",expandMethod:"expandButtonMenu",parse:{method:"arrayOfOptions",optionName:"menu"}}
  ;;{tagName:"ext4:buttons",parse:{method:"arrayOfOptions",optionName:"buttons"}}
  ;;{tagName:"ext4:calendar",className:"Ext.panel.Panel",xtype:"panel",xtypeTagName:"ext4:item",containerTag:"ext4:items",expandMethod:"expandPanel",instanceMethod:"panelInstance",pass1Method:"expandCalendar"}
+ ;;{tagName:"ext4:calendarpanel",className:"Ext.calendar.CalendarPanel",xtype:"calendarpanel",xtypeTagName:"ext4:item",containerTag:"ext4:items",expandMethod:"expandPanel",instanceMethod:"panelInstance",pass1Method:"expandCalendarPanel"}
  ;;{tagName:"ext4:cellediting",className:"Ext.grid.plugin.CellEditing",ptype:"cellediting",xtypeTagName:"ext4:item",containerTag:"ext4:plugins"}
  ;;{tagName:"ext4:chart",className:"Ext.chart.Chart",xtype:"chart",xtypeTagName:"ext4:item",containerTag:"ext4:items",expandMethod:"expandChart",instanceMethod:"chartInstance",pass1Method:"expandGauge"}
  ;;{tagName:"ext4:charttips",parse:{method:"object",optionName:"tips"}}
@@ -142,7 +143,7 @@ mappingObjects
  ;;{tagName:"ext4:sorter",parse:{method:"item"}}
  ;;{tagName:"ext4:sorters",parse:{method:"arrayOfOptions",optionName:"sorters"}}
  ;;{tagName:"ext4:spacer",className:"Ext.toolbar.Spacer",xtype:"tbspacer",xtypeTagName:"ext4:item",containerTag:"ext4:items"}
- ;;{tagName:"ext4:splitbutton",className:"Ext.button.Split"}
+ ;;{tagName:"ext4:splitbutton",className:"Ext.button.Split",xtype:"splitbutton",xtypeTagName:"ext4:item",containerTag:"ext4:items",allowedContainers:["ext4:buttons","ext4:bbar","ext4:fbar","ext4:rbar","ext4:tbar"],parse:{method:"item"}}
  ;;{tagName:"ext4:sprite",className:"Ext.draw.Sprite",xtype:"dummy",xtypeTagName:"ext4:item",containerTag:"ext4:items",hasId:false}
  ;;{tagName:"ext4:stop",parse:{method:"object",optionName:"stop"},hasId:false}
  ;;{tagName:"ext4:stops",parse:{method:"object",optionName:"stops"},hasId:false}

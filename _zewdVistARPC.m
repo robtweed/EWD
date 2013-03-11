@@ -1,7 +1,7 @@
 %zewdVistARPC	; EWD Open Source / Stateless VistA RPC core functions
  ;
- ; Product: Enterprise Web Developer (Build 952)
- ; Build Date: Thu, 10 Jan 2013 08:44:43
+ ; Product: Enterprise Web Developer (Build 960)
+ ; Build Date: Mon, 11 Mar 2013 14:56:32
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -126,7 +126,7 @@ getPatientsByClinic(inputs,results)
  ; date format: yyyymmdd
  ;
  n apptNode,apptStatus,apptTime,apptTimeFM,clinicId,date,endDateFM,months,no
- n patientDfn,patientName,startDateFM,scheduledList,totalCount,U,apptLength,CIts,COts
+ n patientDfn,patientDOB,patientName,patientSSN,startDateFM,scheduledList,totalCount,U,apptLength,CIts,COts ;cpc 4/2/2013
  ;
  s U="^"
  s months("Jan")="01"
@@ -180,9 +180,16 @@ getPatientsByClinic(inputs,results)
  . . s COts=$p(apptNode,U,11) ;cpc
  . . i COts'="" s COts=$$FMTE^XLFDT(COts) ;cpc
  . . s patientName=$p(^DPT(patientDfn,0),U)
+ . . s patientDOB=$p(^DPT(patientDfn,0),U,3) ;cpc 4/2/2013
+ . . ;i patientDOB="" s patientDOB=$$FMTE^XLFDT(patientDOB) ;cpc 4/2/2013
+ . . ;i patientDOB'="" s patientDOB=$$FMTE^XLFDT(patientDOB) ;cpc 6/2/2013
+ . . i patientDOB'="" s patientDOB=$$FMTHL7^XLFDT(patientDOB) ;cpc 6/2/2013 ;cpc 19/2/2013
+ . . S patientSSN=$p(^DPT(patientDfn,0),U,9) ;cpc 4/2/2013
  . . s no=no+1
  . . s results("schedule",no,"patientName")=patientName
  . . s results("schedule",no,"patientId")=patientDfn ;cpc 3/12/2012
+ . . s results("schedule",no,"patientDOB")=patientDOB ;cpc 4/2/2013
+ . . s results("schedule",no,"patientSSN")=patientSSN ;cpc 4/2/2013
  . . s results("schedule",no,"apptStatus")=apptStatus
  . . s results("schedule",no,"apptTime")=apptTime
  . . s results("schedule",no,"apptLength")=apptLength ;cpc

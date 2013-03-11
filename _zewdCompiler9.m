@@ -1,7 +1,7 @@
 %zewdCompiler9	; Enterprise Web Developer Compiler : ajax fixed text
  ;
- ; Product: Enterprise Web Developer (Build 952)
- ; Build Date: Thu, 10 Jan 2013 08:44:42
+ ; Product: Enterprise Web Developer (Build 960)
+ ; Build Date: Mon, 11 Mar 2013 14:56:32
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -571,30 +571,43 @@ ajaxLoader ;
     ;;   }
 	;;};
 	;;EWD.sockets = {
+	;;  log: false,
 	;;  handlerFunction: {},
 	;;  sendMessage: function(params) {
 	;;    if (typeof params.message === 'undefined') params.message = '';
 	;;    params.token = EWD.sockets.token;
-	;;    if (typeof console !== 'undefined') console.log("sendMessage: " + JSON.stringify(params));
+	;;    if (typeof console !== 'undefined') {
+	;;      if (EWD.sockets.log) console.log("sendMessage: " + JSON.stringify(params));
+	;;    }
 	;;    this.socket.json.send(JSON.stringify(params));
 	;;  },
 	;;  getPage: function(params) {
 	;;    if (typeof params.nvp === 'undefined') params.nvp = '';
 	;;    this.sendMessage({type: "ewdGetFragment", page: params.page, targetId: params.targetId, nvp: params.nvp});
 	;;  },
+	;;  keepAlive: function(mins) {
+	;;    EWD.sockets.timeout = mins;
+	;;    setTimeout(function() {
+	;;      EWD.sockets.sendMessage({type: "keepAlive", message:  "1"});
+	;;      EWD.sockets.keepAlive(EWD.sockets.timeout);
+	;;    },EWD.sockets.timeout*60000);
+	;;  },
 	;;  connect: function(messageFunction, port, token) {
 	;;    //this.socket = io.connect(null, {port: port, rememberTransport: false});
 	;;    this.socket = io.connect();
 	;;    this.socket.on('connect', function() {
 	;;      if (typeof EWD.sockets.token !== 'undefined') {
-    ;;        console.log('WebSocket connected');
+    ;;        if (EWD.sockets.log) console.log('WebSocket connected');
     ;;        EWD.sockets.sendMessage({type: 'register', token: EWD.sockets.token});
     ;;      }
 	;;    });
 	;;    this.socket.on('message', function(obj){
-	;;      if (typeof console !== 'undefined') console.log("onMessage: " + JSON.stringify(obj));
+	;;      if (typeof console !== 'undefined') {
+    ;;        if (EWD.sockets.log) console.log("onMessage: " + JSON.stringify(obj));
+    ;;      }
 	;;      if (typeof EWD.sockets.handlerFunction[obj.type] !== 'undefined') {
 	;;        EWD.sockets.handlerFunction[obj.type](obj);
+	;;        obj = null;
 	;;        return;
 	;;      }
 	;;      if (obj.type === 'ewdGetFragment') {
@@ -615,7 +628,7 @@ ajaxLoader ;
 	;;      if (obj.type === 'json') {
 	;;        if (typeof obj.return !== 'undefined') {
 	;;          var str = obj.return + "=" + obj.message;
-	;;          console.log("str = " + str);
+	;;          if (EWD.sockets.log) console.log("str = " + str);
 	;;          eval(str);
 	;;          delete obj.message;
 	;;        }
@@ -623,8 +636,11 @@ ajaxLoader ;
 	;;          obj.json = JSON.parse(obj.message);
 	;;          delete obj.message;
 	;;        }
+	;;        return;
 	;;      }
-	;;      messageFunction(obj);
+    ;;      EWD.sockets.serverMessageHandler(obj);
+    ;;      obj = null;
+    ;;      return;
 	;;    });
 	;;    this.token = token;
 	;;    //this.sendMessage({type: "register", token: token});
@@ -692,86 +708,3 @@ jsErrorClass ;
  ;;                        } ;
  ;;***END***
  ;;
-JSON2 ;
- ;;/*
- ;;The following alternative to Douglas Crockford's toJSONString() method
- ;;was written by Theodor Zoulias (http://trimpath.com/forum/viewtopic.php?pid=945)
- ;;*/
- ;;//var toJsonString;
- ;;(function () {
- ;;  toJsonString = function(o) {
- ;;   var UNDEFINED;
- ;;   switch (typeof o) {
- ;;     case 'string': return '\'' + encodeJS(o) + '\'';
- ;;     case 'number': return String(o);
- ;;     case 'object': 
- ;;        if (o) {
- ;;          var a = [];
- ;;          if (o.constructor == Array) {
- ;;            for (var i = 0; i < o.length; i++) {
- ;;              var json = toJsonString(o[i]);
- ;;              if (json != UNDEFINED) a[a.length] = json;
- ;;            }
- ;;            return '[' + a.join(',') + ']';
- ;;          } 
- ;;          else if (o.constructor == Date) {
- ;;            return 'new Date(' + o.getTime() + ')';
- ;;          } 
- ;;          else {
- ;;            for (var p in o) {
- ;;              var json = toJsonString(o[p]);
- ;;              if (json != UNDEFINED) a[a.length] = (/^[A-Za-z_]\w*$/.test(p) ? (p + ':') : ('\'' + encodeJS(p) + '\':')) + json;
- ;;            }
- ;;            return '{' + a.join(',') + '}';
- ;;          }
- ;;        }
- ;;        return 'null';
- ;;     case 'boolean'  : return String(o);
- ;;     case 'function' : return;
- ;;     case 'undefined': return 'null';
- ;;   }
- ;;  }
- ;;  function encodeJS(s) {
- ;;   return (!/[\x00-\x19\'\\]/.test(s)) ? s : s.replace(/([\\'])/g, '\\$1').replace(/\r/g, '\\r').replace(/\n/g, '\\n').replace(/\t/g, '\\t').replace(/[\x00-\x19]/g, '');
- ;;  }
- ;;})()
- ;;***END***
- ;
-ajaxErrorClasses ;
-	;;.dispOff {
-	;;    background : #ffffff ;
-	;;    border-style: outset ;
-	;;    border-width: 2px ;
-	;;    left:400px; 
-	;;    width: 300px;
-	;;    height:150px;
-	;;    position:absolute; 
-	;;    top:100px; 
-	;;    z-index:1;
-	;;    visibility : hidden ;
-	;;}
-	;;.dispOn {
-	;;    background : #efffff ;
-	;;    border-style: outset ;
-	;;    border-width: 3px ;
-	;;    text-align : center ;
-	;;    left:400px; 
-	;;    width: 300px;
-	;;    height:150px;
-	;;    position:absolute; 
-	;;    top:160px; 
-	;;    visibility: on; 
-	;;    z-index:1000;
-	;;}	
-ajaxTraceWindow ;
- ;;<html>
- ;;<head><title>Ajax Trace Page</title>
- ;;</head>
- ;;<body>
- ;;<form>
- ;;<textarea id="traceText" rows="50" cols="100">*
- ;;</textarea>
- ;;</form>
- ;;</body>
- ;;</html>
- ;;***END***

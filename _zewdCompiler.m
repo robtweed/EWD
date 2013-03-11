@@ -1,7 +1,7 @@
 %zewdCompiler	; Enterprise Web Developer Compiler
  ;
- ; Product: Enterprise Web Developer (Build 952)
- ; Build Date: Thu, 10 Jan 2013 08:44:42
+ ; Product: Enterprise Web Developer (Build 960)
+ ; Build Date: Mon, 11 Mar 2013 14:56:31
  ; 
  ; 
  ; ----------------------------------------------------------------------------
@@ -658,7 +658,7 @@ bypassMode(docName)
 	. . . . . d setAttribute^%zewdDOM("cachepage","false",configOID)
 	. . . . e  d 
 	. . . . . d setAttribute^%zewdDOM("cachepage",attrs("cachepage"),configOID)
-    . . . . . d removeAttribute^%zewdDOM("cachepage",nodeOID)
+	. . . . . d removeAttribute^%zewdDOM("cachepage",nodeOID)
 	. . . . d removeAttribute^%zewdDOM("isfirstpage",nodeOID)
 	. . . . k attrs("isfirstpage")
 	. . . e  d
@@ -1091,7 +1091,7 @@ createAjaxTrace(outputPath,verbose)
  i '$$openNewFile(filePath) QUIT
  ;o filePath:"nw":2 e  QUIT
  u filePath
- f i=1:1 s line=$t(ajaxTraceWindow+i^%zewdCompiler9) q:line["***END**"  d
+ f i=1:1 s line=$t(ajaxTraceWindow+i^%zewdCompiler23) q:line["***END**"  d
  . w $p(line,";;",2,250),!
  c filePath
  i verbose=1 w filePath,!

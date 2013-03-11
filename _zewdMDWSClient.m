@@ -1,7 +1,7 @@
 %zewdMDWSClient ; MDWS Client Interface
  ;
- ; Product: Enterprise Web Developer (Build 952)
- ; Build Date: Thu, 10 Jan 2013 08:44:43
+ ; Product: Enterprise Web Developer (Build 960)
+ ; Build Date: Mon, 11 Mar 2013 14:56:32
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -171,35 +171,44 @@ getClinicData(results,data)
  ;
 getClinicAppts(results,data)
  ;
- n CITime,COTime,count,d,date,h,i,id,m,mn,name,pid,s,y,length,status,ztime ;cpc 3/12/2012
+ ;n CITime,COTime,count,d,date,h,i,id,m,mn,name,pid,s,y,length,status,ztime ;cpc 3/12/2012
+ n apptId,CITime,clinicId,COTime,count,d,dateH,dob,h,i,id,m,mn,name,pid,s,site,ssn,y,length,status,time,ztime ;cpc 3/12/2012; cpc 4/2/2013 ;cpc 18/2/2013
  ;
  k data
+ s site=$$getTextValue("/PatientArray/tag",.results) ;cpc 18/2/2013
  s count=$$getValue($g(results("PatientArray","count")))
  s count=$$getTextValue("/PatientArray/count",.results)
  f i=1:1:count d
  . s name=$$getTextValue("/PatientArray/patients/PatientTO/"_i_"/name",.results)
  . s pid=$$getTextValue("/PatientArray/patients/PatientTO/"_i_"/patientId",.results) ;cpc 3/12/2012
+ . s dob=$$getTextValue("/PatientArray/patients/PatientTO/"_i_"/patientDOB",.results) ;cpc 4/2/2013
+ . s ssn=$$getTextValue("/PatientArray/patients/PatientTO/"_i_"/patientSSN",.results) ;cpc 4/2/2013
  . s date=$$getTextValue("/PatientArray/patients/PatientTO/"_i_"/location/appointmentTimestamp",.results)
  . ;"20121009.080000"
  . s length=$$getTextValue("/PatientArray/patients/PatientTO/"_i_"/location/appointmentLength",.results)
  . s status=$$getTextValue("/PatientArray/patients/PatientTO/"_i_"/location/status",.results)
  . s CItime=$$getTextValue("/PatientArray/patients/PatientTO/"_i_"/location/checkInTimestamp",.results) ;cpc
  . s COtime=$$getTextValue("/PatientArray/patients/PatientTO/"_i_"/location/checkOutTimestamp",.results) ;cpc
+ . s clinicId=$$getTextValue("/PatientArray/patients/PatientTO/"_i_"/location/id",.results) ;cpc 18/2/2013
  . ;10/08/2012 11:00:00
  . ;"Nov 20, 2012@07:29"
- . s data(i,"patientId")=pid ;cpc 3/12/2012
- . s data(i,"name")=name
- . s data(i,"date")=$$convertVistADate(date,2)
- . s data(i,"time")=$$convertVistADate(date,1)
- . ;s ztime=$ZDATE(","_(data(i,"time")+(length*60)),"24:60:SS") ;assuming length always in minutes ; Rob ?non version specific code;cpc
- . s ztime=$$decodeTime^%zewdMgr2((data(i,"time")+(length*60))) ;cpc as above but vendor agnostic
- . s data(i,"from")=$$convertVistADate(date,3)
- . s data(i,"to")=$$convertVistADate(date,4)_" "_ztime ;cpc
- . ;s data(i,"to")=mn_"/"_d_"/"_y_" "_(h+1)_":"_m_":"_s
- . s data(i,"length")=length ;cpc 
- . s data(i,"status")=status ; cpc
- . s data(i,"CItime")=$$convertVistADate(CItime,3) ;cpc
- . s data(i,"COtime")=$$convertVistADate(COtime,4) ;cpc
+ . s dateH=$$convertVistADate(date,2) ;cpc 18/2/2013
+ . s dob=$$convertVistADate(dob,2) ;cpc 18/2/2013
+ . s time=$$convertVistADate(date,1) ;cpc 18/2/2013
+ . s apptId=$$makeApptID^schedulerV(clinicId,pid,dateH_","_time,site) ;cpc 18/2/2012
+ . s data(apptId,"patientId")=pid ;cpc 3/12/2012
+ . s data(apptId,"name")=name
+ . s data(apptId,"date")=dateH
+ . s data(apptId,"DOB")=dob ;cpc 18/2/2013
+ . s data(apptId,"SSN")=ssn ; cpc 4/2/2013
+ . s data(apptId,"time")=time ;cpc 18/2/2013
+ . s ztime=$$decodeTime^%zewdMgr2((time+(length*60))) ;cpc as above but vendor agnostic ;cpc 18/2/2013
+ . s data(apptId,"from")=$$convertVistADate(date,3)
+ . s data(apptId,"to")=$$convertVistADate(date,4)_" "_ztime ;cpc
+ . s data(apptId,"length")=length ;cpc 
+ . s data(apptId,"status")=status ; cpc
+ . s data(apptId,"CItime")=$$convertVistADate(CItime,3) ;cpc
+ . s data(apptId,"COtime")=$$convertVistADate(COtime,4) ;cpc
  QUIT ""
  ;
 request(serviceName,nvps,results,sessid)

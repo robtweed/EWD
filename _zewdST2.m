@@ -1,7 +1,7 @@
 %zewdST2 ; Sencha Touch Tag Processors and runtime logic
  ;
- ; Product: Enterprise Web Developer (Build 938)
- ; Build Date: Thu, 30 Aug 2012 19:19:48
+ ; Product: Enterprise Web Developer (Build 960)
+ ; Build Date: Mon, 11 Mar 2013 14:56:32
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -1030,6 +1030,7 @@ camelCaseTerms
  ;;bubbleEvents
  ;;buttonAlign
  ;;calculateCategoryCount
+ ;;calendarStore
  ;;cancelButton
  ;;cardSwitchAnimation
  ;;categoryNames
@@ -1114,6 +1115,7 @@ camelCaseTerms
  ;;errorMsgCls
  ;;eventPrefix
  ;;eventSelector
+ ;;eventStore
  ;;exitAnimation
  ;;falseText
  ;;fieldBodyCls
@@ -1131,6 +1133,8 @@ camelCaseTerms
  ;;forId
  ;;formItemCls
  ;;frameHeader
+ ;;getClass
+ ;;getRowClass
  ;;groupButtons
  ;;groupByText
  ;;groudGutter
@@ -1166,6 +1170,7 @@ camelCaseTerms
  ;;insetPadding
  ;;invalidCls
  ;;invalidText
+ ;;isDisabled
  ;;itemClick
  ;;itemCls
  ;;itemConfig
@@ -1193,6 +1198,7 @@ camelCaseTerms
  ;;loadNextPage
  ;;maintainFlex
  ;;majorTickSteps
+ ;;markDirty
  ;;markerConfig
  ;;maskRe
  ;;matchFieldWidth
@@ -1225,6 +1231,8 @@ camelCaseTerms
  ;;onItemDisclosure
  ;;openCls
  ;;overCls
+ ;;overflowX
+ ;;overflowY
  ;;overlapHeader
  ;;pageSize
  ;;pickerAlign

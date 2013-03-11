@@ -1,7 +1,7 @@
 %zewdExt4 ; Extjs Tag Processors
  ;
- ; Product: Enterprise Web Developer (Build 952)
- ; Build Date: Thu, 10 Jan 2013 08:44:42
+ ; Product: Enterprise Web Developer (Build 960)
+ ; Build Date: Mon, 11 Mar 2013 14:56:32
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -81,9 +81,9 @@ container(nodeOID,attrValue,docOID,technology)
  s title=$g(mainAttrs("title"))
  i title="" s title="ExtJS 4 Application"
  s rootPath=$g(mainAttrs("rootpath"))
- i rootPath="" s rootPath="/ext-4/"
- s rootPath=$$addSlashAtEnd^%zewdST(rootPath)
- s ^zewd("rootPath",$$zcvt^%zewdAPI(app,"L"))=rootPath
+ i rootPath'="" d  ;s rootPath="/ext-4/"
+ . s rootPath=$$addSlashAtEnd^%zewdST(rootPath)
+ . s ^zewd("rootPath",$$zcvt^%zewdAPI(app,"L"))=rootPath
  s jsVersion=$g(mainAttrs("jsversion"))
  i jsVersion="" s jsVersion="ext-all.js"
  s cssVersion=$g(mainAttrs("cssversion"))
@@ -146,10 +146,14 @@ container(nodeOID,attrValue,docOID,technology)
  i $g(mainAttrs("enableloader"))="true" d
  . s ^zewd("loader",$$zcvt^%zewdAPI(appName,"L"),"configs","enabled")="true"
  . s ^zewd("loader",$$zcvt^%zewdAPI(appName,"L"),"configs","disableCaching")="false"
- s text=" d defineLoader^%zewdExt4Code(sessid)"
- i $$addCSPServerScript^%zewdAPI(jsOID,text)
+ i technology'="csp" d
+ . s text=" d defineLoader^%zewdExt4Code(sessid)"
+ . i $$addCSPServerScript^%zewdAPI(jsOID,text)
+ . s text=""
+ e  d
+ . s text="#($$defineLoader^%zewdExt4Code(sessid))#"_$c(13,10)
  ;
- s text="Ext.application({"_$c(13,10)
+ s text=text_"Ext.application({"_$c(13,10)
  s text=text_" name:'"_appName_"',"_$c(13,10)
  s text=text_" launch: function() {"_$c(13,10)
  ;i $g(mainAttrs("enableloader"))="true" s text=text_"   Ext.Loader.setConfig({enabled:true});"_$c(13,10)
@@ -170,6 +174,7 @@ container(nodeOID,attrValue,docOID,technology)
  s jsSectionOID=$$addElementToDOM^%zewdDOM("ewd:jssection",jsOID,,.attr)
  s text="}"
  s xOID=$$addElementToDOM^%zewdDOM("ewd:jsline",jsOID,,,text)
+ d requires^%zewdExt4a(docName)
  ;
  d childTags^%zewdExt4a(nodeOID,jsSectionOID)
  i technology="csp" d
@@ -746,6 +751,10 @@ expandCalendar(nodeOID)
  d expandCalendar^%zewdExt4a($g(nodeOID))
  QUIT
  ;
+expandCalendarPanel(nodeOID)
+ d expandCalendarPanel^%zewdExt4a($g(nodeOID))
+ QUIT
+ ;
 expandSubmitButton(nodeOID)
  ;
  n addTo,attr,formId,handler,nextPage,pOID,replace,stop,text,xOID
@@ -1231,6 +1240,9 @@ convertToInstance(nodeOID)
  s parentOID=$$getParentNode^%zewdDOM(nodeOID)
  i $$getTagName^%zewdDOM(parentOID)="ext4:container" d
  . n renderTo
+ . s renderTo=$g(mainAttrs("renderTo"))
+ . i renderTo="false" d  q
+ . . k mainAttrs("renderTo")
  . s renderTo=$g(mainAttrs("renderto"))
  . i renderTo=""!($$zcvt^%zewdAPI(renderTo,"l")="autorender") d
  . . s mainAttrs("renderto")=".Ext.getBody()"

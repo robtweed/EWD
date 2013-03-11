@@ -1,7 +1,7 @@
 %zewdCompiler23	; Enterprise Web Developer Compiler : HTML5 Offline First Page
  ;
- ; Product: Enterprise Web Developer (Build 910)
- ; Build Date: Wed, 25 Apr 2012 17:59:25
+ ; Product: Enterprise Web Developer (Build 960)
+ ; Build Date: Mon, 11 Mar 2013 14:56:32
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -195,3 +195,62 @@ html5 ;
  ;;  </body>
  ;;</html>
  ;;***END***
+ ;
+ajaxTraceWindow ;
+ ;;<html>
+ ;;<head><title>Ajax Trace Page</title>
+ ;;</head>
+ ;;<body>
+ ;;<form>
+ ;;<textarea id="traceText" rows="50" cols="100">*
+ ;;</textarea>
+ ;;</form>
+ ;;</body>
+ ;;</html>
+ ;;***END***
+ ;
+JSON2 ;
+ ;;/*
+ ;;The following alternative to Douglas Crockford's toJSONString() method
+ ;;was written by Theodor Zoulias (http://trimpath.com/forum/viewtopic.php?pid=945)
+ ;;*/
+ ;;//var toJsonString;
+ ;;(function () {
+ ;;  toJsonString = function(o) {
+ ;;   var UNDEFINED;
+ ;;   switch (typeof o) {
+ ;;     case 'string': return '\'' + encodeJS(o) + '\'';
+ ;;     case 'number': return String(o);
+ ;;     case 'object': 
+ ;;        if (o) {
+ ;;          var a = [];
+ ;;          if (o.constructor == Array) {
+ ;;            for (var i = 0; i < o.length; i++) {
+ ;;              var json = toJsonString(o[i]);
+ ;;              if (json != UNDEFINED) a[a.length] = json;
+ ;;            }
+ ;;            return '[' + a.join(',') + ']';
+ ;;          } 
+ ;;          else if (o.constructor == Date) {
+ ;;            return 'new Date(' + o.getTime() + ')';
+ ;;          } 
+ ;;          else {
+ ;;            for (var p in o) {
+ ;;              var json = toJsonString(o[p]);
+ ;;              if (json != UNDEFINED) a[a.length] = (/^[A-Za-z_]\w*$/.test(p) ? (p + ':') : ('\'' + encodeJS(p) + '\':')) + json;
+ ;;            }
+ ;;            return '{' + a.join(',') + '}';
+ ;;          }
+ ;;        }
+ ;;        return 'null';
+ ;;     case 'boolean'  : return String(o);
+ ;;     case 'function' : return;
+ ;;     case 'undefined': return 'null';
+ ;;   }
+ ;;  }
+ ;;  function encodeJS(s) {
+ ;;   return (!/[\x00-\x19\'\\]/.test(s)) ? s : s.replace(/([\\'])/g, '\\$1').replace(/\r/g, '\\r').replace(/\n/g, '\\n').replace(/\t/g, '\\t').replace(/[\x00-\x19]/g, '');
+ ;;  }
+ ;;})()
+ ;;***END***
+ ;

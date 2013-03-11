@@ -1,7 +1,7 @@
 %zewdCompiler8	; Enterprise Web Developer Compiler Functions
  ;
- ; Product: Enterprise Web Developer (Build 931)
- ; Build Date: Fri, 27 Jul 2012 12:05:04
+ ; Product: Enterprise Web Developer (Build 960)
+ ; Build Date: Mon, 11 Mar 2013 14:56:32
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -590,7 +590,7 @@ addStyle(label,docOID)
 	;
 	; now add the new function and update the text node in the DOM
 	;
-	s no=2 i label="ajaxErrorClasses" s no=9
+	s no=2 i label="ajaxErrorClasses" s no=22
 	s x="s line=$t("_label_"+i^%zewdCompiler"_no_")"
 	f i=1:1 x x q:line["***END***"  d
 	. s text=$p(line,";;",2,255)

@@ -1,7 +1,7 @@
 %zewdExt4Code ; Extjs 4 Runtime Logic
  ;
- ; Product: Enterprise Web Developer (Build 952)
- ; Build Date: Thu, 10 Jan 2013 08:44:42
+ ; Product: Enterprise Web Developer (Build 960)
+ ; Build Date: Mon, 11 Mar 2013 14:56:32
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -355,12 +355,16 @@ writeLine(line)
  ;
 defineLoader(sessid)
  ;
- n app,array,name,rootPath,text
+ n app,array,isCsp,line,name,rootPath,text,xRootPath
  ;
+ s line=""
+ s isCsp=$$getSessionValue^%zewdAPI("ewd.technology",sessid)="csp"
  s app=$$getSessionValue^%zewdAPI("ewd.appName",sessid)
  s app=$$zcvt^%zewdAPI(app,"l")
  i app="" QUIT
  s rootPath=$g(^zewd("rootPath",app))
+ s xRootPath=$$getSessionValue^%zewdAPI("extjs.rootPath",sessid)
+ i xRootPath'="" s rootPath=xRootPath
  i $e(rootPath,$l(rootPath))'="/" s rootPath=rootPath_"/"
  i $d(^zewd("loader",app,"configs")) d
  . m array=^zewd("loader",app,"configs")
@@ -371,20 +375,38 @@ defineLoader(sessid)
  . s name=""
  . f  s name=$o(array("paths",name)) q:name=""  d
  . . s array("paths",name)=rootPath_array("paths",name)
- . d writeLine("EWD.loader = ")
- . d streamArrayToJSON^%zewdJSON("array")
- . d writeLine(";"_$c(13,10))
+ . i isCsp d
+ . . s line=line_"EWD.loader = "
+ . . s line=line_$$arrayToJSON^%zewdJSON("array")
+ . . s line=line_";"_$c(13,10)
+ . e  d
+ . . d writeLine("EWD.loader = ")
+ . . d streamArrayToJSON^%zewdJSON("array")
+ . . d writeLine(";"_$c(13,10))
  . i $d(^zewd("loader",app,"requires")) d
  . . k array
  . . m array=^zewd("loader",app,"requires")
- . . d writeLine("EWD.requires = ")
- . . d streamArrayToJSON^%zewdJSON("array")
- . . d writeLine(";"_$c(13,10))
+ . . d mergeArrayFromSession^%zewdAPI(.array,"ewd_require",sessid)
+ . . i isCsp d
+ . . . s line=line_"EWD.requires = "
+ . . . s line=line_$$arrayToJSON^%zewdJSON("array")
+ . . . s line=line_";"_$c(13,10)
+ . . e  d
+ . . . d writeLine("EWD.requires = ")
+ . . . d streamArrayToJSON^%zewdJSON("array")
+ . . . d writeLine(";"_$c(13,10))
  . e  d
+ . . i isCsp d
+ . . . s line=line_"EWD.requires = '';"_$c(13,10)
+ . . e  d
+ . . . d writeLine("EWD.requires = '';"_$c(13,10))
+ e  d
+ . i isCsp d
+ . . s line=line_"EWD.loader = {enabled: false};"_$c(13,10)
+ . . s line=line_"EWD.requires = '';"_$c(13,10)
+ . e  d
+ . . d writeLine("EWD.loader = {enabled: false};"_$c(13,10))
  . . d writeLine("EWD.requires = '';"_$c(13,10))
- e  d 
- . d writeLine("EWD.loader = {enabled: false};"_$c(13,10))
- . d writeLine("EWD.requires = '';"_$c(13,10))
  ;
  QUIT
  ;
@@ -567,7 +589,9 @@ writeComboBoxStore(fieldName,sessid)
  . s d=list(fieldName,no)
  . s name=$p(d,$c(1),1)
  . s value=$p(d,$c(1),2)
- . d writeLine(comma_"  {'name':'"_name_"','value':'"_value_"'}"_$c(13,10))
+ . ;d writeLine(comma_"  {'name':'"_name_"','value':'"_value_"'}"_$c(13,10))
+ . d writeLine(comma_"  {'name':'"_name_"','value':'"_value_"'}")
+ . w !
  . s comma=","
  d writeLine(" ]"_$c(13,10))
  d writeLine("});"_$c(13,10))
@@ -951,6 +975,10 @@ calendarRefresh
  ;
 calendarClear
  ;
+ n io
+ ;
+ s io=$io
+ u io:width=1048576 ;Set device's logical record size to the max
  d writeLine("EWD.calendar.clear();"_$c(13,10))
  QUIT
  ;

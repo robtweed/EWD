@@ -1,7 +1,7 @@
 %zewdCompiler19	; Runtime Functions
  ;
- ; Product: Enterprise Web Developer (Build 931)
- ; Build Date: Fri, 27 Jul 2012 12:05:04
+ ; Product: Enterprise Web Developer (Build 960)
+ ; Build Date: Mon, 11 Mar 2013 14:56:31
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -211,7 +211,7 @@ createJSFile(outputPath,verbose,technology) ;
 	. f label="iWD","ajaxLoader","JSON2" d
 	. . s stop=0
 	. . f lineNo=1:1 d  q:stop
-	. . . i label="JSON2" s no=9
+	. . . i label="JSON2" s no=23
 	. . . i label="ajaxLoader" s no=9
 	. . . i label="iWD" s no=14
 	. . . s x="s line=$t("_label_"+lineNo^%zewdCompiler"_no_")"
@@ -264,7 +264,8 @@ createJSFile(outputPath,verbose,technology) ;
 	. s stop=0
 	. f lineNo=1:1 d  q:stop
 	. . s no=2
-	. . i label="ajaxLoader"!(label="JSON2") s no=9
+	. . i label="ajaxLoader" s no=9
+	. . i label="JSON2" s no=23
 	. . i label="jsBlock" s no=15
 	. . i label="slideshow" s no=18
 	. . i label="comboPlus" s no=21

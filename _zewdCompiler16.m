@@ -1,7 +1,7 @@
 %zewdCompiler16	; Enterprise Web Developer Compiler Functions
  ;
- ; Product: Enterprise Web Developer (Build 931)
- ; Build Date: Fri, 27 Jul 2012 12:05:04
+ ; Product: Enterprise Web Developer (Build 960)
+ ; Build Date: Mon, 11 Mar 2013 14:56:31
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -829,7 +829,8 @@ scriptsTag(app,docName,technology)
 	. s textOID=$$appendChild^%zewdDOM(textOID,headOID)
 	. s bodyOID=$$getTagOID^%zewdDOM("body",docName)
 	. s onload=$$getAttribute^%zewdDOM("onload",bodyOID)
-	. s phpVar1=$$addPhpVar^%zewdCustomTags("#ewd_token")
+	. ;s phpVar1=$$addPhpVar^%zewdCustomTags("#ewd_token")
+	. s phpVar1=$$addPhpVar^%zewdCustomTags("#ewd_wstoken")
 	. s phpVar2=$$addPhpVar^%zewdCustomTags("#ewd_port")
 	. s onload="EWD.sockets.connect(EWD.sockets.serverMessageHandler, "_phpVar2_", '"_phpVar1_"');"_onload
 	. d setAttribute^%zewdDOM("onload",onload,bodyOID)

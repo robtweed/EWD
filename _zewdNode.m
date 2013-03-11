@@ -1,7 +1,7 @@
 %zewdNode	; Enterprise Web Developer global access APIs for Node.js
  ;
- ; Product: Enterprise Web Developer (Build 952)
- ; Build Date: Thu, 10 Jan 2013 08:44:43
+ ; Product: Enterprise Web Developer (Build 960)
+ ; Build Date: Mon, 11 Mar 2013 14:56:32
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -133,7 +133,7 @@ globalAccessMethod(message) ;
  s method=$p(message,$c(1),3)
  ;
  ;r method
- i $g(^zewd("trace"))=1 d trace^%zewdAPI($j_": method="_method)
+ ;i $g(^zewd("trace"))=1 d trace^%zewdAPI($j_": method="_method)
  i method="get" d
  . s global=$p(message,$c(1),4)
  . s subscripts=$p(message,$c(1),5)
@@ -1004,38 +1004,75 @@ stopListener(pipeName)
  d signalEvent(pipeName,"stop")
  QUIT
  ;
-reloadModule(module)
+reloadModule(appName,module)
  n sessid
  s sessid=$o(^%zewdSession("session",""),-1)
- i $$onBeforeRender(module,"zzdummy",sessid,1)
+ i $$onBeforeRender(appName,module,"zzdummy",sessid,1)
  QUIT
  ;
-testOBR
- s module="nodeDemo"
- s method="initialise"
- s sessid=$o(^%zewdSession("session",""),-1)
- w $$onBeforeRender(module,method,sessid)
- QUIT
- ;
- ;
-onBeforeRender(module,method,sessid,reload)
+onBeforeRender(appName,module,method,sessid,reload)
  ;
  n type,message
  s type="onBeforeRender"
+ s message("appName")=$g(appName)
  s message("module")=$g(module)
  s message("method")=$g(method)
  s message("reload")=+$g(reload)
  QUIT $$sendWebSocketMsg(type,.message,sessid)
  ;
+broadcastMsg(type,message)
+ ;
+ n msg,sessid
+ ;
+ s sessid=""
+ f  s sessid=$o(^%zewdSession("session",sessid)) q:sessid=""  d
+ . k msg
+ . m msg=message
+ . i $$sendWebSocketMsg(type,.msg,sessid)
+ ;
+ QUIT
+ ;
+sendMsgToAppUsers(type,message,appName)
+ ;
+ n msg,sessid
+ ;
+ s appName=$$zcvt^%zewdAPI(appName,"l")
+ s sessid=""
+ f  s sessid=$o(^%zewdSession("session",sessid)) q:sessid=""  d
+ . i $$zcvt^%zewdAPI($$getSessionValue^%zewdAPI("ewd_appName",sessid),"l")=appName d
+ . . k msg
+ . . m msg=message
+ . . i $$sendWebSocketMsg(type,.msg,sessid)
+ ;
+ QUIT
+ ;
 sendWebSocketMsg(type,message,sessid)
  ;
- n headers,host,html,http,json,no,ok,path,payload,pno,port
- n responseTime,return,ssl,sslHost,sslPort,token,url,wsPath
+ n headers,host,html,http,ix,json,no,ok,path,payload,pno,port
+ n responseTime,return,ssl,sslHost,sslPort,stop,token,url,wsPath
  ;
- i $g(sessid)="" QUIT 0
+ i $g(sessid)="" d  QUIT 0
+ . i $g(^zewd("trace")) d trace^%zewdAPI("sendWebSocketMsg: sessid is null")
  s token=$$getSessionValue^%zewdAPI("ewd_wstoken",sessid)
- i token="" QUIT 0
- i $$isTokenExpired^%zewdPHP(token) QUIT 0
+ i token="" d  QUIT 0
+ . i $g(^zewd("trace")) d trace^%zewdAPI("sendWebSocketMsg: token is null")
+ i $$isTokenExpired^%zewdPHP(token) d  QUIT 0
+ . i $g(^zewd("trace")) d trace^%zewdAPI("sendWebSocketMsg: token "_token_": expired")
+ s port=$$getSessionValue^%zewdAPI("ewd_port",sessid)
+ ;d trace^%zewdAPI("sendWebSocketMsg: port="_port)
+ i port="" d  QUIT 0
+ . i $g(^zewd("trace")) d trace^%zewdAPI("sendWebSocketMsg: ewd_port is null")
+ i '$d(^zewd("webSocketParams",port)) d  QUIT 0
+ . i $g(^zewd("trace")) d trace^%zewdAPI("sendWebSocketMsg: ^zewd(webSocketParams) missing for port "_port)
+ s stop=0
+ l +^zewd("nodeProcessRunning",port):0 i  d  i stop QUIT 0
+ . l -^zewd("nodeProcessRunning",port)
+ . i $g(^zewd("trace")) d trace^%zewdAPI("nodeProcessRunning check: $j="_$j_"; "_$g(^zewd("nodeProcessRunning",port)))
+ . i $g(^zewd("nodeProcessRunning",port))'=$j d
+ . . ; if lock was obtained and this was a process other than the one that set the lock
+ . . ; then Node.js can't be running, so don't attempt to send message
+ . . s stop=1
+ . . i $g(^zewd("trace")) d trace^%zewdAPI("sendWebSocketMsg: nodeProcessRunning lock not set for port "_port)
  d updateSession(sessid)
  ;
  s json=""
@@ -1055,19 +1092,19 @@ sendWebSocketMsg(type,message,sessid)
  . . . s message=""
  . . e  d
  . . . s message=$$jsEscape^%zewdPHP(message)
- s host=$g(^zewd("webSocketParams","host"))
- s port=$g(^zewd("webSocketParams","port"))
- s ssl=$g(^zewd("webSocketParams","ssl"))
- s wsPath=$g(^zewd("webSocketParams","webSocketsPath"))
+ s host="127.0.0.1"
+ s ssl=$g(^zewd("webSocketParams",port,"ssl"))
+ s wsPath=$g(^zewd("webSocketParams",port,"webSocketsPath"))
  i type="onBeforeRender" d
  . s wsPath="/onBeforeRender/"
  i $e(wsPath,$l(wsPath))'="/" s wsPath=wsPath_"/"
  s path=wsPath_"request.html"
  i type="onBeforeRender" d
- . s payload(1)="module="_$g(message("module"))
- . s payload(2)="&method="_$g(message("method"))
- . s payload(3)="&token="_token
- . s payload(4)="&reload="_$g(message("reload"))
+ . s payload(1)="appName="_$g(message("appName"))
+ . s payload(2)="&module="_$g(message("module"))
+ . s payload(3)="&method="_$g(message("method"))
+ . s payload(4)="&token="_token
+ . s payload(5)="&reload="_$g(message("reload"))
  . s message=""
  e  d
  . i type="fragment" d
@@ -1094,18 +1131,29 @@ sendWebSocketMsg(type,message,sessid)
  . . f  s no=$o(message("content",no)) q:no=""  d
  . . . s payload(pno)=$$jsEscape^%zewdPHP(message("content",no))
  . . . s pno=pno+1
- i port'="" s path=":"_port_path
+ i 'ssl,port'="" s path=":"_port_path
  s http="http://"
  s sslHost=""
  s sslPort=""
  i ssl d
- . s http="https://"
- . s sslHost=$g(^zewd("webSocketParams","proxyHost"))
- . s sslPort=$g(^zewd("webSocketParams","proxyPort"))
+ . i $g(^zewd("webSocketParams",port,"useProxy")) d
+ . . s http="https://"
+ . . s sslHost=host
+ . . s sslPort=$g(^zewd("webSocketParams",port,"proxyPort"))
+ . . s path=":"_port_path
+ . e  d
+ . . s host=host_":"_$g(^zewd("webSocketParams",port,"httpPort"))
  s url=http_host_path
  k headers
  s responseTime=10
+ i $g(^zewd("trace")) d
+ . s ix=$increment(^%zewdTrace("sockets"))
+ . s ^%zewdTrace("sockets",ix,"url")=url
+ . s ^%zewdTrace("sockets",ix,"sslHost")=sslHost
+ . s ^%zewdTrace("sockets",ix,"sslPort")=sslPort
+ . k ^%zewdTrace("sockets",ix,"payload") m ^%zewdTrace("sockets",ix,"payload")=payload
  s ok=$$httpPOST^%zewdGTM(url,.payload,"",.html,,responseTime,,,,$g(sslHost),$g(sslPort))
+ i $g(^zewd("trace")) m ^%zewdTrace("sockets",ix,"html")=html
  i type="onBeforeRender" QUIT $g(html(1))
  QUIT 1
  ;
@@ -1150,18 +1198,29 @@ fragmentBySocket(page,targetId,nvp,token,file)
  ;
 processSocketMsg(type,message,token)
  ;
- n rou,sessid
+ n appName,rou,sessid
  ;
  i $g(^zewd("trace"))=1 d trace^%zewdAPI("type: "_type_": token="_token_"; message="_message)
  s sessid=$$getSessid^%zewdPHP(token)
  i $$isTokenExpired^%zewdPHP(token) s sessid=""
  i sessid="" QUIT "Invalid token or session expired"
+ s appName=$$getSessionValue^%zewdAPI("ewd_appName",sessid)
+ s appName=$$zcvt^%zewdAPI(appName,"l")
+ ;
+ i type="keepAlive" d  QUIT ""
+ . d updateSession(sessid)
  ;
  i type="testing" d  QUIT ""
  . d updateSession(sessid)
  . i $$sendWebSocketMsg("alert","Message from "_$zv,sessid)
  ;
- s rou=$g(^zewd("websocketHandler",type))
+ i type="systemInfo",appName="ewdgateway2" d  QUIT ""
+ . n array,message
+ . s array("zv")=$zv
+ . s array("ewdBuild")=$$getVersion^%zewdCompiler()
+ . i $$sendWebSocketMsg("systemInfo",.array,sessid)
+ ;
+ s rou=$g(^zewd("websocketHandler",appName,type))
  i rou'="" d  QUIT ""
  . n x
  . d updateSession(sessid)
@@ -1235,9 +1294,13 @@ sendManagementMsg(parameters)
  s sslHost=""
  s sslPort=""
  i ssl d
- . s http="https://"
- . s sslHost=$g(^zewd("webSocketParams","proxyHost"))
- . s sslPort=$g(^zewd("webSocketParams","proxyPort"))
+ . ;s http="https://"
+ . s host=$g(^zewd("webSocketParams","proxyHost"))
+ . s port=$g(^zewd("webSocketParams","proxyPort"))
+ ;i ssl d
+ ;. s http="https://"
+ ;. s sslHost=$g(^zewd("webSocketParams","proxyHost"))
+ ;. s sslPort=$g(^zewd("webSocketParams","proxyPort"))
  s url=http_host_path
  k headers
  s responseTime=10
@@ -1267,3 +1330,14 @@ listProcesses
  s params("listChildProcesses")="true"
  d sendManagementMsg(.params)
  QUIT
+ ;
+setProcessLock(port)
+ l +^zewd("nodeProcessRunning",port):0
+ s ^zewd("nodeProcessRunning",port)=$j
+ QUIT ""
+ ;
+closeSession(sessid)
+ d deleteSession^%zewdPHP(sessid)
+ QUIT "ok"
+ ;
+ ;

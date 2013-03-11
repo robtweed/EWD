@@ -1,7 +1,7 @@
 %zewdExt4a ; Extjs Tag Processors (continued)
  ;
- ; Product: Enterprise Web Developer (Build 952)
- ; Build Date: Thu, 10 Jan 2013 08:44:42
+ ; Product: Enterprise Web Developer (Build 960)
+ ; Build Date: Mon, 11 Mar 2013 14:56:32
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -350,6 +350,24 @@ htmlEditorInstance(attrs,nodeOID,instanceOID)
  ;
  QUIT argumentsOID
  ;
+expandCalendarPanel(nodeOID)
+ ;
+ n applc,src
+ ;
+ s applc=$$zcvt^%zewdAPI(app,"l")
+ s src="examples/calendar/resources/css/calendar.css"
+ d registerResource^%zewdCustomTags("css",src,"",app,,1)
+ s src="examples/calendar/resources/css/examples.css"
+ d registerResource^%zewdCustomTags("css",src,"",app,,1)
+ s src="examples/calendar/src/Ewd.js"
+ d registerResource^%zewdCustomTags("js",src,"",app,,1)
+ s ^zewd("loader",applc,"configs","enabled")="true"
+ s ^zewd("loader",applc,"configs","paths","Ext.calendar")="examples/calendar/src"
+ s ^zewd("loader",applc,"requires",1)="Ext.calendar.CalendarPanel"
+ s ^zewd("loader",applc,"requires",2)="Ext.calendar.data.Calendars"
+ s ^zewd("loader",applc,"requires",3)="Ext.calendar.util.Date"
+ QUIT
+ ;
 expandCalendar(nodeOID)
  ;
  n applc,attr,mainAttrs,src,targetId,text,xOID
@@ -380,3 +398,75 @@ expandCalendar(nodeOID)
  d removeIntermediateNode^%zewdDOM(nodeOID)
  QUIT
  ;
+requires(docName)
+ ;
+ n attrName,attrs,childNo,childOID,component,lcApp,module,OIDArray,path,rOID,rsOID,tagName
+ ;
+ s lcApp=$$zcvt^%zewdAPI(appName,"L")
+ k ^zewd("requires",lcApp)
+ s rsOID=$$getTagOID^%zewdDOM("ext4:requires",docName)
+ i rsOID'="" d
+ . d getChildrenInOrder^%zewdDOM(rsOID,.OIDArray)
+ . s childNo=""
+ . f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d
+ . . s childOID=OIDArray(childNo)
+ . . s tagName=$$getTagName^%zewdDOM(childOID)
+ . . i tagName'="ext4:require" q
+ . . d getAttributeValues^%zewdDOM(childOID,.attrs)
+ . . s module=$g(attrs("modulename"))
+ . . s path=$g(attrs("path"))
+ . . i path="" d
+ . . . s path=$g(attrs("cachepath"))
+ . . . i technology="gtm" s path=$g(attrs("gtmpath"))
+ . . s component=$g(attrs("component"))
+ . . i component'="" d
+ . . . ;^zewd("loader","scheduling","requires",1)="Ext.calendar.AppFrag"
+ . . . ;^zewd("loader","scheduling","configs","enabled")="true"
+ . . . ;^zewd("loader","scheduling","configs","paths","Ext.calendar")="examples/calendar/src"
+ . . . n index
+ . . . s index=$increment(^zewd("loader",lcApp,"requires"))
+ . . . s ^zewd("loader",lcApp,"requires",index)=component
+ . . . s ^zewd("loader",lcApp,"configs","enabled")="true"
+ . . e  d
+ . . . s ^zewd("requires",lcApp,module)=path
+ . i $$removeChild^%zewdDOM(rsOID)
+ d configs(docName)
+ ;
+ QUIT
+ ;
+configs(docName)
+ ;
+ n attrName,attrs,childNo,childOID,csOID,lcApp,mainAttrs,OIDArray,tagName
+ ;
+ s lcApp=$$zcvt^%zewdAPI(appName,"L")
+ k ^zewd("configs",lcApp)
+ s csOID=$$getTagOID^%zewdDOM("ext4:configs",docName)
+ i csOID'="" d
+ . n enabled
+ . d getAttributeValues^%zewdDOM(csOID,.mainAttrs)
+ . s enabled=$g(mainAttrs("enabled"))
+ . i enabled="" s enabled="false"
+ . s ^zewd("loader",lcApp,"configs","enabled")=enabled
+ . d getChildrenInOrder^%zewdDOM(csOID,.OIDArray)
+ . s childNo=""
+ . f  s childNo=$o(OIDArray(childNo)) q:childNo=""  d
+ . . s childOID=OIDArray(childNo)
+ . . s tagName=$$getTagName^%zewdDOM(childOID)
+ . . i tagName'="ext4:config",tagName'="ext4:require" q
+ . . d getAttributeValues^%zewdDOM(childOID,.attrs)
+ . . i tagName="ext4:config" d
+ . . . n name,path
+ . . . s name=$g(attrs("name"))
+ . . . s path=$g(attrs("path"))
+ . . . i name'="" s ^zewd("loader",lcApp,"configs","paths",name)=path
+ . . i tagName="ext4:require" d
+ . . . n component
+ . . . s component=$g(attrs("component"))
+ . . . i component'="" d
+ . . . . ;^zewd("loader","scheduling","requires",1)="Ext.calendar.AppFrag"
+ . . . . n index
+ . . . . s index=$increment(^zewd("loader",lcApp,"requires"))
+ . . . . s ^zewd("loader",lcApp,"requires",index)=component
+ . i $$removeChild^%zewdDOM(csOID)
+ ;
+ QUIT

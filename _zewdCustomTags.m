@@ -1,7 +1,7 @@
 %zewdCustomTags	; Enterprise Web Developer Custom Tag Library Functions
  ;
- ; Product: Enterprise Web Developer (Build 952)
- ; Build Date: Thu, 10 Jan 2013 08:44:42
+ ; Product: Enterprise Web Developer (Build 960)
+ ; Build Date: Mon, 11 Mar 2013 14:56:32
  ;
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -263,7 +263,12 @@ loadFiles(appName,type,sessid)
  . . i useRootPath d
  . . . s src=$g(^zewd("rootPath",appName))_src
  . . e  d
+ . . . n rootPath
  . . . s src=path_file
+ . . . s rootPath=$$getSessionValue^%zewdAPI("framework.rootPath",sessid)
+ . . . i rootPath'="" d
+ . . . . i $e(rootPath,$l(rootPath))="/" s rootPath=$e(rootPath,1,$l(rootPath)-1)
+ . . . . s src=rootPath_src
  . ;i $e(file,1)'="/" s src=path_file 
  . s line=""
  . i type="js" s line="<script src='"_src_"' type='text/javascript'"_deferAttr_"></script>"_$c(13,10)
@@ -286,7 +291,12 @@ loadFiles(appName,type,sessid)
  . . i useRootPath d
  . . . s src=$g(^zewd("rootPath",appName))_src
  . . e  d
+ . . . n rootPath
  . . . s src=path_file
+ . . . s rootPath=$$getSessionValue^%zewdAPI("framework.rootPath",sessid)
+ . . . i rootPath'="" d
+ . . . . i $e(rootPath,$l(rootPath))'="/" s rootPath=rootPath_"/"
+ . . . . s src=rootPath_file
  . ;i $e(file,1)'="/" s src=path_file
  . s line="" 
  . i type="js" s line="<script src='"_src_"' type='text/javascript'"_deferAttr_"></script>"_$c(13,10)

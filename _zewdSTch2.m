@@ -1,7 +1,7 @@
 %zewdSTch2 ; Sencha Touch v2 Tag Processors
  ;
- ; Product: Enterprise Web Developer (Build 938)
- ; Build Date: Thu, 30 Aug 2012 19:19:48
+ ; Product: Enterprise Web Developer (Build 960)
+ ; Build Date: Mon, 11 Mar 2013 14:56:32
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -84,8 +84,8 @@ container(nodeOID,attrValue,docOID,technology)
  s title=$g(mainAttrs("title"))
  i title="" s title="Sencha Touch 2 Application"
  s rootPath=$g(mainAttrs("rootpath"))
- i rootPath="" s rootPath="/st2.0/"
- s rootPath=$$addSlashAtEnd^%zewdST(rootPath)
+ ;i rootPath="" s rootPath="/st2.0/"
+ i rootPath'="" s rootPath=$$addSlashAtEnd^%zewdST(rootPath)
  s jsVersion=$g(mainAttrs("jsversion"))
  i jsVersion="" s jsVersion="sencha-touch-all.js"
  s cssVersion=$g(mainAttrs("cssversion"))

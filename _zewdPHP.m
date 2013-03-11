@@ -1,7 +1,7 @@
 %zewdPHP	; Enterprise Web Developer PHP run-time functions and processing
  ;
- ; Product: Enterprise Web Developer (Build 952)
- ; Build Date: Thu, 10 Jan 2013 08:44:43
+ ; Product: Enterprise Web Developer (Build 960)
+ ; Build Date: Mon, 11 Mar 2013 14:56:32
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -101,7 +101,11 @@ startSession(page,requestArray,serverArray,sessionArray,filesArray) ;
  d putSession(sessid,.sessionArray)
  d setSessionValue("ewd_date",$$decDate^%zewdAPI($h),sessid)
  d setSessionValue("ewd_time",$$inetTime^%zewdAPI($h),sessid)
- d setSessionValue("ewd_port",$g(serverArray("SERVER_PORT")),sessid)
+ i $g(serverArray("SERVER_PORT"))'="" d setSessionValue("ewd_port",$g(serverArray("SERVER_PORT")),sessid)
+ ; *****
+ i $$getSessionValue("ewd_wstoken",sessid)="" d
+ . d setSessionValue("ewd.wstoken",$$getSessionValue("ewd_token",sessid),sessid) 
+ ;******
  s browserType=$$getBrowser(.serverArray,.os)
  d setSessionValue("ewd.browserType",browserType,sessid)
  i browserType="iphone" d 
@@ -109,8 +113,8 @@ startSession(page,requestArray,serverArray,sessionArray,filesArray) ;
  e  d
  . d setSessionValue("ewd.touchEvent","onclick",sessid)
  d setSessionValue("ewd.browserOS",os,sessid)
- i $$getSessionValue("ewd_websockets",sessid)="true",$$getSessionValue("ewd_wstoken",sessid)="" d
- . d setSessionValue("ewd.wstoken",$$getSessionValue("ewd_token",sessid),sessid)
+ ;i $$getSessionValue("ewd_websockets",sessid)="true",$$getSessionValue("ewd_wstoken",sessid)="" d
+ ;d setSessionValue("ewd.wstoken",$$getSessionValue("ewd_token",sessid),sessid)
  ;k ^rlt("sessionArray") m ^rlt("sessionArray")=sessionArray
  i $$getSessionValue("ewd_persistRequest",sessid)="true" d  d updateSessionFromRequest(.requestArray,sessid)
  . ;d trace^%zewdAPI("updating session from request")
@@ -186,7 +190,7 @@ checkWLDOnlyStart()
  ;
 createNewSession(page,requestArray,sessionArray)
  ;
- n apage,browserType,ewdToken,error,os,sessid
+ n apage,browserType,ewdToken,error,message,os,sessid
  ;
  ;
  i $g(^%zewd("daemon","use"))="true" d
@@ -224,7 +228,7 @@ createNewSession(page,requestArray,sessionArray)
  s browserType=$$getBrowser(.serverArray,.os)
  d setSessionValue("ewd.browserType",browserType,sessid)
  d setSessionValue("ewd.browserOS",os,sessid)
- i $$getSessionValue("ewd_websockets",sessid)="true",$$getSessionValue("ewd_wstoken",sessid)="" d
+ i $$getSessionValue("ewd_wstoken",sessid)="" d
  . d setSessionValue("ewd.wstoken",$$getSessionValue("ewd_token",sessid),sessid) 
  i browserType="iphone" d 
  . d setSessionValue("ewd.touchEvent","ontouchstart",sessid)
@@ -245,6 +249,8 @@ createNewSession(page,requestArray,sessionArray)
  d releaseLock(sessid)
  i $g(^zewd("trace"))=1 d trace^%zewdAPI("session "_sessid_" : finished creating new session")
  s error=$$escapeError(error,sessid)
+ s message("sessid")=sessid
+ d sendMsgToAppUsers^%zewdNode("newSession",.message,"ewdGateway2")
  ;
  QUIT error
  ;
@@ -619,7 +625,9 @@ prePageScript(sessid)
  . k ^%zewdSession("server",sessid)
  . m ^%zewdSession("server",sessid)=serverArray
  . i $g(^zewd("trace")) d trace^%zewdAPI("invoking onBeforeRender: module="_module_"; method="_method_"; sessid="_sessid)
- . s error=$$onBeforeRender^%zewdNode(module,method,sessid)
+ . ;s error=$$onBeforeRender^%zewdNode(module,method,sessid)
+ . s error=$$onBeforeRender^%zewdNode(appName,module,method,sessid)
+ . i error'="",$g(^zewd("trace")) d trace^%zewdAPI("Module "_module_" returned error: "_error)
  . k ^%zewdSession("request",sessid)
  . k ^%zewdSession("server",sessid)
  ;
@@ -729,7 +737,7 @@ getSession(sessid,sessionArray)
  ;
 deleteExpiredSessions
  ;
- n sessid,expiry,xsessid
+ n name,sessid,expiry,xsessid
  ;
  d deleteExpiredTokens
  s sessid=""
@@ -757,7 +765,14 @@ deleteExpiredSessions
  . i $e(sessid,1,4)'="csp:" d
  . . i '$d(^%zewdSession("session",sessid)) k ^%zewdSession("tokensBySession",sessid)
  . e  d
+ . . s xsessid=$e(sessid,5,$l(sessid))
  . . i '$d(^%cspSession(xsessid)) k ^%zewdSession("tokensBySession",sessid)
+ ;
+ f name="server","request","action","nextPageTokens" d
+ . s sessid=""
+ . f  s sessid=$o(^%zewdSession(name,sessid)) q:sessid=""  d
+ . . i $e(sessid,1,4)'="csp:" d
+ . . . i '$d(^%zewdSession("session",sessid)) k ^%zewdSession(name,sessid)
  ;
  QUIT
  ;
@@ -784,7 +799,7 @@ deleteExpiredTokens
  ;
 deleteSession(sessid)
  ;
- n token
+ n message,token
  ;
  s token=""
  f  s token=$o(^%zewdSession("tokensBySession",sessid,token)) q:token=""  d
@@ -794,6 +809,10 @@ deleteSession(sessid)
  k ^%zewdSession("nextPageTokens",sessid)
  k ^%zewdSession("action",sessid)
  k ^%zewdSession("jsonAccess",sessid)
+ k ^%zewdSession("server",sessid)
+ k ^%zewdSession("request",sessid)
+ s message("sessid")=sessid
+ d sendMsgToAppUsers^%zewdNode("deleteSession",.message,"ewdGateway2")
  QUIT
  ;
 deleteToken(token)
