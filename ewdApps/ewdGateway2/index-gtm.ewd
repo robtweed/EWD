@@ -62,9 +62,6 @@
       <ext4:fieldset title="See ewdGateway2 startup file for password">
         <ext4:textfield id="password" inputType="password" fieldLabel="Password" allowBlank="false" value="" />
       </ext4:fieldset>
-      <ewd:comment>
-       <ext4:button text="Quick Login" handler="function() {Ext.getCmp('password').setValue('keepThisSecret!');}" />
-      </ewd:comment>
      <ext4:submitbutton text="Login" nextPage="login" />
     </ext4:formPanel>
   </ext4:modalwindow>
