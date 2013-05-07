@@ -2,6 +2,8 @@
  
 EWD is a Free Open Source Ajax Framework for GT.M
 
+Build 963: 07 May 2013
+
 Thanks to:
 
 - The Health Informatics Service, Calderdale & Huddersfield NHS Foundation Trust for sponsoring development and documentation of the ExtJS tag library
@@ -78,7 +80,7 @@ switch apps using an additional parameter for the setRedirect command:
 
 ## License
 
-Copyright (c) 2004-11 M/Gateway Developments Ltd,
+Copyright (c) 2004-13 M/Gateway Developments Ltd,
 Reigate, Surrey UK.
 All rights reserved.
 
