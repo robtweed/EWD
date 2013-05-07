@@ -1,7 +1,7 @@
 %zewdST2 ; Sencha Touch Tag Processors and runtime logic
  ;
- ; Product: Enterprise Web Developer (Build 960)
- ; Build Date: Mon, 11 Mar 2013 14:56:32
+ ; Product: Enterprise Web Developer (Build 963)
+ ; Build Date: Tue, 07 May 2013 11:04:17
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -1278,12 +1278,16 @@ camelCaseTerms
  ;;selType
  ;;shadowAttributes
  ;;showAnimation
+ ;;showDayView
  ;;showDelay
  ;;showGroupsText
  ;;showInLegend
  ;;showMarkers
+ ;;showMonthView
+ ;;showNavBar
  ;;showSummaryRow
  ;;showToday
+ ;;showWeekView
  ;;simpleSelect
  ;;singleExpand
  ;;slotOrder

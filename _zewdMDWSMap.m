@@ -1,7 +1,7 @@
 %zewdMDWSMap ; openMDWS Method Registration details
  ;
- ; Product: Enterprise Web Developer (Build 945)
- ; Build Date: Sat, 24 Nov 2012 10:49:50
+ ; Product: Enterprise Web Developer (Build 963)
+ ; Build Date: Tue, 07 May 2013 11:04:16
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -31,7 +31,7 @@
 mappings ;
  ;;{facade:"EmrSvc",operation:"connect",coreMethod:"connect^%zewdVistARPC",MDWSWrapper:"connect^%zewdMDWS"}
  ;;{facade:"EmrSvc",operation:"login",coreMethod:"login^%zewdVistARPC",MDWSWrapper:"login^%zewdMDWSSvc1"}
- ;;{facade:"EmrSvc",operation:"match",coreMethod:"match^schedulerRPC",MDWSWrapper:"match^schedulerSvc"}
+ ;;{facade:"EmrSvc",operation:"match",coreMethod:"match^JJOHSCRP",MDWSWrapper:"match^JJOHSCSV"}
  ;;{facade:"SchedulingSvc",operation:"connect",coreMethod:"connect^%zewdVistARPC",MDWSWrapper:"connect^%zewdMDWS"}
  ;;{facade:"SchedulingSvc",operation:"login",coreMethod:"login^%zewdVistARPC",MDWSWrapper:"login^%zewdMDWSSvc1"}
  ;;{facade:"SchedulingSvc",operation:"getClinics",coreMethod:"getClinics^%zewdVistARPC",MDWSWrapper:"getClinics^%zewdMDWSSvc1"}

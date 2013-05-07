@@ -1,7 +1,7 @@
 %zewdGTMRuntime ; EWD for GT.M.  Runtime interface  
  ;
- ; Product: Enterprise Web Developer (Build 952)
- ; Build Date: Thu, 10 Jan 2013 08:44:43
+ ; Product: Enterprise Web Developer (Build 963)
+ ; Build Date: Tue, 07 May 2013 11:04:16
  ;
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -124,6 +124,9 @@ nodeEntry ; entry point for Node.js EWD Gateway
  ;
  ; Standard EWD Page:
  ;
+ n sessid,token
+ s token=$g(%KEY("ewd_token"))
+ s sessid=$$getSessid^%zewdAPI(token)
  i pageName="ewdLogout" d writeHTTPHeader(app,pageName) QUIT
  s ewdAppName=$$zcvt^%zewdAPI(app,"l")
  s ewdPageName=$$zcvt^%zewdAPI(pageName,"l")
@@ -155,9 +158,21 @@ nodeEntry ; entry point for Node.js EWD Gateway
  . . w $p(line,";;",2,100)_$c(13,10)
  . w !
  s x="d run^"_rouName
- i $g(^zewd("trace"))=1 d trace^%zewdAPI("Invoking GT.M/MGWSI page: x="_x_" ; namespace="_$$namespace^%zewdAPI())
+ i $g(^zewd("trace"))=1 d trace^%zewdAPI($j_": Invoking GT.M/MGWSI page: x="_x_" ; namespace="_$$namespace^%zewdAPI())
  s $zt="g wlRunErr"
+ n locked
+ s locked=1
+ i $g(^zewd("trace"))=1 d trace^%zewdAPI($j_": Attempting to lock ^%zewdNodeLock for sessid="_sessid)
+ i sessid'="" l +^%zewdNodeLock(sessid):2 e  s locked=0
+ i $g(^zewd("trace"))=1 d
+ . i locked d
+ . . d trace^%zewdAPI($j_": lock ^%zewdNodeLock set for sessid="_sessid)
+ . e  d
+ . . i $g(^zewd("trace"))=1 d trace^%zewdAPI($j_": lock couldn't be set - continuing anyway")
  x x
+ i locked,sessid'="" d
+ . l -^%zewdNodeLock(sessid)
+ . i $g(^zewd("trace"))=1 d trace^%zewdAPI($j_": lock ^%zewdNodeLock released for sessid="_sessid)
  w !
  QUIT
  ;
@@ -474,6 +489,22 @@ splitRoutine(rouNo,lineNo,i,addIf,ifCond)
  i addIf s ^CacheTempWLD($j,"routine",rouNo,i)=ifCond,i=i+1
  QUIT
  ;
+removeHash(line)
+ ;
+ n p1,p2,p3,text
+ ;
+ i line'["#(" QUIT line
+ s text=""
+ f  q:line'["#("  d
+ . s p1=$p(line,"#(",1)
+ . i p1'="" s text=text_p1
+ . s p2=$p(line,"#(",2,1000)
+ . s p3=$p(p2,")#",1)
+ . s text=text_p3
+ . s line=$p(p2,")#",2,1000)
+ . i line'="" s text=text_line
+ QUIT text
+ ;
 outputNode(nodeOID,mode,indent,suppressIndent,endWithCR,cspFlag,cspVars,phpVars,isXHTML,technology)
  ;
  n data,displayIndent,i,language,lastTag,method,nextIndent,nodeType,np,returnValue,runat
@@ -499,6 +530,7 @@ outputNode(nodeOID,mode,indent,suppressIndent,endWithCR,cspFlag,cspVars,phpVars,
  . . . s np=$l(data,$c(13,10))
  . . . f i=1:1:np d
  . . . . i $e(data,1)'=" " s data=" "_data
+ . . . . s data=$$removeHash(data)
  . . . . d addCommand($p(data,$c(13,10),i),"body")
  . e  i tagName="script",language="cache",method="onprehttp" d
  . . n childOID
@@ -853,7 +885,9 @@ replaceVars(string,cspVars,phpVars,technology)
  . . . . . s arrayValue=$p(arrayValue,""")",1)
  . . . . . s arrayValue="<?= #"_arrayValue_" ?>"
  . . . . s string=%p1_arrayValue_%p3
- . . . e  s string=%p1_"#("_var_")#"_%p3
+ . . . ;e  s string=%p1_"#("_var_")#"_%p3
+ . . . e  d
+ . . . . s string=%p1_"#("_var_")#"_%p3
  QUIT string
  ;
 createEBToken(method,sessionArray)
@@ -1180,6 +1214,7 @@ mapacheLoop ;
  ;s ^rltQuery=query
  i query'="undefined" s ok=$$parseJSON^%zewdJSON(query,.%KEY,1)
  i content'="" d
+ . n i,name,np,nvp,value
  . s np=$l(content,"&")
  . f i=1:1:np d
  . . s nvp=$p(content,"&",i)

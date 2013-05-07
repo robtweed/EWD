@@ -1,7 +1,7 @@
 %zewdSTch2 ; Sencha Touch v2 Tag Processors
  ;
- ; Product: Enterprise Web Developer (Build 960)
- ; Build Date: Mon, 11 Mar 2013 14:56:32
+ ; Product: Enterprise Web Developer (Build 963)
+ ; Build Date: Tue, 07 May 2013 11:04:17
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -187,6 +187,8 @@ container(nodeOID,attrValue,docOID,technology)
  s jsSectionOID=$$addElementToDOM^%zewdDOM("ewd:jssection",jsOID,,.attr)
  s text="}"
  s xOID=$$addElementToDOM^%zewdDOM("ewd:jsline",jsOID,,,text)
+ ;
+ d requires^%zewdExt4a(docName)
  ;
  d childTags(nodeOID,jsSectionOID)
  i technology="csp" d

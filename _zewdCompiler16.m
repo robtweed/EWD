@@ -1,7 +1,7 @@
 %zewdCompiler16	; Enterprise Web Developer Compiler Functions
  ;
- ; Product: Enterprise Web Developer (Build 960)
- ; Build Date: Mon, 11 Mar 2013 14:56:31
+ ; Product: Enterprise Web Developer (Build 963)
+ ; Build Date: Tue, 07 May 2013 11:04:16
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -753,7 +753,7 @@ addToList(listName,textValue,codeValue,position,sessid,otherAttrs)
  ;
 setLoadPath(app,page,path,expiryDays,loginPage)
  ;
- n expiry,i,id,length,now
+ n expiry,i,id,length,now,np,step
  ;
  ; http://myServer.com/ewd.html?id=4AWPMzTqMUPhtntLyP5X
  ;

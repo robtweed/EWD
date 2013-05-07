@@ -1,7 +1,7 @@
 %zewdCompiler13	; Enterprise Web Developer Compiler Functions
  ;
- ; Product: Enterprise Web Developer (Build 931)
- ; Build Date: Fri, 27 Jul 2012 12:05:04
+ ; Product: Enterprise Web Developer (Build 963)
+ ; Build Date: Tue, 07 May 2013 11:04:16
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -811,7 +811,7 @@ dirFileNotExists
  QUIT 0
  ;
 fileSize(path)
- n line,temp
+ n line,results,temp
  i '$$fileExists(path) QUIT 0
  d shellCommand^%zewdGTM("ls -s """_path_"""",.results)
  s line=$g(results(1))

@@ -1,7 +1,7 @@
 %zewdCompiler20	; Enterprise Web Developer Compiler : Combo+ tag processor
  ;
- ; Product: Enterprise Web Developer (Build 944)
- ; Build Date: Fri, 23 Nov 2012 17:15:06
+ ; Product: Enterprise Web Developer (Build 963)
+ ; Build Date: Tue, 07 May 2013 11:04:16
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -551,14 +551,16 @@ jsMethod(nodeOID,attrValues,docOID,technology)
 	;
 	; Invoke a Javascript function statement
 	;
-	n comma,jsText,maxLen,name,ok,paramsOID,return,textOID,type,var
+	n comma,condition,jsText,maxLen,name,ok,paramsOID,return,textOID,type,var
 	;
 	s name=$$getAttribute^%zewdDOM("name",nodeOID)
 	s return=$$getAttribute^%zewdDOM("return",nodeOID)
 	s var=$$getAttribute^%zewdDOM("var",nodeOID)
+	s condition=$$getAttribute^%zewdDOM("condition",nodeOID)
 	s jsText=name_"("
 	i return'="" s jsText=return_"="_jsText
 	i var="true" s jsText="var "_jsText
+	i condition'="" s jsText="if ("_condition_") "_jsText
 	s comma=""
 	s paramsOID=$$getFirstChild^%zewdDOM(nodeOID)
 	i paramsOID'="" d
@@ -591,6 +593,20 @@ jsMethod(nodeOID,attrValues,docOID,technology)
 	. n p1,revText,xOID
 	. s xOID=nodeOID
 	. s revText=$re(jsText)
+	. i revText[";php&" d
+	. . n i,np,pieces,txt,txt1
+	. . s np=$l(revText,";php&")
+	. . f i=1:1:np s pieces(i)=$p(revText,";php&",i)
+	. . f i=1:2:(np-2) d
+	. . . s p1=pieces(i)_";php&"_pieces(i+1)_";php&"
+	. . . s txt=$re(p1)
+	. . . f  d  q:txt=""
+	. . . . s txt1=$e(txt,1,4000)
+	. . . . s txt=$e(txt,4000+1,$l(txt))
+	. . . . s textOID=$$createTextNode^%zewdDOM(txt1,docOID)
+	. . . . s textOID=$$insertBefore^%zewdDOM(textOID,xOID)
+	. . . . s xOID=textOID
+	. . s revText=pieces(np)
 	. f  d  q:revText=""
 	. . s p1=$e(revText,1,4000)
 	. . s revText=$e(revText,4000+1,$l(revText))

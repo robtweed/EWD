@@ -1,7 +1,7 @@
 %zewdMDWS	; EWD Open Source / Stateless implementation of MDWS
  ;
- ; Product: Enterprise Web Developer (Build 944)
- ; Build Date: Fri, 23 Nov 2012 17:15:07
+ ; Product: Enterprise Web Developer (Build 963)
+ ; Build Date: Tue, 07 May 2013 11:04:16
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -82,11 +82,13 @@ dispatch(facade,method,inputs,results)
  ;
 invoke(method,localCall,results,originalSessid,sessid)
  ;
- n facade,inputs,ok
+ n facade,inputs,ok,sName
  ;
  k results
  d createInputs(localCall,.inputs,sessid)
- s facade=$$getSessionValue^%zewdAPI("mdws.facade",sessid)
+ s sName="mdws.facade"
+ i localCall s sName="mdws.useFacade"
+ s facade=$$getSessionValue^%zewdAPI(sName,sessid)
  s originalSessid=$$getSessionValue^%zewdAPI("mdws.originalSessid",sessid)
  s ok=$$dispatch(facade,method,.inputs,.results)
  i ok'="" d  QUIT 0

@@ -1,7 +1,7 @@
 %zewdCompiler	; Enterprise Web Developer Compiler
  ;
- ; Product: Enterprise Web Developer (Build 960)
- ; Build Date: Mon, 11 Mar 2013 14:56:31
+ ; Product: Enterprise Web Developer (Build 963)
+ ; Build Date: Tue, 07 May 2013 11:04:16
  ; 
  ; 
  ; ----------------------------------------------------------------------------
@@ -454,6 +454,7 @@ processTemplate(filename,inputPath,docName,phpVars,technology,cspVars)
 	; Parse the ewd file into an XHTML eXtc DOM
 	;
 	i $g(docName)="" s docName="ewdTemplate"
+	i $g(^zewd("config","parallelCompile")) s docName="ewdTemplate"_$j
 	s ok=$$openDOM^%zewdAPI()
 	i ok'="" d  QUIT ok
 	. d addToLog(ok_" ; when processing template")
@@ -507,12 +508,15 @@ processFile(filename,inputPath,outputPath,templateDocName,mode,phpVars,technolog
 	i ok'="" d  QUIT ok
 	. d addToLog(ok_" ; while attempting to compile "_filename)
 	;
-	s docName="ewd"
-	s stop=0
-	f i=1:1:10 d  q:stop
-	. i '$$isLockSet s stop=1 q
-	. h 1
-	d setLock
+	i $g(^zewd("config","parallelCompile")) d
+	. s docName="ewd"_$j
+	e  d
+	. s docName="ewd"
+	. s stop=0
+	. f i=1:1:10 d  q:stop
+	. . i '$$isLockSet s stop=1 q
+	. . h 1
+	. d setLock
 	s ok=$$removeDocument^%zewdDOM(docName,0,0)
 	s ok=$$closeDOM^%zewdDOM()
 	s %error=$$parseFile^%zewdHTMLParser(filepath,docName,.cspVars,.phpVars,1)

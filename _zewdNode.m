@@ -1,7 +1,7 @@
 %zewdNode	; Enterprise Web Developer global access APIs for Node.js
  ;
- ; Product: Enterprise Web Developer (Build 960)
- ; Build Date: Mon, 11 Mar 2013 14:56:32
+ ; Product: Enterprise Web Developer (Build 963)
+ ; Build Date: Tue, 07 May 2013 11:04:17
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -73,6 +73,7 @@ cache(pid,namespace,file)
  s port=$p(host,":",2)
  i port="" s port=$g(^zewd("defaultWebPort"))
  i port="" s port=80
+ i $$setProcessLock(port)
  s host=$p(host,":",1)
  k %CGIEVAR("HTTP_HOST")
  s %CGIEVAR("SERVER_PORT")=port
@@ -1145,7 +1146,7 @@ sendWebSocketMsg(type,message,sessid)
  . . s host=host_":"_$g(^zewd("webSocketParams",port,"httpPort"))
  s url=http_host_path
  k headers
- s responseTime=10
+ s responseTime=2
  i $g(^zewd("trace")) d
  . s ix=$increment(^%zewdTrace("sockets"))
  . s ^%zewdTrace("sockets",ix,"url")=url
@@ -1198,27 +1199,32 @@ fragmentBySocket(page,targetId,nvp,token,file)
  ;
 processSocketMsg(type,message,token)
  ;
- n appName,rou,sessid
+ n appName,locked,rou,sessid
  ;
  i $g(^zewd("trace"))=1 d trace^%zewdAPI("type: "_type_": token="_token_"; message="_message)
  s sessid=$$getSessid^%zewdPHP(token)
  i $$isTokenExpired^%zewdPHP(token) s sessid=""
  i sessid="" QUIT "Invalid token or session expired"
+ s locked=1
+ l +^%zewdNodeLock(sessid):2 e  s locked=0
  s appName=$$getSessionValue^%zewdAPI("ewd_appName",sessid)
  s appName=$$zcvt^%zewdAPI(appName,"l")
  ;
  i type="keepAlive" d  QUIT ""
  . d updateSession(sessid)
+ . d unlock(locked,sessid)
  ;
  i type="testing" d  QUIT ""
  . d updateSession(sessid)
  . i $$sendWebSocketMsg("alert","Message from "_$zv,sessid)
+ . d unlock(locked,sessid)
  ;
  i type="systemInfo",appName="ewdgateway2" d  QUIT ""
  . n array,message
  . s array("zv")=$zv
  . s array("ewdBuild")=$$getVersion^%zewdCompiler()
  . i $$sendWebSocketMsg("systemInfo",.array,sessid)
+ . d unlock(locked,sessid)
  ;
  s rou=$g(^zewd("websocketHandler",appName,type))
  i rou'="" d  QUIT ""
@@ -1227,8 +1233,15 @@ processSocketMsg(type,message,token)
  . s x="d "_rou_"("""_message_""","_sessid_")"
  . i $g(^zewd("trace"))=1 d trace^%zewdAPI("processSocketMsg^%zewdNode: x="_x)
  . x x
+ . d unlock(locked,sessid)
  ;
+ d unlock(locked,sessid)
  QUIT "Unknown message"
+ ;
+unlock(locked,sessid)
+ ;
+ i locked,sessid'="" l -^%zewdNodeLock(sessid)
+ QUIT
  ;
 websocketHandlerDemo(message,sessid)
  n mumps
@@ -1332,8 +1345,8 @@ listProcesses
  QUIT
  ;
 setProcessLock(port)
- l +^zewd("nodeProcessRunning",port):0
- s ^zewd("nodeProcessRunning",port)=$j
+ l +^zewd("nodeProcessRunning",port):0 i  d
+ . s ^zewd("nodeProcessRunning",port)=$j
  QUIT ""
  ;
 closeSession(sessid)

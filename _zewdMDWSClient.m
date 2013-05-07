@@ -1,7 +1,7 @@
 %zewdMDWSClient ; MDWS Client Interface
  ;
- ; Product: Enterprise Web Developer (Build 960)
- ; Build Date: Mon, 11 Mar 2013 14:56:32
+ ; Product: Enterprise Web Developer (Build 963)
+ ; Build Date: Tue, 07 May 2013 11:04:16
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -29,15 +29,17 @@
  ;
  QUIT
  ;
-getPath(method,nvps,sessid)
+getPath(method,nvps,sessid,params)
  ;
  n facade,path,version
  ;
  s version=$$getSessionValue^%zewdAPI("mdws.version",sessid)
  i version="" s version="openMDWS"
- s facade=$$getSessionValue^%zewdAPI("mdws.facade",sessid)
+ ;s facade=$$getSessionValue^%zewdAPI("mdws.facade",sessid)
+ s facade=$$getParam("mdws.facade",sessid,.params)
  i facade="" s facade="EmrSvc"
- s path=$$getSessionValue^%zewdAPI("mdws.path",sessid)
+ ;s path=$$getSessionValue^%zewdAPI("mdws.path",sessid)
+ s path=$$getParam("mdws.path",sessid,.params)
  i version="openMDWS" d  QUIT path
  . i path="" s path="/vista/"
  . i $e(path,$l(path))'="/" s path=path_"/"
@@ -195,7 +197,8 @@ getClinicAppts(results,data)
  . s dateH=$$convertVistADate(date,2) ;cpc 18/2/2013
  . s dob=$$convertVistADate(dob,2) ;cpc 18/2/2013
  . s time=$$convertVistADate(date,1) ;cpc 18/2/2013
- . s apptId=$$makeApptID^schedulerV(clinicId,pid,dateH_","_time,site) ;cpc 18/2/2012
+ . ;s apptId=$$makeApptID^schedulerV(clinicId,pid,dateH_","_time,site) ;cpc 18/2/2012
+ . s apptId=$$makeApptID^JJOHSCC0(clinicId,pid,dateH_","_time,site) ;cpc 18/2/2012 & 16/4/2013
  . s data(apptId,"patientId")=pid ;cpc 3/12/2012
  . s data(apptId,"name")=name
  . s data(apptId,"date")=dateH
@@ -211,9 +214,17 @@ getClinicAppts(results,data)
  . s data(apptId,"COtime")=$$convertVistADate(COtime,4) ;cpc
  QUIT ""
  ;
-request(serviceName,nvps,results,sessid)
+getParam(name,sessid,params)
  ;
- n cookie,docName,headers,host,name,no,ok,path,port,sslHost,sslPort,value
+ n value
+ ;
+ s value=$$getSessionValue^%zewdAPI(name,sessid)
+ i $g(params(name))'="" s value=params(name)
+ QUIT value
+ ;
+request(serviceName,nvps,results,sessid,params)
+ ;
+ n cookie,docName,headers,host,name,no,ok,path,port,sslHost,sslPort,value,vistaHost
  ;
  ;d setSessionValue^%zewdAPI("vista.systemId","smart2",sessid)
  ;d setSessionValue^%zewdAPI("mdws.host","smart2.vistaewd.net",sessid)
@@ -223,8 +234,13 @@ request(serviceName,nvps,results,sessid)
  ;
  s docName="openMDWSResponse"_$j
  d setSessionValue^%zewdAPI("docName",docName,sessid)
- s host=$$getSessionValue^%zewdAPI("mdws.host",sessid)
- i $$getSessionValue^%zewdAPI("vista.host",sessid)=host d  QUIT ""
+ ;s host=$$getSessionValue^%zewdAPI("mdws.host",sessid)
+ ;i $$getSessionValue^%zewdAPI("vista.host",sessid)=host d  QUIT ""
+ ;s host=$$getSessionValue^%zewdAPI("mdws.host",sessid)
+ s host=$$getParam("mdws.host",sessid,.params)
+ s vistaHost=$$getParam("vista.host",sessid,.params)
+ ;i $$getSessionValue^%zewdAPI("vista.host",sessid)=host d  QUIT ""
+ i vistaHost=host d  QUIT ""
  . ; local invocation, so bypass HTTP request
  . n facade,func,name,x
  . k results
@@ -232,8 +248,10 @@ request(serviceName,nvps,results,sessid)
  . d mergeArrayToSession^%zewdAPI(.nvps,"mdws_params",sessid)
  . i serviceName="connect" s nvps("sessid")=sessid
  . d setSessionValue^%zewdAPI("mdws.originalSessid",sessid,sessid)
- . s facade=$$getSessionValue^%zewdAPI("mdws.facade",sessid)
+ . ;s facade=$$getSessionValue^%zewdAPI("mdws.facade",sessid)
+ . s facade=$$getParam("mdws.facade",sessid,.params)
  . i $g(^zewd("trace"))=1 d trace^%zewdAPI("*** facade="_facade_"; method="_serviceName)
+ . d setSessionValue^%zewdAPI("mdws.useFacade",facade,sessid)
  . s func=$g(^%zewd("openMDWS","mappings",facade,serviceName,"MDWSWrapper"))
  . s x="s ok=$$"_func_"(sessid,1)"
  . i $g(^zewd("trace"))=1 d trace^%zewdAPI("** request^%zewdMDWSClient - about to execute x="_x)
@@ -244,14 +262,18 @@ request(serviceName,nvps,results,sessid)
  . . k results("cookie")
  . ;k nvps
  ;
- s port=$$getSessionValue^%zewdAPI("mdws.port",sessid)
- s cookie=$$getSessionValue^%zewdAPI("mdws.cookie",sessid)
- s path=$$getPath(serviceName,.nvps,sessid)
+ ;s port=$$getSessionValue^%zewdAPI("mdws.port",sessid)
+ s port=$$getParam("mdws.port",sessid,.params)
+ ;s cookie=$$getSessionValue^%zewdAPI("mdws.cookie",sessid)
+ s cookie=$$getParam("mdws.cookie",sessid,.params)
+ s path=$$getPath(serviceName,.nvps,sessid,.params)
  k nvps,results
  i $g(cookie)'="" s headers("Cookie")=cookie
  ;s ok=$$parseURL^%zewdHTMLParser(host,path,docName,port,0,,,,,.headers)
- s sslPort=$$getSessionValue^%zewdAPI("vista.sslProxyPort",sessid)
- s sslHost=$$getSessionValue^%zewdAPI("vista.sslProxyHost",sessid)
+ ;s sslPort=$$getSessionValue^%zewdAPI("vista.sslProxyPort",sessid)
+ ;s sslHost=$$getSessionValue^%zewdAPI("vista.sslProxyHost",sessid)
+ s sslPort=$$getParam("vista.sslProxyPort",sessid,.params)
+ s sslHost=$$getParam("vista.sslProxyHost",sessid,.params)
  d
  . i sslPort'="",sslHost="" s sslHost="127.0.0.1" q
  . i sslHost'="",sslPort="" s sslPort=89

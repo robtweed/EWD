@@ -1,7 +1,7 @@
 %zewdPHP	; Enterprise Web Developer PHP run-time functions and processing
  ;
- ; Product: Enterprise Web Developer (Build 960)
- ; Build Date: Mon, 11 Mar 2013 14:56:32
+ ; Product: Enterprise Web Developer (Build 963)
+ ; Build Date: Tue, 07 May 2013 11:04:17
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -39,7 +39,7 @@ startSession(page,requestArray,serverArray,sessionArray,filesArray) ;
  . n x
  . s x=$increment(^%zewdTrace("request")) m ^%zewdTrace("request",x)=requestArray
  . m ^%zewdTrace("session",x)=sessionArray
- . d trace^%zewdAPI("Request "_x_": running startSession for "_page_" in the "_$$namespace^%zewdAPI()_" namespace; Process: "_$j)
+ . d trace^%zewdAPI($j_": Request "_x_": running startSession for "_page_" in the "_$$namespace^%zewdAPI()_" namespace; Process: "_$j)
  d normaliseRequestArray(.requestArray,.sessionArray)
  i $g(^zewd("trace"))=1 d
  . k ^%zewdTrace("server") m ^%zewdTrace("server")=serverArray,^%zewdTrace("files")=filesArray
@@ -51,29 +51,30 @@ startSession(page,requestArray,serverArray,sessionArray,filesArray) ;
  ;
  s token=$g(requestArray("ewd_token"))
  s inError=$g(requestArray("error"))
- i $g(^zewd("trace"))=1 d trace^%zewdAPI("token="_token_"; inError="_inError)
+ i $g(^zewd("trace"))=1 d trace^%zewdAPI($j_": token="_token_"; inError="_inError)
  i token="",inError="" d  QUIT error
  . i isFirstPage,$g(sessionArray("ewd_startFromWLDOnly"))'=1 d  q
  . . ; new session - initialise and run prepage script
- . . i $g(^zewd("trace"))=1 d trace^%zewdAPI("About to create new session")
+ . . i $g(^zewd("trace"))=1 d trace^%zewdAPI($j_": About to create new session")
  . . s error=$$createNewSession(page,.requestArray,.sessionArray)
- . i $g(^zewd("trace"))=1 d trace^%zewdAPI("Checking for ewd.startFromWLDOnly")
+ . i $g(^zewd("trace"))=1 d trace^%zewdAPI($j_": Checking for ewd.startFromWLDOnly")
  . s error="Enterprise Web Developer Error : Illegal attempt to access a page"
  . i $g(sessionArray("ewd_startFromWLDOnly"))=1 s error=error_" (must be started via WLD)"
- . i $g(^zewd("trace"))=1 d trace^%zewdAPI("..error="_error)
+ . i $g(^zewd("trace"))=1 d trace^%zewdAPI($j_": ..error="_error)
  ;
- i $g(^zewd("trace"))=1 d trace^%zewdAPI("Existing session")
+ i $g(^zewd("trace"))=1 d trace^%zewdAPI($j_": Existing session")
  s sessid=$$getSessid(token)
- i $g(^zewd("trace"))=1 d trace^%zewdAPI("getSessid returned "_sessid)
+ i $g(^zewd("trace"))=1 d trace^%zewdAPI($j_": getSessid returned "_sessid)
  ;
  s error=$$checkWLDOnlyStart()
  i error'="" QUIT error
  ;
  i inError'="" s sessid=$g(requestArray("sessid"))
- i $g(^zewd("trace"))=1 d trace^%zewdAPI("token="_token_" ; sessid="_sessid)
+ i $g(^zewd("trace"))=1 d trace^%zewdAPI($j_": token="_token_" ; sessid="_sessid)
  ; sessid will be null if token was either invalid or timed out
  i inError="",sessid="" d  QUIT standardError
  . s error=standardError
+ i $$zcvt($g(sessionArray("ewd_appName")),"l")'=$$zcvt($$getSessionValue^%zewdAPI("ewd_appName",sessid),"l") QUIT "Request for "_sessionArray("ewd_appName")_"/"_page_" is invalid!"
  i '$$isGetPageEnabled^%zewdCompiler24(page,sessid,.sessionArray) d  QUIT "Access to "_page_" is not allowed!"
  i inError'="",sessid="" QUIT ""
  ;
@@ -94,7 +95,9 @@ startSession(page,requestArray,serverArray,sessionArray,filesArray) ;
  ;
  ; ok, must be a valid, existing session. Set the session lock to force serialisation if multiple frames/pages
  ;
+ i $g(^zewd("trace"))=1 d trace^%zewdAPI($j_": about to set lock") 
  d setLock(sessid,page)
+ i $g(^zewd("trace"))=1 d trace^%zewdAPI($j_": lock set") 
  ;
  ; merge incoming session, request and server array contents into existing session global
  d deleteFromSession^%zewdAPI("ewd_menuOption",sessid)
@@ -132,7 +135,7 @@ startSession(page,requestArray,serverArray,sessionArray,filesArray) ;
  ;d trace^%zewdAPI("*** inError="_inError_"; ewd_action = "_$$getSessionValue("ewd_action",sessid))
  i inError'=""!($$getSessionValue("ewd_action",sessid)="") d
  . s prePagePass=1
- . i $g(^zewd("trace")) d trace^%zewdAPI("running prepage script")
+ . i $g(^zewd("trace")) d trace^%zewdAPI($j_": running prepage script")
  . s error=$$prePageScript(sessid) ; *** pre-page script
  . ;d trace^%zewdAPI("finished prepage script")
  . d decodeDataTypes(sessid)
@@ -140,7 +143,7 @@ startSession(page,requestArray,serverArray,sessionArray,filesArray) ;
  . ;d trace^%zewdAPI("error="_error)
  ;
  i 'prePagePass,error="",$$getSessionValue("ewd_jump",sessid)="" d 
- . i $g(^zewd("trace")) d trace^%zewdAPI("about to run action script : sessid="_sessid_" ; page="_page)
+ . i $g(^zewd("trace")) d trace^%zewdAPI($j_": about to run action script : sessid="_sessid_" ; page="_page)
  . d encodeDataTypes(sessid)
  . s error=$$actionScript(sessid)
  . d setSessionValue("error",error,sessid)
@@ -150,7 +153,7 @@ startSession(page,requestArray,serverArray,sessionArray,filesArray) ;
  . ;d trace^%zewdAPI("error="_error)
  ; 
  ; all finished - transfer session global to array, for transfer back to PHP page
- i $g(^zewd("trace")) d trace^%zewdAPI("finishing back-end processing")
+ i $g(^zewd("trace")) d trace^%zewdAPI($j_": finishing back-end processing")
  d savePageToken(sessid)
  d getSession(sessid,.sessionArray)
  ;
@@ -162,7 +165,7 @@ startSession(page,requestArray,serverArray,sessionArray,filesArray) ;
  ;i $$getSessionValue^%zewdAPI("ewd_pageType",sessid)="ajax" d setSessionValue^%zewdAPI("ewd_ajaxError",error,sessid)
  i $$getSessionValue("ewd_technology",sessid)="jsp" QUIT error
  ;
- i $g(^zewd("trace")) d trace^%zewdAPI("completed. error="_$g(error))
+ i $g(^zewd("trace")) d trace^%zewdAPI($j_": completed. error="_$g(error))
  i $e(error,1,3)="js:" QUIT "javascript:"_$e(error,4,$l(error))
  QUIT $$zcvt(error,"o","JS")
  ;
@@ -204,20 +207,20 @@ createNewSession(page,requestArray,sessionArray)
  ; New session
  ; 
  s sessid=$$createSessid()
- i $g(^zewd("trace"))=1 d trace^%zewdAPI("new session - "_sessid)
+ i $g(^zewd("trace"))=1 d trace^%zewdAPI($j_": new session - "_sessid)
  d setLock(sessid,page)
- i $g(^zewd("trace"))=1 d trace^%zewdAPI("Lock set")
+ i $g(^zewd("trace"))=1 d trace^%zewdAPI($j_": Lock set")
  d initialiseSession^%zewdAPI(sessid)
- i $g(^zewd("trace"))=1 d trace^%zewdAPI("session initialised")
+ i $g(^zewd("trace"))=1 d trace^%zewdAPI($j_": session initialised")
  ; merge incoming session and request array contents into session global
  d putSession(sessid,.sessionArray)
- i $g(^zewd("trace"))=1 d trace^%zewdAPI("putSession complete")
+ i $g(^zewd("trace"))=1 d trace^%zewdAPI($j_": putSession complete")
  ;i $$getSessionValue("ewd_persistRequest",sessid)="true" d putSession(sessid,.requestArray)
  i $$getSessionValue("ewd_persistRequest",sessid)="true" d updateSessionFromRequest(.requestArray,sessid)
- i $g(^zewd("trace"))=1 d trace^%zewdAPI("Session updated from request")
+ i $g(^zewd("trace"))=1 d trace^%zewdAPI($j_": Session updated from request")
  ; create new page token and add to session global
  s ewdToken=$$createNewToken(sessid,page)
- i $g(^zewd("trace"))=1 d trace^%zewdAPI("ewdToken="_ewdToken)
+ i $g(^zewd("trace"))=1 d trace^%zewdAPI($j_": ewdToken="_ewdToken)
  ; add session id to session global, and set flags to null to prevent PHP page redirection
  d setSessionValue("ewd_sessid",sessid,sessid)
  d setSessionValue("ewd_action","",sessid)
@@ -236,10 +239,10 @@ createNewSession(page,requestArray,sessionArray)
  . d setSessionValue("ewd.touchEvent","onclick",sessid)
  d autoLoad(sessid) 
   ; run prePage script, if any
- i $g(^zewd("trace"))=1 d trace^%zewdAPI("session "_sessid_" : about to run prepage script")
+ i $g(^zewd("trace"))=1 d trace^%zewdAPI($j_": session "_sessid_" : about to run prepage script")
  s error=$$prePageScript(sessid)
- i $g(^zewd("trace"))=1 d trace^%zewdAPI("Prepage script completed")
- i $g(^zewd("trace"))=1 d trace^%zewdAPI("synchronisation with WLD completed OK")
+ i $g(^zewd("trace"))=1 d trace^%zewdAPI($j_": Prepage script completed")
+ i $g(^zewd("trace"))=1 d trace^%zewdAPI($j_": synchronisation with WLD completed OK")
  d decodeDataTypes(sessid)
  d setSessionValue("error",error,sessid)
  i $$getSessionValue("ewd_jump",sessid)="" d
@@ -247,7 +250,7 @@ createNewSession(page,requestArray,sessionArray)
  ; transfer session global to array, for transfer back to PHP page
  d getSession(sessid,.sessionArray)
  d releaseLock(sessid)
- i $g(^zewd("trace"))=1 d trace^%zewdAPI("session "_sessid_" : finished creating new session")
+ i $g(^zewd("trace"))=1 d trace^%zewdAPI($j_": session "_sessid_" : finished creating new session")
  s error=$$escapeError(error,sessid)
  s message("sessid")=sessid
  d sendMsgToAppUsers^%zewdNode("newSession",.message,"ewdGateway2")
@@ -278,19 +281,11 @@ setLock(sessid,page)
  ;
  n i,stop
  ; set lock to prevent other processes for this sessid sitting in the polling loop
- l +^%zewdSession("lock",sessid)
- ;f i=1:1 q:'$$isLocked(sessid,page)  h .1 q:i>300
- s stop=0
- f i=1:1 d  q:stop  h .1 q:i>300
- . i '$d(^%zewdSession("lock",sessid)) s stop=1 q
- . i ^%zewdSession("lock",sessid)'=page q
- . s stop=1
- s ^%zewdSession("lock",sessid)=page
- l -^%zewdSession("lock",sessid)
+ l +^%zewdSession("lock",sessid):2
  QUIT
  ;
 releaseLock(sessid)
- k ^%zewdSession("lock",sessid)
+ l -^%zewdSession("lock",sessid)
  QUIT
  ;
 endOfPage(sessionArray)
@@ -364,12 +359,18 @@ updateSessionFromRequest(requestArray,sessid)
  . q:$g(requestArray(name))=""
  . s nvp=$$zcvt(requestArray(name),"l")
  . i '$g(^zewd("xssEncoding")) d
+ . . n stop,txt
  . . i nvp["<script src=",nvp["</script>",((nvp["http://")!(nvp["https://")) d
  . . . i $g(^zewd("trace"))=1 d trace^%zewdAPI("XSS attempt (1) detected: nvp="_nvp_"; all request values were deleted")
  . . . k requestArray(name)
  . . i nvp["<script>",nvp["</script>" d
  . . . i $g(^zewd("trace"))=1 d trace^%zewdAPI("XSS attempt (2) detected: nvp="_nvp_"; all request values were deleted")
  . . . k requestArray(name)
+ . . s txt="",stop=0
+ . . f  s txt=$o(^zewd("xssStrings",txt)) q:txt=""  d  q:stop
+ . . . i nvp[txt d
+ . . . . i $g(^zewd("trace"))=1 d trace^%zewdAPI("XSS attempt (4) detected ("_txt_"): nvp="_nvp_"; all request values were deleted")
+ . . . . k requestArray(name) s stop=1
  ;
  s nameList=""
  i ewdAction'="" s nameList=$g(^%zewdSession("action",sessid,ewdAction,"nameList"))
@@ -554,13 +555,13 @@ saveNextPageTokens(sessid,page)
  . s pager=$p(pager,"/",1)
  . s page=$re(pager)
  . s page=$p(page,".",1)
- i $g(^zewd("trace"))=1 d trace^%zewdAPI("in saveNextPageTokens: sessid="_sessid)
+ i $g(^zewd("trace"))=1 d trace^%zewdAPI($j_": in saveNextPageTokens: sessid="_sessid)
  s token=""
  f  s token=$o(^%zewdSession("session",sessid,"ewd_NextPage",token)) q:token=""  d
  . s thePage=""
  . f  s thePage=$o(^%zewdSession("session",sessid,"ewd_NextPage",token,thePage)) q:thePage=""  d
  . . s thePage=$$zcvt(thePage,"L")
- . . i $g(^zewd("trace"))=1 d trace^%zewdAPI("nextpage token created: sessid="_sessid_"; token="_token_"thePage="_thePage)
+ . . i $g(^zewd("trace"))=1 d trace^%zewdAPI($j_": nextpage token created: sessid="_sessid_"; token="_token_"thePage="_thePage)
  . . s ^%zewdSession("nextPageTokens",sessid,token,thePage)=""
  . . ;s ^%zewdSession("nextPageTokens",sessid,token)=^%zewdSession("session",sessid,"ewd_NextPage",token)_"~"_page
  k ^%zewdSession("session",sessid,"ewd_NextPage")
@@ -595,7 +596,7 @@ prePageScript(sessid)
  ;
  s error=""
  s method=$$getSessionValue("ewd_templatePrePageScript",sessid)
- i $g(^zewd("trace"))=1 d trace^%zewdAPI("templatePrePageScript method="_method)
+ i $g(^zewd("trace"))=1 d trace^%zewdAPI($j_": templatePrePageScript method="_method)
  i method'="" d
  . s x="s error=$$"_method_"(sessid)"
  . ;s $zt="zg "_$zl_":prePageError^%zewdPHP"
@@ -609,7 +610,7 @@ prePageScript(sessid)
  ;
  s $zt="errorTrap^%zewdPHP"
  s method=$$getSessionValue("ewd_prePageScript",sessid)
- i $g(^zewd("trace"))=1 d trace^%zewdAPI("PrePageScript method="_method)
+ i $g(^zewd("trace"))=1 d trace^%zewdAPI($j_": PrePageScript method="_method)
  i method="" QUIT ""
  ;
  i $e(method,1,3)="js:" d  QUIT error
@@ -624,10 +625,10 @@ prePageScript(sessid)
  . m ^%zewdSession("request",sessid)=requestArray
  . k ^%zewdSession("server",sessid)
  . m ^%zewdSession("server",sessid)=serverArray
- . i $g(^zewd("trace")) d trace^%zewdAPI("invoking onBeforeRender: module="_module_"; method="_method_"; sessid="_sessid)
+ . i $g(^zewd("trace")) d trace^%zewdAPI($j_": invoking onBeforeRender: module="_module_"; method="_method_"; sessid="_sessid)
  . ;s error=$$onBeforeRender^%zewdNode(module,method,sessid)
  . s error=$$onBeforeRender^%zewdNode(appName,module,method,sessid)
- . i error'="",$g(^zewd("trace")) d trace^%zewdAPI("Module "_module_" returned error: "_error)
+ . i error'="",$g(^zewd("trace")) d trace^%zewdAPI($j_": Module "_module_" returned error: "_error)
  . k ^%zewdSession("request",sessid)
  . k ^%zewdSession("server",sessid)
  ;
@@ -639,13 +640,13 @@ prePageScript(sessid)
  . s $zt="zg "_($zl-1)_":"_^zewd("config","customErrorTrap",appName)
  e  d
  . s $zt="zg "_($zl-1)_":prePageError^%zewdPHP" 
- i $g(^zewd("trace")) d trace^%zewdAPI("About to execute prepage script: x="_x)
+ i $g(^zewd("trace")) d trace^%zewdAPI($j_": About to execute prepage script: x="_x)
  d
  . n (%CGIEVAR,error,%KEY,%request,requestArray,serverArray,%session,sessid,x,zewdSession)
  . x x
  i io'["nul" u io
  s $zt="g errorTrap^%zewdPHP"
- i $g(^zewd("trace")) d trace^%zewdAPI("Prepage script completed. error="_$g(error))
+ i $g(^zewd("trace")) d trace^%zewdAPI($j_": Prepage script completed. error="_$g(error))
  QUIT error
  ;
 actionScript(sessid)
@@ -681,12 +682,12 @@ actionScript(sessid)
  ;
  ;
  i $e(method,1,3)="py:" d  QUIT error
- . i $g(^zewd("trace")) d trace^%zewdAPI("about to run action script: method="_method)
+ . i $g(^zewd("trace")) d trace^%zewdAPI($j_": about to run action script: method="_method)
  . s error=$$runPythonScript^%zewdPython(method,sessid)
  . d setSessionValue("ewd_action","",sessid)
  s x="s error=$$"_method_"(sessid)"
  s $zt="zg "_$zl_":actionError^%zewdPHP"
- i $g(^zewd("trace")) d trace^%zewdAPI("about to run action script: x="_x)
+ i $g(^zewd("trace")) d trace^%zewdAPI($j_": about to run action script: x="_x)
  d
  . n (%CGIEVAR,error,%KEY,%request,requestArray,serverArray,%session,sessid,x,zewdSession)
  . x x
@@ -697,7 +698,7 @@ actionScript(sessid)
  . s token=$$createToken(sessid,"zextDesktopLoginForm")
  . d setSessionValue^%zewdAPI("ewd.sso",token,sessid)
  d setSessionValue("ewd_action","",sessid)
- i $g(^zewd("trace")) d trace^%zewdAPI("action script completed : error="_error)
+ i $g(^zewd("trace")) d trace^%zewdAPI($j_": action script completed : error="_error)
  i error'="" d
  s $zt="g errorTrap^%zewdPHP"
  . s method=$$getSessionValue("ewd_onErrorScript",sessid)
@@ -932,13 +933,13 @@ actionError ;
  s ^%zewdError(sessid)=%ze
  ;s ^%zewdError(sessidx)=%ze
  d customError(sessid,.sessionArray)
- i $g(^zewd("trace"))=1 d trace^%zewdAPI("finishing error trap - error="_$g(error))
+ i $g(^zewd("trace"))=1 d trace^%zewdAPI($j_": finishing error trap - error="_$g(error))
  QUIT error
  ;
 errorTrap ;
  s $zt=""
  n error,%loop,%place,%sessid,%stop,ze
- i $g(^zewd("trace")) d trace^%zewdAPI("In errorTrap: sessid="_$g(sessid)_"; ze="_$zstatus)
+ i $g(^zewd("trace")) d trace^%zewdAPI($j_": In errorTrap: sessid="_$g(sessid)_"; ze="_$zstatus)
  s sessid=+$g(sessid)
  k ^%zewdError(sessid)
  d saveSymbolTable^%zewdAPI(sessid)
@@ -1036,7 +1037,7 @@ event(requestArray)
  . . s x=x_""""_$$doubleQuotes^%zewdAPI(requestArray("ewd_Param",paramNo))_""""_","
  . s x=$e(x,1,$l(x)-1)_sessString_")"
  s $zt="zg "_$zl_":eventErrorTrap^%zewdPHP"
- i $g(^zewd("trace")) d trace^%zewdAPI("Event broker call invocation: x="_x)
+ i $g(^zewd("trace")) d trace^%zewdAPI($j_": Event broker call invocation: x="_x)
  d
  . n (%CGIEVAR,error,%KEY,%request,requestArray,serverArray,%session,sessid,x,zewdSession)
  . x x
@@ -1357,7 +1358,7 @@ isNextPageTokenValid(token,sessid,page)
  ;#ENDIF
  s page=$$zcvt(page,"L")
  i '$d(^%zewdSession("nextPageTokens",sessid,token,page)),$g(^zewd("trace"))=1 d
- . d trace^%zewdAPI("nextPageToken error: sessid="_sessid_"; token="_token_"; page="_page)
+ . d trace^%zewdAPI($j_": nextPageToken error: sessid="_sessid_"; token="_token_"; page="_page)
  QUIT $d(^%zewdSession("nextPageTokens",sessid,token,page))
  ;
 zcvt(string,param,param2)

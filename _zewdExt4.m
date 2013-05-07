@@ -1,7 +1,7 @@
 %zewdExt4 ; Extjs Tag Processors
  ;
- ; Product: Enterprise Web Developer (Build 960)
- ; Build Date: Mon, 11 Mar 2013 14:56:32
+ ; Product: Enterprise Web Developer (Build 963)
+ ; Build Date: Tue, 07 May 2013 11:04:16
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -1231,7 +1231,7 @@ convertToInstance(nodeOID)
  i className="" QUIT nodeOID
  s attr("classname")=className
  d getAttributes(nodeOID,.mainAttrs)
- f name="object","var" d
+ f name="object","var","ext4:condition" d
  . i $g(mainAttrs(name))'="" d
  . . s attr(name)=mainAttrs(name)
  . . k mainAttrs(name)

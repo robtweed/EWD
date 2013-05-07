@@ -1,7 +1,7 @@
 %zewdJSON	; Enterprise Web Developer JSON functions
  ;
- ; Product: Enterprise Web Developer (Build 944)
- ; Build Date: Fri, 23 Nov 2012 17:15:07
+ ; Product: Enterprise Web Developer (Build 963)
+ ; Build Date: Tue, 07 May 2013 11:04:16
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -737,7 +737,7 @@ writeLine(line,technology)
  i technology="node" d
  . s ^CacheTempBuffer($j,$increment(^CacheTempBuffer($j)))=line
  e  d
- . w line
+ . w line,!
  QUIT
  ;
 streamArrayToJSON(name)

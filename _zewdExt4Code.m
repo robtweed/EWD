@@ -1,7 +1,7 @@
 %zewdExt4Code ; Extjs 4 Runtime Logic
  ;
- ; Product: Enterprise Web Developer (Build 960)
- ; Build Date: Mon, 11 Mar 2013 14:56:32
+ ; Product: Enterprise Web Developer (Build 963)
+ ; Build Date: Tue, 07 May 2013 11:04:16
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -788,8 +788,8 @@ formArray(configOption,def,subLevel,formInfo,formId)
  . . s id=$g(def(ino,"id"))
  . . s name=$g(def(ino,"name"))
  . . i name="ewd_action" d
- . . . d setMethodAndNextPage^%zewdWLD(def(ino,"value"),"","",formInfo,.sessionArray)
- . . . m ^%zewdSession("action",sessid)=sessionArray("ewd_Action") break
+ . . . d setMethodAndNextPage^%zewdGTMRuntime(def(ino,"value"),"","",formInfo,.sessionArray)
+ . . . m ^%zewdSession("action",sessid)=sessionArray("ewd_Action")
  . . s xtype=$g(def(ino,"xtype"))
  . . i xtype="" s xtype=$g(def(ino,"ptype"))
  . . ;
@@ -809,7 +809,7 @@ formArray(configOption,def,subLevel,formInfo,formId)
  . . . s def(ino,"items",no,"id")=aid
  . . . s def(ino,"items",no,"value")="zewdSTForm"_parentId
  . . . s def(ino,"items",no,"xtype")="hiddenfield"
- . . . d setMethodAndNextPage^%zewdWLD(def(ino,"items",no,"value"),"","",formInfo,.sessionArray)
+ . . . d setMethodAndNextPage^%zewdGTMRuntime(def(ino,"items",no,"value"),"","",formInfo,.sessionArray)
  . . . m ^%zewdSession("action",sessid)=sessionArray("ewd_Action") 
  . . ;
  . . i xtype="radiogroup"!(xtype="checkboxgroup")!(xtype="fieldset")!(xtype="fieldcontainer")!(xtype="toolbar") d  q
@@ -942,6 +942,26 @@ writeCalendarData(appts)
  d writeLine("EWD.calendar.apptData = ")
  d streamArrayToJSON^%zewdJSON("data")
  d writeLine(";"_$c(13,10))
+ QUIT
+ ;
+writeCalendarPanelStore(sessionName,id,colors,sessid)
+ ;
+ n appts
+ ;
+ d mergeArrayFromSession^%zewdAPI(.appts,sessionName,sessid)
+ d writeLine("Ext.Function.defer(function() {EWD.calendar.clearPanel('"_id_"');"_$c(13,10))
+ d writeLine("var dataArray = ")
+ d streamArrayToJSON^%zewdJSON("appts")
+ d writeLine(";"_$c(13,10))
+ d writeLine("EWD.calendar.loadDataIntoPanel('"_id_"', dataArray, true);")
+ d writeLine("},200);")
+ i $g(colors)'="" d
+ . n colorArray
+ . d mergeArrayFromSession^%zewdAPI(.colorArray,colors,sessid)
+ . d writeLine("EWD.calendar.multiView['"_id_"'].timeColor = ")
+ . d streamArrayToJSON^%zewdJSON("colorArray")
+ . d writeLine(";"_$c(13,10))
+ ;
  QUIT
  ;
 createJSONObject(varName,array,addVar)

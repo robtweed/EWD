@@ -1,7 +1,7 @@
 %zewdCompiler9	; Enterprise Web Developer Compiler : ajax fixed text
  ;
- ; Product: Enterprise Web Developer (Build 960)
- ; Build Date: Mon, 11 Mar 2013 14:56:32
+ ; Product: Enterprise Web Developer (Build 963)
+ ; Build Date: Tue, 07 May 2013 11:04:16
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -583,6 +583,7 @@ ajaxLoader ;
 	;;  },
 	;;  getPage: function(params) {
 	;;    if (typeof params.nvp === 'undefined') params.nvp = '';
+	;;    if (typeof params.targetId === 'undefined') params.targetId = 'ewdNullId';
 	;;    this.sendMessage({type: "ewdGetFragment", page: params.page, targetId: params.targetId, nvp: params.nvp});
 	;;  },
 	;;  keepAlive: function(mins) {
@@ -597,14 +598,14 @@ ajaxLoader ;
 	;;    this.socket = io.connect();
 	;;    this.socket.on('connect', function() {
 	;;      if (typeof EWD.sockets.token !== 'undefined') {
-    ;;        if (EWD.sockets.log) console.log('WebSocket connected');
-    ;;        EWD.sockets.sendMessage({type: 'register', token: EWD.sockets.token});
-    ;;      }
+	;;        if (EWD.sockets.log) console.log('WebSocket connected');
+	;;        EWD.sockets.sendMessage({type: 'register', token: EWD.sockets.token});
+	;;      }
 	;;    });
 	;;    this.socket.on('message', function(obj){
 	;;      if (typeof console !== 'undefined') {
-    ;;        if (EWD.sockets.log) console.log("onMessage: " + JSON.stringify(obj));
-    ;;      }
+	;;        if (EWD.sockets.log) console.log("onMessage: " + JSON.stringify(obj));
+	;;      }
 	;;      if (typeof EWD.sockets.handlerFunction[obj.type] !== 'undefined') {
 	;;        EWD.sockets.handlerFunction[obj.type](obj);
 	;;        obj = null;
@@ -626,8 +627,8 @@ ajaxLoader ;
 	;;        return;
 	;;      }
 	;;      if (obj.type === 'json') {
-	;;        if (typeof obj.return !== 'undefined') {
-	;;          var str = obj.return + "=" + obj.message;
+	;;        if (typeof obj['return'] !== 'undefined') {
+	;;          var str = obj['return'] + "=" + obj.message;
 	;;          if (EWD.sockets.log) console.log("str = " + str);
 	;;          eval(str);
 	;;          delete obj.message;
@@ -638,9 +639,9 @@ ajaxLoader ;
 	;;        }
 	;;        return;
 	;;      }
-    ;;      EWD.sockets.serverMessageHandler(obj);
-    ;;      obj = null;
-    ;;      return;
+	;;      if (EWD.sockets.serverMessageHandler) EWD.sockets.serverMessageHandler(obj);
+	;;      obj = null;
+	;;      return;
 	;;    });
 	;;    this.token = token;
 	;;    //this.sendMessage({type: "register", token: token});

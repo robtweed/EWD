@@ -1,7 +1,7 @@
 %zewdExt4a ; Extjs Tag Processors (continued)
  ;
- ; Product: Enterprise Web Developer (Build 960)
- ; Build Date: Mon, 11 Mar 2013 14:56:32
+ ; Product: Enterprise Web Developer (Build 963)
+ ; Build Date: Tue, 07 May 2013 11:04:16
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -153,6 +153,7 @@ ExtCreate(nodeOID,parentOID,isFragment)
  . s attr("return")=mainAttrs("object")
  . i $g(mainAttrs("var"))="true" s attr("var")="true"
  s attr("name")="Ext.create"
+ i $g(mainAttrs("ext4:condition"))'="" s attr("condition")=mainAttrs("ext4:condition")
  s mOID=$$addElementToDOM^%zewdDOM("ewd:jsmethod",parentOID,,.attr)
  s paramsOID=$$addElementToDOM^%zewdDOM("ewd:jsparameters",mOID)
  s className=$g(mainAttrs("classname")) i className="" s className="unnamedClass"
@@ -195,7 +196,10 @@ ExtCreate(nodeOID,parentOID,isFragment)
  . s addTo=$$addPhpVar^%zewdCustomTags("#tmp_addTo")
  . s remove=$$addPhpVar^%zewdCustomTags("#tmp_removeAll")
  . ;s text="var addTo='"_addTo_"';"_$c(13,10)
- . s text="var addTo='"_addTo_"';"_$c(13,10)
+ . i $g(mainAttrs("ext4:condition"))="" d
+ . . s text="var addTo='"_addTo_"';"_$c(13,10)
+ . e  d
+ . . s text="var addTo = ''; if ("_mainAttrs("ext4:condition")_") addTo='"_addTo_"';"_$c(13,10)
  . s text=text_"var remove='"_remove_"';"_$c(13,10)
  . s text=text_"if (remove === 'true') Ext.getCmp('"_addTo_"').removeAll(true);"_$c(13,10)
  . s text=text_"if (addTo !== '') Ext.getCmp('"_addTo_"').add(Ext.getCmp('"_id_"'));"
@@ -350,10 +354,30 @@ htmlEditorInstance(attrs,nodeOID,instanceOID)
  ;
  QUIT argumentsOID
  ;
+ ;expandCalendarPanel(nodeOID)
+ ;
+ ;n applc,src
+ ;
+ ;s applc=$$zcvt^%zewdAPI(app,"l")
+ ;s src="examples/calendar/resources/css/calendar.css"
+ ;d registerResource^%zewdCustomTags("css",src,"",app,,1)
+ ;s src="examples/calendar/resources/css/examples.css"
+ ;d registerResource^%zewdCustomTags("css",src,"",app,,1)
+ ;s src="examples/calendar/src/Ewd.js"
+ ;d registerResource^%zewdCustomTags("js",src,"",app,,1)
+ ;s ^zewd("loader",applc,"configs","enabled")="true"
+ ;s ^zewd("loader",applc,"configs","paths","Ext.calendar")="examples/calendar/src"
+ ;s ^zewd("loader",applc,"requires",1)="Ext.calendar.CalendarPanel"
+ ;s ^zewd("loader",applc,"requires",2)="Ext.calendar.data.Calendars"
+ ;s ^zewd("loader",applc,"requires",3)="Ext.calendar.util.Date"
+ ;QUIT
+ ;
 expandCalendarPanel(nodeOID)
  ;
- n applc,src
+ n applc,attr,colors,endTime,height,id,mainAttrs,parentOID,sessionName,slotDuration,src
+ n startTime,store,text,textOID,title,xOID
  ;
+ d getAttributes^%zewdExt4(nodeOID,.mainAttrs)
  s applc=$$zcvt^%zewdAPI(app,"l")
  s src="examples/calendar/resources/css/calendar.css"
  d registerResource^%zewdCustomTags("css",src,"",app,,1)
@@ -366,6 +390,62 @@ expandCalendarPanel(nodeOID)
  s ^zewd("loader",applc,"requires",1)="Ext.calendar.CalendarPanel"
  s ^zewd("loader",applc,"requires",2)="Ext.calendar.data.Calendars"
  s ^zewd("loader",applc,"requires",3)="Ext.calendar.util.Date"
+ ;
+ s id=$g(mainAttrs("id"))
+ i id="" s id=$$uniqueId^%zewdExt4(nodeOID)
+ s store=$g(mainAttrs("calendarstore"))
+ s colors=$g(mainAttrs("colors"))
+ s xOID=$$getTagByNameAndAttr^%zewdDOM("ext4:js","at","top",1,docName)
+ i xOID="" d
+ . s attr("at")="top"
+ . s xOID=$$addElementToDOM^%zewdDOM("ext4:js",nodeOID,,.attr)
+ s text="var cPanel = EWD.calendar.multiView['"_id_"'];"_$c(13,10)
+ s text=text_"var panelExists = true;"_$c(13,10)
+ s text=text_"if (!cPanel) {"_$c(13,10)
+ s text=text_" panelExists = false;"_$c(13,10)
+ s text=text_"  EWD.calendar.eventStore['"_id_"'] = Ext.create('Ext.calendar.data.MemoryEventStore', {data: []});"
+ s textOID=$$createTextNode^%zewdDOM(text,docOID)
+ s textOID=$$appendChild^%zewdDOM(textOID,xOID)
+ d setAttribute^%zewdDOM("eventstore",".EWD.calendar.eventStore['"_id_"']",nodeOID)
+ d setAttribute^%zewdDOM("listeners",".EWD.calendar.panelListeners",nodeOID)
+ i $g(mainAttrs("border"))="" d setAttribute^%zewdDOM("border","false",nodeOID)
+ i store="" d
+ . s text="var theCalendarStore = Ext.create('Ext.calendar.data.MemoryCalendarStore', {data: Ext.calendar.data.Calendars.getData()});"_$c(13,10)
+ . s textOID=$$createTextNode^%zewdDOM(text,docOID)
+ . s textOID=$$appendChild^%zewdDOM(textOID,xOID)
+ . d setAttribute^%zewdDOM("calendarstore",".theCalendarStore",nodeOID)
+ s startTime=$g(mainAttrs("starttime"))
+ s endTime=$g(mainAttrs("endtime"))
+ s slotDuration=$g(mainAttrs("slotduration"))
+ i startTime'=""!(endTime'="")!(slotDuration'="") d
+ . s text="EWD.calendar.multiView['"_id_"'] = {"
+ . s text=text_"startTime: '"_startTime_"'"
+ . s text=text_",endTime: '"_endTime_"'"
+ . s text=text_",slotDuration: "_slotDuration
+ . s text=text_"};}"
+ . s textOID=$$createTextNode^%zewdDOM(text,docOID)
+ . s textOID=$$appendChild^%zewdDOM(textOID,xOID)
+ f attr="starttime","endtime","slotduration","colors" d
+ . d removeAttribute^%zewdDOM(attr,nodeOID)
+ ; create wrappering panel
+ s title=$g(mainAttrs("title"))
+ s height=$g(mainAttrs("height"))
+ s parentOID=$$insertNewParentElement^%zewdDOM(nodeOID,"ext4:panel",docOID)
+ d setAttribute^%zewdDOM("title",title,parentOID)
+ d setAttribute^%zewdDOM("height",height,parentOID)
+ d setAttribute^%zewdDOM("id",id_"Container",parentOID)
+ d setAttribute^%zewdDOM("flex",1,parentOID)
+ d setAttribute^%zewdDOM("layout","fit",parentOID)
+ d setAttribute^%zewdDOM("ext4:condition","!panelExists",parentOID)
+ ;
+ s sessionName=$g(mainAttrs("sessionname"))
+ i sessionName'="" d
+ . n cspOID
+ . i $e(id,1,5)'="&php;" s id=""""_id_""""
+ . s text=" d writeCalendarPanelStore^%zewdExt4Code("""_sessionName_""","_id_","""_colors_""",sessid)"
+ . s cspOID=$$addCSPServerScript^%zewdAPI(xOID,text)
+ f attr="title","height","sessionname" d
+ . d removeAttribute^%zewdDOM(attr,nodeOID)
  QUIT
  ;
 expandCalendar(nodeOID)
@@ -377,6 +457,8 @@ expandCalendar(nodeOID)
  d registerResource^%zewdCustomTags("css",src,"",app,,1)
  s src="examples/calendar/resources/css/examples.css"
  d registerResource^%zewdCustomTags("css",src,"",app,,1)
+ s src="examples/calendar/src/Ewd.js"
+ d registerResource^%zewdCustomTags("js",src,"",app,,1)
  s ^zewd("loader",applc,"configs","enabled")="true"
  s ^zewd("loader",applc,"configs","paths","Ext.calendar")="examples/calendar/src"
  s ^zewd("loader",applc,"requires",1)="Ext.calendar.AppFrag"
