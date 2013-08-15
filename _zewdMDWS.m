@@ -1,7 +1,7 @@
 %zewdMDWS	; EWD Open Source / Stateless implementation of MDWS
  ;
- ; Product: Enterprise Web Developer (Build 963)
- ; Build Date: Tue, 07 May 2013 11:04:16
+ ; Product: Enterprise Web Developer (Build 965)
+ ; Build Date: Thu, 15 Aug 2013 17:14:16
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -33,13 +33,48 @@
  ;
 getRequest(sessid)
  ;
- n contentType,cookie,docName,facade,func,method,ok,originalSessid,token,x
+ n contentType,cookie,docName,error,facade,func,method,ok,originalSessid,outputFormat
+ n stringToSign,systemId,token,x
  ;
+ s error=""
  s docName="mdws"_sessid
  d setSessionValue^%zewdAPI("docName",docName,sessid)
  s contentType=$$getRequestValue^%zewdAPI("contentType",sessid)
  i contentType="" s contentType="text/xml"
+ s outputFormat=$$getRequestValue^%zewdAPI("outputFormat",sessid)
+ i outputFormat="json" s contentType="application/json"
+ i outputFormat="xml" s contentType="text/xml"
  d setSessionValue^%zewdAPI("contentType",contentType,sessid)
+ ;
+ s systemId=$$getRequestValue^%zewdAPI("systemId",sessid)
+ i systemId'="" d
+ . n secretKey
+ . ;s secretKey=$g(^zewd("openMDWS","systemKey",systemId))
+ . s secretKey=$g(^zewd("openMDWS","control","remote",systemId,"systemKey"))
+ . i secretKey'="" d
+ . . n date,params,signature,sigRec,stringToSign,timeStamp
+ . . s timeStamp=$$getRequestValue^%zewdAPI("timestamp",sessid)
+ . . s date=timeStamp\86400
+ . . i $h-date>1 s error="Bad timestamp" q
+ . . i date-$h>1 s error="Bad timestamp" q
+ . . s stringToSign=$$getStringToSign(sessid)
+ . . s params("string")=stringToSign
+ . . s params("key")=secretKey
+ . . s signature=$$createDigest(.params,sessid)
+ . . s sigRec=$$getRequestValue^%zewdAPI("signature",sessid)
+ . . ;d trace^%zewdAPI("calculated signature: "_signature)
+ . . ;d trace^%zewdAPI("signature on request: "_sigRec)
+ . . i signature'=sigRec s sigRec=$$replaceAll^%zewdAPI(sigRec," ","+")
+ . . i signature'=sigRec s error="Signature mismatch"
+ . e  d
+ . . s error="No security credentials defined on remote system"
+ e  d
+ . s error="systemId not defined"
+ ;
+ i error'="" d  QUIT ""
+ . ;d trace^%zewdAPI("invoking securityFail: error="_error)
+ . d securityFail(sessid,0,error)
+ . ;d trace^%zewdAPI("securityFail completed")
  ;
  s facade=$$getRequestValue^%zewdAPI("facade",sessid)
  i facade="" d noFacade(sessid,0) QUIT ""
@@ -163,11 +198,36 @@ badCookie(sessid,localCall)
  d createFault(.attrs,$g(localCall),sessid)
  QUIT
  ;
+outOfDate(sessid,localCall)
+ ;
+ n attrs
+ ;
+ s attrs("message")="Invalid request timestamp"
+ d createFault(.attrs,$g(localCall),sessid)
+ QUIT
+ ;
+securityFail(sessid,localCall,message)
+ ;
+ n attrs
+ ;
+ s attrs("message")="Bad security credentials"
+ i $g(message)'="" s attrs("message")=attrs("message")_": "_message
+ d createFault(.attrs,$g(localCall),sessid)
+ QUIT
+ ;
 missingSitecode(sessid,localCall)
  ;
  n attrs,facade
  ;
  s attrs("message")="Missing sitecode"
+ d createFault(.attrs,localCall,sessid)
+ QUIT
+ ;
+badSiteCode(sessid,localCall)
+ ;
+ n attrs,facade
+ ;
+ s attrs("message")="Invalid sitecode"
  d createFault(.attrs,localCall,sessid)
  QUIT
  ;
@@ -183,6 +243,12 @@ createFault(attrs,localCall,sessid)
  s array(outerTag,"fault","stackTrace")=$g(attrs("type"))
  s array(outerTag,"fault","suggestion")=$g(attrs("suggestion"))
  s array(outerTag,"count")=0
+ ; ***********************************
+ i $g(^zewd("trace")) d
+ . n ix
+ . s ix=$increment(^robMDWS)
+ . m ^robMDWS(ix,"array")=array
+ ; ************************************
  d createOutput^%zewdMDWS($g(localCall),.array,sessid)
  s cookie=$$getSessionValue^%zewdAPI("mdws_cookie",sessid)
  i cookie="" d setSessionValue^%zewdAPI("mdws_cookie","Missing Cookie",sessid)
@@ -210,6 +276,7 @@ connect(sessid,localCall)
  s docName=$$getSessionValue^%zewdAPI("docName",sessid)
  d createInputs(localCall,.inputs,sessid)
  i $g(inputs("sitelist"))="" d missingSitecode(sessid,localCall) QUIT ""
+ i inputs("sitelist")'=$g(^zewd("openMDWS","control","local","id")) d badSiteCode(sessid,localCall) QUIT ""
  ;
  ; do some test/lookup on site list to confirm it exists
  ;
@@ -383,12 +450,73 @@ install
  n arr,facade,line,lineNo,ok,operation,tagName
  ;
  k ^%zewd("openMDWS","mappings")
- m ^%zewd("openMDWS","mappings")=^zewd("openMDWS","userDefined")
  f lineNo=1:1 s line=$t(mappings+lineNo^%zewdMDWSMap) q:line["***END***"  d
  . s line=$p(line,";;",2,200)
  . s ok=$$parseJSON^%zewdJSON(line,.arr,1)
  . s facade=$g(arr("facade")) k arr("facade")
  . s operation=$g(arr("operation")) k arr("operation")
  . m ^%zewd("openMDWS","mappings",facade,operation)=arr
+ m ^%zewd("openMDWS","mappings")=^zewd("openMDWS","userDefined")
  QUIT
  ;
+createDigest(params,sessid)
+ ;
+ ; params:
+ ;  type (default = sha256)
+ ;  key (encryption key)
+ ;  string (string to be converted)
+ ;  responseTime (default = 5)
+ ;
+ ;
+ n html,ok,password,payload,port,responseTime,ssl,sslPort,type,url
+ ;
+ s type=$g(params("type"))
+ i type="" s type="sha256"
+ s password=$g(^zewd("ewdGatewayManager","password"))
+ s payload(1)="password="_password
+ s payload(2)="&fn=createHmac"
+ s payload(3)="&type="_type
+ s payload(4)="&key="_params("key")
+ s payload(5)="&string="_$g(params("string"))
+ s port=$$getSessionValue^%zewdAPI("ewd_port",sessid)
+ i port'="",$d(^zewd("config","portMap",port)) s port=^zewd("config","portMap",port)
+ ;i $g(^zewd("config","portMap",port))'="" s port=^zewd("config","portMap",port)
+ s sslPort=""
+ i $g(^zewd("webSocketParams",port,"ssl")) d
+ . i '$g(^zewd("webSocketParams",port,"useProxy")) d
+ . . s port=$g(^zewd("webSocketParams",port,"httpPort"))
+ . e  d
+ . . s sslPort=$g(^zewd("webSocketParams",port,"proxyPort"))
+ ;s sslPort=$g(^zewd("webSocketParams",port,"proxyPort"))
+ s url="http",sslHost=""
+ i sslPort'="" s url="https",sslHost="127.0.0.1"
+ s url=url_"://127.0.0.1:"_port_"/ewdCrypto"
+ k html
+ s responseTime=$g(params("responseTime"))
+ i responseTime="" s responseTime=5
+ s ok=$$httpPOST^%zewdGTM(url,.payload,"",.html,,responseTime,,,,$g(sslHost),$g(sslPort))
+ i $e($g(html(1)),1,4)="404 " QUIT ""
+ QUIT $g(html(1))
+ ;
+ ;
+getStringToSign(sessid)
+ ;
+ n amp,host,name,path,port,stringToSign,value
+ ;
+ s name="",amp=""
+ s stringToSign=""
+ f  s name=$$getNextRequestName^%zewdAPI2(name,sessid) q:name=""  d
+ . q:name="app"
+ . q:name="signature"
+ . q:name="page"
+ . s value=$$getRequestValue^%zewdAPI(name,sessid)
+ . s value=$$urlEscape^%zewdMDWSClient(value)
+ . s stringToSign=stringToSign_amp_name_"="_value
+ . s amp="%26"
+ s host=$$getServerValue^%zewdAPI("SERVER_NAME",sessid)
+ ;s port=$$getServerValue^%zewdAPI("SERVER_PORT",sessid)
+ ;i port'=80 s host=host_":"_port
+ s path=$$getServerValue^%zewdAPI("SCRIPT_NAME",sessid)
+ s stringToSign="POST"_$c(10)_host_$c(10)_path_$c(10)_stringToSign
+ ;
+ QUIT stringToSign

@@ -1,7 +1,7 @@
 %zewdAPI	; Enterprise Web Developer run-time functions and user APIs
  ;
- ; Product: Enterprise Web Developer (Build 944)
- ; Build Date: Fri, 23 Nov 2012 17:15:06
+ ; Product: Enterprise Web Developer (Build 965)
+ ; Build Date: Thu, 15 Aug 2013 17:14:15
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -770,6 +770,7 @@ setCheckboxOn(fieldName,value,sessid)
  ;
 setCheckboxOff(fieldName,value,sessid)
  d removeFromSelected(fieldName,value,sessid)
+ QUIT
  ;
 setCheckboxValues(fieldName,selectedValueArray,sessid)
  ;

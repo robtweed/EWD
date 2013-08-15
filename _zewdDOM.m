@@ -1,7 +1,7 @@
 %zewdDOM	; Enterprise Web Developer support functions
  ;
- ; Product: Enterprise Web Developer (Build 912)
- ; Build Date: Wed, 02 May 2012 16:47:56
+ ; Product: Enterprise Web Developer (Build 965)
+ ; Build Date: Thu, 15 Aug 2013 17:14:16
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -1792,6 +1792,6 @@ documentation(rou) ;
  ;
 lf ;
  i $g(outputLocation)="file" w ! q
- w $c(13,10)
+ w $c(13),!
  QUIT
  ;

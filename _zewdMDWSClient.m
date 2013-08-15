@@ -1,7 +1,7 @@
 %zewdMDWSClient ; MDWS Client Interface
  ;
- ; Product: Enterprise Web Developer (Build 963)
- ; Build Date: Tue, 07 May 2013 11:04:16
+ ; Product: Enterprise Web Developer (Build 965)
+ ; Build Date: Thu, 15 Aug 2013 17:14:16
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -33,7 +33,8 @@ getPath(method,nvps,sessid,params)
  ;
  n facade,path,version
  ;
- s version=$$getSessionValue^%zewdAPI("mdws.version",sessid)
+ ;s version=$$getSessionValue^%zewdAPI("mdws.version",sessid)
+ s version=$$getParam("mdws.version",sessid,.params)
  i version="" s version="openMDWS"
  ;s facade=$$getSessionValue^%zewdAPI("mdws.facade",sessid)
  s facade=$$getParam("mdws.facade",sessid,.params)
@@ -43,13 +44,17 @@ getPath(method,nvps,sessid,params)
  i version="openMDWS" d  QUIT path
  . i path="" s path="/vista/"
  . i $e(path,$l(path))'="/" s path=path_"/"
- . s path=path_"openMDWS/get.ewd?facade="_facade_"&method="_method
- . i $d(nvps) d
- . . n delim,name
- . . s delim="&"
- . . s name=""
- . . f  s name=$o(nvps(name)) q:name=""  d
- . . . s path=path_delim_name_"="_$$urlEscape^%zewdSmart(nvps(name))
+ . s nvps("facade")=facade
+ . s nvps("method")=method
+ . s path=path_"openMDWS/get.ewd"
+ ;
+ ;. s path=path_"openMDWS/get.ewd?facade="_facade_"&method="_method
+ ;. i $d(nvps) d
+ ;. . n delim,name
+ ;. . s delim="&"
+ ;. . s name=""
+ ;. . f  s name=$o(nvps(name)) q:name=""  d
+ ;. . . s path=path_delim_name_"="_$$urlEscape^%zewdSmart(nvps(name))
  ;
  ;
  ;QUIT ""
@@ -143,7 +148,7 @@ convertVistADate(di,t) ;convert internal VistA date format to output
  s m=$e(date,12,13)
  s s=$e(date,14,15)
  i t=1 QUIT ((h*3600)+(m*60)+s)
- i t=2 QUIT $$encodeDate^%zewdGTM(mn_"/"_d_"/"_y)
+ ;i t=2 QUIT $$encodeDate^%zewdGTM(mn_"/"_d_"/"_y)
  i t=2 QUIT $$encodeDate^%zewdGTM(mn_"/"_d_"/"_y)
  i t=3 QUIT mn_"/"_d_"/"_y_" "_h_":"_m_":"_s
  i t=4 QUIT mn_"/"_d_"/"_y
@@ -216,7 +221,22 @@ getClinicAppts(results,data)
  ;
 getParam(name,sessid,params)
  ;
- n value
+ n remoteId,value
+ ;
+ s remoteId=$g(params("remoteId"))
+ s value=""
+ i remoteId'="",'$d(params(name)) d  QUIT value
+ . i $g(name)="mdws.cookie" d  q
+ . . n cookies
+ . . d mergeArrayFromSession^%zewdAPI(.cookies,"mdws_cookies",sessid)
+ . . s value=$g(cookies(remoteId))
+ . i $g(name)="mdws.host" s value=$g(^zewd("openMDWS","control","remote",remoteId,"host")) q
+ . i $g(name)="vista.host" s value=$g(^zewd("openMDWS","control","local","host")) q
+ . i $g(name)="mdws.version" s value=$g(^zewd("openMDWS","control","remote",remoteId,"version")) q
+ . i $g(name)="mdws.port" s value=$g(^zewd("openMDWS","control","remote",remoteId,"port")) q
+ . i $g(name)="mdws.path" s value=$g(^zewd("openMDWS","control","remote",remoteId,"path")) q
+ . i $g(name)="vista.sslProxyPort" s value=$g(^zewd("openMDWS","control","local","sslProxyPort")) q
+ . i $g(name)="vista.sslProxyHost" s value=$g(^zewd("openMDWS","control","local","sslProxyHost")) q
  ;
  s value=$$getSessionValue^%zewdAPI(name,sessid)
  i $g(params(name))'="" s value=params(name)
@@ -224,7 +244,7 @@ getParam(name,sessid,params)
  ;
 request(serviceName,nvps,results,sessid,params)
  ;
- n cookie,docName,headers,host,name,no,ok,path,port,sslHost,sslPort,value,vistaHost
+ n cookie,docName,headers,host,name,no,ok,path,port,remoteId,sslHost,sslPort,value,vistaHost
  ;
  ;d setSessionValue^%zewdAPI("vista.systemId","smart2",sessid)
  ;d setSessionValue^%zewdAPI("mdws.host","smart2.vistaewd.net",sessid)
@@ -233,13 +253,23 @@ request(serviceName,nvps,results,sessid,params)
  ;d setSessionValue^%zewdAPI("vista.host","smart2.vistaewd.net",sessid)
  ;
  s docName="openMDWSResponse"_$j
+ i $g(params("outputFormat"))'="" d setSessionValue^%zewdAPI("mdws.outputFormat",params("outputFormat"),sessid)
  d setSessionValue^%zewdAPI("docName",docName,sessid)
  ;s host=$$getSessionValue^%zewdAPI("mdws.host",sessid)
  ;i $$getSessionValue^%zewdAPI("vista.host",sessid)=host d  QUIT ""
  ;s host=$$getSessionValue^%zewdAPI("mdws.host",sessid)
+ s remoteId=$g(params("remoteId"))
  s host=$$getParam("mdws.host",sessid,.params)
  s vistaHost=$$getParam("vista.host",sessid,.params)
  ;i $$getSessionValue^%zewdAPI("vista.host",sessid)=host d  QUIT ""
+ ; ****************
+ i $g(^zewd("trace")) d
+ . n ix
+ . s ix=$increment(^robDump)
+ . m ^robDump(ix,"params")=params
+ . s ^robDump(ix,"vistaHost")=vistaHost
+ . s ^robDump(ix,"host")=host
+ ; ****************
  i vistaHost=host d  QUIT ""
  . ; local invocation, so bypass HTTP request
  . n facade,func,name,x
@@ -257,8 +287,12 @@ request(serviceName,nvps,results,sessid,params)
  . i $g(^zewd("trace"))=1 d trace^%zewdAPI("** request^%zewdMDWSClient - about to execute x="_x)
  . x x
  . d mergeArrayFromSession^%zewdAPI(.results,docName,sessid)
- . i serviceName="connect" d
- . . d setSessionValue^%zewdAPI("mdws.cookie",$g(results("cookie")),sessid)
+ . i serviceName="connect",$g(results("cookie"))'="" d
+ . . d setSessionValue^%zewdAPI("mdws.cookie",results("cookie"),sessid)
+ . . i $g(params("remoteId"))'="" d
+ . . . n cookies
+ . . . s cookies(params("remoteId"))=results("cookie")
+ . . . d mergeArrayToSession^%zewdAPI(.cookies,"mdws_cookies",sessid)
  . . k results("cookie")
  . ;k nvps
  ;
@@ -267,6 +301,7 @@ request(serviceName,nvps,results,sessid,params)
  ;s cookie=$$getSessionValue^%zewdAPI("mdws.cookie",sessid)
  s cookie=$$getParam("mdws.cookie",sessid,.params)
  s path=$$getPath(serviceName,.nvps,sessid,.params)
+ s path=$$createSignedPath(host,path,.nvps,sessid)
  k nvps,results
  i $g(cookie)'="" s headers("Cookie")=cookie
  ;s ok=$$parseURL^%zewdHTMLParser(host,path,docName,port,0,,,,,.headers)
@@ -277,11 +312,49 @@ request(serviceName,nvps,results,sessid,params)
  d
  . i sslPort'="",sslHost="" s sslHost="127.0.0.1" q
  . i sslHost'="",sslPort="" s sslPort=89
- s ok=$$parseURL^%zewdHTMLParser(host,path,docName,port,0,,,,,.headers,sslHost,sslPort)
+ ; ****************************** 
+ i $g(^zewd("trace")) d
+ . s ^robDump(ix,"path")=path
+ . s ^robDump(ix,"docName")=docName
+ . s ^robDump(ix,"port")=port
+ . s ^robDump(ix,"sslHost")=sslHost
+ . s ^robDump(ix,"sslPort")=sslPort
+ ; ********************************
+ i $$getSessionValue^%zewdAPI("ewd_technology",sessid)="ewd" d
+ . n header,ix,no,params,response
+ . s params("host")=host
+ . s params("port")=port
+ . s params("path")=path
+ . s params("post")=0 
+ . s params("ssl")=1
+ . s params("config")="vista"
+ . s params("cookie")=cookie
+ . s ix=$$sendHTTPRequest(.params)
+ . m ^CacheTempEWD($j)=^CacheTempResponse(ix,"response")
+ . s header=""
+ . s no=0
+ . f  s header=$o(^CacheTempResponse(ix,"headers",header)) q:header=""  d
+ . . s no=no+1
+ . . s headers(no)=header_":"_^CacheTempResponse(ix,"headers",header)
+ . k ^CacheTempResponse(ix)
+ . s ok=$$removeDocument^%zewdDOM(docName,0,0)
+ . s ok=$$parseDocument^%zewdHTMLParser($g(docName),0)
+ . k ^CacheTempEWD($j)
+ e  d
+ . s ok=$$parseURL^%zewdHTMLParser(host,path,docName,port,0,,,,,.headers,sslHost,sslPort)
+ ; ******************************************
+ i $g(^zewd("trace")) i $$cloneDocument^%zewdDOM(docName,"rob"_ix)
+ ; ******************************************
  d XML2Array(docName,.results)
+ ; ********************************
+ i $g(^zewd("trace")) m ^robDump(ix,"results")=results
+ ; ********************************
  i $$removeDocument^%zewdDOM(docName)
  i serviceName="connect" d
  . n header,stop
+ . ; ***********************************
+ . i $g(^zewd("trace")) m ^robDump(ix,"headers")=headers
+ . ; ************************************
  . s no="",stop=0
  . f  s no=$o(headers(no)) q:no=""  d  q:stop
  . . s header=headers(no)
@@ -289,6 +362,10 @@ request(serviceName,nvps,results,sessid,params)
  . . i name="SET-COOKIE" d
  . . . s value=$p(header,":",2,1000)
  . . . d setSessionValue^%zewdAPI("mdws.cookie",value,sessid)
+ . . . i $g(remoteId)'="" d
+ . . . . n cookies
+ . . . . s cookies(remoteId)=value
+ . . . . d mergeArrayToSession^%zewdAPI(.cookies,"mdws_cookies",sessid)
  . . . s stop=1
  QUIT ok
  ;
@@ -387,4 +464,124 @@ getTextValue(path,array)
  x x
  ;
  QUIT $p(value,$c(1),1)
+ ;
+ ;
+testingS
+ k nvpList
+ s host="www.mgateway.com:58080"
+ s path="/vista/openMDWS/get.ewd"
+ s nvpList("facade")="SchedulingSvc"
+ s nvpList("method")="getClinics"
+ s nvpList("target")=""
+ ;
+ ; this stuff would normally be available automatically
+ s systemId="Oroville_Hospital"
+ s ^zewd("openMDWS","systemId")=systemId
+ s ^zewd("openMDWS","systemKey",systemId)="th1s1sa5ecret"
+ s sessid=0
+ d setSessionValue^%zewdAPI("ewd_port",8081,sessid)
+ ;
+ s path=$$createSignedPath(host,path,.nvpList,sessid)
+ QUIT
+ ;
+testingS2
+ s params("remoteId")="VATest_California"
+ s serviceName="connect"
+ s nvps("sitelist")="VATest_California"
+ s sessid=0
+ d setSessionValue^%zewdAPI("ewd_port",8081,sessid)
+ d setSessionValue^%zewdAPI("ewd_technology","ewd",sessid)
+ s ok=$$request(serviceName,.nvps,.results,sessid,.params)
+ QUIT
+ ;
+createSignedPath(host,path,nvpList,sessid)
+ ;
+ n amp,n,ok
+ ;
+ ; pre-escape incoming name/value pairs
+ s n=""
+ f  s n=$o(nvpList(n)) q:n=""  d
+ . s nvpList(n)=$$urlEscape(nvpList(n))
+ ;
+ s amp=""
+ s ok=$$createSignature(host,path,.nvpList,sessid)
+ s path=path_"?"
+ s n=""
+ f  s n=$o(nvpList(n)) q:n=""  d
+ . s path=path_amp_n_"="_nvpList(n)
+ . s amp="&"
+ ;
+ QUIT path
+ ;
+createSignature(host,path,nvpList,sessid)
+ ;
+ n secretKey,signature,stringToSign,systemId
+ ;
+ s systemId=$g(^zewd("openMDWS","control","local","id"))
+ i systemId="" QUIT 0
+ s nvpList("systemId")=systemId
+ s secretKey=$g(^zewd("openMDWS","control","local","systemKey"))
+ i secretKey="" QUIT 0
+ s stringToSign=$$createRequestStringToSign(host,path,.nvpList)
+ d trace^%zewdAPI("stringToSign: "_stringToSign)
+ s signature=$$getSignedString(stringToSign,secretKey,sessid)
+ s nvpList("signature")=signature
+ QUIT 1
+ ;
+createRequestStringToSign(host,path,nvpList)
+ ;
+ n stringToSign 
+ ;
+ s nvpList("timestamp")=$$convertDateToSeconds^%zewdAPI($h)
+ s stringToSign=$$createStringToSign(.nvpList)
+ s stringToSign="POST"_$c(10)_host_$c(10)_path_$c(10)_stringToSign
+ QUIT stringToSign
+ ;
+createStringToSign(nvpList)
+ ;
+ n amp,n,name,nlc,nvpListlc,stringToSign,value
+ ;
+ s stringToSign=""
+ s n="",amp=""
+ f  s n=$o(nvpList(n)) q:n=""  d
+ . s name=$$urlEscape(n)
+ . s value=nvpList(n)
+ . s stringToSign=stringToSign_amp_name_"="_value
+ . s amp="%26"
+ QUIT stringToSign
+ ;
+urlEscape(string)
+ ;The unreserved characters are A-Z, a-z, 0-9, hyphen ( - ), underscore ( _ ), period ( . ), and tilde ( ~ ). 
+ ;i string?1AN.AN QUIT string
+ n a,c,esc,i,pass
+ f i=45,46,95,126 s pass(i)=""
+ s esc=""
+ f i=1:1:$l(string) d
+ . s c=$e(string,i)
+ . i c?1AN,$a(c)<128 s esc=esc_c q
+ . s a=$a(c)
+ . i $d(pass(a)) s esc=esc_c q
+ . s a=$$hex(a)
+ . s esc=esc_"%"_$$zcvt^%zewdAPI(a,"u")
+ QUIT esc
+ ;
+hex(number)
+ n hex,no,str
+ s hex=""
+ s str="123456789ABCDEF"
+ f  d  q:number=0
+ . s no=number#16
+ . s number=number\16
+ . i no s no=$e(str,no)
+ . s hex=no_hex
+ QUIT hex
+ ;
+getSignedString(string,secretKey,sessid)
+ ;
+ n params
+ ;
+ s params("string")=string
+ s params("key")=secretKey
+ s params("mode")="request"
+ QUIT $$createDigest^%zewdMDWS(.params,sessid)
  ;

@@ -1,7 +1,7 @@
 %zewdJS	; Enterprise Web Developer: Main Javascript files
  ;
- ; Product: Enterprise Web Developer (Build 910)
- ; Build Date: Wed, 25 Apr 2012 17:59:26
+ ; Product: Enterprise Web Developer (Build 965)
+ ; Build Date: Thu, 15 Aug 2013 17:14:16
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -193,10 +193,12 @@ jsBlock ;
  ;;         path = obj.path;
  ;;         optionalURL = obj.optionalURL;
  ;;         modal = obj.modal;
+ ;;         media = obj.media;
  ;;      }
  ;;      else {
  ;;         divId = obj;
  ;;      }
+ ;;      if (!media) media = 'print';
  ;;      if (!height) height= "500" ;
  ;;      if (!width) width= "500" ;
  ;;      if (!top) top= "50" ;
@@ -229,7 +231,15 @@ jsBlock ;
  ;;         outputWindow.document.write("<div id='add'></div>\n");
  ;;         outputWindow.document.write("</body></html>\n");
  ;;         outputWindow.document.close();
- ;;         if (styleSrc) EWD.page.addStylesheet(outputWindow.document,styleSrc) ;
+ ;;         //if (styleSrc) EWD.page.addStylesheet(outputWindow.document,styleSrc, media) ;
+ ;;         if (typeof styleSrc === 'string') {
+ ;;           if (styleSrc) EWD.page.addStylesheet(outputWindow.document,styleSrc, media) ;
+ ;;         }
+ ;;         else {
+ ;;           for (var i = 0; i < styleSrc.length; i++) {
+ ;;             EWD.page.addStylesheet(outputWindow.document,styleSrc[i], media) ;
+ ;;           }
+ ;;         }
  ;;         var importedMarkup = domNode.innerHTML ;
  ;;         outputWindow.document.getElementById('add').innerHTML = importedMarkup ;
  ;;         if (autoprint) {

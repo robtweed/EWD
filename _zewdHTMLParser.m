@@ -1,7 +1,7 @@
 %zewdHTMLParser	; Enterprise Web Developer HTML to XHTML Converter
  ;
- ; Product: Enterprise Web Developer (Build 952)
- ; Build Date: Thu, 10 Jan 2013 08:44:43
+ ; Product: Enterprise Web Developer (Build 965)
+ ; Build Date: Thu, 15 Aug 2013 17:14:16
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -227,7 +227,7 @@ parseDocument(docName,isHTML)
  s dlim=$c(13,10)
  i $$os^%zewdHTMLParser()="unix" s dlim=$c(10)
  i $$os^%zewdHTMLParser()="gtm" s dlim=$c(10)
- i ^CacheTempEWD($j,1)'[$c(13,10),^CacheTempEWD($j,1)[$c(10) s dlim=$c(10)
+ i $g(^CacheTempEWD($j,1))'[$c(13,10),$g(^CacheTempEWD($j,1))[$c(10) s dlim=$c(10)
  i nLines>1 f lineNo=2:1:nLines d
  . s %line=^CacheTempEWD($j,lineNo)
  . s np=$l(%line,dlim)
