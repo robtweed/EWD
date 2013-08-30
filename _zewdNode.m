@@ -1412,7 +1412,8 @@ ewdLiteMessageTest(type,port)
  i type=1 d
  . s array("type")="fromGTM1"
  . s array("password")="keepThisSecret!"
- . s array("recipients")="all"
+ . s array("recipients")="byApplication"
+ . s array("application")="portalRegRequest"
  . s array("message","x")=123
  . s array("message","y","z")="hello world"
  i type=2 d
