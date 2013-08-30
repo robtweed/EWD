@@ -1,7 +1,7 @@
 %zewdNode	; Enterprise Web Developer global access APIs for Node.js
  ;
- ; Product: Enterprise Web Developer (Build 965)
- ; Build Date: Thu, 15 Aug 2013 17:14:16
+ ; Product: Enterprise Web Developer (Build 967)
+ ; Build Date: Fri, 30 Aug 2013 10:27:51
  ; 
  ; ----------------------------------------------------------------------------
  ; | Enterprise Web Developer for GT.M and m_apache                           |
@@ -1057,7 +1057,7 @@ sendWebSocketMsg(type,message,sessid)
  s token=$$getSessionValue^%zewdAPI("ewd_wstoken",sessid)
  i token="" d  QUIT 0
  . i $g(^zewd("trace")) d trace^%zewdAPI("sendWebSocketMsg: token is null")
- i $$isTokenExpired^%zewdPHP(token) d  QUIT 0
+ i $$getSessionValue^%zewdAPI("ewd_lite",sessid)'=1,$$isTokenExpired^%zewdPHP(token) d  QUIT 0
  . i $g(^zewd("trace")) d trace^%zewdAPI("sendWebSocketMsg: token "_token_": expired")
  s port=$$getSessionValue^%zewdAPI("ewd_port",sessid)
  ;d trace^%zewdAPI("sendWebSocketMsg: port="_port)
@@ -1067,14 +1067,15 @@ sendWebSocketMsg(type,message,sessid)
  i '$d(^zewd("webSocketParams",port)) d  QUIT 0
  . i $g(^zewd("trace")) d trace^%zewdAPI("sendWebSocketMsg: ^zewd(webSocketParams) missing for port "_port)
  s stop=0
- l +^zewd("nodeProcessRunning",port):0 i  d  i stop QUIT 0
- . l -^zewd("nodeProcessRunning",port)
- . i $g(^zewd("trace")) d trace^%zewdAPI("nodeProcessRunning check: $j="_$j_"; "_$g(^zewd("nodeProcessRunning",port)))
- . i $g(^zewd("nodeProcessRunning",port))'=$j d
- . . ; if lock was obtained and this was a process other than the one that set the lock
- . . ; then Node.js can't be running, so don't attempt to send message
- . . s stop=1
- . . i $g(^zewd("trace")) d trace^%zewdAPI("sendWebSocketMsg: nodeProcessRunning lock not set for port "_port)
+ i $$getSessionValue^%zewdAPI("ewd_lite",sessid)'=1 d  i stop QUIT 0
+ . l +^zewd("nodeProcessRunning",port):0 i  d  i stop q
+ . . l -^zewd("nodeProcessRunning",port)
+ . . i $g(^zewd("trace")) d trace^%zewdAPI("nodeProcessRunning check: $j="_$j_"; "_$g(^zewd("nodeProcessRunning",port)))
+ . . i $g(^zewd("nodeProcessRunning",port))'=$j d
+ . . . ; if lock was obtained and this was a process other than the one that set the lock
+ . . . ; then Node.js can't be running, so don't attempt to send message
+ . . . s stop=1
+ . . . i $g(^zewd("trace")) d trace^%zewdAPI("sendWebSocketMsg: nodeProcessRunning lock not set for port "_port)
  d updateSession(sessid)
  ;
  s json=""
@@ -1354,4 +1355,82 @@ closeSession(sessid)
  d deleteSession^%zewdPHP(sessid)
  QUIT "ok"
  ;
+ ;
+ ; EWD Lite External messaging
+ ;
+ ;  Example of message to be sent to all users of a specific application
+ ;
+ ;  s array("type")="fromGTM1"
+ ;  s array("password")="keepThisSecret!"
+ ;  s array("recipients")="byApplication"
+ ;  s array("application")="portalRegRequest"
+ ;  s array("message","x")=123
+ ;  s array("message","y","z")="hello world"
+ ;   etc
+ ;
+ ;  Example of message to be sent to all users
+ ;
+ ;  s array("type")="fromGTM2"
+ ;  s array("password")="keepThisSecret!"
+ ;  s array("recipients")="all"
+ ;  s array("message","x")=123
+ ;  s array("message","y","z")="hello world"
+ ;   etc
+ ;
+ ;  Example of message to be sent to anyone matching a session name/value pair
+ ;
+ ;  s array("type")="fromGTM3"
+ ;  s array("password")="keepThisSecret!"
+ ;  s array("recipients")="bySessionValue"
+ ;  s array("session",1,"name")="username"
+ ;  s array("session",1,"value")="rob"
+ ;  s array("message","x")=123
+ ;  s array("message","y","z")="hello world"
+ ;   etc
+ ;
+ewdLiteMessage(array,port,ipAddress)
+ ;
+ n dev,json
+ ;
+ i $g(ipAddress)="" s ipAddress="127.0.0.1"
+ s json=$$arrayToJSON^%zewdJSON("array")
+ i json'="" d
+ . i $zv["GT.M" d
+ . . s dev=$$openTCP^%zewdGTM(ipAddress,port,5)
+ . . u dev w json
+ . . c dev
+ . e  d
+ . . s dev="|TCP|"_port
+ . . o dev:(ipAddress:port:"PST"):5 e  q
+ . . u dev w json
+ . . c dev
+ QUIT
+ ;
+ewdLiteMessageTest(type,port)
+ n array
+ i $g(port)="" s port=10000
+ i type=1 d
+ . s array("type")="fromGTM1"
+ . s array("password")="keepThisSecret!"
+ . s array("recipients")="all"
+ . s array("message","x")=123
+ . s array("message","y","z")="hello world"
+ i type=2 d
+ . s array("type")="fromGTM2"
+ . s array("password")="keepThisSecret!"
+ . s array("recipients")="all"
+ . s array("message","x")=123
+ . s array("message","y","z")="hello world"
+ i type=3 d
+ . s array("type")="fromGTM3"
+ . s array("password")="keepThisSecret!"
+ . s array("recipients")="bySessionValue"
+ . s array("session",1,"name")="username"
+ . s array("session",1,"value")="zzg38984"
+ . s array("session",2,"name")="ewd_appName"
+ . s array("session",2,"value")="portal"
+ . s array("message","x")=123
+ . s array("message","y","z")="hello world"
+ d ewdLiteMessage^%zewdNode(.array,port)
+ QUIT
  ;
