@@ -2938,7 +2938,7 @@ int mgwsi_db_receive_ex(MGWSIREQ *lp_request, unsigned char * data, int size, sh
 
          n = MGWSI_NET_RECV(lp_request->lp_mgwsicon->sockfd, data + len, size - len, 0);
 
-         if (n < 0) {
+         if (n < 1) { /*DLW changed to 1*/
             len = n;
             break;
          }

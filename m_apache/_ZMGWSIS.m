@@ -287,7 +287,7 @@ CHILD3 ; Read Request
 CHILDE ; Error
  d EVENT($ZS)
  i $ZS["READ" g HALT
- i $ze["%GTM-E-IOEOF" g HALT
+ i $ZS["%GTM-E-IOEOF" g HALT ; DLW changed to $ZS
  G CHILD2
  ;
 HALT ; Halt
