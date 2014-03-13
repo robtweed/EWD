@@ -1,7 +1,7 @@
 /*
    ----------------------------------------------------------------------------
    | m_apache                                                                 |
-   | Copyright (c) 2004-2009 M/Gateway Developments Ltd,                      |
+   | Copyright (c) 2004-2014 M/Gateway Developments Ltd,                      |
    | Surrey UK.                                                               |
    | All rights reserved.                                                     |
    |                                                                          |
@@ -89,6 +89,7 @@
       Apache v1.3.x: m_apache13.so
       Apache v2.0.x: m_apache2.so
       Apache v2.2.x: m_apache22.so
+      Apache v2.4.x: m_apache24.so
 
       Apache must be instructed to load the m_apache module using the following directive:
 
@@ -249,6 +250,12 @@
             export gtmgbldir=mumps.gld
             $gtm_dist/mumps -r INETD^%ZMGWSIS
 
+
+            Depending on installation, you may also have to include values for gtmver and gtmdir. For example:
+
+            export gtmver=V6.0-002_x86
+            export gtmdir=/root/.fis-gtm
+
       1.4.  Restart the xinetd daemon.  For example, by issuing the following command:
 
             /etc/init.d/xinetd restart
@@ -279,6 +286,11 @@
             export gtmgbldir=mumps.gld
             $gtm_dist/mumps -r INETD^%ZMGWSIS
 
+            Depending on installation, you may also have to include values for gtmver and gtmdir. For example:
+
+            export gtmver=V6.0-002_x86
+            export gtmdir=/root/.fis-gtm
+
       2.4.  Restart the inetd daemon.  For example, by issuing the following command:
 
             /etc/init.d/inetd restart
@@ -306,6 +318,88 @@
       the TEST^WEB() function for onward processing.
 
          http://<web_server>/mypath/myfile.mgwsi
+
+
+   WebSocket Support
+   =================
+
+   WebSockets (RFC 6455) are supported for build 50 (and later) of this module together with Apache v2.2 (and later).
+   Also, you need build 11 (or later) of the %ZMGWSIS routine.  To check the version/build you have, run %ZMGWSIS:
+
+      GTM>Do ^%ZMGWSIS
+
+      M/Gateway Developments Ltd - Service Integration Gateway
+      Version: 2.2; Revision 11 (9 December 2013)
+
+   Use the 'MGWSI_M_WS_SERVER' environment variable to define the M routine representing the WebSocket Server.  For example:
+
+      SetEnv MGWSI_M_WS_SERVER WS^%ZMGWSIS
+
+   Study embedded sample WS^%ZMGWSIS to see how WebSocket servers are created.
+
+   It is recommended that you experiment with the embedded sample (a simple WebSocket echo) before creating WebSocket applications of your own.
+   The procedure for running the sample is as follows.
+
+   1. Configure the Apache server to use WebSocket server WS^%ZMGWSIS for your path (/mypath/):
+
+      <Location /mypath>
+         SetEnv MGWSI_M_FUNCTION WEB^%ZMGWSIS
+         SetEnv MGWSI_M_WS_SERVER WS^%ZMGWSIS
+      </Location>
+
+   2. Create the following HTML file (ws.html) in your Documents Root (/htdocs):
+   
+      <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+      <html>
+      <head>
+         <title>WebSocket Echo</title>
+         <script type="text/javascript">
+         <!--
+            var ws;
+
+            if ((typeof(WebSocket) == 'undefined') && (typeof(MozWebSocket) != 'undefined')) {
+               WebSocket = MozWebSocket;
+            }
+
+            function init() {
+               ws = new WebSocket(((window.location.protocol == "https:") ? "wss:" : "ws:") + "//" + window.location.host + "/mypath/wstest.mgwsi");
+               ws.onopen = function(event) {
+                  document.getElementById("main").style.visibility = "visible";
+                  document.getElementById("connected").innerHTML = "Connected to WebSocket server";
+               };
+               ws.onmessage = function(event) {
+                  document.getElementById("output").innerHTML = event.data;
+               };
+               ws.onerror = function(event) { alert("Received error"); };
+               ws.onclose = function(event) {
+                  ws = null;
+                  document.getElementById("main").style.visibility = "hidden";
+                  document.getElementById("connected").innerHTML = "Connection Closed";
+               }
+            }
+
+            function send(message) {
+               if (ws) {
+                  ws.send(message);
+               }
+            }
+         // -->
+         </script>
+      </head>
+      <body onload="init();">
+         <h1>WebSocket Echo</h1>
+         <div id="connected">Not Connected</div>
+         <div id="main" style="visibility:hidden">
+         Enter Message: <input type="text" name="message" value="" size="80" onchange="send(this.value)"/><br/>
+         Server says... <div id="output"></div>
+         </div>
+      </body>
+      </html>
+
+
+   3. Run the sample:
+
+         http://<web_server>/ws.html
 
 
    Encryption functions
@@ -393,18 +487,25 @@
 v2.0.49: 1 July 2009:
    Persistence for [x]inetd support
 
+v2.2.50: 16 December 2013:
+   WebSocket support
+   - WebSocket Server: SetEnv MGWSI_M_WS_SERVER WS^%ZMGWSIS
+
 */
 
-#define MGWSI_VERSION               "2.0.49"
-#define MGWSI_CLIENT_BUILD          49
+#define MGWSI_VERSION               "2.2.50"
+#define MGWSI_CLIENT_BUILD          50
 #define MGWSI_CLIENT_TYPE           "m_apache"
 
 #define MGWSI_SERVER                "127.0.0.1"
 #define MGWSI_PORT                  7040
 
+#define MGWSI_DEBUG                 0
+
 #define MGWSI_M_SERVER              "LOCAL"
 #define MGWSI_M_UCI                 ""
 #define MGWSI_M_FUNCTION            "WEB^%ZMGWSIS"
+#define MGWSI_M_WS_SERVER           "WS^%ZMGWSIS"
 
 #define MGWSI_SSL                   1
 #define MGWSI_SSL_SO                1
@@ -477,6 +578,7 @@ v2.0.49: 1 July 2009:
 #define MGWSI_LOG_FILE              "/tmp/m_apache.log"
 #endif
 
+#define CORE_PRIVATE
 
 #ifdef _WIN32
 #ifdef MGWSI_WINSOCK2
@@ -498,9 +600,16 @@ v2.0.49: 1 July 2009:
 #if !defined(APACHE_RELEASE)
 #include "http_request.h"
 #include "http_connection.h"
+
+#include "apr_base64.h"
+#include "apr_sha1.h"
+#include "util_ebcdic.h"
+
 #include "apr_strings.h"
 #if defined(AP_SERVER_MAJORVERSION_NUMBER) && defined(AP_SERVER_MINORVERSION_NUMBER)
-#if AP_SERVER_MAJORVERSION_NUMBER >= 2 && AP_SERVER_MINORVERSION_NUMBER >= 2
+#if AP_SERVER_MAJORVERSION_NUMBER >= 2 && AP_SERVER_MINORVERSION_NUMBER >= 4
+#define MGWSI_APACHE_VERSION       24
+#elif AP_SERVER_MAJORVERSION_NUMBER >= 2 && AP_SERVER_MINORVERSION_NUMBER >= 2
 #define MGWSI_APACHE_VERSION        22
 #else
 #define MGWSI_APACHE_VERSION        20
@@ -539,6 +648,7 @@ v2.0.49: 1 July 2009:
 #include <fcntl.h>
 #include <netdb.h>
 #include <netinet/in.h>
+#include <netinet/tcp.h>
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <errno.h>
@@ -597,6 +707,7 @@ v2.0.49: 1 July 2009:
 #define MGWSI_SEND_HTTP_HEADER            send_http_header
 #define MGWSI_GET_MODULE_CONFIG           get_module_config
 #else
+
 #if MGWSI_APACHE_VERSION >= 20
 typedef apr_pool_t                        pool;
 typedef apr_table_t                       table;
@@ -644,6 +755,232 @@ typedef apr_table_t                       table;
 #define MGWSI_SEND_HTTP_HEADER            ap_send_http_header
 #define MGWSI_GET_MODULE_CONFIG           ap_get_module_config
 #endif
+
+#if MGWSI_APACHE_VERSION >= 22
+#if APR_HAS_THREADS || defined(DOXYGEN)
+#define MGWSI_WEBSOCKETS                  1
+#endif
+#endif
+
+/* WebSockets constants */
+
+#define MGWSI_WS_BLOCK_DATA_SIZE              4096
+
+#define MGWSI_WS_DATA_FRAMING_MASK               0
+#define MGWSI_WS_DATA_FRAMING_START              1
+#define MGWSI_WS_DATA_FRAMING_PAYLOAD_LENGTH     2
+#define MGWSI_WS_DATA_FRAMING_PAYLOAD_LENGTH_EXT 3
+#define MGWSI_WS_DATA_FRAMING_EXTENSION_DATA     4
+#define MGWSI_WS_DATA_FRAMING_APPLICATION_DATA   5
+#define MGWSI_WS_DATA_FRAMING_CLOSE              6
+
+#define MGWSI_WS_FRAME_GET_FIN(BYTE)         (((BYTE) >> 7) & 0x01)
+#define MGWSI_WS_FRAME_GET_RSV1(BYTE)        (((BYTE) >> 6) & 0x01)
+#define MGWSI_WS_FRAME_GET_RSV2(BYTE)        (((BYTE) >> 5) & 0x01)
+#define MGWSI_WS_FRAME_GET_RSV3(BYTE)        (((BYTE) >> 4) & 0x01)
+#define MGWSI_WS_FRAME_GET_OPCODE(BYTE)      ( (BYTE)       & 0x0F)
+#define MGWSI_WS_FRAME_GET_MASK(BYTE)        (((BYTE) >> 7) & 0x01)
+#define MGWSI_WS_FRAME_GET_PAYLOAD_LEN(BYTE) ( (BYTE)       & 0x7F)
+
+#define MGWSI_WS_FRAME_SET_FIN(BYTE)         (((BYTE) & 0x01) << 7)
+#define MGWSI_WS_FRAME_SET_OPCODE(BYTE)       ((BYTE) & 0x0F)
+#define MGWSI_WS_FRAME_SET_MASK(BYTE)        (((BYTE) & 0x01) << 7)
+#define MGWSI_WS_FRAME_SET_LENGTH(X64, IDX)  (unsigned char)(((X64) >> ((IDX)*8)) & 0xFF)
+
+#define MGWSI_WS_OPCODE_CONTINUATION 0x0
+#define MGWSI_WS_OPCODE_TEXT         0x1
+#define MGWSI_WS_OPCODE_BINARY       0x2
+#define MGWSI_WS_OPCODE_CLOSE        0x8
+#define MGWSI_WS_OPCODE_PING         0x9
+#define MGWSI_WS_OPCODE_PONG         0xA
+
+#define MGWSI_WS_WEBSOCKET_GUID "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
+#define MGWSI_WS_WEBSOCKET_GUID_LEN 36
+
+#define MGWSI_WS_STATUS_CODE_OK                1000
+#define MGWSI_WS_STATUS_CODE_GOING_AWAY        1001
+#define MGWSI_WS_STATUS_CODE_PROTOCOL_ERROR    1002
+#define MGWSI_WS_STATUS_CODE_RESERVED          1004 /* Protocol 8: frame too large */
+#define MGWSI_WS_STATUS_CODE_INVALID_UTF8      1007
+#define MGWSI_WS_STATUS_CODE_POLICY_VIOLATION  1008
+#define MGWSI_WS_STATUS_CODE_MESSAGE_TOO_LARGE 1009
+#define MGWSI_WS_STATUS_CODE_INTERNAL_ERROR    1011
+
+#define MGWSI_WS_MESSAGE_TYPE_INVALID  -1
+#define MGWSI_WS_MESSAGE_TYPE_TEXT      0
+#define MGWSI_WS_MESSAGE_TYPE_BINARY  128
+#define MGWSI_WS_MESSAGE_TYPE_CLOSE   255
+#define MGWSI_WS_MESSAGE_TYPE_PING    256
+#define MGWSI_WS_MESSAGE_TYPE_PONG    257
+
+#if !defined(APR_ARRAY_IDX)
+#define APR_ARRAY_IDX(ary,i,type) (((type *)(ary)->elts)[i])
+#endif
+#if !defined(APR_ARRAY_PUSH)
+#define APR_ARRAY_PUSH(ary,type) (*((type *)apr_array_push(ary)))
+#endif
+
+#define S0 0x000
+#define T1 0x100
+#define T2 0x200
+#define S1 0x300
+#define S2 0x400
+#define T3 0x500
+#define S3 0x600
+#define S4 0x700
+#define ER 0x800
+
+#define UTF8_VALID   0x000
+#define UTF8_INVALID 0x800
+
+static const unsigned short validate_utf8[2048] = {
+   /* S0 (0x000) */
+   S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0, /* %x00-0F */
+   S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0, /* %x10-1F */
+   S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0, /* %x20-2F */
+   S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0, /* %x30-3F */
+   S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0, /* %x40-4F */
+   S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0, /* %x50-5F */
+   S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0, /* %x60-6F */
+   S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0, /* %x70-7F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x80-8F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x90-9F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %xA0-AF */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %xB0-BF */
+   ER,ER,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1, /* %xC0-CF */
+   T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1, /* %xD0-DF */
+   S1,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,S2,T2,T2, /* %xE0-EF */
+   S3,T3,T3,T3,S4,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %xF0-FF */
+   /* T1 (0x100) */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x00-0F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x10-1F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x20-2F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x30-3F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x40-4F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x50-5F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x60-6F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x70-7F */
+   S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0, /* %x80-8F */
+   S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0, /* %x90-9F */
+   S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0, /* %xA0-AF */
+   S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0,S0, /* %xB0-BF */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %xC0-CF */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %xD0-DF */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %xE0-EF */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %xF0-FF */
+   /* T2 (0x200) */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x00-0F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x10-1F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x20-2F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x30-3F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x40-4F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x50-5F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x60-6F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x70-7F */
+   T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1, /* %x80-8F */
+   T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1, /* %x90-9F */
+   T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1, /* %xA0-AF */
+   T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1, /* %xB0-BF */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %xC0-CF */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %xD0-DF */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %xE0-EF */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %xF0-FF */
+   /* S1 (0x300) */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x00-0F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x10-1F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x20-2F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x30-3F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x40-4F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x50-5F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x60-6F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x70-7F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x80-8F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x90-9F */
+   T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1, /* %xA0-AF */
+   T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1, /* %xB0-BF */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %xC0-CF */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %xD0-DF */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %xE0-EF */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %xF0-FF */
+   /* S2 (0x400) */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x00-0F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x10-1F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x20-2F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x30-3F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x40-4F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x50-5F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x60-6F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x70-7F */
+   T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1, /* %x80-8F */
+   T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1,T1, /* %x90-9F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %xA0-AF */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %xB0-BF */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %xC0-CF */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %xD0-DF */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %xE0-EF */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %xF0-FF */
+   /* T3 (0x500) */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x00-0F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x10-1F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x20-2F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x30-3F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x40-4F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x50-5F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x60-6F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x70-7F */
+   T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2, /* %x80-8F */
+   T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2, /* %x90-9F */
+   T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2, /* %xA0-AF */
+   T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2, /* %xB0-BF */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %xC0-CF */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %xD0-DF */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %xE0-EF */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %xF0-FF */
+   /* S3 (0x600) */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x00-0F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x10-1F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x20-2F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x30-3F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x40-4F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x50-5F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x60-6F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x70-7F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x80-8F */
+   T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2, /* %x90-9F */
+   T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2, /* %xA0-AF */
+   T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2, /* %xB0-BF */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %xC0-CF */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %xD0-DF */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %xE0-EF */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %xF0-FF */
+   /* S4 (0x700) */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x00-0F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x10-1F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x20-2F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x30-3F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x40-4F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x50-5F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x60-6F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x70-7F */
+   T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2,T2, /* %x80-8F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %x90-9F */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %xA0-AF */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %xB0-BF */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %xC0-CF */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %xD0-DF */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %xE0-EF */
+   ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER,ER, /* %xF0-FF */
+};
+
+#undef S0
+#undef T1
+#undef T2
+#undef S1
+#undef S2
+#undef T3
+#undef S3
+#undef S4
+#undef ER
 
 
 #ifdef MGWSI_WINSOCK2
@@ -728,8 +1065,8 @@ typedef struct tagMGWSIWINSOCK {
    LPFN_GETADDRINFO              p_getaddrinfo;
    LPFN_FREEADDRINFO             p_freeaddrinfo;
 #else
-   LPVOID                        p_getaddrinfo;
-   LPVOID                        p_freeaddrinfo;
+   void *                        p_getaddrinfo;
+   void *                        p_freeaddrinfo;
 #endif
    LPFN_HTONS                    p_htons;
    LPFN_HTONL                    p_htonl;
@@ -935,6 +1272,45 @@ typedef struct tagMGWSICON {
 } MGWSICON, *LPMGWSICON;
 
 
+typedef struct tagMGWSIWS {
+   short                status;
+   int                  closing;
+
+   int                  input_buffer_size;
+   unsigned char *      input_buffer;
+   int                  output_buffer_size;
+   unsigned char *      output_buffer;
+
+#if defined(MGWSI_WEBSOCKETS)
+   apr_int64_t          protocol_version;
+   request_rec *        r;
+   apr_bucket_brigade * obb;
+   ap_filter_t *        of;
+   apr_thread_mutex_t * mutex;
+   apr_array_header_t * protocols;
+#endif
+
+} MGWSIWS, *LPMGWSIWS;
+
+
+typedef struct tagMGWSIWSFD {
+#if defined(MGWSI_WEBSOCKETS)
+   apr_uint64_t      application_data_offset;
+#endif
+   unsigned char *   application_data;
+   unsigned char     fin;
+   unsigned char     opcode;
+   unsigned int      utf8_state;
+} MGWSIWSFD, *LPMGWSIWSFD;
+
+#if defined(MGWSI_WEBSOCKETS)
+typedef struct tagMGWSIWSHD {
+   ap_filter_t *        f;
+   apr_bucket_brigade * bb;
+} MGWSIWSHD, *LPMGWSIWSHD;
+#endif
+
+
 typedef struct tagMGWSIREQ {
    int               h_db;
    LPMGWSICON        lp_mgwsicon;
@@ -968,8 +1344,34 @@ typedef struct tagMGWSIREQ {
    char              base_uci[128];
    char              uci[128];
    char              fun[128];
+   char              ws_fun[128];
    LPMGWSIBUF        lp_trans_buffer;
+
+   LPMGWSIWS         lp_websocket;
+   unsigned char     websocket_upgrade;
+
 } MGWSIREQ, *LPMGWSIREQ;
+
+
+#if defined(_WIN32)
+#define MGWSI_THREAD_TYPE           DWORD WINAPI
+#define MGWSI_THREAD_RETURN         result
+typedef LPTHREAD_START_ROUTINE      MGWSI_THREAD_START_ROUTINE;
+#else
+#define MGWSI_THREAD_TYPE           void *
+#define MGWSI_THREAD_RETURN         NULL
+typedef void  *(*MGWSI_THREAD_START_ROUTINE) (void *arg);
+#endif
+
+typedef struct tagMGWSITC {
+   unsigned long     thread_id;
+#if defined(_WIN32)
+   DWORD             stack_size;
+   HANDLE            hThread;
+#else
+   int               stack_size;
+#endif
+} MGWSITC, *LPMGWSITC;
 
 
 static int                    request_no           = 0;
@@ -989,66 +1391,90 @@ static apr_thread_mutex_t *   mgwsicon_lock        = NULL;
 #endif
 
 #if MGWSI_APACHE_VERSION >= 20
-static apr_status_t     mgwsi_child_exit              (void *data);
+static apr_status_t     mgwsi_child_exit                    (void *data);
 #else
-static void             mgwsi_child_exit              (server_rec *s, pool *p);
+static void             mgwsi_child_exit                    (server_rec *s, pool *p);
 #endif
-static const char *     mgwsi_cmd                     (cmd_parms *cmd, void *dconf, const char *args);
+static const char *     mgwsi_cmd                           (cmd_parms *cmd, void *dconf, const char *args);
 
-
-int                     mgwsi_check_file_type         (MGWSIREQ *lp_request, char *type);
-int                     mgwsi_get_configuration       (MGWSIREQ *lp_request);
-int                     mgwsi_db_connect              (MGWSIREQ *lp_request, short context);
-int                     mgwsi_db_connect_ex           (MGWSIREQ *lp_request);
-int                     mgwsi_db_disconnect           (MGWSIREQ *lp_request, short context);
-int                     mgwsi_db_disconnect_ex        (MGWSIREQ *lp_request);
-int                     mgwsi_db_send                 (MGWSIREQ *lp_request, LPMGWSIBUF lp_trans_buffer, int mode);
-int                     mgwsi_db_receive              (MGWSIREQ *lp_request, LPMGWSIBUF lp_trans_buffer, int size, int mode);
-int                     mgwsi_db_receive_ex           (MGWSIREQ *lp_request, unsigned char * data, int size, short mode);
-int                     mgwsi_db_connect_init         (MGWSIREQ *lp_request);
-int                     mgwsi_db_ayt                  (MGWSIREQ *lp_request);
-int                     mgwsi_send_response_header    (MGWSIREQ *lp_request, char *header, short keepalive, short web_server_headers, short context);
-int                     mgwsi_system_function         (MGWSIREQ *lp_request);
-int                     mgwsi_return_error            (MGWSIREQ *lp_request, char *error);
-int                     mgwsi_client_send             (MGWSIREQ *lp_request, void *buffer, int size, short context);
-int                     mgwsi_server_variable         (void *rec, const char *key, const char *value);
-int                     mgwsi_get_server_variable     (MGWSIREQ *lp_request, char *VariableName, LPMGWSIBUF lp_cgi_buffer);
-int                     mgwsi_get_req_vars            (MGWSIREQ *lp_request, LPMGWSIBUF lp_cgi_buffer);
-int                     mgwsi_mem_init                (LPMGWSIBUF lp_mem_obj, int size, int increment_size);
-int                     mgwsi_mem_free                (LPMGWSIBUF lp_mem_obj);
-int                     mgwsi_mem_cpy                 (LPMGWSIBUF lp_mem_obj, char * buffer, unsigned long size);
-int                     mgwsi_mem_cat                 (LPMGWSIBUF lp_mem_obj, char * buffer, unsigned long size);
-int                     mgwsi_u_case                  (char *string);
-int                     mgwsi_l_case                  (char *string);
-int                     mgwsi_sleep                   (unsigned long msecs);
-int                     mgwsi_log_event               (char *event, char *title);
-int                     mgwsi_log                     (MGWSIREQ *lp_request, char *buffer, int size);
-int                     mgwsi_request_header          (MGWSIREQ *lp_request, LPMGWSIBUF lp_trans_buffer, char *command);
-int                     mgwsi_parse_query_string      (MGWSIREQ *lp_request, LPMGWSIBUF lp_trans_buffer, LPMGWSIBUF lp_temp_buffer, unsigned char *query_string, int size);
-int                     mgwsi_url_unescape            (char *target);
-int                     mgwsi_request_add             (MGWSIREQ *lp_request, LPMGWSIBUF lp_trans_buffer, unsigned char *element, int size, short byref, short type);
-int                     mgwsi_pow                     (int n10, int power);
-int                     mgwsi_encode_size64           (int n10);
-int                     mgwsi_decode_size64           (int nxx);
-int                     mgwsi_encode_size             (unsigned char *esize, int size, short base);
-int                     mgwsi_decode_size             (unsigned char *esize, int len, short base);
-int                     mgwsi_encode_item_header      (unsigned char * head, int size, short byref, short type);
-int                     mgwsi_decode_item_header      (unsigned char * head, int * size, short * byref, short * type);
-unsigned long           mgwsi_proc_id                 (void);
-double                  mgwsi_get_time                (char * timestr);
-char                    mgwsi_b64_ntc                 (unsigned char n);
-unsigned char           mgwsi_b64_ctn                 (char c);
-int                     mgwsi_b64_encode              (char *from, char *to, int length, int quads);
-int                     mgwsi_b64_decode              (char *from, char *to, int length);
-int                     mgwsi_b64_enc_buffer_size     (int l, int q);
-int                     mgwsi_b64_strip_enc_buffer    (char *buf, int length);
-int                     mgwsi_load_net_library        (short context);
-int                     mgwsi_unload_net_library      (short context);
-int                     mgwsi_load_ssl_library        (short context);
-int                     mgwsi_unload_ssl_library      (short context);
-int                     mgwsi_so_load                 (MGWSISO *p_mgwsiso, char * library);
-MGWSIPROC               mgwsi_so_sym                  (MGWSISO *p_mgwsiso, char * symbol);
-int                     mgwsi_so_unload               (MGWSISO *p_mgwsiso);
+static size_t           mgwsi_ws_protocol_count             (MGWSIREQ *lp_request);
+static const char *     mgwsi_ws_protocol_index             (MGWSIREQ *lp_request, const size_t index);
+static void             mgwsi_ws_protocol_set               (MGWSIREQ *lp_request, const char *protocol);
+static void             mgwsi_ws_handshake                  (MGWSIREQ *lp_request, const char *key);
+static void             mgwsi_ws_parse_protocol             (MGWSIREQ *lp_request, const char *sec_websocket_protocol);
+static int              mgwsi_ws_send_header                (void *data, const char *key, const char *val);
+void                    mgwsi_ws_ap_send_interim_response   (request_rec *r, int send_headers);
+int                     mgwsi_ws_test_request               (MGWSIREQ *lp_request, LPMGWSIBUF lp_cgievar);
+int                     mgwsi_ws_client_send                (MGWSIREQ *lp_request, char *buffer, int len);
+size_t                  mgwsi_ws_client_send_block          (MGWSIREQ *lp_request, const int type, unsigned char *buffer, const size_t buffer_size);
+size_t                  mgwsi_ws_read_client_block          (MGWSIREQ *lp_request, char *buffer, size_t bufsiz);
+void                    mgwsi_ws_data_framing               (MGWSIREQ *lp_request);
+MGWSI_THREAD_TYPE       mgwsi_ws_read_from_db_async         (void *lp_parameters);
+int                     mgwsi_ws_db_send                    (MGWSIREQ *lp_request, unsigned char *data, int size, short type);
+int                     mgwsi_ws_db_receive                 (MGWSIREQ *lp_request, int *size, short *type);
+int                     mgwsi_check_file_type               (MGWSIREQ *lp_request, char *type);
+int                     mgwsi_get_configuration             (MGWSIREQ *lp_request);
+int                     mgwsi_db_connect                    (MGWSIREQ *lp_request, short context);
+int                     mgwsi_db_connect_ex                 (MGWSIREQ *lp_request);
+int                     mgwsi_db_disconnect                 (MGWSIREQ *lp_request, short context);
+int                     mgwsi_db_disconnect_ex              (MGWSIREQ *lp_request);
+int                     mgwsi_db_send                       (MGWSIREQ *lp_request, LPMGWSIBUF lp_trans_buffer, int mode);
+int                     mgwsi_db_send_ex                    (MGWSIREQ *lp_request, unsigned char * data, int size, int mode);
+int                     mgwsi_db_receive                    (MGWSIREQ *lp_request, LPMGWSIBUF lp_trans_buffer, int size, int mode);
+int                     mgwsi_db_receive_ex                 (MGWSIREQ *lp_request, unsigned char * data, int size, short mode);
+int                     mgwsi_db_connect_init               (MGWSIREQ *lp_request);
+int                     mgwsi_db_ayt                        (MGWSIREQ *lp_request);
+int                     mgwsi_send_response_header          (MGWSIREQ *lp_request, char *header, short keepalive, short web_server_headers, short context);
+int                     mgwsi_system_function               (MGWSIREQ *lp_request);
+int                     mgwsi_return_error                  (MGWSIREQ *lp_request, char *error);
+int                     mgwsi_client_send                   (MGWSIREQ *lp_request, void *buffer, int size, short context);
+int                     mgwsi_server_variable               (void *rec, const char *key, const char *value);
+int                     mgwsi_get_server_variable           (MGWSIREQ *lp_request, char *VariableName, LPMGWSIBUF lp_cgi_buffer);
+int                     mgwsi_get_req_vars                  (MGWSIREQ *lp_request, LPMGWSIBUF lp_cgi_buffer);
+int                     mgwsi_mem_init                      (LPMGWSIBUF lp_mem_obj, int size, int increment_size);
+int                     mgwsi_mem_free                      (LPMGWSIBUF lp_mem_obj);
+int                     mgwsi_mem_cpy                       (LPMGWSIBUF lp_mem_obj, char * buffer, unsigned long size);
+int                     mgwsi_mem_cat                       (LPMGWSIBUF lp_mem_obj, char * buffer, unsigned long size);
+int                     mgwsi_u_case                        (char *string);
+int                     mgwsi_l_case                        (char *string);
+int                     mgwsi_sleep                         (unsigned long msecs);
+int                     mgwsi_log_event                     (char *event, char *title);
+int                     mgwsi_log                           (MGWSIREQ *lp_request, char *buffer, int size);
+int                     mgwsi_request_header                (MGWSIREQ *lp_request, LPMGWSIBUF lp_trans_buffer, char *command);
+int                     mgwsi_parse_query_string            (MGWSIREQ *lp_request, LPMGWSIBUF lp_trans_buffer, LPMGWSIBUF lp_temp_buffer, unsigned char *query_string, int size);
+int                     mgwsi_url_unescape                  (char *target);
+int                     mgwsi_request_add                   (MGWSIREQ *lp_request, LPMGWSIBUF lp_trans_buffer, unsigned char *element, int size, short byref, short type);
+int                     mgwsi_pow                           (int n10, int power);
+int                     mgwsi_encode_size62                 (int n10);
+int                     mgwsi_decode_size62                 (int nxx);
+int                     mgwsi_encode_size                   (unsigned char *esize, int size, short base);
+int                     mgwsi_decode_size                   (unsigned char *esize, int len, short base);
+int                     mgwsi_encode_item_header            (unsigned char * head, int size, short byref, short type);
+int                     mgwsi_decode_item_header            (unsigned char * head, int * size, short * byref, short * type);
+int                     mgwsi_encode_ws_header              (unsigned char * head, int size, short type);
+int                     mgwsi_decode_ws_header              (unsigned char * head, int * size, short * type);
+unsigned long           mgwsi_proc_id                       (void);
+double                  mgwsi_get_time                      (char * timestr);
+char                    mgwsi_b64_ntc                       (unsigned char n);
+unsigned char           mgwsi_b64_ctn                       (char c);
+int                     mgwsi_b64_encode                    (char *from, char *to, int length, int quads);
+int                     mgwsi_b64_decode                    (char *from, char *to, int length);
+int                     mgwsi_b64_enc_buffer_size           (int l, int q);
+int                     mgwsi_b64_strip_enc_buffer          (char *buf, int length);
+int                     mgwsi_thread_create                 (LPMGWSITC lp_thread_control, MGWSI_THREAD_START_ROUTINE start_routine, void *arg);
+int                     mgwsi_thread_terminate              (LPMGWSITC lp_thread_control);
+int                     mgwsi_thread_detach                 (void);
+int                     mgwsi_thread_join                   (LPMGWSITC lp_thread_control);
+int                     mgwsi_thread_exit                   (void);
+unsigned long           mgwsi_get_current_tid               (void);
+unsigned long           mgwsi_get_current_pid               (void);
+int                     mgwsi_load_net_library              (short context);
+int                     mgwsi_unload_net_library            (short context);
+int                     mgwsi_load_ssl_library              (short context);
+int                     mgwsi_unload_ssl_library            (short context);
+int                     mgwsi_so_load                       (MGWSISO *p_mgwsiso, char * library);
+MGWSIPROC               mgwsi_so_sym                        (MGWSISO *p_mgwsiso, char * symbol);
+int                     mgwsi_so_unload                     (MGWSISO *p_mgwsiso);
 
 
 /* Process configuration directives (in httpd.conf) related to this module */
@@ -1123,14 +1549,14 @@ static const char *mgwsi_cmd(cmd_parms *cmd, void *dconf, const char *args)
 
 static int mgwsi_handler(request_rec *r)
 {
-   int retval, eod_found, n, len, send_mode;
+   int retval, eod_found, n, len, send_mode, upgrade_connection;
    long n1;
    short server_gone, client_gone, con_close, con_keepalive, keepalive, trans_enc_chunked, web_server_headers, tries, system_function;
    char buffer[8192];
    unsigned char *lp_content, *p;
    MGWSIREQ request, *lp_request;
-   MGWSIBUF cgi_buffer, trans_buffer, temp_buffer;
-   LPMGWSIBUF lp_cgi_buffer, lp_trans_buffer, lp_temp_buffer;
+   MGWSIBUF cgi_buffer, trans_buffer, temp_buffer, response_buffer;
+   LPMGWSIBUF lp_cgi_buffer, lp_trans_buffer, lp_temp_buffer, lp_response_buffer;
    MGWSISV mgwsisv;
    table *e = r->subprocess_env;
    time_t time_start, time_now, time_diff;
@@ -1156,12 +1582,13 @@ static int mgwsi_handler(request_rec *r)
    lp_request->chunked = 0;
 
    lp_request->lp_mgwsicon = NULL;
-
+   lp_request->lp_websocket = NULL;
    lp_request->lp_trans_buffer = NULL;
 
    server_gone = 0;
    client_gone = 0;
    system_function = 0;
+   upgrade_connection = 0;
 
    time_start = time(NULL);
 
@@ -1241,6 +1668,7 @@ static int mgwsi_handler(request_rec *r)
    lp_cgi_buffer = &cgi_buffer;
    lp_trans_buffer = &trans_buffer;
    lp_temp_buffer = &temp_buffer;
+   lp_response_buffer = &response_buffer;
 
    con_close = 0, con_keepalive = 0, keepalive = 0, trans_enc_chunked = 0, web_server_headers = 0;
    request_no ++;
@@ -1264,6 +1692,7 @@ static int mgwsi_handler(request_rec *r)
    mgwsi_mem_init(lp_cgi_buffer, MGWSI_BUFSIZE, 256);
    mgwsi_mem_init(lp_trans_buffer, MGWSI_BUFSIZE, 256);
    mgwsi_mem_init(lp_temp_buffer, MGWSI_BUFSIZE, 256);
+   mgwsi_mem_init(lp_response_buffer, 512, 256);
 
    lp_request->lp_cgi_buffer = lp_cgi_buffer;
 
@@ -1274,7 +1703,12 @@ static int mgwsi_handler(request_rec *r)
    mgwsi_mem_cpy(lp_trans_buffer, "", 0);
    mgwsi_request_header(lp_request, lp_trans_buffer, "W");
 
-   mgwsi_request_add(lp_request, lp_trans_buffer, lp_request->fun, strlen((char *) lp_request->fun), (short) 0, (short) MGWSI_TX_DATA);
+   if (lp_request->websocket_upgrade) {
+      mgwsi_request_add(lp_request, lp_trans_buffer, lp_request->ws_fun, strlen((char *) lp_request->ws_fun), (short) 0, (short) MGWSI_TX_DATA);
+   }
+   else {
+      mgwsi_request_add(lp_request, lp_trans_buffer, lp_request->fun, strlen((char *) lp_request->fun), (short) 0, (short) MGWSI_TX_DATA);
+   }
 
    mgwsi_request_add(lp_request, lp_trans_buffer, NULL, 0, 0, MGWSI_TX_AREC);
 
@@ -1312,6 +1746,167 @@ static int mgwsi_handler(request_rec *r)
    MGWSI_TABLE_DO(mgwsi_server_variable, (void *) &mgwsisv, e, NULL);
 
    mgwsi_request_add(lp_request, lp_trans_buffer, NULL, 0, 0, MGWSI_TX_EOD);
+
+#if !defined(MGWSI_WEBSOCKETS)
+   if (lp_request->websocket_upgrade) {
+      mgwsi_log_event("This build of m_apache does not support WebSockets for this Web Server", "WebSocket Error");
+      mgwsi_return_error(lp_request, "WebSocket Error: This build of m_apache does not support WebSockets");
+      goto mgwsi_handler_exit2;
+   }
+#endif
+
+#if defined(MGWSI_WEBSOCKETS)
+   upgrade_connection = mgwsi_ws_test_request(lp_request, lp_cgi_buffer);
+   if (upgrade_connection) {
+      /* TODO : Need to serialize the connections to minimize a denial of service attack */
+      int len;
+      unsigned long dw_size;
+      char header[2048];
+      char host[128];
+      char sec_websocket_key[256];
+      char token[256], hash[256], sec_websocket_accept[256];
+      int protocol_version = 0;
+      char sec_websocket_protocol[32];
+      ap_filter_t *input_filter;
+
+      len = 0;
+      dw_size = 0;
+      *header = '\0';
+      *sec_websocket_accept = '\0';
+      *sec_websocket_key = '\0';
+      *sec_websocket_protocol = '\0';
+      *token = '\0';
+      *hash = '\0';
+
+      len = mgwsi_get_server_variable(lp_request, "SERVER_NAME", lp_cgi_buffer);
+      strncpy(host, (char *) lp_cgi_buffer->lp_buffer, 120);
+      host[120] = '\0';
+
+      len = mgwsi_get_server_variable(lp_request, "HTTP_SEC_WEBSOCKET_KEY", lp_cgi_buffer);
+      strncpy(sec_websocket_key, (char *) lp_cgi_buffer->lp_buffer, 250);
+      sec_websocket_key[250] = '\0';
+
+      len = mgwsi_get_server_variable(lp_request, "HTTP_SEC_WEBSOCKET_PROTOCOL", lp_cgi_buffer);
+      strncpy(sec_websocket_protocol, (char *) lp_cgi_buffer->lp_buffer, 30);
+      sec_websocket_protocol[30] = '\0';
+
+      len = mgwsi_get_server_variable(lp_request, "HTTP_SEC_WEBSOCKET_VERSION", lp_cgi_buffer);
+      protocol_version = (int) strtol((char *) lp_cgi_buffer->lp_buffer, NULL, 10);
+
+      if (MGWSI_DEBUG) {
+         char buffer[2048];
+         sprintf(buffer, "host=%s; sec_websocket_key=%s; sec_websocket_protocol=%s; protocol_version=%d;", host, sec_websocket_key, sec_websocket_protocol, protocol_version);
+         mgwsi_log_event(buffer, "WebSocket Diagnostic: Start");
+      }
+
+      if ((*host) && (*sec_websocket_key) && ((protocol_version == 7) || (protocol_version == 8) || (protocol_version == 13))) {
+         /* const char *sec_websocket_origin = apr_table_get(pRCB->r->headers_in, "Sec-WebSocket-Origin"); */
+         /* const char *origin = apr_table_get(pRCB->r->headers_in, "Origin"); */
+         /* TODO : We need to validate the Host and Origin */
+
+         lp_request->lp_websocket = (LPMGWSIWS) malloc(sizeof(MGWSIWS));
+         lp_request->lp_websocket->status = 0;
+         lp_request->lp_websocket->closing = 0;
+
+         lp_request->lp_websocket->input_buffer_size = 0;
+         lp_request->lp_websocket->input_buffer = NULL;
+         lp_request->lp_websocket->output_buffer_size = 0;
+         lp_request->lp_websocket->output_buffer = NULL;
+
+         lp_request->lp_websocket->protocol_version = protocol_version;
+
+         lp_request->lp_websocket->r = lp_request->r;
+         lp_request->lp_websocket->obb = NULL;
+         lp_request->lp_websocket->mutex = NULL;
+         lp_request->lp_websocket->protocols = NULL;
+
+         if (MGWSI_DEBUG) {
+            char buffer[256];
+            sprintf(buffer, "WebSocket Diagnostic: Connection: Protocol=%d;", protocol_version);
+            mgwsi_log_event(lp_request->r->uri, buffer);
+         }
+
+         /*
+          * Since we are handling a WebSocket connection, not a standard HTTP
+          * connection, remove the HTTP input filter.
+          */
+         for (input_filter = lp_request->r->input_filters; input_filter != NULL; input_filter = input_filter->next) {
+            if ((input_filter->frec != NULL) && (input_filter->frec->name != NULL) && !strcasecmp(input_filter->frec->name, "http_in")) {
+               ap_remove_input_filter(input_filter);
+               break;
+            }
+         }
+
+         apr_table_clear(lp_request->r->headers_out);
+         apr_table_setn(lp_request->r->headers_out, "Upgrade", "websocket");
+         apr_table_setn(lp_request->r->headers_out, "Connection", "Upgrade");
+
+         /* Set the expected acceptance response */
+         mgwsi_ws_handshake(lp_request, sec_websocket_key);
+
+         /* Handle the WebSocket protocol */
+         if (sec_websocket_protocol != NULL) {
+            /* Parse the WebSocket protocol entry */
+            mgwsi_ws_parse_protocol(lp_request, sec_websocket_protocol);
+
+            if (mgwsi_ws_protocol_count(lp_request) > 0) {
+               /*
+                * Default to using the first protocol in the list
+                * (plugin should overide this in on_connect)
+                */
+
+               mgwsi_ws_protocol_set(lp_request, mgwsi_ws_protocol_index(lp_request, 0));
+            }
+         }
+
+         apr_thread_mutex_create(&(lp_request->lp_websocket->mutex), APR_THREAD_MUTEX_DEFAULT, lp_request->r->pool);
+         apr_thread_mutex_lock(lp_request->lp_websocket->mutex);
+
+         /*
+          * If the plugin supplies an on_connect function, it must
+          * return non-null on success
+          */
+          /*
+           * Now that the connection has been established,
+           * disable the socket timeout
+           */
+         apr_socket_timeout_set(ap_get_module_config(lp_request->r->connection->conn_config, &core_module), -1);
+
+         /* Set response status code and status line */
+         lp_request->r->status = HTTP_SWITCHING_PROTOCOLS;
+         lp_request->r->status_line = ap_get_status_line(lp_request->r->status);
+
+         /* Send the headers */
+
+         mgwsi_ws_ap_send_interim_response(lp_request->r, 1);
+
+         lp_request->websocket_upgrade = 2;
+
+         if (0) {
+            /* The main data framing loop */
+
+            mgwsi_ws_data_framing(lp_request);
+
+            apr_thread_mutex_unlock(lp_request->lp_websocket->mutex);
+
+            /* Disconnecting */
+            lp_request->r->connection->keepalive = AP_CONN_CLOSE;
+
+            /* Close the connection */
+            ap_lingering_close(lp_request->r->connection);
+            apr_thread_mutex_destroy(lp_request->lp_websocket->mutex);
+
+            if (MGWSI_DEBUG) {
+               char buffer[256];
+               sprintf(buffer, "WebSocket Diagnostic: Disconnection: Protocol=%d;", protocol_version);
+               mgwsi_log_event(lp_request->r->uri, buffer);
+            }
+
+            goto mgwsi_handler_exit2;
+         }
+      }
+   }
+#endif /* #if defined(MGWSI_WEBSOCKETS) */
 
    lp_request->dbcon_status = mgwsi_db_connect(lp_request, 0);
 
@@ -1513,6 +2108,7 @@ retry:
 
    lp_content = NULL;
    mgwsi_mem_cpy(lp_cgi_buffer, "", 0);
+
    for (;;) {
       n = mgwsi_db_receive(lp_request, lp_temp_buffer, MGWSI_BUFSIZE, 0);
 
@@ -1531,6 +2127,13 @@ retry:
          break;
       }
    }
+
+#if defined(MGWSI_WEBSOCKETS)
+   if (lp_request->lp_websocket) {
+      mgwsi_mem_cpy(lp_response_buffer, lp_cgi_buffer->lp_buffer, lp_cgi_buffer->data_size);
+      goto mgwsi_handler_websockets;
+   }
+#endif
 
    if (server_gone)
       goto retry;
@@ -1690,6 +2293,87 @@ retry:
    }
 
 
+   /* WebSockets */
+mgwsi_handler_websockets:
+
+#if defined(MGWSI_WEBSOCKETS)
+   if (lp_request->lp_websocket) {
+      unsigned char ok;
+      int n, result;
+      MGWSITC thread_control;
+
+      if (MGWSI_DEBUG) {
+         mgwsi_log_event(lp_response_buffer->lp_buffer, "WebSockets Diagnostic: Response");
+      }
+
+      ok = 0;
+      if (strstr((char *) lp_response_buffer->lp_buffer, "HTTP/1.1 200"))
+         ok = 1;
+
+      if (ok) {
+         lp_request->lp_websocket->status = 1;
+
+         /* The main data framing loop */
+
+         thread_control.stack_size = 0;
+         n = mgwsi_thread_create((LPMGWSITC) &thread_control, (MGWSI_THREAD_START_ROUTINE) mgwsi_ws_read_from_db_async, (void *) lp_request);
+
+         mgwsi_ws_data_framing(lp_request);
+         if (MGWSI_DEBUG) {
+            char buffer[256];
+            sprintf(buffer, "Has Returned from mgwsi_ws_data_framing(): lp_request->lp_websocket->status=%d", lp_request->lp_websocket->status);
+            mgwsi_log_event(buffer, "WebSockets Diagnostic");
+         }
+         if (lp_request->lp_websocket->status == 1) {
+
+            if (MGWSI_DEBUG) {
+               mgwsi_log_event("WebSocket Terminated by client", "WebSockets Diagnostic");
+            }
+
+            mgwsi_ws_db_send(lp_request, NULL, 0, MGWSI_TX_EOD);
+
+            server_gone = 1;
+         }
+
+         result = mgwsi_thread_terminate(&thread_control);
+         server_gone = 1;
+      }
+      else {
+         mgwsi_ws_client_send_block(lp_request, MGWSI_WS_MESSAGE_TYPE_CLOSE, (unsigned char *) "", 0);
+
+         if (MGWSI_DEBUG) {
+            mgwsi_log_event(lp_response_buffer->lp_buffer, "WebSocket Diagnostic: Error");
+         }
+
+         mgwsi_client_send(lp_request, lp_trans_buffer->lp_buffer, lp_trans_buffer->data_size, 0);
+
+         server_gone = 1;
+      }
+
+      apr_thread_mutex_unlock(lp_request->lp_websocket->mutex);
+
+      /* Disconnecting */
+      lp_request->r->connection->keepalive = AP_CONN_CLOSE;
+
+      /* Close the connection */
+      ap_lingering_close(lp_request->r->connection);
+      apr_thread_mutex_destroy(lp_request->lp_websocket->mutex);
+
+      if (MGWSI_DEBUG) {
+         char buffer[256];
+         if (lp_request->lp_websocket->status == 1)
+            sprintf(buffer, "WebSocket Diagnostic: Disconnection: Protocol=%d; Disconnected by Client;", (int) lp_request->lp_websocket->protocol_version);
+         else
+            sprintf(buffer, "WebSocket Diagnostic: Disconnection: Protocol=%d; Disconnected by Server;", (int) lp_request->lp_websocket->protocol_version);
+
+         mgwsi_log_event(lp_request->r->uri, buffer);
+      }
+
+      server_gone = 1;
+   }
+#endif /* #if defined(MGWSI_WEBSOCKETS) */
+
+
 mgwsi_handler_exit1:
 
    if (lp_request->lp_mgwsicon->con_type == MGWSI_CON_GATEWAY) {
@@ -1717,6 +2401,25 @@ mgwsi_handler_exit2:
    mgwsi_mem_free(lp_cgi_buffer);
    mgwsi_mem_free(lp_trans_buffer);
    mgwsi_mem_free(lp_temp_buffer);
+   mgwsi_mem_free(lp_response_buffer);
+
+   if (lp_request->lp_websocket) {
+
+      if (lp_request->lp_websocket->input_buffer) {
+         free((void *) lp_request->lp_websocket->input_buffer);
+         lp_request->lp_websocket->input_buffer = NULL;
+         lp_request->lp_websocket->input_buffer_size = 0;
+      }
+
+      if (lp_request->lp_websocket->output_buffer) {
+         free((void *) lp_request->lp_websocket->output_buffer);
+         lp_request->lp_websocket->output_buffer = NULL;
+         lp_request->lp_websocket->output_buffer_size = 0;
+      }
+
+      free((void *) lp_request->lp_websocket);
+      lp_request->lp_websocket = NULL;
+   }
 
    return OK;
 }
@@ -2044,6 +2747,746 @@ static void *mgwsi_merge_server_config(pool *p, void *server1_conf, void *server
 }
 
 
+#if defined(MGWSI_WEBSOCKETS)
+
+static size_t mgwsi_ws_protocol_count(MGWSIREQ *lp_request)
+{
+   size_t count = 0;
+
+   if ((lp_request->lp_websocket != NULL) && (lp_request->lp_websocket->protocols != NULL) && !apr_is_empty_array(lp_request->lp_websocket->protocols)) {
+      count = (size_t) lp_request->lp_websocket->protocols->nelts;
+   }
+   return count;
+}
+
+
+static const char * mgwsi_ws_protocol_index(MGWSIREQ *lp_request, const size_t index)
+{
+   if ((index >= 0) && (index < mgwsi_ws_protocol_count(lp_request))) {
+      return APR_ARRAY_IDX(lp_request->lp_websocket->protocols, index, char *);
+   }
+   return NULL;
+}
+
+static void mgwsi_ws_protocol_set(MGWSIREQ *lp_request, const char *protocol)
+{
+   if ((lp_request->lp_websocket != NULL) && (protocol != NULL)) {
+      MGWSIWS *state = lp_request->lp_websocket;
+
+      if ((state != NULL) && (state->r != NULL)) {
+         apr_table_setn(state->r->headers_out, "Sec-WebSocket-Protocol", apr_pstrdup(state->r->pool, protocol));
+      }
+   }
+   return;
+}
+
+
+/*
+ * Base64-encode the SHA-1 hash of the client-supplied key with the WebSocket
+ * GUID appended to it.
+ */
+static void mgwsi_ws_handshake(MGWSIREQ *lp_request, const char *key)
+{
+   MGWSIWS *state = lp_request->lp_websocket;
+   apr_byte_t response[32];
+   apr_byte_t digest[APR_SHA1_DIGESTSIZE];
+   apr_sha1_ctx_t context;
+   int len;
+
+   apr_sha1_init(&context);
+   apr_sha1_update(&context, key, strlen(key));
+   apr_sha1_update(&context, MGWSI_WS_WEBSOCKET_GUID, MGWSI_WS_WEBSOCKET_GUID_LEN);
+   apr_sha1_final(digest, &context);
+
+   len = apr_base64_encode_binary((char *)response, digest, sizeof(digest));
+   response[len] = '\0';
+
+   apr_table_setn(state->r->headers_out, "Sec-WebSocket-Accept", apr_pstrdup(state->r->pool, (const char *)response));
+   return;
+}
+
+/*
+ * The client-supplied WebSocket protocol entry consists of a list of
+ * client-side supported protocols. Parse the list, and create an array
+ * containing those protocol names.
+ */
+static void mgwsi_ws_parse_protocol(MGWSIREQ *lp_request, const char *sec_websocket_protocol)
+{
+   MGWSIWS *state = lp_request->lp_websocket;
+   apr_array_header_t *protocols = apr_array_make(state->r->pool, 1, sizeof(char *));
+   char *protocol_state = NULL;
+   char *protocol = apr_strtok(apr_pstrdup(state->r->pool, sec_websocket_protocol), ", \t", &protocol_state);
+
+   while (protocol != NULL) {
+      APR_ARRAY_PUSH(protocols, char *) = protocol;
+      protocol = apr_strtok(NULL, ", \t", &protocol_state);
+   }
+   if (!apr_is_empty_array(protocols)) {
+      state->protocols = protocols;
+   }
+   return;
+}
+
+
+static int mgwsi_ws_send_header(void *data, const char *key, const char *val)
+{
+   ap_fputstrs(((MGWSIWSHD *) data)->f, ((MGWSIWSHD *) data)->bb, key, ": ", val, CRLF, NULL);
+   return 1;
+}
+
+void mgwsi_ws_ap_send_interim_response(request_rec *r, int send_headers)
+{
+#if 0
+
+   ap_send_interim_response(r, send_headers);
+
+#else
+
+   MGWSIWSHD x;
+   char *status_line = NULL;
+   request_rec *rr;
+
+   if (r->proto_num < 1001) {
+      /* don't send interim response to HTTP/1.0 Client */
+      return;
+   }
+   if (!ap_is_HTTP_INFO(r->status)) {
+      ap_log_rerror(APLOG_MARK, APLOG_DEBUG, 0, r, "Status is %d - not sending interim response", r->status);
+      return;
+   }
+
+   /* if we send an interim response, we're no longer in a state of
+    * expecting one.  Also, this could feasibly be in a subrequest,
+    * so we need to propagate the fact that we responded.
+    */
+   for (rr = r; rr != NULL; rr = rr->main) {
+      rr->expecting_100 = 0;
+   }
+
+   status_line = apr_pstrcat(r->pool, AP_SERVER_PROTOCOL, " ", r->status_line, CRLF, NULL);
+   ap_xlate_proto_to_ascii(status_line, strlen(status_line));
+
+   x.f = r->connection->output_filters;
+   x.bb = apr_brigade_create(r->pool, r->connection->bucket_alloc);
+
+   ap_fputs(x.f, x.bb, status_line);
+   if (send_headers) {
+      apr_table_do(mgwsi_ws_send_header, &x, r->headers_out, NULL);
+      apr_table_clear(r->headers_out);
+   }
+   ap_fputs(x.f, x.bb, CRLF);
+   ap_fflush(x.f, x.bb);
+   apr_brigade_destroy(x.bb);
+
+#endif
+
+   return;
+}
+
+
+int mgwsi_ws_test_request(MGWSIREQ *lp_request, LPMGWSIBUF lp_cgievar)
+{
+   short phase;
+   int upgrade_connection;
+
+   phase = 0;
+   upgrade_connection = 0;
+
+   if (lp_request->r && (lp_request->r->method_number == M_GET) && (lp_request->r->parsed_uri.path != NULL) && (lp_request->r->headers_in != NULL)) {
+      const char *upgrade = apr_table_get(lp_request->r->headers_in, "Upgrade");
+      const char *connection = apr_table_get(lp_request->r->headers_in, "Connection");
+
+      if ((upgrade != NULL) && (connection != NULL) && !strcasecmp(upgrade, "WebSocket")) {
+         upgrade_connection = !strcasecmp(connection, "Upgrade");
+         if (!upgrade_connection) {
+            char *token = ap_get_token(lp_request->r->pool, &connection, 0);
+
+            while (token && *token) { /* Parse the Connection value */
+
+               upgrade_connection = !strcasecmp(token, "Upgrade");
+               if (upgrade_connection) {
+                  break;
+               }
+               while (*connection == ';') {
+                  ++ connection;
+                  ap_get_token(lp_request->r->pool, &connection, 0); /* Skip parameters */
+               }
+               if (*connection ++ != ',') {
+                  break; /* Invalid without comma */
+               }
+               token = (*connection) ? ap_get_token(lp_request->r->pool, &connection, 0) : NULL;
+            }
+         }
+      }
+   }
+
+   return upgrade_connection;
+
+}
+
+
+int mgwsi_ws_client_send(MGWSIREQ *lp_request, char *buffer, int len)
+{
+   int result, n;
+   unsigned long dw_size;
+
+   result = 0;
+   dw_size = 0;
+   n = 0;
+
+   if (ap_fwrite(lp_request->lp_websocket->of, lp_request->lp_websocket->obb, (const char *) buffer, (apr_size_t) len) == APR_SUCCESS) { /* Payload Data */
+      result = len;
+   }
+
+   return result;
+}
+
+
+size_t mgwsi_ws_client_send_block(MGWSIREQ *lp_request, const int type, unsigned char *buffer, const size_t buffer_size)
+{
+   int result;
+   unsigned long dw_size;
+   apr_uint64_t payload_length = (apr_uint64_t) ((buffer != NULL) ? buffer_size : 0);
+   size_t written = 0;
+
+   result = 0;
+   dw_size = 0;
+
+   /* Deal with size more that 63 bits - FIXME */
+
+   if (lp_request->lp_websocket != NULL) {
+      MGWSIWS *state = lp_request->lp_websocket;
+
+      apr_thread_mutex_lock(state->mutex);
+
+      if ((state->r != NULL) && (state->obb != NULL) && !state->closing) {
+
+         unsigned char header[32];
+         size_t pos = 0;
+         unsigned char opcode;
+
+         state->of = state->r->connection->output_filters;
+
+         switch (type) {
+            case MGWSI_WS_MESSAGE_TYPE_TEXT:
+               opcode = MGWSI_WS_OPCODE_TEXT;
+               break;
+            case MGWSI_WS_MESSAGE_TYPE_BINARY:
+               opcode = MGWSI_WS_OPCODE_BINARY;
+               break;
+            case MGWSI_WS_MESSAGE_TYPE_PING:
+               opcode = MGWSI_WS_OPCODE_PING;
+               break;
+            case MGWSI_WS_MESSAGE_TYPE_PONG:
+               opcode = MGWSI_WS_OPCODE_PONG;
+               break;
+            case MGWSI_WS_MESSAGE_TYPE_CLOSE:
+            default:
+               state->closing = 1;
+               opcode = MGWSI_WS_OPCODE_CLOSE;
+               break;
+         }
+         header[pos++] = MGWSI_WS_FRAME_SET_FIN(1) | MGWSI_WS_FRAME_SET_OPCODE(opcode);
+         if (payload_length < 126) {
+            header[pos++] = MGWSI_WS_FRAME_SET_MASK(0) | MGWSI_WS_FRAME_SET_LENGTH(payload_length, 0);
+         }
+         else {
+            if (payload_length < 65536) {
+               header[pos++] = MGWSI_WS_FRAME_SET_MASK(0) | 126;
+            }
+            else {
+               header[pos++] = MGWSI_WS_FRAME_SET_MASK(0) | 127;
+               header[pos++] = MGWSI_WS_FRAME_SET_LENGTH(payload_length, 7);
+               header[pos++] = MGWSI_WS_FRAME_SET_LENGTH(payload_length, 6);
+               header[pos++] = MGWSI_WS_FRAME_SET_LENGTH(payload_length, 5);
+               header[pos++] = MGWSI_WS_FRAME_SET_LENGTH(payload_length, 4);
+               header[pos++] = MGWSI_WS_FRAME_SET_LENGTH(payload_length, 3);
+               header[pos++] = MGWSI_WS_FRAME_SET_LENGTH(payload_length, 2);
+            }
+            header[pos++] = MGWSI_WS_FRAME_SET_LENGTH(payload_length, 1);
+            header[pos++] = MGWSI_WS_FRAME_SET_LENGTH(payload_length, 0);
+         }
+
+         mgwsi_ws_client_send(lp_request, (char *) header, (int) pos); /* Header */
+         if (payload_length > 0) {
+            if (mgwsi_ws_client_send(lp_request, (char *) buffer, (int) buffer_size) > 0) { /* Payload Data */
+               written = buffer_size;
+            }
+         }
+         if (ap_fflush(state->of, state->obb) != APR_SUCCESS) {
+            written = 0;
+         }
+      }
+
+      apr_thread_mutex_unlock(state->mutex);
+   }
+
+   return written;
+}
+
+/*
+ * Read a buffer of data from the input stream.
+ */
+size_t mgwsi_ws_read_client_block(MGWSIREQ *lp_request, char *buffer, size_t bufsiz)
+{
+   apr_status_t rv;
+   apr_bucket_brigade *bb;
+   apr_size_t readbufsiz = 0;
+
+   bb = apr_brigade_create(lp_request->r->pool, lp_request->r->connection->bucket_alloc);
+   if (bb != NULL) {
+      if ((rv = ap_get_brigade(lp_request->r->input_filters, bb, AP_MODE_READBYTES, APR_BLOCK_READ, (apr_size_t) bufsiz)) == APR_SUCCESS) {
+         if ((rv = apr_brigade_flatten(bb, buffer, (apr_size_t *) &bufsiz)) == APR_SUCCESS) {
+            readbufsiz = (apr_size_t) bufsiz;
+         }
+      }
+      apr_brigade_destroy(bb);
+   }
+   return (size_t) readbufsiz;
+}
+
+
+/*
+ * The data framing handler requires that the server state mutex is locked by
+ * the caller upon entering this function. It will be locked when leaving too.
+ */
+void mgwsi_ws_data_framing(MGWSIREQ *lp_request)
+{
+   int result;
+   apr_int64_t payload_limit;
+   MGWSIWS *state = lp_request->lp_websocket;
+   request_rec *r = state->r;
+   apr_bucket_brigade *obb = apr_brigade_create(r->pool, r->connection->bucket_alloc);
+
+   result = 0;
+   payload_limit = 32 * 1024 * 1024;
+
+   if (obb != NULL) {
+      unsigned char block[MGWSI_WS_BLOCK_DATA_SIZE];
+      apr_int64_t block_size;
+      apr_int64_t extension_bytes_remaining = 0;
+      apr_int64_t payload_length = 0;
+      apr_int64_t mask_offset = 0;
+      int framing_state = MGWSI_WS_DATA_FRAMING_START;
+      int payload_length_bytes_remaining = 0;
+      int mask_index = 0, masking = 0;
+      unsigned char mask[4] = { 0, 0, 0, 0 };
+      unsigned char fin = 0, opcode = 0xFF;
+      MGWSIWSFD control_frame = { 0, NULL, 1, 8, UTF8_VALID };
+      MGWSIWSFD message_frame = { 0, NULL, 1, 0, UTF8_VALID };
+      MGWSIWSFD *frame = &control_frame;
+      unsigned short status_code = MGWSI_WS_STATUS_CODE_OK;
+      unsigned char status_code_buffer[2];
+
+      /* Allow the plugin to now write to the client */
+      state->obb = obb;
+      apr_thread_mutex_unlock(state->mutex);
+
+      while ((framing_state != MGWSI_WS_DATA_FRAMING_CLOSE) && ((block_size = mgwsi_ws_read_client_block(lp_request, (char *) block, sizeof(block))) > 0)) {
+         apr_int64_t block_offset = 0;
+
+         while (block_offset < block_size) {
+            switch (framing_state) {
+               case MGWSI_WS_DATA_FRAMING_START:
+                  /*
+                   * Since we don't currently support any extensions,
+                   * the reserve bits must be 0
+                   */
+                  if ((MGWSI_WS_FRAME_GET_RSV1(block[block_offset]) != 0) ||
+                      (MGWSI_WS_FRAME_GET_RSV2(block[block_offset]) != 0) ||
+                      (MGWSI_WS_FRAME_GET_RSV3(block[block_offset]) != 0)) {
+                     framing_state = MGWSI_WS_DATA_FRAMING_CLOSE;
+                     status_code = MGWSI_WS_STATUS_CODE_PROTOCOL_ERROR;
+                     break;
+                  }
+                  fin = MGWSI_WS_FRAME_GET_FIN(block[block_offset]);
+                  opcode = MGWSI_WS_FRAME_GET_OPCODE(block[block_offset++]);
+
+                  framing_state = MGWSI_WS_DATA_FRAMING_PAYLOAD_LENGTH;
+
+                  if (opcode >= 0x8) { /* Control frame */
+                     if (fin) {
+                        frame = &control_frame;
+                        frame->opcode = opcode;
+                        frame->utf8_state = UTF8_VALID;
+                     }
+                     else {
+                        framing_state = MGWSI_WS_DATA_FRAMING_CLOSE;
+                        status_code = MGWSI_WS_STATUS_CODE_PROTOCOL_ERROR;
+                        break;
+                     }
+                  }
+                  else { /* Message frame */
+                     frame = &message_frame;
+                     if (opcode) {
+                        if (frame->fin) {
+                           frame->opcode = opcode;
+                           frame->utf8_state = UTF8_VALID;
+                        }
+                        else {
+                           framing_state = MGWSI_WS_DATA_FRAMING_CLOSE;
+                           status_code = MGWSI_WS_STATUS_CODE_PROTOCOL_ERROR;
+                           break;
+                        }
+                     }
+                     else if (frame->fin || ((opcode = frame->opcode) == 0)) {
+                        framing_state = MGWSI_WS_DATA_FRAMING_CLOSE;
+                        status_code = MGWSI_WS_STATUS_CODE_PROTOCOL_ERROR;
+                        break;
+                     }
+                     frame->fin = fin;
+                  }
+                  payload_length = 0;
+                  payload_length_bytes_remaining = 0;
+
+                  if (block_offset >= block_size) {
+                     break; /* Only break if we need more data */
+                  }
+               case MGWSI_WS_DATA_FRAMING_PAYLOAD_LENGTH:
+                  payload_length = (apr_int64_t) MGWSI_WS_FRAME_GET_PAYLOAD_LEN(block[block_offset]);
+                  masking = MGWSI_WS_FRAME_GET_MASK(block[block_offset++]);
+
+                  if (payload_length == 126) {
+                     payload_length = 0;
+                     payload_length_bytes_remaining = 2;
+                  }
+                  else if (payload_length == 127) {
+                     payload_length = 0;
+                     payload_length_bytes_remaining = 8;
+                  }
+                  else {
+                     payload_length_bytes_remaining = 0;
+                  }
+                  if ((masking == 0) ||   /* Client-side mask is required */
+                      ((opcode >= 0x8) && /* Control opcodes cannot have a payload larger than 125 bytes */
+                      (payload_length_bytes_remaining != 0))) {
+                    framing_state = MGWSI_WS_DATA_FRAMING_CLOSE;
+                    status_code = MGWSI_WS_STATUS_CODE_PROTOCOL_ERROR;
+                    break;
+                  }
+                  else {
+                     framing_state = MGWSI_WS_DATA_FRAMING_PAYLOAD_LENGTH_EXT;
+                  }
+                  if (block_offset >= block_size) {
+                     break;  /* Only break if we need more data */
+                  }
+               case MGWSI_WS_DATA_FRAMING_PAYLOAD_LENGTH_EXT:
+                  while ((payload_length_bytes_remaining > 0) && (block_offset < block_size)) {
+                     payload_length *= 256;
+                     payload_length += block[block_offset++];
+                     payload_length_bytes_remaining--;
+                  }
+                  if (payload_length_bytes_remaining == 0) {
+                     if ((payload_length < 0) ||
+                         (payload_length > payload_limit)) {
+                        /* Invalid payload length */
+                        framing_state = MGWSI_WS_DATA_FRAMING_CLOSE;
+                        status_code = (state->protocol_version >= 13) ? MGWSI_WS_STATUS_CODE_MESSAGE_TOO_LARGE : MGWSI_WS_STATUS_CODE_RESERVED;
+                        break;
+                      }
+                      else if (masking != 0) {
+                         framing_state = MGWSI_WS_DATA_FRAMING_MASK;
+                      }
+                      else {
+                         framing_state = MGWSI_WS_DATA_FRAMING_EXTENSION_DATA;
+                         break;
+                      }
+                  }
+                  if (block_offset >= block_size) {
+                     break;  /* Only break if we need more data */
+                  }
+               case MGWSI_WS_DATA_FRAMING_MASK:
+                  while ((mask_index < 4) && (block_offset < block_size)) {
+                     mask[mask_index++] = block[block_offset++];
+                  }
+                  if (mask_index == 4) {
+                     framing_state = MGWSI_WS_DATA_FRAMING_EXTENSION_DATA;
+                     mask_offset = 0;
+                     mask_index = 0;
+                     if ((mask[0] == 0) && (mask[1] == 0) && (mask[2] == 0) && (mask[3] == 0)) {
+                        masking = 0;
+                     }
+                  }
+                  else {
+                     break;
+                  }
+                  /* Fall through */
+               case MGWSI_WS_DATA_FRAMING_EXTENSION_DATA:
+                  /* Deal with extension data when we support them -- FIXME */
+                  if (extension_bytes_remaining == 0) {
+                     if (payload_length > 0) {
+                        frame->application_data = (unsigned char *) realloc(frame->application_data, (size_t) (frame->application_data_offset + payload_length));
+                        if (frame->application_data == NULL) {
+                           framing_state = MGWSI_WS_DATA_FRAMING_CLOSE;
+                           status_code = (state->protocol_version >= 13) ? MGWSI_WS_STATUS_CODE_INTERNAL_ERROR : MGWSI_WS_STATUS_CODE_GOING_AWAY;
+                           break;
+                        }
+                     }
+                     framing_state = MGWSI_WS_DATA_FRAMING_APPLICATION_DATA;
+                  }
+                  /* Fall through */
+               case MGWSI_WS_DATA_FRAMING_APPLICATION_DATA:
+                  {
+                     apr_int64_t block_data_length;
+                     apr_int64_t block_length = 0;
+                     apr_uint64_t application_data_offset = frame->application_data_offset;
+                     unsigned char *application_data = frame->application_data;
+
+                     block_length = block_size - block_offset;
+                     block_data_length = (payload_length > block_length) ? block_length : payload_length;
+
+                     if (masking) {
+                        apr_int64_t i;
+
+                        if (opcode == MGWSI_WS_OPCODE_TEXT) {
+                           unsigned int utf8_state = frame->utf8_state;
+                           unsigned char c;
+
+                           for (i = 0; i < block_data_length; i++) {
+                              c = block[block_offset++] ^mask[mask_offset++ & 3];
+                              utf8_state = validate_utf8[utf8_state + c];
+                              if (utf8_state == UTF8_INVALID) {
+                                 payload_length = block_data_length;
+                                 break;
+                              }
+                              application_data[application_data_offset++] = c;
+                           }
+                           frame->utf8_state = utf8_state;
+                        }
+                        else {
+                           /* Need to optimize the unmasking -- FIXME */
+                           for (i = 0; i < block_data_length; i++) {
+                              application_data[application_data_offset++] = block[block_offset++] ^mask[mask_offset++ & 3];
+                           }
+                        }
+                     }
+                     else if (block_data_length > 0) {
+                        memcpy(&application_data[application_data_offset], &block[block_offset], (size_t) block_data_length);
+                        if (opcode == MGWSI_WS_OPCODE_TEXT) {
+                           apr_int64_t i, application_data_end = application_data_offset + block_data_length;
+                           unsigned int utf8_state = frame->utf8_state;
+
+                           for (i = application_data_offset; i < application_data_end; i++) {
+                              utf8_state = validate_utf8[utf8_state + application_data[i]];
+                              if (utf8_state == UTF8_INVALID) {
+                                 payload_length = block_data_length;
+                                 break;
+                              }
+                           }
+                           frame->utf8_state = utf8_state;
+                        }
+                        application_data_offset += block_data_length;
+                        block_offset += block_data_length;
+                     }
+                     payload_length -= block_data_length;
+
+                     if (payload_length == 0) {
+                        int message_type = MGWSI_WS_MESSAGE_TYPE_INVALID;
+
+                        switch (opcode) {
+                           case MGWSI_WS_OPCODE_TEXT:
+                              if ((fin && (frame->utf8_state != UTF8_VALID)) || (frame->utf8_state == UTF8_INVALID)) {
+                                 framing_state = MGWSI_WS_DATA_FRAMING_CLOSE;
+                                 status_code = MGWSI_WS_STATUS_CODE_INVALID_UTF8;
+                              }
+                              else {
+                                 message_type = MGWSI_WS_MESSAGE_TYPE_TEXT;
+                              }
+                              break;
+                           case MGWSI_WS_OPCODE_BINARY:
+                              message_type = MGWSI_WS_MESSAGE_TYPE_BINARY;
+                              break;
+                           case MGWSI_WS_OPCODE_CLOSE:
+                              framing_state = MGWSI_WS_DATA_FRAMING_CLOSE;
+                              status_code = MGWSI_WS_STATUS_CODE_OK;
+                              break;
+                           case MGWSI_WS_OPCODE_PING:
+                              mgwsi_ws_client_send_block(lp_request, MGWSI_WS_MESSAGE_TYPE_PONG, (unsigned char *) application_data, (size_t) application_data_offset);
+                              break;
+                           case MGWSI_WS_OPCODE_PONG:
+                              break;
+                           default:
+                              framing_state = MGWSI_WS_DATA_FRAMING_CLOSE;
+                              status_code = MGWSI_WS_STATUS_CODE_PROTOCOL_ERROR;
+                              break;
+                        }
+                        if (fin && (message_type != MGWSI_WS_MESSAGE_TYPE_INVALID)) { /* CMT1060 */
+
+                           int result, timeout;
+
+                           timeout = 60;
+
+                           if (MGWSI_DEBUG) {
+                              char buffer[256];
+                              strncpy(buffer, (char *) application_data, (int) application_data_offset);
+                              buffer[application_data_offset] = '\0';
+                              mgwsi_log_event(buffer, "WebSocket Diagnostic: Data Received from Client");
+                           }
+
+
+                           if (lp_request->lp_mgwsicon) {
+/*
+                              result = mgwsi_db_send_ex(lp_request, (unsigned char *) application_data, (int) application_data_offset, 0);
+*/
+                              result = mgwsi_ws_db_send(lp_request, (unsigned char *) application_data, (int) application_data_offset, MGWSI_TX_DATA);
+                           }
+                        }
+                        if (framing_state != MGWSI_WS_DATA_FRAMING_CLOSE) {
+                           framing_state = MGWSI_WS_DATA_FRAMING_START;
+
+                           if (fin) {
+                              if (frame->application_data != NULL) {
+                                 free(frame->application_data);
+                                 frame->application_data = NULL;
+                              }
+                              application_data_offset = 0;
+                           }
+                        }
+                    }
+                    frame->application_data_offset = application_data_offset;
+                  }
+                  break;
+               case MGWSI_WS_DATA_FRAMING_CLOSE:
+                  block_offset = block_size;
+                  break;
+               default:
+                  framing_state = MGWSI_WS_DATA_FRAMING_CLOSE;
+                  status_code = MGWSI_WS_STATUS_CODE_PROTOCOL_ERROR;
+                  break;
+            }
+         }
+      }
+      if (message_frame.application_data != NULL) {
+         free(message_frame.application_data);
+      }
+      if (control_frame.application_data != NULL) {
+         free(control_frame.application_data);
+      }
+
+      /* Send server-side closing handshake */
+      status_code_buffer[0] = (status_code >> 8) & 0xFF;
+      status_code_buffer[1] = status_code & 0xFF;
+      mgwsi_ws_client_send_block(lp_request, MGWSI_WS_MESSAGE_TYPE_CLOSE, (unsigned char *) status_code_buffer, sizeof(status_code_buffer));
+
+      /* We are done with the bucket brigade */
+      apr_thread_mutex_lock(state->mutex);
+      state->obb = NULL;
+      apr_brigade_destroy(obb);
+   }
+}
+
+
+MGWSI_THREAD_TYPE mgwsi_ws_read_from_db_async(void *lp_parameters)
+{
+   short type;
+   int result, timeout;
+   size_t ret;
+   int size;
+   //unsigned char data[256];
+   MGWSIREQ *lp_request;
+
+   result = 0;
+   ret = 0;
+   lp_request = (MGWSIREQ *) lp_parameters;
+
+   timeout = 60000;
+   for (;;) {
+
+      result = mgwsi_ws_db_receive(lp_request, &size, &type);
+
+      if (MGWSI_DEBUG) {
+         char buffer[256];
+         if (result >= 0) {
+            sprintf(buffer, "WebSocket Diagnostic: Read from M: result=%d; type=%d", result, type);
+            mgwsi_log_event((char *) lp_request->lp_websocket->output_buffer, buffer);
+         }
+      }
+
+      if (type == MGWSI_TX_EOD) {
+         lp_request->lp_websocket->status = 11;
+
+         if (MGWSI_DEBUG) {
+            mgwsi_log_event("WebSocket gracefully closed on Cache side", "WebSocket Diagnostic");
+         }
+
+         mgwsi_ws_client_send_block(lp_request, MGWSI_WS_MESSAGE_TYPE_CLOSE, (unsigned char *) "", 0);
+         break;
+      }
+      if (result < 0) {
+         lp_request->lp_websocket->status = 21;
+
+         if (MGWSI_DEBUG) {
+            mgwsi_log_event("WebSocket forcefully closed on Cache side", "WebSocket Diagnostic");
+         }
+
+         mgwsi_ws_client_send_block(lp_request, MGWSI_WS_MESSAGE_TYPE_CLOSE, (unsigned char *) "", 0);
+         break;
+      }
+
+      size = result;
+      ret = mgwsi_ws_client_send_block(lp_request, MGWSI_WS_MESSAGE_TYPE_TEXT, (unsigned char *) lp_request->lp_websocket->output_buffer, (size_t) size);
+   }
+
+
+   mgwsi_thread_exit();
+
+   return MGWSI_THREAD_RETURN;
+
+}
+
+/*
+int                     mgwsi_encode_ws_header        (unsigned char * head, int size, short type);
+int                     mgwsi_decode_ws_header        (unsigned char * head, int * size, short * type);
+*/
+
+int mgwsi_ws_db_send(MGWSIREQ *lp_request, unsigned char *data, int size, short type)
+{
+   if (lp_request->lp_websocket->input_buffer_size < (size + 5 + 256)) {
+      free((void *) lp_request->lp_websocket->input_buffer);
+      lp_request->lp_websocket->input_buffer = (unsigned char *) malloc(sizeof(char) * (size + 5 + 256));
+      lp_request->lp_websocket->input_buffer_size = size + 5 + 256;
+   }
+
+   mgwsi_encode_ws_header((unsigned char *) lp_request->lp_websocket->input_buffer, size, type);
+   if (size) {
+   memcpy((void *) (lp_request->lp_websocket->input_buffer + 5), (void *) data, size);
+   }
+   lp_request->lp_websocket->input_buffer[size + 5] = '\0';
+
+   return mgwsi_db_send_ex(lp_request, (unsigned char *) lp_request->lp_websocket->input_buffer, (int) (size + 5), 0);
+}
+
+
+int mgwsi_ws_db_receive(MGWSIREQ *lp_request, int *size, short *type)
+{
+   int result;
+   unsigned char head[16];
+
+   result = mgwsi_db_receive_ex(lp_request, (unsigned char *) head, 5, 0);
+   if (result < 5) {
+      return -1;
+   }
+
+   mgwsi_decode_ws_header((unsigned char *) head, size, type);
+
+   if (lp_request->lp_websocket->output_buffer_size < (*size + 5 + 256)) {
+      free((void *) lp_request->lp_websocket->output_buffer);
+      lp_request->lp_websocket->output_buffer = (unsigned char *) malloc(sizeof(char) * (*size + 5 + 256));
+      lp_request->lp_websocket->output_buffer_size = *size + 5 + 256;
+   }
+
+   result = mgwsi_db_receive_ex(lp_request, (unsigned char *) lp_request->lp_websocket->output_buffer, *size, 0);
+   if (result != *size) {
+      result = -1;
+   }
+
+   return result;
+}
+
+
+#endif /* #if defined(MGWSI_WEBSOCKETS) */
+
+
 #if MGWSI_APACHE_VERSION >= 20
 
 /*--------------------------------------------------------------------------*/
@@ -2245,6 +3688,7 @@ int mgwsi_get_configuration(MGWSIREQ *lp_request)
    strcpy(lp_request->ip_address, MGWSI_SERVER);
    strcpy(lp_request->server, MGWSI_M_SERVER);
    strcpy(lp_request->fun, MGWSI_M_FUNCTION);
+   strcpy(lp_request->ws_fun, MGWSI_M_WS_SERVER);
    lp_request->port = MGWSI_PORT;
    lp_request->base_port = MGWSI_PORT;
    strcpy(lp_request->uci, MGWSI_M_UCI);
@@ -2273,6 +3717,10 @@ int mgwsi_get_configuration(MGWSIREQ *lp_request)
    len = mgwsi_get_server_variable(lp_request, "MGWSI_M_FUNCTION", lp_request->lp_cgi_buffer);
    if (len > 0)
       strcpy(lp_request->fun, lp_request->lp_cgi_buffer->lp_buffer);
+
+   len = mgwsi_get_server_variable(lp_request, "MGWSI_M_WS_SERVER", lp_request->lp_cgi_buffer);
+   if (len > 0)
+      strcpy(lp_request->ws_fun, lp_request->lp_cgi_buffer->lp_buffer);
 
    len = mgwsi_get_server_variable(lp_request, "MGWSI_M_UCI", lp_request->lp_cgi_buffer);
    if (len > 0) {
@@ -2398,7 +3846,7 @@ int mgwsi_db_connect(MGWSIREQ *lp_request, short context)
    }
 
    lp_request->lp_mgwsicon->activity ++;
-   if (reuse) {
+   if (reuse && mgwsi_db_con[h_db]->con_status == MGWCON_CONSTATUS_CON) {
       return 2;
    }
 
@@ -2479,7 +3927,7 @@ int mgwsi_db_connect_ex(MGWSIREQ *lp_request)
 {
    short ipv6, getaddrinfo_ok, connected;
    const int on = 1;
-   int n;
+   int n, flag;
    static struct sockaddr_in cli_addr, srv_addr;
 
    getaddrinfo_ok = 0;
@@ -2554,6 +4002,10 @@ int mgwsi_db_connect_ex(MGWSIREQ *lp_request)
                continue;
             }
             else {
+               /* Disable Nagle Algorithm */
+               flag = 1;
+               MGWSI_NET_SETSOCKOPT(lp_request->lp_mgwsicon->sockfd, IPPROTO_TCP, TCP_NODELAY, (const char *) &flag, sizeof(int));
+
                connected = 1;
                break;
             }
@@ -2585,7 +4037,7 @@ int mgwsi_db_connect_ex(MGWSIREQ *lp_request)
          else {
             sprintf(lp_request->error, "m_apache: Cannot connect over IPv6 - will try to use the IPv4 stack instead (%s:%d): Error Code: %d", lp_request->ip_address, lp_request->port, MGWSI_GET_LAST_ERROR);
 #if MGWSI_APACHE_VERSION >= 20
-            ap_log_rerror(APLOG_MARK, APLOG_NOTICE, 0, lp_request->r, lp_request->error);
+            ap_log_rerror(APLOG_MARK, APLOG_NOTICE, 0, lp_request->r, "%s", lp_request->error);
 #endif
             strcpy(lp_request->error, "");
          }
@@ -2598,7 +4050,7 @@ int mgwsi_db_connect_ex(MGWSIREQ *lp_request)
          else {
             sprintf(lp_request->error, "m_apache: Cannot connect over IPv6 - will try to use the IPv4 stack instead (%s:%d): Error Code: %d", lp_request->ip_address, lp_request->port, MGWSI_GET_LAST_ERROR);
 #if MGWSI_APACHE_VERSION >= 20
-            ap_log_rerror(APLOG_MARK, APLOG_NOTICE, 0, lp_request->r, lp_request->error);
+            ap_log_rerror(APLOG_MARK, APLOG_NOTICE, 0, lp_request->r, "%s", lp_request->error);
 #endif
             strcpy(lp_request->error, "");
          }
@@ -2621,6 +4073,10 @@ int mgwsi_db_connect_ex(MGWSIREQ *lp_request)
       sprintf(lp_request->error, "Cannot open a stream-socket to the server (%d)", MGWSI_GET_LAST_ERROR);
       return 0;
    }
+
+   /* Disable Nagle Algorithm */
+   flag = 1;
+   MGWSI_NET_SETSOCKOPT(lp_request->lp_mgwsicon->sockfd, IPPROTO_TCP, TCP_NODELAY, (const char *) &flag, sizeof(int));
 
 #if defined(MGWSI_UNIX) || defined(MGWSI_VMS)
    bzero((char *) &cli_addr, sizeof(cli_addr));
@@ -2653,7 +4109,6 @@ int mgwsi_db_connect_ex(MGWSIREQ *lp_request)
 
 int mgwsi_db_disconnect(MGWSIREQ *lp_request, short context)
 {
-
    if (!lp_request->lp_mgwsicon)
       return -1;
 
@@ -2691,7 +4146,6 @@ int mgwsi_db_disconnect(MGWSIREQ *lp_request, short context)
       lp_request->lp_mgwsicon = NULL;
    }
 
-
    return 1;
 }
 
@@ -2727,8 +4181,7 @@ int mgwsi_db_disconnect_ex(MGWSIREQ *lp_request)
 
 int mgwsi_db_send(MGWSIREQ *lp_request, LPMGWSIBUF lp_trans_buffer, int mode)
 {
-   int result, n, n1, len, total;
-   char *request;
+   int result, len;
    unsigned char esize[8];
 
    result = 1;
@@ -2746,14 +4199,25 @@ int mgwsi_db_send(MGWSIREQ *lp_request, LPMGWSIBUF lp_trans_buffer, int mode)
       strncpy(lp_trans_buffer->lp_buffer + (lp_request->header_len - 6) + (5 - len), esize, len);
    }
 
-   request = lp_trans_buffer->lp_buffer;
-   len = lp_trans_buffer->data_size;
+   result = mgwsi_db_send_ex(lp_request, (unsigned char *) lp_trans_buffer->lp_buffer, lp_trans_buffer->data_size, mode);
 
+   return result;
+}
+
+
+int mgwsi_db_send_ex(MGWSIREQ *lp_request, unsigned char * data, int size, int mode)
+{
+   int result, n, n1, total;
+
+   if (!lp_request->lp_mgwsicon)
+      return -2;
+
+   result = 0;
    total = 0;
-
    n1= 0;
+
    for (;;) {
-      n = MGWSI_NET_SEND(lp_request->lp_mgwsicon->sockfd, request + total, len - total, 0);
+      n = MGWSI_NET_SEND(lp_request->lp_mgwsicon->sockfd, data + total, size - total, 0);
       if (n < 0) {
          result = 0;
          break;
@@ -2761,7 +4225,7 @@ int mgwsi_db_send(MGWSIREQ *lp_request, LPMGWSIBUF lp_trans_buffer, int mode)
 
       total += n;
 
-      if (total == len)
+      if (total == size)
          break;
 
       n1 ++;
@@ -2769,10 +4233,8 @@ int mgwsi_db_send(MGWSIREQ *lp_request, LPMGWSIBUF lp_trans_buffer, int mode)
          break;
 
    }
-
    return result;
 }
-
 
 
 int mgwsi_db_receive(MGWSIREQ *lp_request, LPMGWSIBUF lp_trans_buffer, int size, int mode)
@@ -2938,13 +4400,19 @@ int mgwsi_db_receive_ex(MGWSIREQ *lp_request, unsigned char * data, int size, sh
 
          n = MGWSI_NET_RECV(lp_request->lp_mgwsicon->sockfd, data + len, size - len, 0);
 
-         if (n < 1) { /*DLW changed to 1*/
+         /* DLW - recv returns 0 for orderly shutdowns of remote sockets
+          * need to break on that condition to prevent an infinite loop
+            if (n < 0) {
+         */
+
+         if (n < 1) {
             len = n;
             break;
          }
          len += n;
-         if (len >= size)
+         if (len >= size) {
             break;
+         }
       }
    }
 
@@ -3985,12 +5453,13 @@ int mgwsi_get_server_variable(MGWSIREQ *lp_request, char *VariableName, LPMGWSIB
 int mgwsi_get_req_vars(MGWSIREQ *lp_request, LPMGWSIBUF lp_cgi_buffer)
 {
    int result;
-   char request_transfer_encoding[32];
+   char request_transfer_encoding[32], upgrade[32];
 
    result = 1;
 
    lp_request->con_len = 0;
    lp_request->req_chunked = 0;
+   lp_request->websocket_upgrade = 0;
    request_transfer_encoding[0] = '\0';
 
    mgwsi_get_server_variable(lp_request, "CONTENT_LENGTH", lp_cgi_buffer);
@@ -4004,6 +5473,15 @@ int mgwsi_get_req_vars(MGWSIREQ *lp_request, LPMGWSIBUF lp_cgi_buffer)
    if (mgwsi_get_server_variable(lp_request, "HTTP_TRANSFER_ENCODING", lp_cgi_buffer) < 128) {
       strncpy(request_transfer_encoding, (char *) lp_cgi_buffer->lp_buffer, 31);
       request_transfer_encoding[31] = '\0';
+   }
+
+   if (mgwsi_get_server_variable(lp_request, "HTTP_UPGRADE", lp_cgi_buffer) < 128) {
+      strncpy(upgrade, (char *) lp_cgi_buffer->lp_buffer, 30);
+      upgrade[30] = '\0';
+      mgwsi_l_case(upgrade);
+      if (!strcmp(upgrade, "websocket")) {
+         lp_request->websocket_upgrade = 1;
+      }
    }
 
    if (*request_transfer_encoding) {
@@ -4386,7 +5864,7 @@ int mgwsi_pow(int n10, int power)
 }
 
 
-int mgwsi_encode_size64(int n10)
+int mgwsi_encode_size62(int n10)
 {
    if (n10 >= 0 && n10 < 10)
       return (48 + n10);
@@ -4399,7 +5877,7 @@ int mgwsi_encode_size64(int n10)
 }
 
 
-int mgwsi_decode_size64(int nxx)
+int mgwsi_decode_size62(int nxx)
 {
    if (nxx >= 48 && nxx < 58)
       return (nxx - 48);
@@ -4410,7 +5888,6 @@ int mgwsi_decode_size64(int nxx)
 
    return 0;
 }
-
 
 
 int mgwsi_encode_size(unsigned char *esize, int size, short base)
@@ -4425,13 +5902,13 @@ int mgwsi_encode_size(unsigned char *esize, int size, short base)
 
       n1 = 31;
       buffer[n1 --] = '\0';
-      buffer[n1 --] = mgwsi_encode_size64(size  % base);
+      buffer[n1 --] = mgwsi_encode_size62(size % base);
 
       for (n = 1;; n ++) {
          x = (size / mgwsi_pow(base, n));
          if (!x)
             break;
-         buffer[n1 --] = mgwsi_encode_size64(x  % base);
+         buffer[n1 --] = mgwsi_encode_size62(x % base);
       }
       n1 ++;
       strcpy((char *) esize, buffer + n1);
@@ -4458,7 +5935,7 @@ int mgwsi_decode_size(unsigned char *esize, int len, short base)
       for (n = len - 1; n >= 0; n --) {
 
          x = (int) esize[n];
-         size = size + mgwsi_decode_size64(x) * mgwsi_pow(base, (len - (n + 1)));
+         size = size + mgwsi_decode_size62(x) * mgwsi_pow(base, (len - (n + 1)));
       }
    }
 
@@ -4501,6 +5978,31 @@ int mgwsi_decode_item_header(unsigned char * head, int * size, short * byref, sh
    hlen = slen + 1;
 
    return hlen;
+}
+
+
+int mgwsi_encode_ws_header(unsigned char * head, int size, short type)
+{
+   int slen;
+   unsigned char esize[16];
+
+   sprintf((char *) head, "0000%d", type);
+ 
+   slen = mgwsi_encode_size(esize, size, 62);
+
+   strncpy((char *) (head + (4 - slen)), (char *) esize, slen);
+
+   return 5;
+}
+
+
+int mgwsi_decode_ws_header(unsigned char * head, int * size, short * type)
+{
+   *type = (short) strtol((char *) (head + 4), NULL, 10);
+
+   *size = mgwsi_decode_size(head, 4, 62);
+
+   return 5;
 }
 
 
@@ -4744,6 +6246,159 @@ int mgwsi_b64_strip_enc_buffer(char *buf, int length)
  
    return ret;
 
+}
+
+
+
+#if defined(MGWSI_WEBSOCKETS)
+
+int mgwsi_thread_create(LPMGWSITC lp_thread_control, MGWSI_THREAD_START_ROUTINE start_routine, void *arg)
+{
+   int result;
+
+#if defined(_WIN32)
+   int n;
+   long hThread;
+   DWORD CreationFlags, StackSize;
+   LPSECURITY_ATTRIBUTES lpThreadAttributes;
+
+   n = 0;
+   result = 0;
+   StackSize = 0;
+   hThread = 0;
+
+   lpThreadAttributes = NULL;
+   CreationFlags = 0;
+
+   lp_thread_control->hThread = CreateThread(lpThreadAttributes, StackSize, (MGWSI_THREAD_START_ROUTINE) start_routine, (void *) arg, CreationFlags, (LPDWORD) &(lp_thread_control->thread_id));
+/*
+   if (lp_thread_control->hThread) {
+      result = 0;
+
+      n = cspMutexLock(CoreData.lp_memlockTH, 0, NULL);
+
+      for (n = 0; n < CoreData.max_connections; n ++) {
+         if (!thread_handles[n]) {
+            thread_handles[n] = lp_thread_control->hThread;
+            break;
+         }
+      }
+
+      cspMutexUnlock(CoreData.lp_memlockTH);
+
+   }
+   else
+      result = -1;
+*/
+
+#else
+   size_t StackSize, newStackSize;
+   pthread_attr_t attr;
+
+   StackSize = 0;
+   newStackSize = 0;
+
+   pthread_attr_init(&attr);
+
+   pthread_attr_getstacksize(&attr, &StackSize);
+
+   newStackSize = 0x40000; /* 262144 */
+
+   pthread_attr_setstacksize(&attr, newStackSize);
+
+   result = pthread_create(&(lp_thread_control->thread_id), &attr, (MGWSI_THREAD_START_ROUTINE) start_routine, (void *) arg);
+
+   pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL); /* CMT1052 */
+
+#endif
+
+   return result;
+
+}
+
+
+
+int mgwsi_thread_terminate(LPMGWSITC lp_thread_control)
+{
+   int result;
+
+   result = 1;
+
+#ifdef _WIN32
+   if (lp_thread_control->hThread)
+      TerminateThread(lp_thread_control->hThread, 0);
+#else
+   pthread_kill(lp_thread_control->thread_id, SIGINT);
+#endif
+
+   return result;
+
+}
+
+
+
+int mgwsi_thread_detach(void)
+{
+   int result;
+
+   result = 1;
+
+#if defined(_WIN32)
+#else
+   result = pthread_detach(pthread_self());
+#endif
+
+   return result;
+}
+
+
+int mgwsi_thread_join(LPMGWSITC lp_thread_control)
+{
+   int result;
+
+   result = 1;
+
+#if defined(_WIN32)
+   result = (int) WaitForSingleObject(lp_thread_control->hThread, INFINITE);
+#else
+   result = pthread_join(lp_thread_control->thread_id, NULL);
+#endif
+
+   return result;
+}
+
+
+int mgwsi_thread_exit(void)
+{
+#if defined(_WIN32)
+   ExitThread(0);
+#else
+   pthread_exit(NULL);
+#endif
+
+   return 1;
+}
+
+#endif /* #if defined(MGWSI_WEBSOCKETS) */
+
+
+unsigned long mgwsi_get_current_tid(void)
+{
+#if defined(_WIN32)
+   return ((unsigned long) GetCurrentThreadId());
+#else
+   return ((unsigned long) pthread_self());
+#endif
+}
+
+
+unsigned long mgwsi_get_current_pid(void)
+{
+#if defined(_WIN32)
+   return (unsigned long) GetCurrentProcessId();
+#else
+   return ((unsigned long) getpid());
+#endif
 }
 
 
@@ -5219,7 +6874,7 @@ ssl_init_end:
    if (strlen(message)) {
 
 #if MGWSI_APACHE_VERSION >= 20
-      ap_log_error(APLOG_MARK, APLOG_NOTICE, 0, NULL, message);
+      ap_log_error(APLOG_MARK, APLOG_NOTICE, 0, NULL, "%s", message);
 #endif
    }
 

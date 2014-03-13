@@ -2,7 +2,8 @@
  ;
  ; ----------------------------------------------------------------------------
  ; | m_apache                                                                 |
- ; | Copyright (c) 2004-2009 M/Gateway Developments Ltd,                      |
+ ; | m_python                                                                 |
+ ; | Copyright (c) 2004-2014 M/Gateway Developments Ltd,                      |
  ; | Surrey UK.                                                               |
  ; | All rights reserved.                                                     |
  ; |                                                                          |

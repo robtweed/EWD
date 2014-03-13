@@ -3,7 +3,7 @@ ZMGWSIS ; Service Integration - GT.M call-in (doesn't like '%' routines)
  ; ----------------------------------------------------------------------------
  ; | m_apache                                                                 |
  ; | m_python                                                                 |
- ; | Copyright (c) 2004-2009 M/Gateway Developments Ltd,                      |
+ ; | Copyright (c) 2004-2014 M/Gateway Developments Ltd,                      |
  ; | Surrey UK.                                                               |
  ; | All rights reserved.                                                     |
  ; |                                                                          |
