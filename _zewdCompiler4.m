@@ -691,8 +691,8 @@ trace(nodeOID,attrValues,docOID,technology)
 	;   
 	set text=$$getAttrValue("text",.attrValues,technology)
 	;
-	. ; d trace^%zewdAPI(text)
-	. ; 
+	; d trace^%zewdAPI(text)
+	; 
 	s text=" d trace^%zewdAPI("_text_")"
 	s serverOID=$$addCSPServerScript(nodeOID,text)
 	;
