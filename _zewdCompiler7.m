@@ -893,6 +893,7 @@ processTag(tagName,attrList,procName,include,defFile,docName,technology,error)
 	. . ;s ok=$$$closeDOM break
 	. i include="",defFile="" d  i error'="" q
 	. . i $$zcvt^%zewdAPI(procName,"l")["##class" d
+	. . . ;
 	. . e  d
 	. . . s x="d "_procName_"(nodeOID,.attrValues,docOID,technology)"
 	. . . i $g(^zewd("trace"))=1,$e(tagName,1,4)'="ewd:",tagName'="textarea" d trace^%zewdAPI("Compiling custom tag "_tagName_": about to call "_x)
