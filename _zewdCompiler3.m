@@ -495,20 +495,20 @@ getPHPVarName(phpName,removeDollar)
 	. . s esc=1
 	. . s value="#"_$e(svalue,3,1000)
 	. . i svalue["." d
-	. . n object,property
-	. . s svalue=$e(svalue,2,$l(value))
-	. . s object=$p(svalue,".",1)
-	. . s property=$p(svalue,".",2)
-	. . i object["[" d
-	. . . n index
-	. . . s index=$p(object,"[",2)
-	. . . s index=$p(index,"]",1)
-	. . . s object=$p(object,"[",1)
-	. . . i $e(index,1)="$" s index=$e(index,2,$l(index))
-	. . . s svalue="$$getResultSetValue^%zewdAPI("""_object_""","_index_","""_property_""",sessid)"
-	. . e  d
-	. . . i $e(svalue,1,3)="tmp" s svalue="$$getTmpSessionValue^%zewdAPI2("""_svalue_""",sessid)" q
-	. . . s svalue="$$getSessionValue^%zewdAPI("""_svalue_""",sessid)"
+	. . . n object,property
+	. . . s svalue=$e(svalue,2,$l(value))
+	. . . s object=$p(svalue,".",1)
+	. . . s property=$p(svalue,".",2)
+	. . . i object["[" d
+	. . . . n index
+	. . . . s index=$p(object,"[",2)
+	. . . . s index=$p(index,"]",1)
+	. . . . s object=$p(object,"[",1)
+	. . . . i $e(index,1)="$" s index=$e(index,2,$l(index))
+	. . . . s svalue="$$getResultSetValue^%zewdAPI("""_object_""","_index_","""_property_""",sessid)"
+	. . . e  d
+	. . . . i $e(svalue,1,3)="tmp" s svalue="$$getTmpSessionValue^%zewdAPI2("""_svalue_""",sessid)" q
+	. . . . s svalue="$$getSessionValue^%zewdAPI("""_svalue_""",sessid)"
 	. e  d
 	. . i $e(svalue,2,4)="tmp" s svalue="$$getTmpSessionValue^%zewdAPI2("""_$e(svalue,2,$l(svalue))_""",sessid)" q
 	. . s svalue="$$getSessionValue^%zewdAPI("""_$e(svalue,2,$l(svalue))_""",sessid)"
