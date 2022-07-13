@@ -236,7 +236,7 @@ parseDocument(docName,isHTML)
  . s prevLine=^CacheTempEWD($j,lineNo-1)_%p1
  . s ^CacheTempEWD($j,lineNo-1)=prevLine
  . s ^CacheTempEWD($j,lineNo)=%p2
- ;
+ . ;
  . i $e(prevLine,$l(prevLine)-2,$l(prevLine))["<" d
  . . i $e(prevLine,$l(prevLine))=dlim s prevLine=$e(prevLine,1,$l(prevLine)-1)
  . . s nextLine=%p2
